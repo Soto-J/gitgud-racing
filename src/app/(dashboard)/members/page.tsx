@@ -6,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { auth } from "@/lib/auth";
 
 import { getQueryClient, trpc } from "@/trpc/server";
-import { HydrationBoundary } from "@tanstack/react-query";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { MembersView } from "@/modules/members/ui/views/members-view";
 
@@ -18,8 +18,8 @@ export const MembersPage = async () => {
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(trpc.members.getMany.queryOptions());
   return (
-    <HydrationBoundary>
-      <Suspense fallback={<p></p>}>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<p>Loading</p>}>
         <ErrorBoundary fallback={<p></p>}>
           <MembersView />
         </ErrorBoundary>

@@ -20,7 +20,7 @@ export const MembersView = () => {
       <DataTable
         columns={columns}
         data={data}
-        onRowClick={(original) => router.push(`/profile/${original.id}`)}
+        onRowClick={(original) => router.push(`/members/${original.id}`)}
       />
     </div>
   );

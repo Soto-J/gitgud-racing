@@ -1,10 +1,9 @@
 import z from "zod";
 
-import { getTableColumns, sql, and, eq, desc, count, like } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { user } from "@/db/schema";
-// import { agentsInsertSchema, agentsUpdateSchema } from "../schemas";
 
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
