@@ -4,17 +4,33 @@ import {
   text,
   timestamp,
   boolean,
+  mysqlEnum,
+  float,
+  int,
 } from "drizzle-orm/mysql-core";
+
+export const role = mysqlEnum("role", ["admin", "member"]);
+
+export const safetyClass = mysqlEnum("safety_class", ["A", "B", "C", "D", "R"]);
 
 export const profile = mysqlTable("profile", {
   id: varchar("id", { length: 36 }).primaryKey(),
-  iracingId: varchar("id", { length: 36 }),
 
-  userId: varchar("id", { length: 36 })
+  userId: varchar("user_id", { length: 36 })
     .notNull()
+    .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
   isActive: boolean(),
+  iracingId: varchar("iracing_id", { length: 10 }),
+
+  iRating: int("i_rating"),
+  safetyClass: safetyClass,
+  safteyRating: float("safety_rating"),
+
+  discord: varchar("discord", { length: 37 }),
+  team: varchar("team", { length: 20 }),
+  bio: text("bio"),
 
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
@@ -28,6 +44,7 @@ export const user = mysqlTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
+  role: role.notNull().default("member"),
 
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
@@ -35,7 +52,7 @@ export const user = mysqlTable("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-})
+});
 
 export const session = mysqlTable("session", {
   id: varchar("id", { length: 36 }).primaryKey(),
