@@ -57,7 +57,28 @@ export const SignUpView = () => {
     },
   });
 
-  const onSocialSubmit = (provider: string) => {};
+  const onGoogleSubmit = () => {
+    setIsPending(true);
+    setError(null);
+
+    authClient.signIn.social(
+      {
+        provider: "google",
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setIsPending(false);
+          setError(null);
+        },
+
+        onError: ({ error }) => {
+          setIsPending(false);
+          setError(error.message);
+        },
+      },
+    );
+  };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setError(null);
@@ -220,7 +241,7 @@ export const SignUpView = () => {
                 </div>
 
                 <Button
-                  onClick={() => onSocialSubmit("google")}
+                  onClick={() => onGoogleSubmit()}
                   disabled={isPending}
                   variant="outline"
                   type="button"
@@ -242,7 +263,7 @@ export const SignUpView = () => {
             </form>
           </Form>
 
-          <div className="bg-gradient-to-br from-[#000000] via-[#ED1C24] to-[#FFF200] hidden relative md:block">
+          <div className="bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] hidden relative md:block">
             <Image
               src="/gitgud-logo.png"
               alt="Image"
