@@ -10,7 +10,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { MembersView } from "@/modules/members/ui/views/members-view";
 
-export const MembersPage = async () => {
+export default async function MembersPage() {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) redirect("/sign-in");
@@ -26,6 +26,4 @@ export const MembersPage = async () => {
       </Suspense>
     </HydrationBoundary>
   );
-};
-
-export default MembersPage;
+}
