@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -36,8 +35,6 @@ export const SignInView = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,7 +43,28 @@ export const SignInView = () => {
     },
   });
 
-  const onSocialSubmit = (provider: string) => {};
+  const onGoogleSubmit = () => {
+    setIsPending(true);
+    setError(null);
+
+    authClient.signIn.social(
+      {
+        provider: "google",
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setIsPending(false);
+          setError(null);
+        },
+
+        onError: ({ error }) => {
+          setIsPending(false);
+          setError(error.message);
+        },
+      },
+    );
+  };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setIsPending(true);
@@ -143,7 +161,7 @@ export const SignInView = () => {
                 </div>
 
                 <Button
-                  onClick={() => onSocialSubmit("google")}
+                  onClick={() => onGoogleSubmit()}
                   disabled={isPending}
                   variant="outline"
                   type="button"
@@ -165,7 +183,7 @@ export const SignInView = () => {
             </form>
           </Form>
 
-          <div className="bg-gradient-to-br from-[#000000] via-[#ED1C24] to-[#FFF200] hidden relative md:block">
+          <div className="bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] hidden relative md:block">
             <Image
               src="/gitgud-logo.png"
               alt="Image"
