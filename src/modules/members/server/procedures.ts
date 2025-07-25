@@ -15,9 +15,14 @@ export const membersRouter = createTRPCRouter({
     return members;
   }),
 
-  getOne: protectedProcedure.query(async ({ ctx, input }) => {
-    const [member] = await db.select().from(user);
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const [member] = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, input.id));
 
-    return member;
-  }),
+      return member;
+    }),
 });
