@@ -5,8 +5,12 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+
+import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
-import { BotIcon, StarIcon, VideoIcon } from "lucide-react";
+import { IoPeopleOutline } from "react-icons/io5";
+
+import { StarIcon } from "lucide-react";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
 
@@ -24,18 +28,20 @@ import {
 } from "@/components/ui/sidebar";
 
 const firstSection = [
-  { icon: IoPersonOutline, label: "Members", href: "/members" },
-  { icon: BotIcon, label: "Profile", href: "/profile" },
+  { icon: IoHomeOutline, label: "Home", href: "/" },
+  { icon: IoPersonOutline, label: "Profile", href: "/profile" },
+  { icon: IoPeopleOutline, label: "Members", href: "/members" },
+  { icon: IoPeopleOutline, label: "Teams", href: "/teams" },
 ];
 
-const secondSection = [{ icon: StarIcon, label: "Upgrade", href: "/upgrade" }];
+const secondSection = [{ icon: StarIcon, label: "Mock", href: "/#" }];
 
 export const DashboardSidebar = () => {
   const pathname = usePathname();
 
   return (
     <Sidebar>
-      <SidebarHeader className="text-sidebar-accent-foreground flex items-center justify-center">
+      <SidebarHeader className="flex items-center justify-center">
         <Link href="/" className="">
           <Image
             src="/gitgud-logo.png"
@@ -61,13 +67,21 @@ export const DashboardSidebar = () => {
                     asChild
                     isActive={pathname === href}
                     className={cn(
-                      "from-sidebar-accent to-sidebar/50 via-sidebar/50 h-10 border border-transparent from-5% via-30% text-white hover:border-[#FFF200]/10 hover:bg-linear-to-r/oklch",
+                      "from-sidebar-accent to-sidebar/50 via-sidebar/50 h-10 border border-transparent from-5% via-40% hover:border-[#FFEB00]/10 hover:bg-linear-to-r/oklch",
                       pathname === href &&
-                        "border-[#FFF200]/10 bg-linear-to-r/oklch text-black",
+                        "border-[#FFEB00]/80 bg-linear-to-r/oklch",
                     )}
                   >
-                    <Link href={href} className="flex items-center gap-2">
-                      <Icon className="" />
+                    <Link
+                      href={href}
+                      className={cn(
+                        "flex items-center gap-2 hover:[&>*]:text-black",
+                        pathname === href
+                          ? "[&>*]:text-black"
+                          : "[&>*]:text-white",
+                      )}
+                    >
+                      <Icon />
                       <span className="text-sm font-medium tracking-tight">
                         {label}
                       </span>
