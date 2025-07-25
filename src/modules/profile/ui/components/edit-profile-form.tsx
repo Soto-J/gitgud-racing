@@ -15,9 +15,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 
-interface EditProfileFormProps {}
-
-export const EditProfileForm = ({}: EditProfileFormProps) => {
+export const EditProfileForm = () => {
   const form = useForm<z.infer<typeof profileInsertSchema>>({
     resolver: zodResolver(profileInsertSchema),
     defaultValues: {
@@ -62,7 +60,7 @@ export const EditProfileForm = ({}: EditProfileFormProps) => {
             </FormItem>
           )}
         />
-       
+
         <FormField
           name="iRacingId"
           control={form.control}
