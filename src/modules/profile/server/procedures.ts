@@ -1,6 +1,6 @@
 import z from "zod";
 
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
 
 import { db } from "@/db";
 import { profile, user } from "@/db/schema";
@@ -18,11 +18,25 @@ export const profileRouter = createTRPCRouter({
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
       const [profileWithUser] = await db
-        .select()
+        .select({
+          ...getTableColumns(profile),
+
+          memberName: user.name,
+        })
         .from(profile)
         .innerJoin(user, eq(profile.userId, user.id))
         .where(eq(profile.userId, input.userId));
 
-      return profileWithUser ?? null;
+      return profileWithUser || null;
+    }),
+
+  create: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [createdProfile] = await db.insert(profile).values({
+        userId: input.userId,
+      });
+
+      return createdProfile.insertId;
     }),
 });

@@ -5,10 +5,10 @@ import { MoreVerticalIcon, PencilIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface EditProfileButtonProps {
   onEdit: () => void;
@@ -24,7 +24,10 @@ export const EditProfileButton = ({ onEdit }: EditProfileButtonProps) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={onEdit} className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={onEdit}
+          className="cursor-pointer"
+        >
           <PencilIcon className="size-4 text-black" />
           <span>Edit</span>
         </DropdownMenuItem>
