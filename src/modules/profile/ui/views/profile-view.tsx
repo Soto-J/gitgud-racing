@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 
-import { EditProfileForm } from "@/modules/profile/ui/components/edit-profile-form";
-
+import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 import { EditProfileButton } from "@/modules/profile/ui/components/edit-profile-button";
-
-import { ResponsiveDialog } from "@/components/responsive-dialog";
-import { Button } from "@/components/ui/button";
 
 interface ProfileViewProps {
   userId: string;
@@ -18,43 +18,40 @@ interface ProfileViewProps {
 export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
+  const quereyClient = useQueryClient();
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
+
+  const { data: profile } = useSuspenseQuery(
     trpc.profile.getOne.queryOptions({ userId }),
   );
 
-  if (!data) {
-    return (
-      <div className="flex min-h-svh items-center justify-center">
-        <Button onClick={() => setOpenDialog(true)}>
-          Complete your profile
-        </Button>
-        
-        <ResponsiveDialog
-          title="Profile"
-          description="Edit your profile"
-          isOpen={openDialog}
-          onOpenChange={() => setOpenDialog(false)}
-        >
-          <EditProfileForm />
-        </ResponsiveDialog>
-      </div>
-    );
+  if (!profile) {
+    useMutation(
+      trpc.profile.create.mutationOptions({
+        onSuccess: () => {
+          quereyClient.invalidateQueries(
+            trpc.profile.getOne.queryOptions({ userId }),
+          );
+        },
+        onError: (error) => {
+          console.log(error.message);
+        },
+      }),
+    ).mutate({ userId });
   }
 
   return (
     <>
-      {/* <RemoveConfirmationDialog />
-      <UpdateAgentDialog
-        initialValues={data}
-        isOpen={showEditDialog}
-        onOpenChange={setShowEditDialog}
-      /> */}
+      <EditProfileDialog
+        onOpenDialog={openDialog}
+        onCloseDialog={() => setOpenDialog(false)}
+        initialValues={profile}
+      />
 
       <div className="gap-y-4 p-4 md:px-8">
         <div className="flex justify-between space-y-5 rounded-lg border bg-white px-4 py-5 shadow">
           <div className="space-y-5 px-4 py-5">
-            <h2 className="text-2xl font-medium">name</h2>
+            <h2 className="text-2xl font-medium">{profile.memberName}</h2>
 
             <div className="space-y-4">
               <p className="font-medium">Irating</p>
@@ -66,7 +63,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
           </div>
 
           <div className="mt-4 mr-4">
-            <EditProfileButton onEdit={() => {}} />
+            <EditProfileButton onEdit={() => setOpenDialog(true)} />
           </div>
         </div>
       </div>

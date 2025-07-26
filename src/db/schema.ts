@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 import {
   mysqlTable,
   varchar,
@@ -14,26 +15,28 @@ export const role = mysqlEnum("role", ["admin", "member"]);
 export const safetyClass = mysqlEnum("safety_class", ["A", "B", "C", "D", "R"]);
 
 export const profile = mysqlTable("profile", {
-  id: varchar("id", { length: 36 }).primaryKey(),
+  id: varchar("id", { length: 21 })
+    .primaryKey()
+    .$default(() => nanoid()),
 
   userId: varchar("user_id", { length: 36 })
     .notNull()
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  isActive: boolean(),
-  iracingId: varchar("iracing_id", { length: 10 }),
+  isActive: boolean().default(false),
+  iracingId: varchar("iracing_id", { length: 10 }).default(""),
 
-  iRating: int("i_rating"),
-  safetyClass: safetyClass,
-  safteyRating: float("safety_rating"),
+  iRating: int("i_rating").default(0),
+  safetyClass: safetyClass.default("R"),
+  safteyRating: float("safety_rating").default(0.0),
 
-  discord: varchar("discord", { length: 37 }),
-  team: varchar("team", { length: 20 }),
-  bio: text("bio"),
+  discord: varchar("discord", { length: 37 }).default(""),
+  team: varchar("team", { length: 20 }).default(""),
+  bio: text("bio").default(""),
 
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const user = mysqlTable("user", {

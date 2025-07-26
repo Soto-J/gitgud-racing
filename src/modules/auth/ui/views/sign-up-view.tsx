@@ -95,8 +95,6 @@ export const SignUpView = () => {
       },
       {
         onSuccess: async () => {
-          // TODO: Create profile
-
           router.push("/");
           setIsPending(false);
           setError(null);
@@ -263,13 +261,13 @@ export const SignUpView = () => {
             </form>
           </Form>
 
-          <div className="bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] hidden relative md:block">
+          <div className="relative hidden bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] md:block">
             <Image
               src="/gitgud-logo.png"
               alt="Image"
               fill
               priority
-              className="object-contain backdrop-blur-5xl"
+              className="backdrop-blur-5xl object-contain"
             />
           </div>
         </CardContent>
