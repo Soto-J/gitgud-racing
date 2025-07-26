@@ -25,19 +25,21 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
     trpc.profile.getOne.queryOptions({ userId }),
   );
 
+  const createProfile = useMutation(
+    trpc.profile.create.mutationOptions({
+      onSuccess: () => {
+        quereyClient.invalidateQueries(
+          trpc.profile.getOne.queryOptions({ userId }),
+        );
+      },
+      onError: (error) => {
+        console.log(error.message);
+      },
+    }),
+  );
+
   if (!profile) {
-    useMutation(
-      trpc.profile.create.mutationOptions({
-        onSuccess: () => {
-          quereyClient.invalidateQueries(
-            trpc.profile.getOne.queryOptions({ userId }),
-          );
-        },
-        onError: (error) => {
-          console.log(error.message);
-        },
-      }),
-    ).mutate({ userId });
+    createProfile.mutate({ userId });
   }
 
   return (
