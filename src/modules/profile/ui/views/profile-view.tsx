@@ -58,7 +58,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
               <p className="font-medium">Srating</p>
               <p className="font-medium">Team</p>
               <p className="font-medium">Bio</p>
-              <p className="text-neutral-800">someshit</p>
+              <p className="text-neutral-800"></p>
             </div>
           </div>
 
