@@ -29,7 +29,7 @@ export const profile = mysqlTable("profile", {
 
   iRating: int("i_rating").default(0),
   safetyClass: safetyClass.default("R"),
-  safteyRating: float("safety_rating").default(0.0),
+  safetyRating: float("safety_rating").default(0.0),
 
   discord: varchar("discord", { length: 37 }).default(""),
   team: varchar("team", { length: 20 }).default(""),

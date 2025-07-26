@@ -47,7 +47,7 @@ export const EditProfileDialog = ({
       iRacingId: initialValues?.iracingId ?? "",
       iRating: initialValues.iRating?.toString() || "",
       safetyClass: initialValues.safetyClass || "R",
-      safetyRating: initialValues.safteyRating?.toString() || "",
+      safetyRating: initialValues.safetyRating?.toString() || "",
       discord: initialValues?.discord ?? "",
       bio: initialValues?.bio ?? "",
     },

@@ -18,7 +18,7 @@ interface ProfileViewProps {
 export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
-  const quereyClient = useQueryClient();
+  const queryClient = useQueryClient();
   const trpc = useTRPC();
 
   const { data: profile } = useSuspenseQuery(
@@ -28,12 +28,12 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const createProfile = useMutation(
     trpc.profile.create.mutationOptions({
       onSuccess: () => {
-        quereyClient.invalidateQueries(
+        queryClient.invalidateQueries(
           trpc.profile.getOne.queryOptions({ userId }),
         );
       },
       onError: (error) => {
-        console.log(error.message);
+        console.error(error.message);
       },
     }),
   );
