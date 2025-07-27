@@ -24,12 +24,12 @@ export const profile = mysqlTable("profile", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  isActive: boolean().default(false),
+  isActive: boolean().notNull().default(false),
   iracingId: varchar("iracing_id", { length: 10 }).default(""),
 
-  iRating: int("i_rating").default(0),
-  safetyClass: safetyClass.default("R"),
-  safetyRating: float("safety_rating").default(0.0),
+  iRating: int("i_rating").notNull().default(0),
+  safetyClass: safetyClass.notNull().default("R"),
+  safetyRating: float("safety_rating").notNull().default(0.0),
 
   discord: varchar("discord", { length: 37 }).default(""),
   team: varchar("team", { length: 20 }).default(""),
