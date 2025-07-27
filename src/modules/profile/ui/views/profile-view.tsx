@@ -12,7 +12,6 @@ import {
 } from "@tanstack/react-query";
 
 import {
-  Edit3,
   Trophy,
   Shield,
   Users,
@@ -20,10 +19,10 @@ import {
   User,
 } from "lucide-react";
 
-import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
-import { EditProfileButton } from "@/modules/profile/ui/components/edit-profile-button";
 import { StatCard } from "@/modules/profile/ui/components/stat-card";
 import { ProfileBanner } from "@/modules/profile/ui/components/profile-banner";
+import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
+import { EditProfileButton } from "@/modules/profile/ui/components/edit-profile-button";
 import { AchievementBadges } from "@/modules/profile/ui/components/achievement-badges";
 
 const classColors = {
@@ -116,7 +115,9 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
                       <span
                         className={cn(
                           "rounded px-2 py-1 text-sm font-bold text-white",
-                          classColors[profile.safetyClass!],
+                          classColors[
+                            profile.safetyClass as keyof typeof classColors
+                          ],
                         )}
                       >
                         {profile.safetyClass}

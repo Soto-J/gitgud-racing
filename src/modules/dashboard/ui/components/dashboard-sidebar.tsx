@@ -10,7 +10,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
 
-import { StarIcon } from "lucide-react";
+import { ChevronRight, StarIcon } from "lucide-react";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
 
@@ -40,9 +40,9 @@ export const DashboardSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <Sidebar>
-      <SidebarHeader className="flex items-center justify-center">
-        <Link href="/" className="">
+    <Sidebar className="border-red-800/30 shadow-2xl">
+      <SidebarHeader className="relative flex items-center justify-center">
+        <Link href="/" className="group relative">
           <Image
             src="/gitgud-logo.png"
             alt="Git Gud"
@@ -53,12 +53,15 @@ export const DashboardSidebar = () => {
         </Link>
       </SidebarHeader>
 
-      <div className="px-4 py-2">
-        <Separator className="bg-black opacity-10" />
-      </div>
+      <Separator className="h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
 
-      <SidebarContent>
+      <SidebarContent className="px-4">
         <SidebarGroup>
+          <div className="mb-3">
+            <h3 className="px-2 text-xs font-semibold tracking-wider text-red-300 uppercase">
+              Racing Hub
+            </h3>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               {firstSection.map(({ href, label, icon: Icon }) => (
@@ -67,24 +70,30 @@ export const DashboardSidebar = () => {
                     asChild
                     isActive={pathname === href}
                     className={cn(
-                      "from-sidebar-accent to-sidebar/50 via-sidebar/50 h-10 border border-transparent from-5% via-40% hover:border-[#FFEB00]/10 hover:bg-linear-to-r/oklch",
+                      "relative overflow-hidden transition-all duration-300",
                       pathname === href &&
-                        "border-[#FFEB00]/80 bg-linear-to-r/oklch",
+                        "bg-gradient-to-r from-red-600/90 to-red-700/90 shadow-lg shadow-red-500/25",
                     )}
                   >
                     <Link
                       href={href}
                       className={cn(
-                        "flex items-center gap-2 hover:[&>*]:text-black",
+                        "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
                         pathname === href
-                          ? "[&>*]:text-black"
-                          : "[&>*]:text-white",
+                          ? "text-white"
+                          : "text-gray-300 hover:[&>*]:text-black",
                       )}
                     >
-                      <Icon />
-                      <span className="text-sm font-medium tracking-tight">
+                      <Icon size={20} className="" />
+                      <span className="font-medium tracking-tight">
                         {label}
                       </span>
+                      {pathname === href && (
+                        <ChevronRight
+                          className="ml-auto text-red-200"
+                          size={16}
+                        />
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -93,11 +102,15 @@ export const DashboardSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <div className="px-4 py-2">
-          <Separator className="bg-black opacity-10" />
-        </div>
+        <Separator className="h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
 
         <SidebarGroup>
+          <div className="mb-3">
+            <h3 className="px-2 text-xs font-semibold tracking-wider text-red-300 uppercase">
+              Driver Zone
+            </h3>
+          </div>
+
           <SidebarGroupContent>
             <SidebarMenu>
               {secondSection.map(({ href, label, icon: Icon }) => (
@@ -106,16 +119,30 @@ export const DashboardSidebar = () => {
                     asChild
                     isActive={pathname === href}
                     className={cn(
-                      "from-sidebar-accent to-sidebar/50 via-sidebar/50 h-10 border border-transparent from-5% via-30% hover:border-[#FFF200]/10 hover:bg-linear-to-r/oklch",
+                      "relative overflow-hidden transition-all duration-300",
                       pathname === href &&
-                        "border-[#FFF200]/10 bg-linear-to-r/oklch",
+                        "bg-gradient-to-r from-red-600/90 to-red-700/90 shadow-lg shadow-red-500/25",
                     )}
                   >
-                    <Link href={href}>
-                      <Icon className="size-5" />
-                      <span className="text-sm font-medium tracking-tight">
+                    <Link
+                      href={href}
+                      className={cn(
+                        "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                        pathname === href
+                          ? "text-black"
+                          : "text-white hover:[&>*]:text-black",
+                      )}
+                    >
+                      <Icon size={20} />
+                      <span className="font-medium tracking-tight">
                         {label}
                       </span>
+                      {pathname === href && (
+                        <ChevronRight
+                          className="ml-auto text-red-200"
+                          size={16}
+                        />
+                      )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -123,6 +150,27 @@ export const DashboardSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Quick Stats Card */}
+        <div className="backdrop-blur-s mt-6 rounded-xl border border-red-700/30 bg-gradient-to-br from-red-900/30 to-red-800/30 p-4">
+          <h4 className="mb-3 text-sm font-semibold text-red-200">
+            Quick Stats
+          </h4>
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between text-gray-300">
+              <span>iRating</span>
+              <span className="font-semibold text-red-300">2,847</span>
+            </div>
+            <div className="flex justify-between text-gray-300">
+              <span>Safety</span>
+              <span className="font-semibold text-green-400">A 4.23</span>
+            </div>
+            <div className="flex justify-between text-gray-300">
+              <span>Races</span>
+              <span className="font-semibold text-blue-300">142</span>
+            </div>
+          </div>
+        </div>
       </SidebarContent>
 
       <SidebarFooter className="text-white">
