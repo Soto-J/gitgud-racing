@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { useMeetingsFilters } from "@/modules/members/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
 import { LoadingState } from "@/components/loading-state";
 import { DataTable } from "@/modules/members/ui/components/data-table";
@@ -13,7 +13,7 @@ import { columns } from "@/modules/members/ui/components/columns";
 import { DataPagination } from "@/components/data-pagination";
 
 export const MembersView = () => {
-  const [filters, setFilters] = useMeetingsFilters();
+  const [filters, setFilters] = useMembersFilters();
   const router = useRouter();
 
   const trpc = useTRPC();

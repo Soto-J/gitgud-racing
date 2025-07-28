@@ -8,8 +8,6 @@ export const filtersSearchParams = {
   page: parseAsInteger
     .withDefault(DEFAULT_PAGE)
     .withOptions({ clearOnDefault: true }),
-
-  memberId: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
 };
 
 export const loadSearchParams = createLoader(filtersSearchParams);
