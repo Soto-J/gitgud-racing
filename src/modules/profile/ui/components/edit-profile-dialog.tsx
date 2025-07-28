@@ -4,18 +4,26 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
+import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { toast } from "sonner";
+
 import { profileInsertSchema } from "@/modules/profile/schema";
 import { ProfileGetOne } from "@/modules/profile/types";
 
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { ResponsiveDialog } from "@/components/responsive-dialog";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
-import { ResponsiveDialog } from "@/components/responsive-dialog";
 import {
   Select,
   SelectContent,
@@ -24,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
@@ -42,18 +49,45 @@ export const EditProfileDialog = ({
   const form = useForm<z.infer<typeof profileInsertSchema>>({
     resolver: zodResolver(profileInsertSchema),
     defaultValues: {
-      firstName: firstName || "",
-      lastName: lastName || "",
-      iRacingId: initialValues?.iracingId ?? "",
-      iRating: initialValues.iRating?.toString() || "",
+      firstName: firstName,
+      lastName: lastName,
+      iRacingId: initialValues?.iracingId || "0",
+      iRating: initialValues.iRating.toString() || "0",
       safetyClass: initialValues.safetyClass || "R",
-      safetyRating: initialValues.safetyRating?.toString() || "",
+      safetyRating: initialValues.safetyRating?.toString() || "0.0",
+      team: initialValues.team || "",
       discord: initialValues?.discord ?? "",
       bio: initialValues?.bio ?? "",
     },
   });
 
-  const onSubmit = () => {};
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const editProfile = useMutation(
+    trpc.profile.edit.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.profile.getOne.queryOptions({ userId: initialValues.userId }),
+        );
+
+        toast.success("Profile Updated!");
+        onCloseDialog();
+      },
+
+      onError: (error) => {
+        console.error(error);
+        toast.error(error.message);
+      },
+    }),
+  );
+
+  const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
+    editProfile.mutate({
+      profileId: initialValues.id,
+      ...values,
+    });
+  };
 
   return (
     <ResponsiveDialog
@@ -63,7 +97,12 @@ export const EditProfileDialog = ({
       onOpenChange={onCloseDialog}
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 py-2">
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (errors) =>
+            console.log("Validation failed", errors),
+          )}
+          className="space-y-6 py-2"
+        >
           <FormField
             name="firstName"
             control={form.control}
@@ -74,6 +113,8 @@ export const EditProfileDialog = ({
                 <FormControl>
                   <Input placeholder="John" {...field} />
                 </FormControl>
+
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -102,6 +143,8 @@ export const EditProfileDialog = ({
                 <FormControl>
                   <Input placeholder="" type="number" {...field} />
                 </FormControl>
+
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -114,8 +157,10 @@ export const EditProfileDialog = ({
                 <FormLabel>IRating</FormLabel>
 
                 <FormControl>
-                  <Input placeholder="" {...field} />
+                  <Input type="number" placeholder="" {...field} />
                 </FormControl>
+
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -178,6 +223,20 @@ export const EditProfileDialog = ({
           </div>
 
           <FormField
+            name="team"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Team</FormLabel>
+
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
             name="discord"
             control={form.control}
             render={({ field }) => (
@@ -204,6 +263,20 @@ export const EditProfileDialog = ({
               </FormItem>
             )}
           />
+
+          <div className="flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={editProfile.isPending}
+              onClick={onCloseDialog}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={editProfile.isPending}>
+              Update
+            </Button>
+          </div>
         </form>
       </Form>
     </ResponsiveDialog>

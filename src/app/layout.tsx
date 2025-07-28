@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
 
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
+
 import { TRPCReactProvider } from "@/trpc/client";
 
+import { Toaster } from "sonner";
+
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -34,7 +27,11 @@ export default function RootLayout({
   return (
     <TRPCReactProvider>
       <html lang="en">
-        <body className={`${jetBrainsMono.className} antialiased`}>{children}</body>
+        <body className={`${jetBrainsMono.className} antialiased`}>
+          {children}
+
+          <Toaster />
+        </body>
       </html>
     </TRPCReactProvider>
   );

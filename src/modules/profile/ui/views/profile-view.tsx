@@ -11,13 +11,7 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 
-import {
-  Trophy,
-  Shield,
-  Users,
-  MessageCircle,
-  User,
-} from "lucide-react";
+import { Trophy, Shield, Users, MessageCircle, User } from "lucide-react";
 
 import { StatCard } from "@/modules/profile/ui/components/stat-card";
 import { ProfileBanner } from "@/modules/profile/ui/components/profile-banner";
@@ -40,12 +34,13 @@ interface ProfileViewProps {
 export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
-  const queryClient = useQueryClient();
   const trpc = useTRPC();
 
   const { data: profile } = useSuspenseQuery(
     trpc.profile.getOne.queryOptions({ userId }),
   );
+
+  const queryClient = useQueryClient();
 
   const createProfile = useMutation(
     trpc.profile.create.mutationOptions({
