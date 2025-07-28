@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+
 import {
   mysqlTable,
   varchar,
@@ -12,7 +13,8 @@ import {
 
 export const role = mysqlEnum("role", ["admin", "member"]);
 
-export const safetyClass = mysqlEnum("safety_class", ["A", "B", "C", "D", "R"]);
+export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
+export const safetyClass = mysqlEnum("safety_class", safetyClassValues);
 
 export const profile = mysqlTable("profile", {
   id: varchar("id", { length: 21 })
