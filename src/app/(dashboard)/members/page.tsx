@@ -8,7 +8,11 @@ import { auth } from "@/lib/auth";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { MembersView } from "@/modules/members/ui/views/members-view";
+import {
+  ErrorMembersView,
+  LoadingMembersView,
+  MembersView,
+} from "@/modules/members/ui/views/members-view";
 
 const MembersPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -19,8 +23,8 @@ const MembersPage = async () => {
   void queryClient.prefetchQuery(trpc.members.getMany.queryOptions());
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p>Loading</p>}>
-        <ErrorBoundary fallback={<p></p>}>
+      <Suspense fallback={<LoadingMembersView />}>
+        <ErrorBoundary fallback={<ErrorMembersView />}>
           <MembersView />
         </ErrorBoundary>
       </Suspense>
