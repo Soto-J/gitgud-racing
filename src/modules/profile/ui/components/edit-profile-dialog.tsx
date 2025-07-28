@@ -51,8 +51,8 @@ export const EditProfileDialog = ({
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
-      iRacingId: initialValues?.iracingId || "0",
-      iRating: initialValues.iRating.toString() || "0",
+      iRacingId: initialValues?.iracingId || "",
+      iRating: initialValues.iRating?.toString() || "0",
       safetyClass: initialValues.safetyClass || "R",
       safetyRating: initialValues.safetyRating?.toString() || "0.0",
       team: initialValues.team || "",

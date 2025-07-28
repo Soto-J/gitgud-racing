@@ -34,11 +34,11 @@ export const profileRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const [result] = await db.insert(profile).values({
+      const [insertResult] = await db.insert(profile).values({
         userId: input.userId,
       });
 
-      if (!result) {
+      if (!insertResult || insertResult.affectedRows === 0) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
       }
 
@@ -53,7 +53,7 @@ export const profileRouter = createTRPCRouter({
   edit: protectedProcedure
     .input(profileUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      const [result] = await db
+      const [updateResult] = await db
         .update(profile)
         .set({
           iracingId: input.iRacingId,
@@ -71,19 +71,38 @@ export const profileRouter = createTRPCRouter({
           ),
         );
 
-      if (!result) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
+      if (!updateResult || updateResult.affectedRows === 0) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized: Problem updating profile",
+        });
       }
 
       const { firstName, lastName } = input;
       const name = `${firstName.trim()} ${lastName.trim()}`;
 
-      await db.update(user).set({ name }).where(eq(user.id, ctx.auth.user.id));
+      const [userUpdateResult] = await db
+        .update(user)
+        .set({ name })
+        .where(eq(user.id, ctx.auth.user.id));
 
+      if (!userUpdateResult) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update profile",
+        });
+      }
       const [editedProfile] = await db
         .select()
         .from(profile)
         .where(eq(profile.id, input.profileId));
+
+      if (!editedProfile) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch profile",
+        });
+      }
 
       return editedProfile;
     }),
