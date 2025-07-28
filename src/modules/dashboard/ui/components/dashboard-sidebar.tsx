@@ -53,9 +53,9 @@ export const DashboardSidebar = () => {
         </Link>
       </SidebarHeader>
 
-      <Separator className="h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
+      <Separator className="my-4 h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
 
-      <SidebarContent className="px-4">
+      <SidebarContent className="p-4">
         <SidebarGroup>
           <div className="mb-3">
             <h3 className="px-2 text-xs font-semibold tracking-wider text-red-300 uppercase">
@@ -78,7 +78,7 @@ export const DashboardSidebar = () => {
                     <Link
                       href={href}
                       className={cn(
-                        "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                        "flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
                         pathname === href
                           ? "text-white"
                           : "text-gray-300 hover:[&>*]:text-black",
@@ -102,7 +102,7 @@ export const DashboardSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
+        <Separator className="my-4 h-px bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
 
         <SidebarGroup>
           <div className="mb-3">

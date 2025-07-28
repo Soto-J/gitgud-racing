@@ -34,15 +34,15 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="overflow-hidden rounded-lg border border-[#3C3C3C] shadow">
-      <Table className="bg-[#111111] text-white">
-        <TableHeader className="bg-[#A6051A]">
+    <div className="overflow-hidden rounded-lg border border-zinc-700 bg-black shadow-lg">
+      <Table className="bg-black text-white">
+        <TableHeader className="bg-ferrari-red border-ferrari-yellow border-b-2">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="text-center font-semibold text-white"
+                  className="border-ferrari-dark-red border-r px-6 py-4 text-center text-sm font-bold tracking-wider text-white uppercase last:border-r-0"
                 >
                   {header.isPlaceholder
                     ? null
@@ -58,17 +58,17 @@ export function DataTable<TData, TValue>({
 
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+            table.getRowModel().rows.map((row, index) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 onClick={() => onRowClick?.(row.original)}
-                className="hover:bg-[#A6051A]"
+                className={`hover:bg-ferrari-dark-red cursor-pointer border-b border-zinc-800 transition-colors duration-150 ${index % 2 === 0 ? "bg-zinc-900" : "bg-black"} `}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="cursor-pointer p-4 text-center text-sm text-[#FFEB00]"
+                    className="border-r border-zinc-800 p-4 text-center text-sm font-medium text-yellow-100 last:border-r-0"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
@@ -77,8 +77,11 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center font-medium text-zinc-500"
+              >
+                No results found.
               </TableCell>
             </TableRow>
           )}
