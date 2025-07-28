@@ -18,6 +18,9 @@ import { ProfileBanner } from "@/modules/profile/ui/components/profile-banner";
 import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 import { EditProfileButton } from "@/modules/profile/ui/components/edit-profile-button";
 import { AchievementBadges } from "@/modules/profile/ui/components/achievement-badges";
+import { toast } from "sonner";
+import { LoadingState } from "@/components/loading-state";
+import { ErrorState } from "@/components/error-state";
 
 const classColors = {
   A: "bg-red-500",
@@ -48,9 +51,11 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
         queryClient.invalidateQueries(
           trpc.profile.getOne.queryOptions({ userId }),
         );
+        toast.success("Profile created");
       },
       onError: (error) => {
         console.error(error.message);
+        toast.error("Could not create your profile");
       },
     }),
   );
@@ -163,3 +168,10 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
     </>
   );
 };
+
+export const LoadingProfileView = () => (
+  <LoadingState title="Loading" description="This make take a few seconds" />
+);
+export const ErrorProdileView = () => (
+  <ErrorState title="Error" description="Something went wrong" />
+);

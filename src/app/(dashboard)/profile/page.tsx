@@ -9,7 +9,11 @@ import { auth } from "@/lib/auth";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { ProfileView } from "@/modules/profile/ui/views/profile-view";
+import {
+  ErrorProdileView,
+  LoadingProfileView,
+  ProfileView,
+} from "@/modules/profile/ui/views/profile-view";
 
 const ProfilePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -23,8 +27,8 @@ const ProfilePage = async () => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<p>Loading</p>}>
-        <ErrorBoundary fallback={<p>Error</p>}>
+      <Suspense fallback={<LoadingProfileView />}>
+        <ErrorBoundary fallback={<ErrorProdileView />}>
           <ProfileView userId={session.user.id} />
         </ErrorBoundary>
       </Suspense>
