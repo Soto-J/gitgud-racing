@@ -102,6 +102,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
                   label="iRating"
                   value={profile.iRating}
                 />
+
                 <StatCard
                   icon={Shield}
                   label="Safety Rating"
@@ -121,11 +122,13 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
                     </div>
                   }
                 />
+
                 <StatCard
                   icon={Users}
                   label="Team"
                   value={profile.team ?? "—"}
                 />
+
                 <StatCard
                   icon={MessageCircle}
                   label="Discord"

@@ -176,10 +176,14 @@ export const EditProfileDialog = ({
                   </FormLabel>
 
                   <FormControl>
-                    <Select {...field}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <SelectTrigger className="min-w-[80px] px-2">
-                        <SelectValue />
+                        <SelectValue placeholder="select" />
                       </SelectTrigger>
+
                       <SelectContent>
                         <SelectGroup className="[&>*]:cursor-pointer">
                           <SelectItem value="A">A</SelectItem>

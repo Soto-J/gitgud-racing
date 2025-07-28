@@ -39,7 +39,11 @@ export const StatCard = ({
           <div
             className={`font-bold ${highlight ? "text-red-700" : "text-gray-900"}`}
           >
-            {value}
+            {value ? (
+              <span>{value}</span>
+            ) : (
+              <span className="text-sm text-gray-400 italic">N/A</span>
+            )}
           </div>
         </div>
       </div>
