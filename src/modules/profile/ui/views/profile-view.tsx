@@ -172,6 +172,6 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
 export const LoadingProfileView = () => (
   <LoadingState title="Loading" description="This make take a few seconds" />
 );
-export const ErrorProdileView = () => (
+export const ErrorProfileView = () => (
   <ErrorState title="Error" description="Something went wrong" />
 );

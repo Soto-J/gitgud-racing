@@ -10,7 +10,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import {
-  ErrorProdileView,
+  ErrorProfileView,
   LoadingProfileView,
   ProfileView,
 } from "@/modules/profile/ui/views/profile-view";
@@ -28,7 +28,7 @@ const ProfilePage = async () => {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingProfileView />}>
-        <ErrorBoundary fallback={<ErrorProdileView />}>
+        <ErrorBoundary fallback={<ErrorProfileView />}>
           <ProfileView userId={session.user.id} />
         </ErrorBoundary>
       </Suspense>
