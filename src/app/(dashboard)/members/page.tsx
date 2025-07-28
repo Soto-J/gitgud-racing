@@ -3,10 +3,15 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { auth } from "@/lib/auth";
+import { SearchParams } from "nuqs";
+
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient, trpc } from "@/trpc/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
+import { auth } from "@/lib/auth";
+
+import { loadSearchParams } from "@/modules/members/params";
 
 import {
   ErrorMembersView,
@@ -14,13 +19,22 @@ import {
   MembersView,
 } from "@/modules/members/ui/views/members-view";
 
-const MembersPage = async () => {
+interface MembersPageProps {
+  searchParams: Promise<SearchParams>;
+}
+
+const MembersPage = async ({ searchParams }: MembersPageProps) => {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) redirect("/sign-in");
 
+  const filters = await loadSearchParams(searchParams);
+
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.members.getMany.queryOptions());
+  void queryClient.prefetchQuery(
+    trpc.members.getMany.queryOptions({ ...filters }),
+  );
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingMembersView />}>
