@@ -1,18 +1,23 @@
+import { eq } from "drizzle-orm";
+
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { IracingLoginSchema } from "../schema";
+
+import { IracingLoginSchema } from "@/modules/iracing/schema";
+
 import { hashIRacingPassword } from "@/lib/utils";
 import { authenticateIRacing } from "@/lib/iracing-auth";
-import { TRPCError } from "@trpc/server";
+
 import { db } from "@/db";
 import { user } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export const iracingRouter = createTRPCRouter({
   login: protectedProcedure
     .input(IracingLoginSchema)
     .mutation(async ({ ctx, input }) => {
       const hashedPassword = hashIRacingPassword(input.password, input.email);
-
+      console.log({ hashedPassword });
+      
       const result = await authenticateIRacing(hashedPassword, input.email);
 
       if (!result.success || !result?.authCookie) {

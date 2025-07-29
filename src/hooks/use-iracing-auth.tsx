@@ -4,7 +4,7 @@ import React, { useState } from "react";
 interface useIracingAuthProps {
   credentials: {
     email: string;
-    password: string;
+    hashedPassword: string;
   };
 }
 export const useIracingAuth = ({ credentials }: useIracingAuthProps) => {
@@ -15,7 +15,10 @@ export const useIracingAuth = ({ credentials }: useIracingAuthProps) => {
 
   const login = async () => {
     try {
-      const result = await authenticateIRacing(credentials);
+      const result = await authenticateIRacing(
+        credentials.hashedPassword,
+        credentials.email,
+      );
 
       if (!result || !result.success || !result.authCookie) {
         throw new Error("Something went wrong logging in");
@@ -30,28 +33,28 @@ export const useIracingAuth = ({ credentials }: useIracingAuthProps) => {
       }
     }
   };
-//   const api = {
-//     getDriverStats: (customerId: number) =>
-//       iracingAPI.getDriverStats(customerId, {
-//         authCookie: authCookie || undefined,
-//       }),
+  //   const api = {
+  //     getDriverStats: (customerId: number) =>
+  //       iracingAPI.getDriverStats(customerId, {
+  //         authCookie: authCookie || undefined,
+  //       }),
 
-//     getCareerStats: (customerId: number) =>
-//       iracingAPI.getCareerStats(customerId, {
-//         authCookie: authCookie || undefined,
-//       }),
+  //     getCareerStats: (customerId: number) =>
+  //       iracingAPI.getCareerStats(customerId, {
+  //         authCookie: authCookie || undefined,
+  //       }),
 
-//     getCurrentSeason: () =>
-//       iracingAPI.getCurrentSeason({ authCookie: authCookie || undefined }),
+  //     getCurrentSeason: () =>
+  //       iracingAPI.getCurrentSeason({ authCookie: authCookie || undefined }),
 
-//     getDriverInfo: (customerId: number) =>
-//       iracingAPI.getDriverInfo(customerId, {
-//         authCookie: authCookie || undefined,
-//       }),
+  //     getDriverInfo: (customerId: number) =>
+  //       iracingAPI.getDriverInfo(customerId, {
+  //         authCookie: authCookie || undefined,
+  //       }),
 
-//     getSeriesData: () =>
-//       iracingAPI.getSeriesData({ authCookie: authCookie || undefined }),
-//   };
+  //     getSeriesData: () =>
+  //       iracingAPI.getSeriesData({ authCookie: authCookie || undefined }),
+  //   };
   return {
     login,
     isAuthenticated,
