@@ -100,9 +100,9 @@ export const EditProfileDialog = ({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="overflow-hidden"
+          className="max-h-[80vh] overflow-hidden"
         >
-          <ScrollArea className="h-[500px]">
+          <ScrollArea className="h-[400px]">
             <div className="space-y-6 p-4">
               <FormField
                 name="firstName"
@@ -264,7 +264,7 @@ export const EditProfileDialog = ({
                     <FormLabel>Bio</FormLabel>
 
                     <FormControl>
-                      <Textarea {...field} />
+                      <Textarea {...field}  />
                     </FormControl>
                   </FormItem>
                 )}
@@ -272,7 +272,7 @@ export const EditProfileDialog = ({
             </div>
           </ScrollArea>
 
-          <div className="flex items-center justify-between  pt-2">
+          <div className="flex items-center justify-between pt-2">
             <Button
               type="button"
               variant="outline"
