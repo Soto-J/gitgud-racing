@@ -48,7 +48,7 @@ export const ResponsiveDialog = ({
       </Drawer>
     );
   }
-
+  
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>

@@ -36,13 +36,23 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
   );
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<LoadingMembersView />}>
-        <ErrorBoundary fallback={<ErrorMembersView />}>
-          <MembersView />
-        </ErrorBoundary>
-      </Suspense>
-    </HydrationBoundary>
+    <>
+      <div className="py-8 text-center">
+        <h1 className="text-ferrari-dark-red mb-2 text-3xl font-bold">
+          Git Gud Fam
+        </h1>
+
+        <p className="text-lg text-gray-600">Racing League Members</p>
+      </div>
+
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Suspense fallback={<LoadingMembersView />}>
+          <ErrorBoundary fallback={<ErrorMembersView />}>
+            <MembersView />
+          </ErrorBoundary>
+        </Suspense>
+      </HydrationBoundary>
+    </>
   );
 };
 

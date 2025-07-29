@@ -22,15 +22,7 @@ export const MembersView = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="mb-8 text-center">
-        <h1 className="text-ferrari-dark-red mb-2 text-3xl font-bold">
-          Git Gud Fam
-        </h1>
-
-        <p className="text-lg text-gray-600">Racing League Members</p>
-      </div>
-
+    <div className="px-6">
       <div className="overflow-hidden rounded-xl bg-white shadow-sm">
         <DataTable
           columns={columns}
