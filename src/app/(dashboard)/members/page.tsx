@@ -37,7 +37,7 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
 
   return (
     <>
-      <div className="mb-8 text-center">
+      <div className="py-8 text-center">
         <h1 className="text-ferrari-dark-red mb-2 text-3xl font-bold">
           Git Gud Fam
         </h1>
