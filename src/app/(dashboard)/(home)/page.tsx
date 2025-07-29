@@ -10,7 +10,7 @@ const DashboardPage = async () => {
 
   if (!session) redirect("/sign-in");
 
-  return <HomeView />;
+  return <HomeView userId={session.user.id} />;
 };
 
 export default DashboardPage;
