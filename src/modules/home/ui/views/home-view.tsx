@@ -32,9 +32,9 @@ export const HomeView = () => {
   return (
     <div className="bg-background flex h-screen flex-col items-center justify-center">
       Home View
-      <button onClick={onClick} className="bg-red-500 p-4">
+      {/* <button onClick={onClick} className="bg-red-500 p-4">
         Click
-      </button>
+      </button> */}
     </div>
   );
 };
