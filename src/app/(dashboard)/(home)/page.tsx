@@ -10,7 +10,6 @@ const DashboardPage = async () => {
 
   if (!session) redirect("/sign-in");
 
-
   return <HomeView />;
 };
 

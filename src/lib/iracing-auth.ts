@@ -1,5 +1,3 @@
-import { hashIRacingPassword } from "./utils";
-
 export interface IRacingCredentials {
   email: string;
   password: string;

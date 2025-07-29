@@ -7,10 +7,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function hashIRacingPassword(
-  email: string,
-  password: string,
-): string {
-  const hash = CryptoJS.SHA256(password + email.toLowerCase());
-  return CryptoJS.enc.Base64.stringify(hash);
+export function hashIRacingPassword(password: string, email: string): string {
+  return CryptoJS.enc.Base64.stringify(
+    CryptoJS.SHA256(password + email.toLowerCase()),
+  );
 }
