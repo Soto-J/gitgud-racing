@@ -10,6 +10,7 @@ import {
   float,
   int,
 } from "drizzle-orm/mysql-core";
+import { z } from "better-auth";
 
 export const role = mysqlEnum("role", ["admin", "member"]);
 
@@ -51,6 +52,7 @@ export const user = mysqlTable("user", {
   image: text("image"),
   role: role.notNull().default("member"),
 
+  iracingCookie: text("iracing_cookie"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
