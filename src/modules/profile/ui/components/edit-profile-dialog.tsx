@@ -69,7 +69,7 @@ export const EditProfileDialog = ({
     trpc.profile.edit.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.profile.getOne.queryOptions({ userId: initialValues.userId }),
+          trpc.profile.getOneOrCreate.queryOptions({ userId: initialValues.userId }),
         );
 
         toast.success("Profile Updated!");
