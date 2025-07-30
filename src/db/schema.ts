@@ -10,7 +10,6 @@ import {
   float,
   int,
 } from "drizzle-orm/mysql-core";
-import { z } from "better-auth";
 
 export const role = mysqlEnum("role", ["admin", "member"]);
 
