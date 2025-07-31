@@ -81,8 +81,8 @@ export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
       >
         <DropdownMenuGroup>
           <DropdownMenuItem className="group cursor-pointer text-zinc-300 focus:bg-zinc-800">
-            <Edit className="focus:group-text-zinc-300 mr-2 h-4 w-4" />
-            <span className="focus:group-text-zinc-300">Edit Member</span>
+            <Edit className="mr-2 h-4 w-4 group-focus:text-zinc-300" />
+            <span className="group-focus:text-zinc-300">Edit Member</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -93,8 +93,8 @@ export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
             className="group cursor-pointer text-red-400 focus:bg-red-500/20 focus:text-red-600"
             onClick={onDelete}
           >
-            <Trash2 className="focus:group-text-red-600 mr-2 h-4 w-4" />
-            <span className="focus:group-text-red-600">Delete Member</span>
+            <Trash2 className="mr-2 h-4 w-4 group-focus:text-red-600" />
+            <span className="group-focus:text-red-600">Delete Member</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
