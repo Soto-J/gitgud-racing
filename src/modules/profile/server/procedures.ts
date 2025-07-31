@@ -2,22 +2,24 @@ import z from "zod";
 
 import { and, eq, getTableColumns } from "drizzle-orm";
 
+import { TRPCError } from "@trpc/server";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+
 import { db } from "@/db";
 import { profile, user } from "@/db/schema";
+
 import { profileUpdateSchema } from "@/modules/profile/schema";
 
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-import { TRPCError } from "@trpc/server";
 import { authClient } from "@/lib/auth-client";
 
 export const profileRouter = createTRPCRouter({
-  getMany: protectedProcedure.query(async ({ ctx, input }) => {
+  getMany: protectedProcedure.query(async () => {
     return await db.select().from(profile);
   }),
 
   getOneOrCreate: protectedProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const [profileWithUser] = await db
         .select({
           ...getTableColumns(profile),
@@ -93,5 +95,41 @@ export const profileRouter = createTRPCRouter({
         .where(eq(profile.id, input.profileId));
 
       return editedProfile;
+    }),
+
+  adminEdit: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        isActive: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const [result] = await db
+        .update(profile)
+        .set({ isActive: input.isActive })
+        .where(eq(profile.userId, input.userId));
+
+      return result;
+    }),
+
+  adminDelete: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [currentUser] = await db
+        .select({ role: user.role })
+        .from(user)
+        .where(eq(user.id, ctx.auth.user.id));
+
+      if (currentUser?.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only admins can delete users",
+        });
+      }
+
+      const [result] = await db.delete(user).where(eq(user.id, input.userId));
+
+      return result;
     }),
 });
