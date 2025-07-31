@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, JSX } from "react";
 
 import { ResponsiveDialog } from "@/components/responsive-dialog";

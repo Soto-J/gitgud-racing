@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useSuspenseQueries } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
+import { useConfirm } from "@/hooks/use-confirm";
+
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 
@@ -14,7 +16,6 @@ import { columns } from "@/modules/admin/ui/components/columns";
 import { DataPagination } from "@/components/data-pagination";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
-import { useConfirm } from "@/hooks/use-confirm";
 
 export const AdminPageView = () => {
   const [filters, setFilters] = useMembersFilters();
