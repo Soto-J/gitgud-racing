@@ -79,6 +79,6 @@ export const membersRouter = createTRPCRouter({
       .from(user)
       .where(eq(user.id, ctx.auth.user.id));
 
-    return member.role === "admin";
+    return member?.role === "admin";
   }),
 });
