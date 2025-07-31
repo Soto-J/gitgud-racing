@@ -27,7 +27,7 @@ interface ProfileCardProps {
   onEdit?: () => void;
 }
 
-export const ProfileCard = ({ onEdit, profile }: ProfileCardProps) => {
+export const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-red-50 p-4 md:px-8">
       {/* Profile Banner */}
@@ -40,9 +40,7 @@ export const ProfileCard = ({ onEdit, profile }: ProfileCardProps) => {
               <h1 className="mb-2 text-4xl font-bold tracking-tight md:text-5xl">
                 Racing Profile
               </h1>
-              <p className="text-lg text-red-200">
-                iRacing Championship Series
-              </p>
+              <p className="text-lg text-red-200">iRacing Series</p>
             </div>
 
             <div className="hidden md:block">
@@ -81,7 +79,7 @@ export const ProfileCard = ({ onEdit, profile }: ProfileCardProps) => {
                   className="group relative flex transform items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-red-700 hover:to-red-800 hover:shadow-xl"
                 >
                   <Edit3 size={18} />
-                  <span>Edit Profile</span>
+                  <span>Edit</span>
                   <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
                 </button>
               )}

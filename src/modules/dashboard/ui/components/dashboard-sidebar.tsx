@@ -10,7 +10,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
 
-import { ChevronRight, StarIcon } from "lucide-react";
+import { ChevronRight, Crown, Flag, StarIcon } from "lucide-react";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
 
@@ -29,26 +29,28 @@ import {
 
 const firstSection = [
   { icon: IoHomeOutline, label: "Home", href: "/" },
-  { icon: IoPersonOutline, label: "Profile", href: "/profile" },
+  { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
   { icon: IoPeopleOutline, label: "Members", href: "/members" },
-  { icon: IoPeopleOutline, label: "Teams", href: "/teams" },
+  { icon: Flag, label: "Teams", href: "/teams" },
 ];
 
-const secondSection = [{ icon: StarIcon, label: "Mock", href: "/#" }];
+const secondSection = [
+  { icon: Crown, label: "Admin", href: "/admin", isAdmin: false },
+  { icon: StarIcon, label: "Mock", href: "/#" },
+];
 
 export const DashboardSidebar = () => {
   const pathname = usePathname();
 
   return (
     <Sidebar className="border-red-800/30 shadow-2xl">
-      <SidebarHeader className="relative flex items-center justify-center">
-        <Link href="/" className="group relative">
+      <SidebarHeader className="relative">
+        <Link href="/" className="h-36">
           <Image
             src="/gitgud-logo.png"
             alt="Git Gud"
-            height={70}
-            width={70}
-            className="object-cover"
+            fill
+            className="object-contain"
           />
         </Link>
       </SidebarHeader>

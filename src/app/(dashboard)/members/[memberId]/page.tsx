@@ -1,11 +1,18 @@
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
-import { MemberIdView } from "@/modules/members/ui/views/member-id-view";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
+import {
+  ErrorMemberIdView,
+  LoadingMemberIdView,
+  MemberIdView,
+} from "@/modules/members/ui/views/member-id-view";
 
 interface MemberIdPageProps {
   params: Promise<{ memberId: string }>;
@@ -24,7 +31,11 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <MemberIdView userId={memberId} />
+      <Suspense fallback={<LoadingMemberIdView />}>
+        <ErrorBoundary fallback={<ErrorMemberIdView />}>
+          <MemberIdView userId={memberId} />
+        </ErrorBoundary>
+      </Suspense>
     </HydrationBoundary>
   );
 };
