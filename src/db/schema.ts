@@ -27,11 +27,13 @@ export const profile = mysqlTable("profile", {
     .references(() => user.id, { onDelete: "cascade" }),
 
   isActive: boolean().notNull().default(false),
-  iracingId: varchar("iracing_id", { length: 10 }).default(""),
-
   iRating: int("i_rating").notNull().default(0),
   safetyClass: safetyClass.notNull().default("R"),
   safetyRating: float("safety_rating").notNull().default(0.0),
+  
+  iracingId: varchar("iracing_id", { length: 10 }).default(""),
+  iracingCookie: text("iracing_cookie"),
+  iracingEmail: text("iracing_email"),
 
   discord: varchar("discord", { length: 37 }).default(""),
   team: varchar("team", { length: 20 }).default(""),
@@ -51,7 +53,6 @@ export const user = mysqlTable("user", {
   image: text("image"),
   role: role.notNull().default("member"),
 
-  iracingCookie: text("iracing_cookie"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
