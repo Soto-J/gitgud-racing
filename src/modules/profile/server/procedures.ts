@@ -8,6 +8,7 @@ import { profileUpdateSchema } from "@/modules/profile/schema";
 
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
+import { authClient } from "@/lib/auth-client";
 
 export const profileRouter = createTRPCRouter({
   getMany: protectedProcedure.query(async ({ ctx, input }) => {
@@ -73,11 +74,15 @@ export const profileRouter = createTRPCRouter({
       const { firstName, lastName } = input;
       const name = `${firstName.trim()} ${lastName.trim()}`;
 
-      // TODO: Update authclient
-      // await authClient.updateUser({
-      //   image: "https://example.com/image.jpg",
-      //   name,
-      // });
+      // Update authclient user
+      const authResponse = await authClient.updateUser({ name });
+
+      if (!authResponse.data?.status) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Problem updating better auth user name",
+        });
+      }
 
       // Update user table
       await db.update(user).set({ name }).where(eq(user.id, ctx.auth.user.id));
