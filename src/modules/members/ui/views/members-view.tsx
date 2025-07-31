@@ -7,10 +7,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
+import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
+import { DataPagination } from "@/components/data-pagination";
+
 import { DataTable } from "@/modules/members/ui/components/data-table";
 import { columns } from "@/modules/members/ui/components/columns";
-import { DataPagination } from "@/components/data-pagination";
 
 export const MembersView = () => {
   const [filters, setFilters] = useMembersFilters();
@@ -50,5 +52,5 @@ export const LoadingMembersView = () => (
   <LoadingState title="Loading" description="This make take a few seconds" />
 );
 export const ErrorMembersView = () => (
-  <LoadingState title="Error" description="Something went wrong" />
+  <ErrorState title="Error" description="Something went wrong" />
 );

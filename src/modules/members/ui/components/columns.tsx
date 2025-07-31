@@ -8,7 +8,15 @@ export const columns: ColumnDef<MemberGetOne>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      return <p className="text-gray-400 italic">N/A</p>;
+      return (
+        <span
+          className={
+            true ? "font-medium text-green-600" : "font-medium text-red-600"
+          }
+        >
+          {true ? "Active" : "Inactive"}
+        </span>
+      );
     },
   },
   {
@@ -35,13 +43,6 @@ export const columns: ColumnDef<MemberGetOne>[] = [
   {
     accessorKey: "team",
     header: "Team",
-    cell: ({ row }) => {
-      return <p className="text-gray-400 italic">N/A</p>;
-    },
-  },
-  {
-    accessorKey: "discord",
-    header: "Discord",
     cell: ({ row }) => {
       return <p className="text-gray-400 italic">N/A</p>;
     },

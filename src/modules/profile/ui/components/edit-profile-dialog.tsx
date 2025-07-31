@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { profileInsertSchema } from "@/modules/profile/schema";
 import { ProfileGetOne } from "@/modules/profile/types";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
@@ -69,7 +69,9 @@ export const EditProfileDialog = ({
     trpc.profile.edit.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.profile.getOneOrCreate.queryOptions({ userId: initialValues.userId }),
+          trpc.profile.getOneOrCreate.queryOptions({
+            userId: initialValues.userId,
+          }),
         );
 
         toast.success("Profile Updated!");
@@ -264,7 +266,7 @@ export const EditProfileDialog = ({
                     <FormLabel>Bio</FormLabel>
 
                     <FormControl>
-                      <Textarea {...field}  />
+                      <Textarea {...field} />
                     </FormControl>
                   </FormItem>
                 )}

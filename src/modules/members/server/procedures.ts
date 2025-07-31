@@ -72,4 +72,13 @@ export const membersRouter = createTRPCRouter({
 
       return member;
     }),
+
+  isAdmin: protectedProcedure.query(async ({ ctx }) => {
+    const [member] = await db
+      .select({ role: user.role })
+      .from(user)
+      .where(eq(user.id, ctx.auth.user.id));
+
+    return member.role === "admin";
+  }),
 });
