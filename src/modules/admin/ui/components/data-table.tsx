@@ -18,6 +18,7 @@ declare module "@tanstack/react-table" {
       page: number;
       memberId: string;
     };
+    confirmDelete: () => Promise<boolean>;
   }
 }
 
@@ -29,6 +30,7 @@ interface DataTableProps<TData, TValue> {
     page: number;
     memberId: string;
   };
+  confirmDelete: () => Promise<boolean>;
   onRowClick?: (row: TData) => void;
 }
 
@@ -36,6 +38,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   filters,
+  confirmDelete,
   onRowClick,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
@@ -64,6 +67,7 @@ export function DataTable<TData, TValue>({
                     {flexRender(cell.column.columnDef.cell, {
                       ...cell.getContext(),
                       filters,
+                      confirmDelete,
                     })}
                   </TableCell>
                 ))}

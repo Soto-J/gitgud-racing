@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Ellipsis } from "lucide-react";
+import { Edit, Ellipsis, Trash2 } from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
 
 import { MemberGetOne } from "@/modules/members/types";
 
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +40,7 @@ export const columns: ColumnDef<MemberGetOne>[] = [
   },
   {
     accessorKey: "name",
-    cell: ({ row, table }) => {
+    cell: ({ row }) => {
       const router = useRouter();
       return (
         <div className="cursor-pointer">
@@ -52,20 +53,20 @@ export const columns: ColumnDef<MemberGetOne>[] = [
   },
   {
     accessorKey: "manage",
-    cell: ({ row, filters }) => {
+    cell: ({ row, filters, confirmDelete }) => {
       const trpc = useTRPC();
       const queryClient = useQueryClient();
 
-      const updateUser = useMutation(
-        trpc.profile.adminEdit.mutationOptions({
-          onSuccess: async () => {
-            await queryClient.invalidateQueries(
-              trpc.members.getMany.queryOptions({ ...filters }),
-            );
-          },
-          onError: (error) => console.error(error.message),
-        }),
-      );
+      // const updateUser = useMutation(
+      //   trpc.profile.adminEdit.mutationOptions({
+      //     onSuccess: async () => {
+      //       await queryClient.invalidateQueries(
+      //         trpc.members.getMany.queryOptions({ ...filters }),
+      //       );
+      //     },
+      //     onError: (error) => console.error(error.message),
+      //   }),
+      // );
 
       const deleteUser = useMutation(
         trpc.profile.adminDelete.mutationOptions({
@@ -78,32 +79,49 @@ export const columns: ColumnDef<MemberGetOne>[] = [
         }),
       );
 
-      const onDelete = () => {
-        // TODO: Add confirm
+      const onDelete = async () => {
+        const Ok = await confirmDelete();
+
+        if (!Ok) {
+          return;
+        }
+
         deleteUser.mutate({ userId: row.original.id });
       };
 
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center justify-center">
-            <Ellipsis className="cursor-pointer" size={20} />
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 hover:bg-zinc-800/50"
+            >
+              <span className="sr-only">Open menu</span>
+              <Ellipsis className="h-4 w-4" />
+            </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="rounded bg-zinc-500 p-4">
+          <DropdownMenuContent
+            align="start"
+            className="w-48 border-zinc-800 bg-zinc-900/95 backdrop-blur-sm"
+          >
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer bg-blue-500">
-                Edit
+              <DropdownMenuItem className="group cursor-pointer text-zinc-300 focus:bg-zinc-800">
+                <Edit className="focus:group-text-zinc-300 mr-2 h-4 w-4" />
+                <span className="focus:group-text-zinc-300">Edit Member</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-zinc-800" />
 
             <DropdownMenuGroup>
               <DropdownMenuItem
-                className="cursor-pointer bg-red-500"
+                className="group cursor-pointer text-red-400 focus:bg-red-500/20 focus:text-red-600"
                 onClick={onDelete}
               >
-                Delete
+                <Trash2 className="focus:group-text-red-600 mr-2 h-4 w-4" />
+                <span className="focus:group-text-red-600">Delete Member</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

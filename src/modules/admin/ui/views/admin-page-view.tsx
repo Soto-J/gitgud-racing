@@ -14,6 +14,7 @@ import { columns } from "@/modules/admin/ui/components/columns";
 import { DataPagination } from "@/components/data-pagination";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const AdminPageView = () => {
   const [filters, setFilters] = useMembersFilters();
@@ -25,6 +26,12 @@ export const AdminPageView = () => {
     ],
   });
 
+  const [ConfirmationDialog, confirmDelete] = useConfirm({
+    title: "Delete Member Account",
+    description:
+      "This will permanently remove the member and all associated data. This action cannot be undone.",
+  });
+
   const router = useRouter();
   if (!isAdmin) {
     router.push("/");
@@ -32,8 +39,15 @@ export const AdminPageView = () => {
 
   return (
     <>
+      <ConfirmationDialog />
+
       <div className="flex h-svh flex-col items-center justify-center">
-        <DataTable data={data.members} columns={columns} filters={filters} />
+        <DataTable
+          data={data.members}
+          columns={columns}
+          filters={filters}
+          confirmDelete={confirmDelete}
+        />
 
         <DataPagination
           page={filters.page}
