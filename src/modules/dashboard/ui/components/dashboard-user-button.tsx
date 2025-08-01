@@ -80,10 +80,6 @@ export const DashboardUserButton = () => {
           </DrawerHeader>
 
           <DrawerFooter>
-            <Button variant="outline" onClick={() => {}}>
-              <CreditCardIcon className="size-4 text-black" />
-              <span>Billing</span>
-            </Button>
             <Button variant="outline" onClick={onSignout}>
               <LogOutIcon className="size-4 text-black" />
               <span>Logout</span>
