@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { useSuspenseQueries } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { useConfirm } from "@/hooks/use-confirm";
@@ -19,24 +19,17 @@ import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
 export const AdminPageView = () => {
   const [filters, setFilters] = useMembersFilters();
+
   const trpc = useTRPC();
-  const [{ data: isAdmin }, { data }] = useSuspenseQueries({
-    queries: [
-      trpc.members.isAdmin.queryOptions(),
-      trpc.members.getMany.queryOptions({ ...filters }),
-    ],
-  });
+  const { data } = useSuspenseQuery(
+    trpc.members.getMany.queryOptions({ ...filters }),
+  );
 
   const [ConfirmationDialog, confirmDelete] = useConfirm({
     title: "Delete Member Account",
     description:
       "This will permanently remove the member and all associated data. This action cannot be undone.",
   });
-
-  const router = useRouter();
-  if (!isAdmin) {
-    router.push("/");
-  }
 
   return (
     <>

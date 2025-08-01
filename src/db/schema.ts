@@ -48,7 +48,12 @@ export const user = mysqlTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  role: role.notNull().default("member"),
+
+  // admin plugin attributes
+  role: text("role"),
+  banned: boolean("banned"),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
 
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
@@ -67,6 +72,8 @@ export const session = mysqlTable("session", {
   token: varchar("token", { length: 255 }).notNull().unique(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
+
+  impersonatedBy: text("impersonated_by"),
 
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull(),

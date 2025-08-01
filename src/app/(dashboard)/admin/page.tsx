@@ -23,16 +23,19 @@ interface AdminPageProps {
 }
 
 const AdminPage = async ({ searchParams }: AdminPageProps) => {
-  const session = auth.api.getSession({ headers: await headers() });
+  const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
     redirect("/sign-in");
   }
 
+  if (session.user?.role !== "admin") {
+    redirect("/");
+  }
+
   const filters = await loadSearchParams(searchParams);
 
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.members.isAdmin.queryOptions());
   void queryClient.prefetchQuery(
     trpc.members.getMany.queryOptions({ ...filters }),
   );

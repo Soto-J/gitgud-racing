@@ -27,7 +27,7 @@ export const membersRouter = createTRPCRouter({
         memberId: z.string().nullish(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const { memberId, page, pageSize, search } = input;
 
       const members = await db
@@ -64,7 +64,7 @@ export const membersRouter = createTRPCRouter({
 
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const [member] = await db
         .select()
         .from(user)

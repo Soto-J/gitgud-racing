@@ -46,7 +46,6 @@ export const SignInView = () => {
   const onGoogleSubmit = () => {
     setIsPending(true);
     setError(null);
-
     authClient.signIn.social(
       {
         provider: "google",
