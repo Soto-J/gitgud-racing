@@ -13,6 +13,8 @@ import { auth } from "@/lib/auth";
 
 import { loadSearchParams } from "@/modules/members/params";
 
+import { MembersListHeader } from "@/modules/members/ui/components/members-list-header";
+
 import {
   ErrorMembersView,
   LoadingMembersView,
@@ -37,13 +39,7 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
 
   return (
     <>
-      <div className="py-8 text-center">
-        <h1 className="text-ferrari-dark-red mb-2 text-3xl font-bold">
-          Git Gud Fam
-        </h1>
-
-        <p className="text-lg text-gray-600">Racing League Members</p>
-      </div>
+      <MembersListHeader />
 
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={<LoadingMembersView />}>

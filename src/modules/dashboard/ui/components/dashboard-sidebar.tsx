@@ -9,8 +9,11 @@ import { cn } from "@/lib/utils";
 import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
+import { SlCalender } from "react-icons/sl";
 
-import { ChevronRight, Crown, Flag, StarIcon } from "lucide-react";
+import { ChevronRight, Crown, Flag } from "lucide-react";
+
+import { authClient } from "@/lib/auth-client";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
 
@@ -29,18 +32,21 @@ import {
 
 const firstSection = [
   { icon: IoHomeOutline, label: "Home", href: "/" },
-  { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
-  { icon: IoPeopleOutline, label: "Members", href: "/members" },
-  { icon: Flag, label: "Teams", href: "/teams" },
+  { icon: SlCalender, label: "Schedule", href: "/schedule" },
 ];
 
 const secondSection = [
-  { icon: Crown, label: "Admin", href: "/admin", isAdmin: false },
-  { icon: StarIcon, label: "Mock", href: "/#" },
+  { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
+  { icon: IoPeopleOutline, label: "Members", href: "/members" },
+  { icon: Flag, label: "Teams", href: "/teams" },
+  { icon: Crown, label: "Admin", href: "/admin", adminTab: true },
 ];
 
 export const DashboardSidebar = () => {
   const pathname = usePathname();
+
+  const { data: session } = authClient.useSession();
+  const currentUserIsAdmin = session?.user?.role === "admin";
 
   return (
     <Sidebar className="border-red-800/30 shadow-2xl">
@@ -115,40 +121,46 @@ export const DashboardSidebar = () => {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {secondSection.map(({ href, label, icon: Icon }) => (
-                <SidebarMenuItem key={href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === href}
-                    className={cn(
-                      "relative overflow-hidden transition-all duration-300",
-                      pathname === href &&
-                        "bg-gradient-to-r from-red-600/90 to-red-700/90 shadow-lg shadow-red-500/25",
-                    )}
-                  >
-                    <Link
-                      href={href}
+              {secondSection.map(({ href, label, icon: Icon, adminTab }) => {
+                if (adminTab && currentUserIsAdmin === false) {
+                  return null;
+                }
+
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === href}
                       className={cn(
-                        "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
-                        pathname === href
-                          ? "text-black"
-                          : "text-white hover:[&>*]:text-black",
+                        "relative overflow-hidden transition-all duration-300",
+                        pathname === href &&
+                          "bg-gradient-to-r from-red-600/90 to-red-700/90 shadow-lg shadow-red-500/25",
                       )}
                     >
-                      <Icon size={20} />
-                      <span className="font-medium tracking-tight">
-                        {label}
-                      </span>
-                      {pathname === href && (
-                        <ChevronRight
-                          className="ml-auto text-red-200"
-                          size={16}
-                        />
-                      )}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+                      <Link
+                        href={href}
+                        className={cn(
+                          "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                          pathname === href
+                            ? "text-black"
+                            : "text-white hover:[&>*]:text-black",
+                        )}
+                      >
+                        <Icon size={20} />
+                        <span className="font-medium tracking-tight">
+                          {label}
+                        </span>
+                        {pathname === href && (
+                          <ChevronRight
+                            className="ml-auto text-red-200"
+                            size={16}
+                          />
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
