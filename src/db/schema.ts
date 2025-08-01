@@ -26,7 +26,8 @@ export const profile = mysqlTable("profile", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  isActive: boolean().notNull().default(false),
+  iracingId: text("iracing_id"),
+  isActive: boolean("isActive").notNull().default(false),
   iRating: int("i_rating").notNull().default(0),
   safetyClass: safetyClass.notNull().default("R"),
   safetyRating: float("safety_rating").notNull().default(0.0),
@@ -111,9 +112,9 @@ export const iracingAuth = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-  userId: varchar("user_id", { length: 255 })
+  userId: varchar("user_id", { length: 36 })
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
 
   // Auth data
   authCookie: text("auth_cookie").notNull(),

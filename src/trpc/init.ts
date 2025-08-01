@@ -5,14 +5,13 @@ import { initTRPC, TRPCError } from "@trpc/server";
 
 import { eq } from "drizzle-orm";
 
-import { COOKIE_EXPIRES_AT } from "@/constants";
-
 import { db } from "@/db";
 import { iracingAuth, user } from "@/db/schema";
 
 import { auth } from "@/lib/auth";
 
 import { getIracingAuthCookie } from "@/lib/iracing-auth";
+import { COOKIE_EXPIRES_IN_MS } from "@/constants";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -91,19 +90,19 @@ export const iracingProcedure = protectedProcedure.use(
     }
 
     console.log("Refreshing iRacing auth...");
-    const authResponse = await getIracingAuthCookie();
+    const authCookie = await getIracingAuthCookie();
 
     await db
       .insert(iracingAuth)
       .values({
         userId: process.env.MY_USER_ID!,
-        authCookie: authResponse.authCookie,
-        expiresAt: COOKIE_EXPIRES_AT,
+        authCookie,
+        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS), // 1 hour
       })
       .onDuplicateKeyUpdate({
         set: {
-          authCookie: authResponse.authCookie,
-          expiresAt: COOKIE_EXPIRES_AT,
+          authCookie,
+          expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
           updatedAt: new Date(),
         },
       });

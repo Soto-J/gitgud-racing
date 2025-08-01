@@ -18,16 +18,10 @@ export async function getIracingAuthCookie() {
       password: hashedPassword,
     }),
     credentials: "include", // Important for cookies
+    signal: AbortSignal.timeout(10000), // 10 second timeout
   });
 
-  console.log("Response status:", response.status);
-  console.log(
-    "Response headers:",
-    Object.fromEntries(response.headers.entries()),
-  );
-
   const responseData = await response.json();
-  console.log("Response body:", responseData);
 
   if (!response.ok) {
     throw new TRPCError({
@@ -47,5 +41,5 @@ export async function getIracingAuthCookie() {
     });
   }
 
-  return { authCookie };
+  return authCookie;
 }

@@ -1,15 +1,12 @@
 import z from "zod";
-import { eq } from "drizzle-orm";
 
-import { db } from "@/db";
-import { profile } from "@/db/schema";
+import { IRACING_URL } from "@/constants";
 
 import { createTRPCRouter, iracingProcedure } from "@/trpc/init";
-import { IRACING_URL } from "@/constants";
 
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
-    const response = await fetch(`${IRACING_URL}/member/get?cust_ids=961831`, {
+    const response = await fetch(`${IRACING_URL}/doc`, {
       headers: {
         Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
       },
@@ -23,10 +20,9 @@ export const iracingRouter = createTRPCRouter({
     }
 
     const { link } = await response.json();
-    const dataResponse = await fetch(link);
-    const data = await dataResponse.json();
+    const linkResponse = await fetch(link);
 
-    return data;
+    return await linkResponse.json();
   }),
 
   getUser: iracingProcedure
@@ -41,11 +37,17 @@ export const iracingRouter = createTRPCRouter({
         },
       );
 
-      const { link } = await response.json();
-      const dataResponse = await fetch(link);
-      const data = await dataResponse.json();
+      if (!response) {
+        return {
+          success: false,
+          message: "Error: Problem fetching iRacing user",
+        };
+      }
 
-      return data;
+      const { link } = await response.json();
+      const linkResponse = await fetch(link);
+
+      return await linkResponse.json();
     }),
 });
 
