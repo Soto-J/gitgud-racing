@@ -15,7 +15,7 @@ interface DashboardCommandProps {
 export const DashboardCommand = ({ open, setOpen }: DashboardCommandProps) => {
   return (
     <CommandResponsiveDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Find a meeting or agent" />
+      <CommandInput placeholder="" />
 
       <CommandList>
         <CommandItem>Test</CommandItem>
