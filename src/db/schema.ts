@@ -26,14 +26,11 @@ export const profile = mysqlTable("profile", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  isActive: boolean().notNull().default(false),
+  iracingId: text("iracing_id"),
+  isActive: boolean("isActive").notNull().default(false),
   iRating: int("i_rating").notNull().default(0),
   safetyClass: safetyClass.notNull().default("R"),
   safetyRating: float("safety_rating").notNull().default(0.0),
-  
-  iracingId: varchar("iracing_id", { length: 10 }).default(""),
-  iracingCookie: text("iracing_cookie"),
-  iracingEmail: text("iracing_email"),
 
   discord: varchar("discord", { length: 37 }).default(""),
   team: varchar("team", { length: 20 }).default(""),
@@ -109,4 +106,29 @@ export const verification = mysqlTable("verification", {
   updatedAt: timestamp("updated_at").$defaultFn(
     () => /* @__PURE__ */ new Date(),
   ),
+});
+
+export const iracingAuth = mysqlTable("iracing_auth", {
+  id: varchar("id", { length: 21 })
+    .primaryKey()
+    .$default(() => nanoid()),
+  userId: varchar("user_id", { length: 36 })
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  // Auth data
+  authCookie: text("auth_cookie").notNull(),
+  authCode: text("auth_code"),
+  customerId: int("customer_id"),
+
+  // SSO data (from your response)
+  ssoCookieValue: text("sso_cookie_value"),
+
+  // Timing
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  expiresAt: timestamp("expires_at"), // createdAt + 1 hour
+
+  // Status
+  isActive: boolean("is_active").default(true),
 });

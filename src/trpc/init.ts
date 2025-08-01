@@ -6,9 +6,12 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { user } from "@/db/schema";
+import { iracingAuth, user } from "@/db/schema";
 
 import { auth } from "@/lib/auth";
+
+import { getIracingAuthCookie } from "@/lib/iracing-auth";
+import { COOKIE_EXPIRES_IN_MS } from "@/constants";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -65,3 +68,55 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
   return next({ ctx });
 });
+
+export const iracingProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
+    const [iracingAuthData] = await db
+      .select()
+      .from(iracingAuth)
+      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!));
+
+    const isValid =
+      iracingAuthData?.expiresAt && iracingAuthData.expiresAt > new Date();
+
+    if (isValid) {
+      console.log("Using cashed iRacing auth....");
+      return next({
+        ctx: {
+          ...ctx,
+          iracingAuthData,
+        },
+      });
+    }
+
+    console.log("Refreshing iRacing auth...");
+    const authCookie = await getIracingAuthCookie();
+
+    await db
+      .insert(iracingAuth)
+      .values({
+        userId: process.env.MY_USER_ID!,
+        authCookie,
+        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS), // 1 hour
+      })
+      .onDuplicateKeyUpdate({
+        set: {
+          authCookie,
+          expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+          updatedAt: new Date(),
+        },
+      });
+
+    const [refreshedAuth] = await db
+      .select()
+      .from(iracingAuth)
+      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!));
+
+    return next({
+      ctx: {
+        ...ctx,
+        iracingAuthData: refreshedAuth,
+      },
+    });
+  },
+);

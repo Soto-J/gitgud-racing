@@ -1,65 +1,45 @@
-export interface IRacingCredentials {
-  email: string;
-  password: string;
-}
+import { TRPCError } from "@trpc/server";
+import CryptoJS from "crypto-js";
 
-export interface IRacingAuthResponse {
-  authCookie?: string;
-  message?: string;
-  iracingEmail?: string;
-  success: boolean;
-}
+export async function getIracingAuthCookie() {
+  const hashedPassword = CryptoJS.enc.Base64.stringify(
+    CryptoJS.SHA256(
+      process.env.IRACING_PASSWORD! + process.env.IRACING_EMAIL!.toLowerCase(),
+    ),
+  );
 
-export async function authenticateIRacing(
-  hashedPassword: string,
-  email: string,
-): Promise<IRacingAuthResponse> {
-  try {
-    const response = await fetch("https://members-ng.iracing.com/auth", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password: hashedPassword,
-      }),
-      credentials: "include", // Important for cookies
+  const response = await fetch("https://members-ng.iracing.com/auth", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: process.env.IRACING_EMAIL,
+      password: hashedPassword,
+    }),
+    credentials: "include", // Important for cookies
+    signal: AbortSignal.timeout(10000), // 10 second timeout
+  });
+
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: `iRacing authentication failed: ${response.status}`,
     });
-
-    console.log("Response status:", response.status);
-    console.log(
-      "Response headers:",
-      Object.fromEntries(response.headers.entries()),
-    );
-
-    const responseData = await response.json();
-    console.log("Response body:", responseData);
-
-    if (!response.ok) {
-      return {
-        success: false,
-        message: "Authentication failed",
-      };
-    }
-
-    // Extract session cookie or token from response
-    const setCookieHeader = response.headers.get("set-cookie");
-    const authCookie = setCookieHeader?.match(/authtoken_members=([^;]+)/)?.[1];
-
-    if (!authCookie) {
-      return { success: false, message: "No auth cookie found in response" };
-    }
-
-    return {
-      success: true,
-      authCookie: authCookie || undefined,
-      iracingEmail: responseData.email,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: "Network error during authentication",
-    };
   }
+
+  // Extract session cookie or token from response
+  const setCookieHeader = response.headers.get("set-cookie");
+  const authCookie = setCookieHeader?.match(/authtoken_members=([^;]+)/)?.[1];
+
+  if (!authCookie) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "No auth cookie found in response",
+    });
+  }
+
+  return authCookie;
 }
