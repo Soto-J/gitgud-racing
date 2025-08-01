@@ -31,7 +31,7 @@ export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
   const queryClient = useQueryClient();
 
   // const updateUser = useMutation(
-  //   trpc.profile.adminEdit.mutationOptions({
+  //   trpc.admin.editUser.mutationOptions({
   //     onSuccess: async () => {
   //       await queryClient.invalidateQueries(
   //         trpc.members.getMany.queryOptions({ ...filters }),
@@ -42,7 +42,7 @@ export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
   // );
 
   const deleteUser = useMutation(
-    trpc.profile.adminDelete.mutationOptions({
+    trpc.admin.deleteUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.members.getMany.queryOptions({ ...filters }),

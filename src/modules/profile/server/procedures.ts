@@ -96,40 +96,4 @@ export const profileRouter = createTRPCRouter({
 
       return editedProfile;
     }),
-
-  adminEdit: protectedProcedure
-    .input(
-      z.object({
-        userId: z.string(),
-        isActive: z.boolean(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const [result] = await db
-        .update(profile)
-        .set({ isActive: input.isActive })
-        .where(eq(profile.userId, input.userId));
-
-      return result;
-    }),
-
-  adminDelete: protectedProcedure
-    .input(z.object({ userId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const [currentUser] = await db
-        .select({ role: user.role })
-        .from(user)
-        .where(eq(user.id, ctx.auth.user.id));
-
-      if (currentUser?.role !== "admin") {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Only admins can delete users",
-        });
-      }
-
-      const [result] = await db.delete(user).where(eq(user.id, input.userId));
-
-      return result;
-    }),
 });
