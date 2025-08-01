@@ -12,11 +12,9 @@ const DashboardPage = async () => {
   if (!session) redirect("/sign-in");
 
   // const queryClient = getQueryClient();
-  // void queryClient.prefetchQuery(
-  //   trpc.iracing.testIracing.queryOptions({ userId: session.user.id }),
-  // );
+  // void queryClient.prefetchQuery(trpc.iracing.getDocumentation.queryOptions());
 
-  return <HomeView userId={session.user.id} />;
+  return <HomeView />;
 };
 
 export default DashboardPage;

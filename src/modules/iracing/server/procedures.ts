@@ -1,72 +1,56 @@
 import z from "zod";
 import { eq } from "drizzle-orm";
 
-import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
-
-import { IracingLoginSchema } from "@/modules/iracing/schema";
-
-import { hashIRacingPassword } from "@/lib/utils";
-import { authenticateIRacing } from "@/lib/iracing-auth";
-
 import { db } from "@/db";
 import { profile } from "@/db/schema";
 
+import { createTRPCRouter, iracingProcedure } from "@/trpc/init";
+import { IRACING_URL } from "@/constants";
+
 export const iracingRouter = createTRPCRouter({
-  getAuthCookie: protectedProcedure
-    .input(IracingLoginSchema)
-    .mutation(async ({ ctx, input }) => {
-      const hashedPassword = hashIRacingPassword(input.password, input.email);
-      console.log({ hashedPassword });
+  getDocumentation: iracingProcedure.query(async ({ ctx }) => {
+    const response = await fetch(`${IRACING_URL}/member/get?cust_ids=961831`, {
+      headers: {
+        Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
+      },
+    });
 
-      const result = await authenticateIRacing(hashedPassword, input.email);
+    if (!response) {
+      return {
+        success: false,
+        message: "Error: Problem fetching iRacing documentation",
+      };
+    }
 
-      if (!result.success || !result?.authCookie) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Authenticating iracing failed",
-        });
-      }
+    const { link } = await response.json();
+    const dataResponse = await fetch(link);
+    const data = await dataResponse.json();
 
-      await db
-        .update(profile)
-        .set({
-          iracingCookie: result?.authCookie,
-        })
-        .where(eq(profile.userId, ctx.auth.user.id));
+    return data;
+  }),
 
-      const [member] = await db
-        .select()
-        .from(profile)
-        .where(eq(profile.userId, ctx.auth.user.id));
-
-      return member;
-    }),
-
-  testIracing: protectedProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      const [userProfile] = await db
-        .select()
-        .from(profile)
-        .where(eq(profile.userId, input.userId));
-
+  getUser: iracingProcedure
+    .input(z.object({ custId: z.string() }))
+    .query(async ({ ctx, input }) => {
       const response = await fetch(
-        // "https://members-ng.iracing.com/data/member/info",
-        "https://members-ng.iracing.com/data/doc",
+        `${IRACING_URL}/member/get?cust_ids=${input.custId}`,
         {
           headers: {
-            Cookie: `authtoken_members=${userProfile.iracingCookie}`,
+            Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
           },
         },
       );
 
-      const body = await response.json();
-      console.log({ body });
-      return body;
+      const { link } = await response.json();
+      const dataResponse = await fetch(link);
+      const data = await dataResponse.json();
+
+      return data;
     }),
 });
+
 /*
+// "https://members-ng.iracing.com/data/member/info",
 
   body: {
     all: {
