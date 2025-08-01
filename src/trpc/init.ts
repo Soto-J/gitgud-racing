@@ -45,20 +45,8 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 });
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  const userRoleResult = await db
-    .select({ role: user.role })
-    .from(user)
-    .where(eq(user.id, ctx.auth.user.id));
-
-  if (!userRoleResult.length) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "Could not retrieve user role",
-    });
-  }
-
-  const [{ role }] = userRoleResult;
-
+  const { role } = ctx.auth.user;
+  
   if (role !== "admin") {
     throw new TRPCError({
       code: "FORBIDDEN",
