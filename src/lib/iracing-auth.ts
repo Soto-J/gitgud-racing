@@ -5,8 +5,9 @@ export interface IRacingCredentials {
 
 export interface IRacingAuthResponse {
   authCookie?: string;
-  success: boolean;
   message?: string;
+  iracingEmail?: string;
+  success: boolean;
 }
 
 export async function authenticateIRacing(
@@ -25,13 +26,15 @@ export async function authenticateIRacing(
       }),
       credentials: "include", // Important for cookies
     });
+
     console.log("Response status:", response.status);
     console.log(
       "Response headers:",
       Object.fromEntries(response.headers.entries()),
     );
-    const responseText = await response.text();
-    console.log("Response body:", responseText);
+
+    const responseData = await response.json();
+    console.log("Response body:", responseData);
 
     if (!response.ok) {
       return {
@@ -41,10 +44,17 @@ export async function authenticateIRacing(
     }
 
     // Extract session cookie or token from response
-    const authCookie = response.headers.get("set-cookie");
+    const setCookieHeader = response.headers.get("set-cookie");
+    const authCookie = setCookieHeader?.match(/authtoken_members=([^;]+)/)?.[1];
+
+    if (!authCookie) {
+      return { success: false, message: "No auth cookie found in response" };
+    }
+
     return {
       success: true,
       authCookie: authCookie || undefined,
+      iracingEmail: responseData.email,
     };
   } catch (error) {
     return {

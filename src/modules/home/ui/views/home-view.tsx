@@ -11,9 +11,12 @@ interface HomeViewProps {
 
 export const HomeView = ({ userId }: HomeViewProps) => {
   const trpc = useTRPC();
+  // const { data } = useSuspenseQuery(
+  //   trpc.iracing.testIracing.queryOptions({ userId }),
+  // );
 
-  const iracingLogin = useMutation(
-    trpc.iracing.login.mutationOptions({
+  const getAuthCookie = useMutation(
+    trpc.iracing.getAuthCookie.mutationOptions({
       onSuccess: () => {
         console.log("Loged in");
         toast.success("Loged in!");
@@ -26,7 +29,7 @@ export const HomeView = ({ userId }: HomeViewProps) => {
   );
 
   const onClick = () => {
-    const data = iracingLogin.mutate({
+    const data = getAuthCookie.mutate({
       email: "sotosoloco@gmail.com",
       password: process.env.NEXT_PUBLIC_IRACING_PASSWORD!,
       userId: "Wrf3AZpPBYmDjALI4qJEmcqxPJGD2M5Y",
