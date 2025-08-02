@@ -30,27 +30,6 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
     trpc.profile.getOneOrCreate.queryOptions({ userId }),
   );
 
-  // const queryClient = useQueryClient();
-
-  // const createProfile = useMutation(
-  //   trpc.profile.create.mutationOptions({
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries(
-  //         trpc.profile.getOne.queryOptions({ userId }),
-  //       );
-  //       toast.success("Profile created");
-  //     },
-  //     onError: (error) => {
-  //       console.error(error.message);
-  //       toast.error("Could not create your profile");
-  //     },
-  //   }),
-  // );
-
-  // if (!profile) {
-  //   createProfile.mutate({ userId });
-  // }
-
   return (
     <>
       <EditProfileDialog
