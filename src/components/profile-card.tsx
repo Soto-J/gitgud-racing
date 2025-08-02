@@ -13,6 +13,7 @@ import {
 
 import { StatCard } from "./stat-card";
 import { ProfileGetOne } from "@/modules/profile/types";
+import { BannerHeader } from "./banner-header";
 
 const classColors = {
   A: "bg-red-500",
@@ -29,28 +30,13 @@ interface ProfileCardProps {
 
 export const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-red-50 p-4 md:px-8">
-      {/* Profile Banner */}
-      <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-red-900 via-red-800 to-red-700 shadow-xl">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-        <div className="relative px-8 py-12 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="mb-2 text-4xl font-bold tracking-tight md:text-5xl">
-                Racing Profile
-              </h1>
-              <p className="text-lg text-red-200">iRacing Series</p>
-            </div>
-
-            <div className="hidden md:block">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
-                <Trophy className="h-12 w-12 text-yellow-400" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-red-50 p-4 md:p-8">
+      <BannerHeader
+        title="Racing Profile"
+        description="iRacing Series"
+        icon={Trophy}
+        iconColor="text-ferrari-yellow"
+      />
 
       {/* Card */}
       <div className="mx-auto max-w-6xl">
@@ -72,7 +58,7 @@ export const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
                   <span>Professional Driver</span>
                 </div>
               </div>
-              {/* Edit button */}
+
               {onEdit && (
                 <button
                   onClick={onEdit}

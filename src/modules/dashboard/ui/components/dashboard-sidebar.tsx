@@ -16,6 +16,7 @@ import { ChevronRight, Crown, Flag } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
+import { QuickStatsCard } from "@/modules/dashboard/ui/components/quick-stats-card";
 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -51,7 +52,7 @@ export const DashboardSidebar = () => {
   return (
     <Sidebar className="border-red-800/30 shadow-2xl">
       <SidebarHeader className="relative">
-        <Link href="/" className="h-36">
+        <Link href="/" className="h-24 md:h-30">
           <Image
             src="/gitgud-logo.png"
             alt="Git Gud"
@@ -165,26 +166,7 @@ export const DashboardSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Quick Stats Card */}
-        <div className="backdrop-blur-s mt-6 rounded-xl border border-red-700/30 bg-gradient-to-br from-red-900/30 to-red-800/30 p-4">
-          <h4 className="mb-3 text-sm font-semibold text-red-200">
-            Quick Stats
-          </h4>
-          <div className="space-y-2 text-xs">
-            <div className="flex justify-between text-gray-300">
-              <span>iRating</span>
-              <span className="font-semibold text-red-300">2,847</span>
-            </div>
-            <div className="flex justify-between text-gray-300">
-              <span>Safety</span>
-              <span className="font-semibold text-green-400">A 4.23</span>
-            </div>
-            <div className="flex justify-between text-gray-300">
-              <span>Races</span>
-              <span className="font-semibold text-blue-300">142</span>
-            </div>
-          </div>
-        </div>
+        <QuickStatsCard />
       </SidebarContent>
 
       <SidebarFooter className="text-white">
