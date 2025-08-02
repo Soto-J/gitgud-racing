@@ -1,6 +1,6 @@
 export const QuickStatsCard = () => {
   return (
-    <div className="backdrop-blur-s mt-6 rounded-xl border border-red-700/30 bg-gradient-to-br from-red-900/30 to-red-800/30 p-4">
+    <div className="mt-6 rounded-xl border border-red-700/30 bg-gradient-to-br from-red-900/30 to-red-800/30 p-4 backdrop-blur-sm">
       <h4 className="mb-3 text-sm font-semibold text-red-200">Quick Stats</h4>
       <div className="space-y-2 text-xs">
         <div className="flex justify-between text-gray-300">
