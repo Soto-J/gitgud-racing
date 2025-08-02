@@ -15,6 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AdminEditProfileDialog } from "./admin-edit-profile-dialog";
+import { useState } from "react";
 
 interface ActionsProps {
   userId: string;
@@ -27,6 +29,7 @@ interface ActionsProps {
 }
 
 export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
+  const [openDialog, setOpenDialog] = useState(false);
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
@@ -63,41 +66,52 @@ export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0 hover:bg-zinc-800/50"
-        >
-          <span className="sr-only">Open menu</span>
-          <Ellipsis className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
+    <>
+      {/* <AdminEditProfileDialog
+        onOpenDialog={openDialog}
+        onCloseDialog={() => setOpenDialog(false)}
+        initialValues={undefined}
+      /> */}
 
-      <DropdownMenuContent
-        align="start"
-        className="w-48 border-zinc-800 bg-zinc-900/95 backdrop-blur-sm"
-      >
-        <DropdownMenuGroup>
-          <DropdownMenuItem className="group cursor-pointer text-zinc-300 focus:bg-zinc-800">
-            <Edit className="mr-2 h-4 w-4 group-focus:text-zinc-300" />
-            <span className="group-focus:text-zinc-300">Edit Member</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuSeparator className="bg-zinc-800" />
-
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            className="group cursor-pointer text-red-400 focus:bg-red-500/20 focus:text-red-600"
-            onClick={onDelete}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 p-0 hover:bg-zinc-800/50"
           >
-            <Trash2 className="mr-2 h-4 w-4 group-focus:text-red-600" />
-            <span className="group-focus:text-red-600">Delete Member</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            <span className="sr-only">Open menu</span>
+            <Ellipsis className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent
+          align="start"
+          className="w-48 border-zinc-800 bg-zinc-900/95 backdrop-blur-sm"
+        >
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => setOpenDialog(true)}
+              className="group cursor-pointer text-zinc-300 focus:bg-zinc-800"
+            >
+              <Edit className="mr-2 h-4 w-4 group-focus:text-zinc-300" />
+              <span className="group-focus:text-zinc-300">Edit Member</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator className="bg-zinc-800" />
+
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              className="group cursor-pointer text-red-400 focus:bg-red-500/20 focus:text-red-600"
+              onClick={onDelete}
+            >
+              <Trash2 className="mr-2 h-4 w-4 group-focus:text-red-600" />
+              <span className="group-focus:text-red-600">Delete Member</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 };
