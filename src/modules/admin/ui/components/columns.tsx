@@ -4,11 +4,10 @@ import Link from "next/link";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { MemberGetOne } from "@/modules/members/types";
-
 import { Actions } from "./actions";
+import { AdminGetUser } from "../../types";
 
-export const columns: ColumnDef<MemberGetOne>[] = [
+export const columns: ColumnDef<AdminGetUser>[] = [
   {
     accessorKey: "status",
     header: "Status",
@@ -41,7 +40,7 @@ export const columns: ColumnDef<MemberGetOne>[] = [
     cell: ({ row, filters, confirmDelete }) => {
       return (
         <Actions
-          userId={row.original.id}
+          user={row.original}
           filters={filters}
           confirmDelete={confirmDelete}
         />
