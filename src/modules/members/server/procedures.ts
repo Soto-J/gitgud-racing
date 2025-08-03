@@ -2,6 +2,7 @@ import z from "zod";
 
 import { count, desc, eq, like, and } from "drizzle-orm";
 
+import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
 import { user } from "@/db/schema";
 
@@ -43,6 +44,10 @@ export const membersRouter = createTRPCRouter({
         .limit(pageSize)
         .offset((page - 1) * pageSize);
 
+      if (!members) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Users not found" });
+      }
+
       const [total] = await db
         .select({ count: count() })
         .from(user)
@@ -72,13 +77,4 @@ export const membersRouter = createTRPCRouter({
 
       return member;
     }),
-
-  isAdmin: protectedProcedure.query(async ({ ctx }) => {
-    const [member] = await db
-      .select({ role: user.role })
-      .from(user)
-      .where(eq(user.id, ctx.auth.user.id));
-
-    return member?.role === "admin";
-  }),
 });

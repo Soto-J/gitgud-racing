@@ -1,12 +1,19 @@
 "use client";
 
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 
 import { Ellipsis, Edit, Trash2 } from "lucide-react";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
+import { AdminEditProfileDialog } from "./admin-edit-profile-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,11 +22,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AdminEditProfileDialog } from "./admin-edit-profile-dialog";
-import { useState } from "react";
+import { AdminGetUser } from "../../types";
 
 interface ActionsProps {
-  userId: string;
+  user: AdminGetUser;
   filters: {
     search: string;
     page: number;
@@ -28,11 +34,12 @@ interface ActionsProps {
   confirmDelete: () => Promise<boolean>;
 }
 
-export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
+export const Actions = ({ user, filters, confirmDelete }: ActionsProps) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
+  const trpc = useTRPC();
+
+  const queryClient = useQueryClient();
   // const updateUser = useMutation(
   //   trpc.admin.editUser.mutationOptions({
   //     onSuccess: async () => {
@@ -62,16 +69,16 @@ export const Actions = ({ userId, filters, confirmDelete }: ActionsProps) => {
       return;
     }
 
-    deleteUser.mutate({ userId });
+    deleteUser.mutate({ userId: user.id });
   };
 
   return (
     <>
-      {/* <AdminEditProfileDialog
+      <AdminEditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={undefined}
-      /> */}
+        initialValues={user}
+      />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

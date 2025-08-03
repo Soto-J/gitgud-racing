@@ -29,7 +29,7 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
     redirect("/sign-in");
   }
 
-  if (session.user?.role !== "admin") {
+  if (session.user.role !== "admin") {
     redirect("/");
   }
 
@@ -37,7 +37,7 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.members.getMany.queryOptions({ ...filters }),
+    trpc.admin.getUsers.queryOptions({ ...filters }),
   );
 
   return (

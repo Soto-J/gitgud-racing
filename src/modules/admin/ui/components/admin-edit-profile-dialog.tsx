@@ -4,17 +4,16 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { useTRPC } from "@/trpc/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { toast } from "sonner";
 
-import { profileInsertSchema } from "@/modules/profile/schema";
-import { ProfileGetOne } from "@/modules/profile/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
+
+import { AdminGetUser } from "@/modules/admin/types";
+import { profileInsertSchema } from "@/modules/admin/schema";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import {
@@ -25,19 +24,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface AdminEditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: ProfileGetOne;
+  initialValues: AdminGetUser;
 }
 
 export const AdminEditProfileDialog = ({
@@ -45,20 +36,16 @@ export const AdminEditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: AdminEditProfileDialogProps) => {
-  const [firstName, lastName] = initialValues.memberName.split(" ");
+  const [firstName, lastName] = initialValues.name.split(" ");
 
   const form = useForm<z.infer<typeof profileInsertSchema>>({
     resolver: zodResolver(profileInsertSchema),
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
-      iRacingId: initialValues?.iracingId || "0",
-      iRating: initialValues.iRating.toString() || "0",
-      safetyClass: initialValues.safetyClass || "R",
-      safetyRating: initialValues.safetyRating?.toString() || "0.0",
       team: initialValues.team || "",
-      discord: initialValues?.discord ?? "",
-      bio: initialValues?.bio ?? "",
+      isActive: initialValues.isActive,
+      role: initialValues.role,
     },
   });
 
@@ -66,11 +53,11 @@ export const AdminEditProfileDialog = ({
   const queryClient = useQueryClient();
 
   const editProfile = useMutation(
-    trpc.profile.edit.mutationOptions({
+    trpc.admin.editUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.profile.getOneOrCreate.queryOptions({
-            userId: initialValues.userId,
+          trpc.admin.getUser.queryOptions({
+            userId: initialValues.id,
           }),
         );
 
@@ -87,15 +74,15 @@ export const AdminEditProfileDialog = ({
 
   const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
     editProfile.mutate({
-      profileId: initialValues.id,
+      userId: initialValues.id,
       ...values,
     });
   };
 
   return (
     <ResponsiveDialog
-      title="Profile"
-      description="Edit your profile"
+      title="Edit Member"
+      description="Edit member profile"
       isOpen={onOpenDialog}
       onOpenChange={onCloseDialog}
     >
@@ -137,100 +124,6 @@ export const AdminEditProfileDialog = ({
               />
 
               <FormField
-                name="iRacingId"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IRacing ID</FormLabel>
-
-                    <FormControl>
-                      <Input placeholder="" type="number" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="iRating"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IRating</FormLabel>
-
-                    <FormControl>
-                      <Input type="number" placeholder="" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 items-center sm:grid-cols-2">
-                <FormField
-                  name="safetyClass"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-fit">
-                      <FormLabel className="text-sm font-medium">
-                        Safety Class
-                      </FormLabel>
-
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger className="min-w-[80px] px-2">
-                            <SelectValue placeholder="select" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            <SelectGroup className="[&>*]:cursor-pointer">
-                              <SelectItem value="A">A</SelectItem>
-                              <SelectItem value="B">B</SelectItem>
-                              <SelectItem value="C">C</SelectItem>
-                              <SelectItem value="D">D</SelectItem>
-                              <SelectItem value="R">R</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="safetyRating"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="w-fit text-sm font-medium">
-                        Safety Rating
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          min="0"
-                          max="4"
-                          step="0.01"
-                          placeholder="e.g. 3.45"
-                          onKeyDown={(e) => {
-                            if (e.key === "-" || e.key === "e")
-                              e.preventDefault();
-                          }}
-                          className="w-24 px-2"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
                 name="team"
                 control={form.control}
                 render={({ field }) => (
@@ -239,34 +132,6 @@ export const AdminEditProfileDialog = ({
 
                     <FormControl>
                       <Input placeholder="" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="discord"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discord</FormLabel>
-
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="bio"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
-
-                    <FormControl>
-                      <Textarea {...field} />
                     </FormControl>
                   </FormItem>
                 )}

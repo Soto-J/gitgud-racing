@@ -14,16 +14,15 @@ import { DataPagination } from "@/components/data-pagination";
 
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
-import { AdminEditProfileDialog } from "../components/admin-edit-profile-dialog";
 
 export const AdminPageView = () => {
   const [filters, setFilters] = useMembersFilters();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.members.getMany.queryOptions({ ...filters }),
+    trpc.admin.getUsers.queryOptions({ ...filters }),
   );
-
+  
   const [ConfirmationDialog, confirmDelete] = useConfirm({
     title: "Delete Member Account",
     description:
@@ -33,7 +32,6 @@ export const AdminPageView = () => {
   return (
     <>
       <ConfirmationDialog />
-    
 
       <div className="flex h-svh flex-col items-center justify-center">
         <DataTable
