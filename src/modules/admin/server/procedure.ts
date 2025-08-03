@@ -54,7 +54,7 @@ export const adminRouter = createTRPCRouter({
           isActive: profile.isActive,
         })
         .from(user)
-        .innerJoin(profile, eq(profile.id, user.id))
+        .innerJoin(profile, eq(profile.userId, user.id))
         .where(eq(profile.userId, input.userId));
 
       if (!member) {
@@ -97,7 +97,7 @@ export const adminRouter = createTRPCRouter({
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
-            search ? like(user.name, `%${search}`) : undefined,
+            search ? like(user.name, `%${search}%`) : undefined,
           ),
         )
         .orderBy(desc(user.createdAt), desc(user.id))
@@ -111,6 +111,7 @@ export const adminRouter = createTRPCRouter({
       const [total] = await db
         .select({ count: count() })
         .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
