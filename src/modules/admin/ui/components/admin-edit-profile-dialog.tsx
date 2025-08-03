@@ -108,7 +108,6 @@ export const AdminEditProfileDialog = ({
                   </FormItem>
                 )}
               />
-
               <FormField
                 name="lastName"
                 control={form.control}
@@ -122,7 +121,6 @@ export const AdminEditProfileDialog = ({
                   </FormItem>
                 )}
               />
-
               <FormField
                 name="team"
                 control={form.control}
@@ -132,6 +130,36 @@ export const AdminEditProfileDialog = ({
 
                     <FormControl>
                       <Input placeholder="" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="isActive"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Active Status</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                name="role"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                      <Input placeholder="member" {...field} />
                     </FormControl>
                   </FormItem>
                 )}
