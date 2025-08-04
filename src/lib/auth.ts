@@ -45,7 +45,6 @@ export const auth = betterAuth({
 
           if (!userProfile) {
             await db.insert(dbSchema.profile).values({ userId: user.id });
-            console.log("Profile created for user:", { name: user.name });
           }
         } catch (error) {
           console.error(error)
