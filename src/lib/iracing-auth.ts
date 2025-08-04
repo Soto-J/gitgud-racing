@@ -1,5 +1,6 @@
-import { TRPCError } from "@trpc/server";
 import CryptoJS from "crypto-js";
+
+import { TRPCError } from "@trpc/server";
 
 export async function getIracingAuthCookie() {
   const hashedPassword = CryptoJS.enc.Base64.stringify(
@@ -20,8 +21,6 @@ export async function getIracingAuthCookie() {
     credentials: "include", // Important for cookies
     signal: AbortSignal.timeout(10000), // 10 second timeout
   });
-
-  const responseData = await response.json();
 
   if (!response.ok) {
     throw new TRPCError({

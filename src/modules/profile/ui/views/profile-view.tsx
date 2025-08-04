@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 
 import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 
@@ -20,19 +20,23 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
 
   const trpc = useTRPC();
 
-  const { data: profile } = useSuspenseQuery(
-    trpc.profile.getOne.queryOptions({ userId }),
-  );
-
+  const [profile, iracingData] = useSuspenseQueries({
+    queries: [
+      trpc.profile.getOne.queryOptions({ userId }),
+      trpc.iracing.getUser.queryOptions({ userId }),
+    ],
+  });
+  
+  console.log({ iracingData: iracingData.data });
   return (
     <>
       <EditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={profile}
+        initialValues={profile.data}
       />
 
-      <ProfileCard profile={profile} onEdit={() => setOpenDialog(true)} />
+      <ProfileCard profile={profile.data} onEdit={() => setOpenDialog(true)} />
     </>
   );
 };

@@ -46,7 +46,7 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   const { role } = ctx.auth.user;
-  
+
   if (role !== "admin") {
     throw new TRPCError({
       code: "FORBIDDEN",
@@ -84,12 +84,12 @@ export const iracingProcedure = protectedProcedure.use(
       .insert(iracingAuth)
       .values({
         userId: process.env.MY_USER_ID!,
-        authCookie,
-        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS), // 1 hour
+        authCookie: authCookie,
+        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
       })
       .onDuplicateKeyUpdate({
         set: {
-          authCookie,
+          authCookie: authCookie,
           expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
           updatedAt: new Date(),
         },
@@ -100,6 +100,7 @@ export const iracingProcedure = protectedProcedure.use(
       .from(iracingAuth)
       .where(eq(iracingAuth.userId, process.env.MY_USER_ID!));
 
+    console.log({ refreshedAuth });
     return next({
       ctx: {
         ...ctx,
