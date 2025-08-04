@@ -112,7 +112,7 @@ export const AdminEditProfileDialog = ({
                         Member Status
                       </FormLabel>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Toggle member's active status
+                        Toggle member&apos;s active status
                       </p>
                     </div>
                     <FormControl>
@@ -245,7 +245,7 @@ export const AdminEditProfileDialog = ({
                               </SelectItem>
 
                               <SelectItem
-                                value="Member"
+                                value="member"
                                 className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                               >
                                 <div className="flex w-full items-center justify-between gap-x-2">
