@@ -55,7 +55,7 @@ export const Actions = ({ user, filters, confirmDelete }: ActionsProps) => {
     trpc.admin.deleteUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.members.getMany.queryOptions({ ...filters }),
+          trpc.admin.getUsers.queryOptions({ ...filters }),
         );
       },
       onError: (error) => console.error(error.message),
