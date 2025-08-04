@@ -65,7 +65,6 @@ export const iracingRouter = createTRPCRouter({
       }
 
       try {
-        console.log("YURRRRRRRRRRRR1", ctx.iracingAuthData?.authCookie);
         const response = await fetch(
           `${IRACING_URL}/member/get?cust_ids=${member.custId}`,
           {
@@ -76,13 +75,11 @@ export const iracingRouter = createTRPCRouter({
         );
 
         if (!response) {
-          console.log("YURRRRRRRRRRRR2");
           console.log({ response });
-          throw new Error("Something went wrong");
-          // throw new TRPCError({
-          //   code: "INTERNAL_SERVER_ERROR",
-          //   message: "Problem fetching iRacing User",
-          // });
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Problem fetching iRacing User",
+          });
         }
         const { link } = await response.json();
         const linkResponse = await fetch(link);
