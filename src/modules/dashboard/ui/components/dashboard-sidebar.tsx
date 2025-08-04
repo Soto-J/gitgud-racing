@@ -47,7 +47,7 @@ export const DashboardSidebar = () => {
   const pathname = usePathname();
 
   const { data: session } = authClient.useSession();
-  const currentUserIsAdmin = session?.user?.role === "admin";
+  const currentUserIsAdmin = session?.user.role === "admin";
 
   return (
     <Sidebar className="border-red-800/30 shadow-2xl">

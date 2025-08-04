@@ -17,7 +17,7 @@ export const profileRouter = createTRPCRouter({
     return await db.select().from(profile);
   }),
 
-  getOneOrCreate: protectedProcedure
+  getOne: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input }) => {
       const [profileWithUser] = await db
@@ -29,22 +29,41 @@ export const profileRouter = createTRPCRouter({
         .innerJoin(user, eq(profile.userId, user.id))
         .where(eq(profile.userId, input.userId));
 
-      if (profileWithUser) {
-        return profileWithUser;
+      if (!profileWithUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Problem fetching user profile",
+        });
       }
 
-      await db.insert(profile).values({ userId: input.userId });
+      return profileWithUser;
+    }),
 
-      const [newProfile] = await db
-        .select({
-          ...getTableColumns(profile),
-          memberName: user.name,
-        })
+  create: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const [response] = await db.insert(profile).values({
+        userId: input.userId,
+      });
+
+      if (!response) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Problem creating profile",
+        });
+      }
+
+      const createProfile = await db
+        .select()
         .from(profile)
-        .innerJoin(user, eq(profile.userId, user.id))
-        .where(eq(profile.userId, input.userId));
+        .where(
+          and(
+            eq(profile.userId, input.userId),
+            eq(profile.userId, ctx.auth.user.id),
+          ),
+        );
 
-      return newProfile;
+      return createProfile;
     }),
 
   edit: protectedProcedure
@@ -79,12 +98,12 @@ export const profileRouter = createTRPCRouter({
       // Update authclient user
       const authResponse = await authClient.updateUser({ name });
 
-      if (!authResponse.data?.status) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Problem updating better auth user name",
-        });
-      }
+      // if (!authResponse.data?.status) {
+      //   throw new TRPCError({
+      //     code: "INTERNAL_SERVER_ERROR",
+      //     message: "Problem updating better auth user name",
+      //   });
+      // }
 
       // Update user table
       await db.update(user).set({ name }).where(eq(user.id, ctx.auth.user.id));

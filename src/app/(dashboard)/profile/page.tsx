@@ -22,7 +22,7 @@ const ProfilePage = async () => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.profile.getOneOrCreate.queryOptions({ userId: session.user.id }),
+    trpc.profile.getOne.queryOptions({ userId: session.user.id }),
   );
 
   return (

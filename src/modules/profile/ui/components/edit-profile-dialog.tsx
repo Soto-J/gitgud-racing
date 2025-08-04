@@ -4,10 +4,10 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { useTRPC } from "@/trpc/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { toast } from "sonner";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 import { profileInsertSchema } from "@/modules/profile/schema";
 import { ProfileGetOne } from "@/modules/profile/types";
@@ -69,7 +69,7 @@ export const EditProfileDialog = ({
     trpc.profile.edit.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.profile.getOneOrCreate.queryOptions({
+          trpc.profile.getOne.queryOptions({
             userId: initialValues.userId,
           }),
         );

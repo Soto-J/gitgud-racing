@@ -3,13 +3,7 @@
 import { useState } from "react";
 
 import { useTRPC } from "@/trpc/client";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-
-import { toast } from "sonner";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 
@@ -27,7 +21,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const trpc = useTRPC();
 
   const { data: profile } = useSuspenseQuery(
-    trpc.profile.getOneOrCreate.queryOptions({ userId }),
+    trpc.profile.getOne.queryOptions({ userId }),
   );
 
   return (

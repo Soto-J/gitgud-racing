@@ -7,6 +7,7 @@ import Image from "next/image";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { z } from "zod";
 
 import { OctagonAlertIcon } from "lucide-react";
@@ -43,7 +44,6 @@ const formSchema = z
 export const SignUpView = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -94,10 +94,11 @@ export const SignUpView = () => {
         callbackURL: "/",
       },
       {
-        onSuccess: async () => {
-          router.push("/");
+        onSuccess: async ({ data }) => {
           setIsPending(false);
           setError(null);
+
+          router.push("/");
         },
         onError: ({ error }) => {
           setIsPending(false);
@@ -121,7 +122,6 @@ export const SignUpView = () => {
                   </p>
                 </div>
 
-                {/* Email Input */}
                 <FormField
                   control={form.control}
                   name="email"
@@ -143,7 +143,6 @@ export const SignUpView = () => {
                   )}
                 />
 
-                {/* Name Input */}
                 <div className="grid gap-3">
                   <FormField
                     control={form.control}
@@ -198,7 +197,6 @@ export const SignUpView = () => {
                   )}
                 />
 
-                {/* ConfirmPassword Input */}
                 <FormField
                   control={form.control}
                   name="confirmPassword"
