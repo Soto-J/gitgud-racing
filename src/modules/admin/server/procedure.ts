@@ -13,6 +13,7 @@ import {
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
 } from "@/constants";
+import { profileUpdateSchema } from "../schema";
 
 export const adminRouter = createTRPCRouter({
   deleteUser: adminProcedure
@@ -24,18 +25,43 @@ export const adminRouter = createTRPCRouter({
     }),
 
   editUser: adminProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(profileUpdateSchema)
     .mutation(async ({ input }) => {
-      const updateData = Object.fromEntries(
-        Object.entries(input).filter(([_, value]) => value !== undefined),
+      const { userId, ...updateData } = input;
+      
+      const cleanUpdata = Object.fromEntries(
+        Object.entries(updateData).filter(([_, value]) => value !== undefined),
       );
 
-      const [updateResult] = await db
+      const [resultHeader] = await db
         .update(profile)
-        .set({ ...updateData })
-        .where(eq(profile.userId, input.userId));
+        .set({ ...cleanUpdata })
+        .where(eq(profile.userId, userId));
 
-      return updateResult;
+      if (resultHeader.affectedRows === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Problem updating user",
+        });
+      }
+
+      const [updatedMember] = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          banned: user.banned,
+          banReason: user.banReason,
+          banExpires: user.banExpires,
+          createdAt: user.createdAt,
+          team: profile.team,
+          isActive: profile.isActive,
+        })
+        .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
+        .where(eq(profile.userId, userId));
+
+      return updatedMember;
     }),
 
   getUser: adminProcedure

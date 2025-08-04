@@ -4,24 +4,25 @@ import Link from "next/link";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Actions } from "./actions";
-import { AdminGetUser } from "../../types";
+import { AdminGetUser } from "@/modules/admin/types";
+
+import { TableActions } from "@/modules/admin/ui/components/table/table-actions";
 
 export const columns: ColumnDef<AdminGetUser>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: () => {
-      return (
-        <span
-          className={
-            true ? "font-medium text-green-600" : "font-medium text-red-600"
-          }
-        >
-          {true ? "Active" : "Inactive"}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <span
+        className={
+          row.original.isActive
+            ? "font-medium text-green-600"
+            : "font-medium text-red-600"
+        }
+      >
+        {row.original.isActive ? "Active" : "Inactive"}
+      </span>
+    ),
   },
   {
     accessorKey: "name",
@@ -39,7 +40,7 @@ export const columns: ColumnDef<AdminGetUser>[] = [
     accessorKey: "manage",
     cell: ({ row, filters, confirmDelete }) => {
       return (
-        <Actions
+        <TableActions
           user={row.original}
           filters={filters}
           confirmDelete={confirmDelete}

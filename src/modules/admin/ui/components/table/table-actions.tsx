@@ -2,18 +2,15 @@
 
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-
 import { Ellipsis, Edit, Trash2 } from "lucide-react";
 
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { AdminEditProfileDialog } from "./admin-edit-profile-dialog";
+import { AdminGetUser } from "@/modules/admin/types";
+
+import { Button } from "@/components/ui/button";
+import { AdminEditProfileDialog } from "../form/admin-edit-profile-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AdminGetUser } from "../../types";
 
 interface ActionsProps {
   user: AdminGetUser;
@@ -34,22 +30,16 @@ interface ActionsProps {
   confirmDelete: () => Promise<boolean>;
 }
 
-export const Actions = ({ user, filters, confirmDelete }: ActionsProps) => {
+export const TableActions = ({
+  user,
+  filters,
+  confirmDelete,
+}: ActionsProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const trpc = useTRPC();
 
   const queryClient = useQueryClient();
-  // const updateUser = useMutation(
-  //   trpc.admin.editUser.mutationOptions({
-  //     onSuccess: async () => {
-  //       await queryClient.invalidateQueries(
-  //         trpc.members.getMany.queryOptions({ ...filters }),
-  //       );
-  //     },
-  //     onError: (error) => console.error(error.message),
-  //   }),
-  // );
 
   const deleteUser = useMutation(
     trpc.admin.deleteUser.mutationOptions({

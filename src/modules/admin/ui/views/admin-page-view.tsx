@@ -7,8 +7,8 @@ import { useConfirm } from "@/hooks/use-confirm";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
-import { DataTable } from "@/modules/admin/ui/components/data-table";
-import { columns } from "@/modules/admin/ui/components/columns";
+import { DataTable } from "@/modules/admin/ui/components/table/data-table";
+import { columns } from "@/modules/admin/ui/components/table/columns";
 
 import { DataPagination } from "@/components/data-pagination";
 

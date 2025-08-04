@@ -180,8 +180,8 @@ export const EditProfileDialog = ({
 
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
                           defaultValue={field.value}
+                          onValueChange={field.onChange}
                         >
                           <SelectTrigger className="min-w-[80px] px-2">
                             <SelectValue placeholder="select" />
