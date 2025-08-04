@@ -4,6 +4,9 @@ import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, iracingProcedure } from "@/trpc/init";
 
 import { IRACING_URL } from "@/constants";
+import { db } from "@/db";
+import { profile } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 /*
 // "https://members-ng.iracing.com/data/member/info",
@@ -45,28 +48,52 @@ export const iracingRouter = createTRPCRouter({
   }),
 
   getUser: iracingProcedure
-    .input(z.object({ custId: z.string() }))
+    .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
-      const response = await fetch(
-        `${IRACING_URL}/member/get?cust_ids=${input.custId}`,
-        {
-          headers: {
-            Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
-          },
-        },
-      );
+      const [member] = await db
+        .select({ custId: profile.iracingId })
+        .from(profile)
+        .where(eq(profile.userId, input.userId));
 
-      if (!response) {
+      if (!member?.custId) {
         return {
           success: false,
-          message: "Error: Problem fetching iRacing user",
+          error: "NO_IRACING_ID",
+          message: "No iRacing ID found for this user",
+          data: null,
         };
       }
 
-      const { link } = await response.json();
-      const linkResponse = await fetch(link);
+      try {
+        console.log("YURRRRRRRRRRRR1", ctx.iracingAuthData?.authCookie);
+        const response = await fetch(
+          `${IRACING_URL}/member/get?cust_ids=${member.custId}`,
+          {
+            headers: {
+              Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
+            },
+          },
+        );
 
-      return await linkResponse.json();
+        if (!response) {
+          console.log("YURRRRRRRRRRRR2");
+          console.log({ response });
+          throw new Error("Something went wrong");
+          // throw new TRPCError({
+          //   code: "INTERNAL_SERVER_ERROR",
+          //   message: "Problem fetching iRacing User",
+          // });
+        }
+        const { link } = await response.json();
+        const linkResponse = await fetch(link);
+
+        const data = await linkResponse.json();
+
+        return data;
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
     }),
 });
 

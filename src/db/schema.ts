@@ -119,6 +119,7 @@ export const iracingAuth = mysqlTable("iracing_auth", {
     .$default(() => nanoid()),
   userId: varchar("user_id", { length: 36 })
     .notNull()
+    .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
   // Auth data
