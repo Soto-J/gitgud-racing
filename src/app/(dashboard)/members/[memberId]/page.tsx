@@ -26,7 +26,7 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.profile.getOneOrCreate.queryOptions({ userId: memberId }),
+    trpc.profile.getOne.queryOptions({ userId: memberId }),
   );
 
   return (

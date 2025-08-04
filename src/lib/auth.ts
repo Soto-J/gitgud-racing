@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, createAuthMiddleware } from "better-auth/plugins";
 
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import * as dbSchema from "@/db/schema";
 
@@ -29,14 +31,25 @@ export const auth = betterAuth({
       if (!user) return;
 
       const now = new Date();
-      const userCreatedAt = new Date(user.createdAt || "");
+      const userCreatedAt = new Date(user.createdAt);
 
       // Check if user was created within the last 5 seconds
       const isNewUser = now.getTime() - userCreatedAt.getTime() < 5000;
 
       if (isNewUser) {
-        await db.insert(dbSchema.profile).values({ userId: user.id });
-        console.log("Profile created for user:", { name: user.name });
+        try {
+          const [userProfile] = await db
+            .select()
+            .from(dbSchema.profile)
+            .where(eq(dbSchema.profile.id, user.id));
+
+          if (!userProfile) {
+            await db.insert(dbSchema.profile).values({ userId: user.id });
+            console.log("Profile created for user:", { name: user.name });
+          }
+        } catch (error) {
+          console.error(error)
+        }
       }
     }),
   },

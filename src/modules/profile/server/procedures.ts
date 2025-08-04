@@ -53,9 +53,10 @@ export const profileRouter = createTRPCRouter({
         });
       }
 
-      const createProfile = await db
+      const [createProfile] = await db
         .select()
         .from(profile)
+        .innerJoin(user, eq(user.id, profile.userId))
         .where(
           and(
             eq(profile.userId, input.userId),
@@ -96,7 +97,7 @@ export const profileRouter = createTRPCRouter({
       const name = `${firstName.trim()} ${lastName.trim()}`;
 
       // Update authclient user
-      const authResponse = await authClient.updateUser({ name });
+      // const authResponse = await authClient.updateUser({ name });
 
       // if (!authResponse.data?.status) {
       //   throw new TRPCError({

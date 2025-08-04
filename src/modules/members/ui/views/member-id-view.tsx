@@ -15,7 +15,7 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   const trpc = useTRPC();
 
   const { data } = useSuspenseQuery(
-    trpc.profile.getOneOrCreate.queryOptions({ userId }),
+    trpc.profile.getOne.queryOptions({ userId }),
   );
 
   return <ProfileCard profile={data} />;
