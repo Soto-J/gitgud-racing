@@ -11,8 +11,6 @@ import {
   int,
 } from "drizzle-orm/mysql-core";
 
-export const role = mysqlEnum("role", ["admin", "member"]);
-
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
 export const safetyClass = mysqlEnum("safety_class", safetyClassValues);
 
@@ -50,7 +48,7 @@ export const user = mysqlTable("user", {
   image: text("image"),
 
   // admin plugin attributes
-  role: text("role").notNull().default("member"),
+  role: mysqlEnum("role", ["admin", "member"]).notNull().default("member"),
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
