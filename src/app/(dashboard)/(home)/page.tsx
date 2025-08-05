@@ -11,8 +11,8 @@ const DashboardPage = async () => {
 
   if (!session) redirect("/sign-in");
 
-  // const queryClient = getQueryClient();
-  // void queryClient.prefetchQuery(trpc.iracing.getDocumentation.queryOptions());
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(trpc.iracing.getDocumentation.queryOptions());
 
   return <HomeView />;
 };

@@ -79,7 +79,7 @@ export const iracingProcedure = protectedProcedure.use(
 
     console.log("Refreshing iRacing auth...");
     const authCookie = await getIracingAuthCookie();
-
+    
     await db
       .insert(iracingAuth)
       .values({
@@ -100,7 +100,6 @@ export const iracingProcedure = protectedProcedure.use(
       .from(iracingAuth)
       .where(eq(iracingAuth.userId, process.env.MY_USER_ID!));
 
-    console.log({ refreshedAuth });
     return next({
       ctx: {
         ...ctx,
