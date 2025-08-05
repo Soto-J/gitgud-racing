@@ -8,7 +8,6 @@ export async function getIracingAuthCookie() {
       process.env.IRACING_PASSWORD! + process.env.IRACING_EMAIL!.toLowerCase(),
     ),
   );
-
   const response = await fetch("https://members-ng.iracing.com/auth", {
     method: "POST",
     headers: {
@@ -33,10 +32,12 @@ export async function getIracingAuthCookie() {
   const setCookieHeader = response.headers.get("set-cookie");
   const authCookie = setCookieHeader?.match(/authtoken_members=([^;]+)/)?.[1];
 
+  console.log("Set-Cookie header:", setCookieHeader);
+  console.log("Extracted auth cookie:", authCookie);
   if (!authCookie) {
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "No auth cookie found in response",
+      code: "UNAUTHORIZED",
+      message: "No valid auth cookie received from iRacing",
     });
   }
 

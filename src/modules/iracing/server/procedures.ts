@@ -28,28 +28,41 @@ import { eq } from "drizzle-orm";
 */
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
-    const response = await fetch(`${IRACING_URL}/doc`, {
-      headers: {
-        Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
-      },
-    });
+    console.log({ ctx });
 
-    if (!response) {
+    try {
+      console.log("Making request to:", `${IRACING_URL}/doc`);
+
+      const response = await fetch(`${IRACING_URL}/doc`, {
+        headers: {
+          Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
+        },
+      });
+
+      if (!response.ok) {
+        return {
+          success: false,
+          message: "Error: Problem fetching iRacing documentation",
+          data: null,
+        };
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
       return {
         success: false,
-        message: "Error: Problem fetching iRacing documentation",
+        message: "Failed to fetch documentation",
+        error: error,
+        data: null,
       };
     }
-
-    const { link } = await response.json();
-    const linkResponse = await fetch(link);
-
-    return await linkResponse.json();
   }),
 
   getUser: iracingProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
+
       const [member] = await db
         .select({ custId: profile.iracingId })
         .from(profile)
@@ -67,6 +80,7 @@ export const iracingRouter = createTRPCRouter({
       try {
         const response = await fetch(
           `${IRACING_URL}/member/get?cust_ids=${member.custId}`,
+          // `${IRACING_URL}/member/get`,
           {
             headers: {
               Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
