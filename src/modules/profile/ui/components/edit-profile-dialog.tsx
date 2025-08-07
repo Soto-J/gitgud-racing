@@ -45,9 +45,9 @@ export const EditProfileDialog = ({
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
-      iRacingId: initialValues.profile.iracingId || "0",
-      discord: initialValues.profile.discord ?? "",
-      bio: initialValues?.profile.bio ?? "",
+      iRacingId: initialValues?.profile?.iracingId || "0",
+      discord: initialValues?.profile?.discord ?? "",
+      bio: initialValues?.profile?.bio ?? "",
     },
   });
 

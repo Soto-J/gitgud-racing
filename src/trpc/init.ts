@@ -138,7 +138,8 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       console.log("Using cached iRacing userData Data");
       return next({ ctx });
     }
-
+    
+    // Otherwise we either update or create licenses for user
     try {
       // Fetch from iRacing API
       const response = await fetch(
