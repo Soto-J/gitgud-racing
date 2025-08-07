@@ -93,7 +93,7 @@ export const profileRouter = createTRPCRouter({
         })
         .where(
           and(
-            eq(profile.id, input.userId),
+            eq(profile.userId, input.userId),
             eq(profile.userId, ctx.auth.user.id),
           ),
         )

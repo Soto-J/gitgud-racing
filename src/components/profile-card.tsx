@@ -56,7 +56,6 @@ export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
                   iRating={val.iRating || 0}
                   licenseClass={val.licenseClass}
                   safetyRating={val.safetyRating || "0.0"}
-                  accentColor="bg-blue-600"
                 />
               </div>
             ))}

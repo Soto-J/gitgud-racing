@@ -12,6 +12,7 @@ import { auth } from "@/lib/auth";
 
 import { getIracingAuthCookie } from "@/lib/iracing-auth";
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
+import { IracingLicense } from "@/types";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -163,7 +164,6 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
         return next({ ctx });
       }
 
-      // console.log({ licenses });
       const insertValues = transformLicenseData(licenses);
       console.log({ insertValues });
 
@@ -190,7 +190,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
   },
 );
 
-const transformLicenseData = (licenses: any[]) => {
+const transformLicenseData = (licenses: IracingLicense[]) => {
   const categoryMap = {
     oval: "oval",
     sports_car: "sportsCar",
@@ -204,15 +204,13 @@ const transformLicenseData = (licenses: any[]) => {
 
     if (!category) return acc;
 
-    const licenseClass = license.group_name.replace("Class ", "").trim();
+    const licenseClass = license.group_name.replace("Class ", "").trim() || "R";
 
     return {
       ...acc,
       [`${category}IRating`]: license.irating,
       [`${category}SafetyRating`]: license.safety_rating,
-      [`${category}LicenseClass`]:
-        licenseClass === "Rookie" ? "R" : licenseClass,
+      [`${category}LicenseClass`]: licenseClass,
     };
   }, {});
 };
-

@@ -7,7 +7,6 @@ interface CategoryCardProps {
   iRating: number;
   safetyRating: string;
   licenseClass: string;
-  accentColor: string;
 }
 
 const classColors = {

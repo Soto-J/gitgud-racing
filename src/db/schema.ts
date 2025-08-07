@@ -144,7 +144,7 @@ export const license = mysqlTable("license", {
   userId: varchar("user_id", { length: 36 })
     .notNull()
     .unique()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: "cascade" }),
 
   // Oval
   ovalIRating: int("oval_i_rating"),

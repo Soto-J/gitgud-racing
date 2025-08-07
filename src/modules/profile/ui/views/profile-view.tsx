@@ -33,7 +33,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
         initialValues={data}
       /> */}
 
-      <ProfileCard data={data.data} onEdit={() => setOpenDialog(true)} />
+      <ProfileCard data={data?.data} onEdit={() => setOpenDialog(true)} />
     </>
   );
 };

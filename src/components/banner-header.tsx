@@ -4,7 +4,7 @@ import { ComponentType } from "react";
 
 interface BannerHeaderProps {
   section: string;
-  icon?: ComponentType;
+  icon?: ComponentType<{ className?: string }>;
   iconColor?: string;
   title: string;
   subTitle1: string;
