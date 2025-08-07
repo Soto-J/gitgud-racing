@@ -25,14 +25,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
@@ -53,10 +45,6 @@ export const EditProfileDialog = ({
       firstName: firstName,
       lastName: lastName,
       iRacingId: initialValues?.iracingId || "0",
-      iRating: initialValues.iRating.toString() || "0",
-      safetyClass: initialValues.safetyClass || "R",
-      safetyRating: initialValues.safetyRating?.toString() || "0.0",
-      team: initialValues.team || "",
       discord: initialValues?.discord ?? "",
       bio: initialValues?.bio ?? "",
     },
@@ -87,7 +75,7 @@ export const EditProfileDialog = ({
 
   const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
     editProfile.mutate({
-      profileId: initialValues.id,
+      userId: initialValues.userId || "",
       ...values,
     });
   };
@@ -148,98 +136,6 @@ export const EditProfileDialog = ({
                     </FormControl>
 
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="iRating"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IRating</FormLabel>
-
-                    <FormControl>
-                      <Input type="number" placeholder="" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 items-center sm:grid-cols-2">
-                <FormField
-                  name="safetyClass"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem className="w-fit">
-                      <FormLabel className="text-sm font-medium">
-                        Safety Class
-                      </FormLabel>
-
-                      <FormControl>
-                        <Select
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="min-w-[80px] px-2">
-                            <SelectValue placeholder="select" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            <SelectGroup className="[&>*]:cursor-pointer">
-                              <SelectItem value="A">A</SelectItem>
-                              <SelectItem value="B">B</SelectItem>
-                              <SelectItem value="C">C</SelectItem>
-                              <SelectItem value="D">D</SelectItem>
-                              <SelectItem value="R">R</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="safetyRating"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="w-fit text-sm font-medium">
-                        Safety Rating
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          min="0"
-                          max="4"
-                          step="0.01"
-                          placeholder="e.g. 3.45"
-                          onKeyDown={(e) => {
-                            if (e.key === "-" || e.key === "e")
-                              e.preventDefault();
-                          }}
-                          className="w-24 px-2"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                name="team"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Team</FormLabel>
-
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
                   </FormItem>
                 )}
               />

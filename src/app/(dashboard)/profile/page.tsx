@@ -19,13 +19,13 @@ const ProfilePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) redirect("/sign-in");
-  
+
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.profile.getOne.queryOptions({ userId: session.user.id }),
-  );
-  void queryClient.prefetchQuery(
-    trpc.iracing.getUser.queryOptions({ userId: session.user.id }),
+    trpc.iracing.getUser.queryOptions(
+      { userId: session.user.id },
+      { retry: false },
+    ),
   );
 
   return (

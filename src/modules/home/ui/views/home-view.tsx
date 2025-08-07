@@ -7,11 +7,11 @@ import { toast } from "sonner";
 
 export const HomeView = () => {
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
-    trpc.iracing.getDocumentation.queryOptions(),
-  );
+  // const { data } = useSuspenseQuery(
+  //   trpc.iracing.getDocumentation.queryOptions(),
+  // );
 
-  console.log({ data });
+  // console.log({ data });
 
   return (
     <div className="bg-background flex h-screen flex-col items-center justify-center">
@@ -20,4 +20,3 @@ export const HomeView = () => {
     </div>
   );
 };
-// "https://members-ng.iracing.com/data/member/get"

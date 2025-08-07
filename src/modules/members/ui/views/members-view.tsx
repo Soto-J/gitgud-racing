@@ -14,7 +14,10 @@ import { DataPagination } from "@/components/data-pagination";
 import { DataTable } from "@/modules/members/ui/components/data-table";
 import { columns } from "@/modules/members/ui/components/columns";
 
-export const MembersView = () => {
+interface MembersViewProps {
+  userId: string;
+}
+export const MembersView = ({ userId }: MembersViewProps) => {
   const [filters, setFilters] = useMembersFilters();
   const router = useRouter();
 
@@ -29,7 +32,11 @@ export const MembersView = () => {
         <DataTable
           columns={columns}
           data={data.members}
-          onRowClick={(original) => router.push(`/members/${original.id}`)}
+          onRowClick={(original) =>
+            userId === original.id
+              ? router.push("/profile")
+              : router.push(`/members/${original.id}`)
+          }
         />
       </div>
 

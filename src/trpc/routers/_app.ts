@@ -10,6 +10,7 @@ export const appRouter = createTRPCRouter({
   members: membersRouter,
   profile: profileRouter,
   iracing: iracingRouter,
+  
 });
 
 // export type definition of API

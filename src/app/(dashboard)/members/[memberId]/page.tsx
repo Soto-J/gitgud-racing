@@ -26,7 +26,7 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.profile.getOne.queryOptions({ userId: memberId }),
+    trpc.iracing.getUser.queryOptions({ userId: memberId }),
   );
 
   return (
