@@ -75,7 +75,6 @@ export const EditProfileDialog = ({
   );
 
   const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
-    console.log("TESTING");
     editProfile.mutate({
       userId: initialValues.user.id || "",
       ...values,

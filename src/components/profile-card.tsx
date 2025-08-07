@@ -23,7 +23,7 @@ export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
   const disciplines = data.licenses?.disciplines || [];
 
   return (
-    <div className="min-h-svh bg-gradient-to-br from-gray-100 via-gray-50 to-red-50 p-4 md:p-8">
+    <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-red-100 p-4 md:p-8">
       <div className="mx-auto max-w-6xl space-y-8">
         <BannerHeader
           section="iRacing Profile"
