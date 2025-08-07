@@ -129,12 +129,13 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
     }
 
     // Check if we need to sync (e.g., data is stale)
+    const lastSync = user?.license?.lastIracingSync;
     const shouldSync =
-      !user?.license?.lastIracingSync ||
-      new Date().getTime() - user.license.lastIracingSync.getTime() >
-        24 * 60 * 60 * 1000; // 24 hours
+      !lastSync ||
+      new Date().getTime() - lastSync.getTime() > 24 * 60 * 60 * 1000; // 24 hours
 
     if (!shouldSync) {
+      console.log("Using cached iRacing userData Data");
       return next({ ctx });
     }
 
@@ -165,7 +166,6 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       }
 
       const insertValues = transformLicenseData(licenses);
-      console.log({ insertValues });
 
       await db
         .insert(license)

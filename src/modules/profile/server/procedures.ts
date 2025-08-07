@@ -82,14 +82,13 @@ export const profileRouter = createTRPCRouter({
   edit: protectedProcedure
     .input(profileUpdateSchema)
     .mutation(async ({ ctx, input }) => {
-      // Update profile table
       const result = await db
         .update(profile)
         .set({
-          iracingId: input.iRacingId,
+          iracingId: input.iRacingId.trim(),
           // team: input.team,
-          discord: input.discord,
-          bio: input.bio,
+          discord: input.discord.trim(),
+          bio: input.bio.trim(),
         })
         .where(
           and(
