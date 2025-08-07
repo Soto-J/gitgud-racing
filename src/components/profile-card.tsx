@@ -1,131 +1,105 @@
-import { cn } from "@/lib/utils";
-
-import { AchievementBadges } from "@/modules/profile/ui/components/achievement-badges";
-
 import {
   User,
   Trophy,
   Shield,
   Users,
   MessageCircle,
-  Edit3,
+  Car,
+  Mountain,
 } from "lucide-react";
 
-import { StatCard } from "./stat-card";
-import { ProfileGetOne } from "@/modules/profile/types";
+import { CategoryCard } from "./category-card";
 import { BannerHeader } from "./banner-header";
-
-const classColors = {
-  A: "bg-red-500",
-  B: "bg-green-500",
-  C: "bg-yellow-500",
-  D: "bg-orange-500",
-  R: "bg-red-500",
-};
+import { InfoCard } from "./info-card";
+import { UserGetOne } from "@/modules/iracing/types";
+import { cn } from "@/lib/utils";
 
 interface ProfileCardProps {
-  profile: ProfileGetOne;
+  data: UserGetOne["data"];
   onEdit?: () => void;
 }
 
-export const ProfileCard = ({ profile, onEdit }: ProfileCardProps) => {
+export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
+  console.log("data", data);
+  const disciplines = data.licenses?.disciplines || [];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-red-50 p-4 md:p-8">
-      <BannerHeader
-        title="Racing Profile"
-        description="iRacing Series"
-        icon={Trophy}
-        iconColor="text-ferrari-yellow"
-      />
+    <div className="min-h-svh bg-gradient-to-br from-gray-100 via-gray-50 to-red-50 p-4 md:p-8">
+      <div className="mx-auto max-w-6xl space-y-8">
+        <BannerHeader
+          section="iRacing Profile"
+          title={data.user?.name || ""}
+          subTitle1="Profesional Driver"
+          subTitle2="Active Member"
+          onEdit={onEdit}
+        />
 
-      {/* Card */}
-      <div className="mx-auto max-w-6xl">
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
-          {/* Profile Header */}
-          <div className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-6">
-            <div className="flex items-start justify-between">
-              <div className="text-white">
-                <h2 className="mb-2 text-3xl font-bold md:text-4xl">
-                  {profile.memberName || ""}
-                  {profile.iracingId && (
-                    <span className="ml-3 text-xl font-normal text-red-200">
-                      #{profile.iracingId}
-                    </span>
-                  )}
-                </h2>
-                <div className="flex items-center gap-2 text-red-100">
-                  <User size={16} />
-                  <span>Professional Driver</span>
-                </div>
+        {/* Racing Categories */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Racing Disciplines
+          </h2>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-6">
+            {disciplines.map((val, idx) => (
+              <div
+                key={val.category}
+                className={cn(
+                  idx <= 2 ? "lg:col-span-2" : "",
+                  idx === 3 ? "lg:col-span-2 lg:col-start-2" : "",
+                  idx === 4 ? "lg:col-span-2 lg:col-start-4" : "",
+                )}
+              >
+                <CategoryCard
+                  title={val.category}
+                  icon={Car}
+                  iRating={val.iRating || 0}
+                  licenseClass={val.licenseClass}
+                  safetyRating={val.safetyRating || "0.0"}
+                  accentColor="bg-blue-600"
+                />
               </div>
+            ))}
+          </div>
+        </div>
 
-              {onEdit && (
-                <button
-                  onClick={onEdit}
-                  className="group relative flex transform items-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-red-700 hover:to-red-800 hover:shadow-xl"
-                >
-                  <Edit3 size={18} />
-                  <span>Edit</span>
-                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
-                </button>
-              )}
-            </div>
+        {/* Additional Info */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Driver Information
+          </h2>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <InfoCard
+              icon={Users}
+              label="Team"
+              value={data.profile.team || "N/a"}
+              accentColor="bg-purple-600"
+            />
+
+            <InfoCard
+              icon={MessageCircle}
+              label="Discord"
+              value={data.profile.discord || ""}
+              accentColor="bg-indigo-600"
+            />
           </div>
 
-          {/* Stats Grid */}
-          <div className="p-8">
-            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <StatCard icon={Trophy} label="iRating" value={profile.iRating} />
-
-              <StatCard
-                icon={Shield}
-                label="Safety Rating"
-                value={
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={cn(
-                        "rounded px-2 py-1 text-sm font-bold text-white",
-                        classColors[
-                          profile.safetyClass as keyof typeof classColors
-                        ],
-                      )}
-                    >
-                      {profile.safetyClass}
-                    </span>
-                    <span>{profile.safetyRating}</span>
-                  </div>
-                }
-              />
-
-              <StatCard icon={Users} label="Team" value={profile.team ?? "—"} />
-
-              <StatCard
-                icon={MessageCircle}
-                label="Discord"
-                value={profile.discord ?? "—"}
-              />
+          {/* Bio Section */}
+          <div className="rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-red-50 p-6">
+            <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-900">
+              <User className="text-red-600" size={24} />
+              Driver Bio
+            </h3>
+            <div className="prose max-w-none">
+              {data.profile.bio ? (
+                <p className="text-lg leading-relaxed text-gray-700">
+                  {data.profile.bio}
+                </p>
+              ) : (
+                <p className="text-lg text-gray-400 italic">No bio provided.</p>
+              )}
             </div>
-
-            {/* Bio Section */}
-            <div className="rounded-xl border-2 border-gray-200 bg-gradient-to-br from-gray-50 to-red-50 p-6">
-              <h3 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-900">
-                <User className="text-red-600" size={24} />
-                Driver Bio
-              </h3>
-              <div className="prose max-w-none">
-                {profile.bio ? (
-                  <p className="text-lg leading-relaxed text-gray-700">
-                    {profile.bio}
-                  </p>
-                ) : (
-                  <p className="text-lg text-gray-400 italic">
-                    No bio provided.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <AchievementBadges />
           </div>
         </div>
       </div>

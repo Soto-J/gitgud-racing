@@ -1,19 +1,14 @@
-import { safetyClassValues } from "@/db/schema";
-
 import z from "zod";
 
 export const profileInsertSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z.string().min(1, { message: "First name is required" }),
+  lastName: z.string().min(1, { message: "Last name is required" }),
   iRacingId: z.string(),
-  iRating: z.string(),
-  safetyClass: z.enum(safetyClassValues),
-  safetyRating: z.string(),
   team: z.string(),
   discord: z.string(),
   bio: z.string(),
 });
 
 export const profileUpdateSchema = profileInsertSchema.extend({
-  profileId: z.string().min(1, { message: "Id is required" }),
+  userId: z.string().min(1, { message: "Id is required" }),
 });

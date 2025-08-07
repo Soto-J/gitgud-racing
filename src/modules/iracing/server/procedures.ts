@@ -1,12 +1,20 @@
 import z from "zod";
 
+import { eq, getTableColumns } from "drizzle-orm";
+
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, iracingProcedure } from "@/trpc/init";
+import {
+  createTRPCRouter,
+  iracingProcedure,
+  syncIracingProfileProcedure,
+} from "@/trpc/init";
 
 import { IRACING_URL } from "@/constants";
+
 import { db } from "@/db";
-import { profile } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { license, profile, user } from "@/db/schema";
+
+import * as helper from "./helper";
 
 /*
 // "https://members-ng.iracing.com/data/member/info",
@@ -28,10 +36,8 @@ import { eq } from "drizzle-orm";
 */
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
-    console.log({ ctx });
-
     try {
-      console.log("Making request to:", `${IRACING_URL}/doc`);
+      console.log("Making request to:", `${IRACING_URL}/data/doc`);
 
       const response = await fetch(`${IRACING_URL}/doc`, {
         headers: {
@@ -59,127 +65,59 @@ export const iracingRouter = createTRPCRouter({
     }
   }),
 
-  getUser: iracingProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ ctx, input }) => {
-
-      const [member] = await db
-        .select({ custId: profile.iracingId })
-        .from(profile)
-        .where(eq(profile.userId, input.userId));
-
-      if (!member?.custId) {
-        return {
-          success: false,
-          error: "NO_IRACING_ID",
-          message: "No iRacing ID found for this user",
-          data: null,
-        };
-      }
-
-      try {
-        const response = await fetch(
-          `${IRACING_URL}/member/get?cust_ids=${member.custId}`,
-          // `${IRACING_URL}/member/get`,
-          {
-            headers: {
-              Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
-            },
-          },
-        );
-
-        if (!response) {
-          console.log({ response });
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Problem fetching iRacing User",
-          });
-        }
-        const { link } = await response.json();
-        const linkResponse = await fetch(link);
-
-        const data = await linkResponse.json();
-
-        return data;
-      } catch (error) {
-        console.log(error);
-        return error;
-      }
-    }),
-});
-
-const fetchData = async ({
-  query,
-  authCookie,
-}: {
-  query: string;
-  authCookie: string;
-}) => {
-  try {
-    const initialResponse = await fetch(`${IRACING_URL}${query}`, {
-      headers: {
-        Cookie: `authtoken_members=${authCookie}`,
-      },
-    });
-
-    if (!initialResponse.ok) {
-      throw new Error(
-        `Failed to get data link. Status: ${initialResponse.status}`,
-      );
-    }
-
-    const { link } = await initialResponse.json();
-
-    if (!link) throw new Error(`Failed to get data link`);
-
-    const linkResponse = await fetch(link);
-
-    if (!linkResponse.ok) {
-      throw new Error(
-        `Failed to fetch data from the provided link. Status ${linkResponse.status}`,
-      );
-    }
-
-    return await linkResponse.json();
-  } catch (error) {
-    console.error("iRacing API error:", error);
-
-    if (error instanceof Error) {
-      if (error.message.includes("401")) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "iRacing authentication failed.",
-        });
-      }
-
-      if (
-        error.message.includes("404") ||
-        error.message.includes("did not contain a data link")
-      ) {
+  getUser: syncIracingProfileProcedure
+    .input(
+      z.object({
+        userId: z.string().nullish(),
+      }),
+    )
+    .query(async ({ input }) => {
+      if (!input?.userId) {
+        console.error({ code: "NOT_FOUND", message: "userId not found" });
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Requested iRacing resource not found.",
+          message: "userId not found",
         });
       }
 
-      if (error.message.includes("Failed to parse")) {
+      const result = await db
+        .select({
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          },
+          profile: {
+            id: profile.id,
+            iracingId: profile.iracingId,
+            discord: profile.discord,
+            team: profile.team,
+            bio: profile.bio,
+            isActive: profile.isActive,
+          },
+          // License fields (will be null if no license exists)
+          licenses: { ...getTableColumns(license) },
+        })
+        .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
+        .leftJoin(license, eq(license.userId, user.id))
+        .where(eq(user.id, input.userId))
+        .then((value) => value[0]);
+
+      if (!result) {
         throw new TRPCError({
-          code: "PARSE_ERROR",
-          message: "Failed to parse iRacing API response.",
+          code: "NOT_FOUND",
+          message: "User not found",
         });
       }
 
-      // Default generic error
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: error.message,
-      });
-    }
+      const member = helper.transformMemberLicenses(result);
 
-    // Fallback for non-Error objects
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "An unknown error occurred while fetching iRacing data.",
-    });
-  }
-};
+      return {
+        isError: false,
+        error: null,
+        message: "User found",
+        data: member,
+      };
+    }),
+});

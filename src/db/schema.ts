@@ -7,36 +7,12 @@ import {
   timestamp,
   boolean,
   mysqlEnum,
-  float,
   int,
+  decimal,
 } from "drizzle-orm/mysql-core";
 
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
 export const safetyClass = mysqlEnum("safety_class", safetyClassValues);
-
-export const profile = mysqlTable("profile", {
-  id: varchar("id", { length: 21 })
-    .primaryKey()
-    .$default(() => nanoid()),
-
-  userId: varchar("user_id", { length: 36 })
-    .notNull()
-    .unique()
-    .references(() => user.id, { onDelete: "cascade" }),
-
-  iracingId: text("iracing_id"),
-  isActive: boolean("isActive").notNull().default(false),
-  iRating: int("i_rating").notNull().default(0),
-  safetyClass: safetyClass.notNull().default("R"),
-  safetyRating: float("safety_rating").notNull().default(0.0),
-
-  discord: varchar("discord", { length: 37 }).default(""),
-  team: varchar("team", { length: 20 }).default(""),
-  bio: text("bio").default(""),
-
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
 
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 }).primaryKey(),
@@ -137,4 +113,89 @@ export const iracingAuth = mysqlTable("iracing_auth", {
 
   // Status
   isActive: boolean("is_active").default(true),
+});
+
+export const profile = mysqlTable("profile", {
+  id: varchar("id", { length: 21 })
+    .notNull()
+    .primaryKey()
+    .$default(() => nanoid()),
+  userId: varchar("user_id", { length: 36 })
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  iracingId: text("iracing_id"),
+  isActive: boolean("is_active").notNull().default(false),
+
+  discord: varchar("discord", { length: 37 }).default(""),
+  team: varchar("team", { length: 20 }).default(""),
+  bio: text("bio").default(""),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const license = mysqlTable("license", {
+  id: varchar("id", { length: 21 })
+    .notNull()
+    .primaryKey()
+    .$default(() => nanoid()),
+  userId: varchar("user_id", { length: 36 })
+    .notNull()
+    .unique()
+    .references(() => user.id),
+
+  // Oval
+  ovalIRating: int("oval_i_rating"),
+  ovalSafetyRating: decimal("oval_safety_rating", { precision: 4, scale: 2 }),
+  ovalLicenseClass: mysqlEnum("oval_license_class", safetyClassValues)
+    .notNull()
+    .default("R"),
+
+  // Sports Car
+  sportsCarIRating: int("sports_car_i_rating"),
+  sportsCarSafetyRating: decimal("sports_car_safety_rating", {
+    precision: 4,
+    scale: 2,
+  }),
+  sportsCarLicenseClass: mysqlEnum("sports_license_class", safetyClassValues)
+    .notNull()
+    .default("R"),
+
+  // Formula Car
+  formulaCarIRating: int("formula_car_i_rating"),
+  formulaCarSafetyRating: decimal("formula_car_safety_rating", {
+    precision: 4,
+    scale: 2,
+  }),
+  formulaCarLicenseClass: mysqlEnum("formula_license_class", safetyClassValues)
+    .notNull()
+    .default("R"),
+
+  // Dirt oval road
+  dirtOvalIRating: int("dirt_oval_i_rating"),
+  dirtOvalSafetyRating: decimal("dirt_oval_safety_rating", {
+    precision: 4,
+    scale: 2,
+  }),
+  dirtOvalLicenseClass: mysqlEnum("dirt_oval_license_class", safetyClassValues)
+    .notNull()
+    .default("R"),
+
+  // Dirt road
+  dirtRoadIRating: int("dirt_road_i_rating"),
+  dirtRoadSafetyRating: decimal("dirt_road_safety_rating", {
+    precision: 4,
+    scale: 2,
+  }),
+  dirtRoadLicenseClass: mysqlEnum("dirt_road_license_class", safetyClassValues)
+    .notNull()
+    .default("R"),
+
+  // Meta fields
+  lastIracingSync: timestamp("last_iracing_sync"),
+
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });

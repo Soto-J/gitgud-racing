@@ -26,10 +26,12 @@ export const MembersListHeader = () => {
   return (
     <div className="space-y-4 p-4 md:p-8">
       <BannerHeader
+        section="Racing League Members"
         title="Git Gud Fam"
-        description="Racing League Members"
-        icon={Car}
+        subTitle1="x Members"
+        subTitle2="x Active"
         iconColor="text-ferrari-yellow"
+        icon={Car}
       />
 
       <ScrollArea>

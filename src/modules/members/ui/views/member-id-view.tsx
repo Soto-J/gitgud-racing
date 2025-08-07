@@ -15,10 +15,10 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   const trpc = useTRPC();
 
   const { data } = useSuspenseQuery(
-    trpc.profile.getOne.queryOptions({ userId }),
+    trpc.iracing.getUser.queryOptions({ userId }),
   );
 
-  return <ProfileCard profile={data} />;
+  return <ProfileCard data={data.data} />;
 };
 
 export const LoadingMemberIdView = () => (

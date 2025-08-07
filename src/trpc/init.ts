@@ -6,12 +6,12 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { iracingAuth, user } from "@/db/schema";
+import { iracingAuth, license, profile } from "@/db/schema";
 
 import { auth } from "@/lib/auth";
 
 import { getIracingAuthCookie } from "@/lib/iracing-auth";
-import { COOKIE_EXPIRES_IN_MS } from "@/constants";
+import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -19,6 +19,7 @@ export const createTRPCContext = cache(async () => {
    */
   return { userId: "user_123" };
 });
+
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable
@@ -29,6 +30,7 @@ const t = initTRPC.create({
    */
   // transformer: superjson,
 });
+
 // Base router and procedure helpers
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
@@ -59,10 +61,11 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
-    const [iracingAuthData] = await db
+    const iracingAuthData = await db
       .select()
       .from(iracingAuth)
-      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!));
+      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!))
+      .then((value) => value[0]);
 
     const isValid =
       iracingAuthData?.expiresAt && iracingAuthData.expiresAt > new Date();
@@ -79,7 +82,7 @@ export const iracingProcedure = protectedProcedure.use(
 
     console.log("Refreshing iRacing auth...");
     const authCookie = await getIracingAuthCookie();
-    
+
     await db
       .insert(iracingAuth)
       .values({
@@ -95,10 +98,11 @@ export const iracingProcedure = protectedProcedure.use(
         },
       });
 
-    const [refreshedAuth] = await db
+    const refreshedAuth = await db
       .select()
       .from(iracingAuth)
-      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!));
+      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!))
+      .then((value) => value[0]);
 
     return next({
       ctx: {
@@ -108,3 +112,107 @@ export const iracingProcedure = protectedProcedure.use(
     });
   },
 );
+
+export const syncIracingProfileProcedure = iracingProcedure.use(
+  async ({ ctx, next }) => {
+    const user = await db
+      .select()
+      .from(profile)
+      .leftJoin(license, eq(license.userId, ctx.auth.user.id))
+      .where(eq(profile.userId, ctx.auth.user.id))
+      .then((value) => value[0]);
+
+    // If user hasn't input an iracingId/custId return
+    if (!user.profile?.iracingId) {
+      return next({ ctx });
+    }
+
+    // Check if we need to sync (e.g., data is stale)
+    const shouldSync =
+      !user?.license?.lastIracingSync ||
+      new Date().getTime() - user.license.lastIracingSync.getTime() >
+        24 * 60 * 60 * 1000; // 24 hours
+
+    if (!shouldSync) {
+      return next({ ctx });
+    }
+
+    try {
+      // Fetch from iRacing API
+      const response = await fetch(
+        `${IRACING_URL}/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
+        {
+          headers: {
+            Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        return next({ ctx });
+      }
+
+      const { link } = await response.json();
+      const dataResponse = await fetch(link);
+      const iracingData = await dataResponse.json();
+
+      const licenses = iracingData.members[0].licenses;
+
+      if (!licenses) {
+        console.error("No licenses found on iRacing api");
+        return next({ ctx });
+      }
+
+      // console.log({ licenses });
+      const insertValues = transformLicenseData(licenses);
+      console.log({ insertValues });
+
+      await db
+        .insert(license)
+        .values({
+          ...insertValues,
+          userId: ctx.auth.user.id,
+          lastIracingSync: new Date(),
+        })
+        .onDuplicateKeyUpdate({
+          set: {
+            ...insertValues,
+            lastIracingSync: new Date(),
+          },
+        });
+
+      console.log("iRacing profile data synced");
+      return next({ ctx });
+    } catch (error) {
+      console.error("Failed to sync iRacing data:", error);
+      return next({ ctx });
+    }
+  },
+);
+
+const transformLicenseData = (licenses: any[]) => {
+  const categoryMap = {
+    oval: "oval",
+    sports_car: "sportsCar",
+    formula_car: "formulaCar",
+    dirt_oval: "dirtOval",
+    dirt_road: "dirtRoad",
+  } as const;
+
+  return licenses.reduce((acc, license) => {
+    const category = categoryMap[license.category as keyof typeof categoryMap];
+
+    if (!category) return acc;
+
+    const licenseClass = license.group_name.replace("Class ", "").trim();
+
+    return {
+      ...acc,
+      [`${category}IRating`]: license.irating,
+      [`${category}SafetyRating`]: license.safety_rating,
+      [`${category}LicenseClass`]:
+        licenseClass === "Rookie" ? "R" : licenseClass,
+    };
+  }, {});
+};
+

@@ -6,11 +6,9 @@ import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { profile, user } from "@/db/schema";
+import { license, profile, user } from "@/db/schema";
 
 import { profileUpdateSchema } from "@/modules/profile/schema";
-
-import { authClient } from "@/lib/auth-client";
 
 export const profileRouter = createTRPCRouter({
   getMany: protectedProcedure.query(async () => {
@@ -18,21 +16,35 @@ export const profileRouter = createTRPCRouter({
   }),
 
   getOne: protectedProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(
+      z.object({
+        userId: z.string().nullish(),
+      }),
+    )
     .query(async ({ input }) => {
-      const [profileWithUser] = await db
+      if (!input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User ID is missing",
+        });
+      }
+
+      const profileWithUser = await db
         .select({
           ...getTableColumns(profile),
+          ...getTableColumns(license),
           memberName: user.name,
         })
         .from(profile)
-        .innerJoin(user, eq(profile.userId, user.id))
-        .where(eq(profile.userId, input.userId));
+        .innerJoin(user, eq(profile.userId, input.userId))
+        .leftJoin(license, eq(license.userId, input.userId)) // gets profile even if there's no license
+        .where(eq(profile.userId, input.userId))
+        .then((results) => results[0]);
 
       if (!profileWithUser) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Problem fetching user profile",
+          message: `Profile not found for user_id: ${input.userId}`,
         });
       }
 
@@ -71,23 +83,21 @@ export const profileRouter = createTRPCRouter({
     .input(profileUpdateSchema)
     .mutation(async ({ ctx, input }) => {
       // Update profile table
-      const [result] = await db
+      const result = await db
         .update(profile)
         .set({
           iracingId: input.iRacingId,
-          iRating: Number(input.iRating),
-          safetyClass: input.safetyClass,
-          safetyRating: Number(input.safetyRating),
           team: input.team,
           discord: input.discord,
           bio: input.bio,
         })
         .where(
           and(
-            eq(profile.id, input.profileId),
+            eq(profile.id, input.userId),
             eq(profile.userId, ctx.auth.user.id),
           ),
-        );
+        )
+        .then((result) => result[0]);
 
       if (!result) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
@@ -96,23 +106,12 @@ export const profileRouter = createTRPCRouter({
       const { firstName, lastName } = input;
       const name = `${firstName.trim()} ${lastName.trim()}`;
 
-      // Update authclient user
-      // const authResponse = await authClient.updateUser({ name });
-
-      // if (!authResponse.data?.status) {
-      //   throw new TRPCError({
-      //     code: "INTERNAL_SERVER_ERROR",
-      //     message: "Problem updating better auth user name",
-      //   });
-      // }
-
-      // Update user table
       await db.update(user).set({ name }).where(eq(user.id, ctx.auth.user.id));
 
       const [editedProfile] = await db
         .select()
         .from(profile)
-        .where(eq(profile.id, input.profileId));
+        .where(eq(profile.userId, input.userId));
 
       return editedProfile;
     }),
