@@ -134,7 +134,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       !lastSync ||
       new Date().getTime() - lastSync.getTime() > 24 * 60 * 60 * 1000; // 24 hours
 
-    if (!shouldSync) {
+    if (!shouldSync && lastSync) {
       console.log("Using cached iRacing userData Data");
       return next({ ctx });
     }
