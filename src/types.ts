@@ -11,3 +11,10 @@ export type IracingLicense = {
   irating: number;
   safety_rating: string;
 };
+
+export type LicenseData = {
+  [K in `${string}${"IRating" | "SafetyRating" | "LicenseClass"}`]:
+    | string
+    | number
+    | null;
+};

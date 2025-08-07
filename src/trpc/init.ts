@@ -12,7 +12,7 @@ import { auth } from "@/lib/auth";
 
 import { getIracingAuthCookie } from "@/lib/iracing-auth";
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
-import { IracingLicense } from "@/types";
+import { IracingLicense, LicenseData } from "@/types";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -138,7 +138,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       console.log("Using cached iRacing userData Data");
       return next({ ctx });
     }
-    
+
     // Otherwise we either update or create licenses for user
     try {
       // Fetch from iRacing API
@@ -167,7 +167,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       }
 
       const insertValues = transformLicenseData(licenses);
-
+      console.log(insertValues);
       await db
         .insert(license)
         .values({
@@ -185,7 +185,10 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       console.log("iRacing profile data synced");
       return next({ ctx });
     } catch (error) {
-      console.error("Failed to sync iRacing data:", error);
+      if (error instanceof Error) {
+        console.error("Failed to sync iRacing data:", error.message);
+      }
+
       return next({ ctx });
     }
   },
@@ -200,18 +203,23 @@ const transformLicenseData = (licenses: IracingLicense[]) => {
     dirt_road: "dirtRoad",
   } as const;
 
-  return licenses.reduce((acc, license) => {
-    const category = categoryMap[license.category as keyof typeof categoryMap];
+  return licenses.reduce(
+    (acc, license) => {
+      const category =
+        categoryMap[license.category as keyof typeof categoryMap];
 
-    if (!category) return acc;
+      if (!category) return acc;
 
-    const licenseClass = license.group_name.replace("Class ", "").trim() || "R";
+      const licenseClass = license.group_name.replace("Class ", "").trim();
 
-    return {
-      ...acc,
-      [`${category}IRating`]: license.irating,
-      [`${category}SafetyRating`]: license.safety_rating,
-      [`${category}LicenseClass`]: licenseClass,
-    };
-  }, {});
+      return {
+        ...acc,
+        [`${category}IRating`]: license.irating,
+        [`${category}SafetyRating`]: license.safety_rating,
+        [`${category}LicenseClass`]:
+          licenseClass === "Rookie" ? "R" : licenseClass,
+      };
+    },
+    {} as Record<string, any>,
+  );
 };
