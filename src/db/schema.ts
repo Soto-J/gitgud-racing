@@ -125,7 +125,7 @@ export const profile = mysqlTable("profile", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  iracingId: text("iracing_id"),
+  iracingId: varchar("iracing_id", { length: 10 }).unique(),
   isActive: boolean("is_active").notNull().default(false),
 
   discord: varchar("discord", { length: 37 }).default(""),

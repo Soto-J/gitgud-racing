@@ -20,7 +20,6 @@ interface ProfileCardProps {
 }
 
 export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
-  console.log("data", data);
   const disciplines = data.licenses?.disciplines || [];
 
   return (

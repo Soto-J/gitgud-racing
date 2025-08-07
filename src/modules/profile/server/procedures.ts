@@ -87,7 +87,7 @@ export const profileRouter = createTRPCRouter({
         .update(profile)
         .set({
           iracingId: input.iRacingId,
-          team: input.team,
+          // team: input.team,
           discord: input.discord,
           bio: input.bio,
         })

@@ -23,15 +23,13 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
     trpc.iracing.getUser.queryOptions({ userId }, { retry: false }),
   );
 
-  console.log(data);
   return (
     <>
-      {/* TODO */}
-      {/* <EditProfileDialog
+      <EditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={data}
-      /> */}
+        initialValues={data?.data}
+      />
 
       <ProfileCard data={data?.data} onEdit={() => setOpenDialog(true)} />
     </>

@@ -10,7 +10,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { profileInsertSchema } from "@/modules/profile/schema";
-import { ProfileGetOne } from "@/modules/profile/types";
+
+import { UserGetOne } from "@/modules/iracing/types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,7 @@ import {
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: ProfileGetOne;
+  initialValues: UserGetOne["data"];
 }
 
 export const EditProfileDialog = ({
@@ -37,16 +38,16 @@ export const EditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) => {
-  const [firstName, lastName] = initialValues.memberName.split(" ");
+  const [firstName, lastName] = initialValues.user.name.split(" ");
 
   const form = useForm<z.infer<typeof profileInsertSchema>>({
     resolver: zodResolver(profileInsertSchema),
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
-      iRacingId: initialValues?.iracingId || "0",
-      discord: initialValues?.discord ?? "",
-      bio: initialValues?.bio ?? "",
+      iRacingId: initialValues.profile.iracingId || "0",
+      discord: initialValues.profile.discord ?? "",
+      bio: initialValues?.profile.bio ?? "",
     },
   });
 
@@ -58,7 +59,7 @@ export const EditProfileDialog = ({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.profile.getOne.queryOptions({
-            userId: initialValues.userId,
+            userId: initialValues.user.id,
           }),
         );
 
@@ -74,8 +75,9 @@ export const EditProfileDialog = ({
   );
 
   const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
+    console.log("TESTING");
     editProfile.mutate({
-      userId: initialValues.userId || "",
+      userId: initialValues.user.id || "",
       ...values,
     });
   };
@@ -92,7 +94,7 @@ export const EditProfileDialog = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="max-h-[80vh] overflow-hidden"
         >
-          <ScrollArea className="h-[400px]">
+          <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
               <FormField
                 name="firstName"
@@ -120,6 +122,8 @@ export const EditProfileDialog = ({
                     <FormControl>
                       <Input placeholder="Smith" {...field} />
                     </FormControl>
+
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -132,7 +136,7 @@ export const EditProfileDialog = ({
                     <FormLabel>IRacing ID</FormLabel>
 
                     <FormControl>
-                      <Input placeholder="" type="number" {...field} />
+                      <Input placeholder="" {...field} />
                     </FormControl>
 
                     <FormMessage />
