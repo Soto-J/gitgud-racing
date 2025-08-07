@@ -1,5 +1,10 @@
 import { license } from "@/db/schema";
 import { InferSelectModel } from "drizzle-orm";
+import { inferRouterOutputs } from "@trpc/server";
+
+import { AppRouter } from "@/trpc/routers/_app";
+
+export type UserGetOne = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
 
 type user = {
   id: string;
@@ -40,8 +45,3 @@ export type GetUserResponse = {
   } | null;
 };
 
-import { inferRouterOutputs } from "@trpc/server";
-
-import { AppRouter } from "@/trpc/routers/_app";
-
-export type UserGetOne = inferRouterOutputs<AppRouter>["iracing"]["getUser"];

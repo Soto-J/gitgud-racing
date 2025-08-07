@@ -12,7 +12,12 @@ import { auth } from "@/lib/auth";
 
 import { getIracingAuthCookie } from "@/lib/iracing-auth";
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
-import { IracingLicense, LicenseData } from "@/types";
+import {
+  IRacingFetchResult,
+  IracingLicense,
+  LicenseData,
+  TransformLicenseData,
+} from "@/types";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -157,8 +162,9 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
 
       const { link } = await response.json();
       const dataResponse = await fetch(link);
-      const iracingData = await dataResponse.json();
-
+      const iracingData: IRacingFetchResult = await dataResponse.json();
+      console.log({ iracingData });
+      
       const licenses = iracingData.members[0].licenses;
 
       if (!licenses) {
@@ -166,18 +172,19 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
         return next({ ctx });
       }
 
-      const insertValues = transformLicenseData(licenses);
-      console.log(insertValues);
+      const transformedData = transformLicenseData(licenses);
+
+      console.log(transformedData);
       await db
         .insert(license)
         .values({
-          ...insertValues,
+          ...transformedData,
           userId: ctx.auth.user.id,
           lastIracingSync: new Date(),
         })
         .onDuplicateKeyUpdate({
           set: {
-            ...insertValues,
+            ...transformedData,
             lastIracingSync: new Date(),
           },
         });
@@ -194,7 +201,9 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
   },
 );
 
-const transformLicenseData = (licenses: IracingLicense[]) => {
+const transformLicenseData = (
+  licenses: IracingLicense[],
+): TransformLicenseData => {
   const categoryMap = {
     oval: "oval",
     sports_car: "sportsCar",
@@ -203,23 +212,30 @@ const transformLicenseData = (licenses: IracingLicense[]) => {
     dirt_road: "dirtRoad",
   } as const;
 
-  return licenses.reduce(
-    (acc, license) => {
-      const category =
-        categoryMap[license.category as keyof typeof categoryMap];
+  // Ensure only return valid license classes
+  const normalizeClass = (cls: string): "A" | "B" | "C" | "D" | "R" => {
+    if (cls === "Rookie") return "R";
 
-      if (!category) return acc;
+    if (["A", "B", "C", "D", "R"].includes(cls)) {
+      return cls as "A" | "B" | "C" | "D" | "R";
+    }
 
-      const licenseClass = license.group_name.replace("Class ", "").trim();
+    return "R";
+  };
 
-      return {
-        ...acc,
-        [`${category}IRating`]: license.irating,
-        [`${category}SafetyRating`]: license.safety_rating,
-        [`${category}LicenseClass`]:
-          licenseClass === "Rookie" ? "R" : licenseClass,
-      };
-    },
-    {} as Record<string, any>,
-  );
+  return licenses.reduce((acc, license) => {
+    const category = categoryMap[license.category as keyof typeof categoryMap];
+
+    if (!category) return acc;
+
+    const licenseClass = license.group_name.replace("Class ", "").trim();
+    const normalizedClass = licenseClass === "Rookie" ? "R" : licenseClass;
+
+    return {
+      ...acc,
+      [`${category}IRating`]: license.irating,
+      [`${category}SafetyRating`]: license.safety_rating.toFixed(2),
+      [`${category}LicenseClass`]: normalizeClass(normalizedClass),
+    };
+  }, {} as TransformLicenseData);
 };
