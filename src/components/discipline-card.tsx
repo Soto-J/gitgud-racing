@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
-interface CategoryCardProps {
+interface DisciplineCardProps {
   icon: LucideIcon;
   title: string;
   iRating: number;
@@ -18,13 +18,13 @@ const classColors = {
   "A+": "bg-purple-600",
 };
 
-export const CategoryCard = ({
+export const DisciplineCard = ({
   title,
   icon: Icon,
   iRating,
   safetyRating,
   licenseClass,
-}: CategoryCardProps) => {
+}: DisciplineCardProps) => {
   const accentColor = classColors[licenseClass as keyof typeof classColors];
 
   return (

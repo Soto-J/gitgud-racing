@@ -12,8 +12,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <SidebarProvider>
       <DashboardSidebar />
 
-      <main className="bg-muted flex h-screen w-screen flex-col">
-        <DashboardNavbar />
+      <main className="bg-muted flex h-screen w-screen flex-col py-8">
+        {/* <DashboardNavbar /> */}
         {children}
       </main>
     </SidebarProvider>

@@ -3,14 +3,14 @@ import { TRPCError } from "@trpc/server";
 import { IRACING_URL } from "@/constants";
 
 import {
-  DrizzleRawUsereData,
-  GetUserResponse,
+  TransformLicensesInput,
+  TransformLicensesOutput,
   LicenseDiscipline,
-} from "../types";
+} from "@/modules/iracing/types";
 
-const transformMemberLicenses = (
-  member: DrizzleRawUsereData,
-): GetUserResponse => {
+const transformLicenses = (
+  member: TransformLicensesInput,
+): TransformLicensesOutput => {
   if (!member?.licenses) {
     const { licenses, ...restData } = member;
     return {
@@ -89,11 +89,14 @@ const fetchData = async ({
       );
     }
 
-    const { link } = await initialResponse.json();
+    const data = await initialResponse.json();
 
-    if (!link) throw new Error(`Failed to get data link`);
+    // Only request that doesnt require a link is documentation
+    if (!data?.link) {
+      return data;
+    }
 
-    const linkResponse = await fetch(link);
+    const linkResponse = await fetch(data.link);
 
     if (!linkResponse.ok) {
       throw new Error(
@@ -145,4 +148,4 @@ const fetchData = async ({
   }
 };
 
-export { transformMemberLicenses, fetchData };
+export { transformLicenses, fetchData };

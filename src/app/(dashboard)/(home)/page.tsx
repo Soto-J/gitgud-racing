@@ -13,7 +13,6 @@ const DashboardPage = async () => {
 
   // const queryClient = getQueryClient();
   // void queryClient.prefetchQuery(trpc.iracing.getDocumentation.queryOptions());
-
   return <HomeView />;
 };
 

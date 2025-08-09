@@ -2,13 +2,17 @@ import CryptoJS from "crypto-js";
 
 import { TRPCError } from "@trpc/server";
 
+import { IRACING_URL } from "@/constants";
+
 export async function getIracingAuthCookie() {
   const hashedPassword = CryptoJS.enc.Base64.stringify(
     CryptoJS.SHA256(
       process.env.IRACING_PASSWORD! + process.env.IRACING_EMAIL!.toLowerCase(),
     ),
   );
-  const response = await fetch("https://members-ng.iracing.com/auth", {
+
+  console.log({ hashedPassword });
+  const response = await fetch(`${IRACING_URL}/auth`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

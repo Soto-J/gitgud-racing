@@ -9,15 +9,15 @@ import { db } from "@/db";
 import { iracingAuth, license, profile } from "@/db/schema";
 
 import { auth } from "@/lib/auth";
-
 import { getIracingAuthCookie } from "@/lib/iracing-auth";
+
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
+
 import {
   IRacingFetchResult,
-  IracingLicense,
-  LicenseData,
+  IRacingLicense,
   TransformLicenseData,
-} from "@/types";
+} from "@/modules/iracing/types";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -148,7 +148,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
     try {
       // Fetch from iRacing API
       const response = await fetch(
-        `${IRACING_URL}/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
+        `${IRACING_URL}/data/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
         {
           headers: {
             Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
@@ -164,7 +164,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       const dataResponse = await fetch(link);
       const iracingData: IRacingFetchResult = await dataResponse.json();
       console.log({ iracingData });
-      
+
       const licenses = iracingData.members[0].licenses;
 
       if (!licenses) {
@@ -202,7 +202,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
 );
 
 const transformLicenseData = (
-  licenses: IracingLicense[],
+  licenses: IRacingLicense[],
 ): TransformLicenseData => {
   const categoryMap = {
     oval: "oval",
