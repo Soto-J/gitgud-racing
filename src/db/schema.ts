@@ -11,9 +11,6 @@ import {
   decimal,
 } from "drizzle-orm/mysql-core";
 
-export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
-export const safetyClass = mysqlEnum("safety_class", safetyClassValues);
-
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 }).primaryKey(),
   name: text("name").notNull(),
@@ -135,6 +132,8 @@ export const profile = mysqlTable("profile", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
 
 export const license = mysqlTable("license", {
   id: varchar("id", { length: 21 })

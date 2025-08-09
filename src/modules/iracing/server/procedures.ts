@@ -3,21 +3,25 @@ import z from "zod";
 import { eq, getTableColumns } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import {
-  createTRPCRouter,
-  iracingProcedure,
-  syncIracingProfileProcedure,
-} from "@/trpc/init";
 
 import { IRACING_URL } from "@/constants";
 
 import { db } from "@/db";
 import { license, profile, user } from "@/db/schema";
 
-import * as helper from "./helper";
+import {
+  createTRPCRouter,
+  iracingProcedure,
+  syncIracingProfileProcedure,
+} from "@/trpc/init";
 
-/*
-// "https://members-ng.iracing.com/data/member/info",
+import * as helper from "@/modules/iracing/server/helper";
+
+export const iracingRouter = createTRPCRouter({
+  getDocumentation: iracingProcedure.query(async ({ ctx }) => {
+    /*
+    Notes:
+  "https://members-ng.iracing.com/data/member/info",
 
   body: {
     all: {
@@ -34,35 +38,13 @@ import * as helper from "./helper";
     }
   }
 */
-export const iracingRouter = createTRPCRouter({
-  getDocumentation: iracingProcedure.query(async ({ ctx }) => {
-    try {
-      console.log("Making request to:", `${IRACING_URL}/data/doc`);
 
-      const response = await fetch(`${IRACING_URL}/doc`, {
-        headers: {
-          Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
-        },
-      });
+    console.log("Making request to:", `${IRACING_URL}/data/doc`);
 
-      if (!response.ok) {
-        return {
-          success: false,
-          message: "Error: Problem fetching iRacing documentation",
-          data: null,
-        };
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      return {
-        success: false,
-        message: "Failed to fetch documentation",
-        error: error,
-        data: null,
-      };
-    }
+    return await helper.fetchData({
+      query: `/data/doc`,
+      authCookie: ctx.iracingAuthData.authCookie,
+    });
   }),
 
   getUser: syncIracingProfileProcedure
@@ -95,7 +77,6 @@ export const iracingRouter = createTRPCRouter({
             bio: profile.bio,
             isActive: profile.isActive,
           },
-          // License fields (will be null if no license exists)
           licenses: { ...getTableColumns(license) },
         })
         .from(user)
@@ -111,7 +92,7 @@ export const iracingRouter = createTRPCRouter({
         });
       }
 
-      const member = helper.transformMemberLicenses(result);
+      const member = helper.transformLicenses(result);
 
       return {
         isError: false,

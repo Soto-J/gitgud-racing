@@ -8,7 +8,7 @@ import {
   Mountain,
 } from "lucide-react";
 
-import { CategoryCard } from "./category-card";
+import { DisciplineCard } from "./discipline-card";
 import { BannerHeader } from "./banner-header";
 import { InfoCard } from "./info-card";
 import { UserGetOne } from "@/modules/iracing/types";
@@ -54,7 +54,7 @@ export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
           licenseClass: "R",
         },
       ];
-      
+
   return (
     <div className="bg-gradient-to-br from-gray-100 via-gray-50 to-red-100 p-4 md:p-8">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -62,12 +62,12 @@ export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
           section="iRacing Profile"
           title={data.user?.name || ""}
           subTitle1="Professional Driver"
-          subTitle2="Active Member"
+          subTitle2={`${data.profile.isActive ? "Active" : "Inactive"} member`}
           onEdit={onEdit}
         />
 
         {/* Racing Categories */}
-        <div className="space-y-6">
+        <div className="space-y-6 py-6">
           <h2 className="text-2xl font-bold text-gray-900">
             Racing Disciplines
           </h2>
@@ -82,7 +82,7 @@ export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
                   idx === 4 ? "lg:col-span-2 lg:col-start-4" : "",
                 )}
               >
-                <CategoryCard
+                <DisciplineCard
                   title={val.category}
                   icon={Car}
                   iRating={val.iRating || 0}
@@ -95,7 +95,7 @@ export const ProfileCard = ({ data, onEdit }: ProfileCardProps) => {
         </div>
 
         {/* Additional Info */}
-        <div className="space-y-6">
+        <div className="space-y-6 py-6">
           <h2 className="text-2xl font-bold text-gray-900">
             Driver Information
           </h2>
