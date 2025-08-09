@@ -11,7 +11,6 @@ export async function getIracingAuthCookie() {
     ),
   );
 
-  console.log({ hashedPassword });
   const response = await fetch(`${IRACING_URL}/auth`, {
     method: "POST",
     headers: {
