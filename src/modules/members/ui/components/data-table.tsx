@@ -7,6 +7,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { cn } from "@/lib/utils";
+
 import {
   Table,
   TableBody,
@@ -63,7 +65,10 @@ export function DataTable<TData, TValue>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 onClick={() => onRowClick?.(row.original)}
-                className={`hover:bg-ferrari-dark-red cursor-pointer border-b border-zinc-800 transition-colors duration-150 ${index % 2 === 0 ? "bg-zinc-900" : "bg-black"} `}
+                className={cn(
+                  "hover:bg-ferrari-dark-red cursor-pointer border-b border-zinc-800 transition-colors duration-150",
+                  index % 2 === 0 ? "bg-zinc-900" : "bg-black",
+                )}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell

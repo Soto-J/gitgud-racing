@@ -2,6 +2,9 @@
 
 import { Car, XCircleIcon } from "lucide-react";
 
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
+
 import { DEFAULT_PAGE } from "@/constants";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
@@ -17,6 +20,11 @@ export const MembersListHeader = () => {
 
   const isFilterActive = !!filters.search;
 
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(
+    trpc.members.getMany.queryOptions({ ...filters }),
+  );
+
   const onClearFilters = () =>
     setFilters({
       search: "",
@@ -24,18 +32,18 @@ export const MembersListHeader = () => {
     });
 
   return (
-    <div className="space-y-4 p-4 md:p-8">
+    <div className="mx-auto max-w-7xl space-y-4 p-4 md:p-8">
       <BannerHeader
         section="Racing League Members"
         title="Git Gud Fam"
-        subTitle1="x Members"
-        subTitle2="x Active"
+        subTitle1={`${data.total} Members`}
+        subTitle2={`${data.totalActive} Active`}
         iconColor="text-ferrari-yellow"
         icon={Car}
       />
 
       <ScrollArea>
-        <div className="flex items-center gap-x-2 p-1">
+        <div className="flex items-center gap-x-2 pt-6 pl-1">
           <MembersSearchFilter />
 
           {isFilterActive && (

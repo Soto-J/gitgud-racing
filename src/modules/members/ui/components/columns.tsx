@@ -1,20 +1,23 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MemberGetOne } from "@/modules/members/types";
+import { MembersGetOne } from "@/modules/members/types";
+import { cn } from "@/lib/utils";
 
-export const columns: ColumnDef<MemberGetOne>[] = [
+export const columns: ColumnDef<MembersGetOne>[] = [
   {
-    accessorKey: "status",
+    accessorKey: "isActive",
     header: "Status",
     cell: ({ row }) => {
       return (
         <span
-          className={
-            true ? "font-medium text-green-600" : "font-medium text-red-600"
-          }
+          className={cn(
+            row.original.isActive
+              ? "font-medium text-green-600"
+              : "font-medium text-red-600",
+          )}
         >
-          {true ? "Active" : "Inactive"}
+          {row.original.isActive ? "Active" : "Inactive"}
         </span>
       );
     },
@@ -24,20 +27,6 @@ export const columns: ColumnDef<MemberGetOne>[] = [
     header: "Name",
     cell: ({ row }) => {
       return <p className="">{row.original.name}</p>;
-    },
-  },
-  {
-    accessorKey: "iRating",
-    header: "IRating",
-    cell: ({ row }) => {
-      return <p className="text-gray-400 italic">N/A</p>;
-    },
-  },
-  {
-    accessorKey: "sRating",
-    header: "SRating",
-    cell: ({ row }) => {
-      return <p className="text-gray-400 italic">N/A</p>;
     },
   },
   {

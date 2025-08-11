@@ -7,18 +7,45 @@ import { adminProcedure, createTRPCRouter } from "@/trpc/init";
 import { db } from "@/db";
 import { profile, user } from "@/db/schema";
 
+import { profileUpdateSchema } from "@/modules/admin/schema";
+
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
 } from "@/constants";
-import { profileUpdateSchema } from "../schema";
 
 export const adminRouter = createTRPCRouter({
   deleteUser: adminProcedure
     .input(z.object({ userId: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.auth.user.id === input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot delete self",
+        });
+      }
+
+      const [memberToDelete] = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, input.userId));
+
+      if (!memberToDelete) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Failed to get member",
+        });
+      }
+
+      if (memberToDelete.role === "admin") {
+           throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Failed to get member",
+        });
+      }
+
       const [result] = await db.delete(user).where(eq(user.id, input.userId));
 
       return result;
@@ -28,7 +55,7 @@ export const adminRouter = createTRPCRouter({
     .input(profileUpdateSchema)
     .mutation(async ({ input }) => {
       const { userId, ...updateData } = input;
-      
+
       const cleanUpdata = Object.fromEntries(
         Object.entries(updateData).filter(([_, value]) => value !== undefined),
       );
@@ -41,7 +68,7 @@ export const adminRouter = createTRPCRouter({
       if (resultHeader.affectedRows === 0) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Problem updating user",
+          message: "Failed to update user",
         });
       }
 
