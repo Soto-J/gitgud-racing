@@ -27,7 +27,7 @@ export const MembersView = ({ userId }: MembersViewProps) => {
   );
 
   return (
-    <div className="px-6">
+    <div className="max-w-7xl mx-auto">
       <div className="overflow-hidden rounded-xl bg-white shadow-sm">
         <DataTable
           columns={columns}

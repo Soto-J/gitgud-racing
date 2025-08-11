@@ -1,10 +1,10 @@
 import z from "zod";
 
-import { count, desc, eq, like, and } from "drizzle-orm";
+import { count, desc, eq, like, and, getTableColumns } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
-import { user } from "@/db/schema";
+import { profile, user } from "@/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import {
@@ -32,8 +32,12 @@ export const membersRouter = createTRPCRouter({
       const { memberId, page, pageSize, search } = input;
 
       const members = await db
-        .select()
+        .select({
+          ...getTableColumns(user),
+          isActive: profile.isActive,
+        })
         .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
@@ -58,10 +62,23 @@ export const membersRouter = createTRPCRouter({
           ),
         );
 
+      const [totalActive] = await db
+        .select({ count: count() })
+        .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
+        .where(
+          and(
+            memberId ? eq(user.id, memberId) : undefined,
+            search ? like(user.name, `%${search}%`) : undefined,
+            eq(profile.isActive, true),
+          ),
+        );
+
       const totalPages = Math.ceil(total.count / pageSize);
 
       return {
         members,
+        totalActive: totalActive.count,
         total: total.count,
         totalPages,
       };
@@ -71,8 +88,12 @@ export const membersRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
       const [member] = await db
-        .select()
+        .select({
+          ...getTableColumns(user),
+          isActive: profile.isActive,
+        })
         .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
         .where(eq(user.id, input.id));
 
       return member;

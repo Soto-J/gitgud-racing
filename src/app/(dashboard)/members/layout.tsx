@@ -3,5 +3,5 @@ interface MembersLayoutProps {
 }
 
 export default function MembersLayout({ children }: MembersLayoutProps) {
-  return <div>{children}</div>;
+  return <div className="">{children}</div>;
 }
