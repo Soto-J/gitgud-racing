@@ -13,19 +13,19 @@ export const DashboardNavbar = () => {
 
   const { toggleSidebar, state, isMobile } = useSidebar();
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
+  // useEffect(() => {
+  //   const down = (e: KeyboardEvent) => {
+  //     if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+  //       e.preventDefault();
 
-        setCommandOpen((open) => !open);
-      }
-    };
+  //       setCommandOpen((open) => !open);
+  //     }
+  //   };
 
-    document.addEventListener("keydown", down);
+  //   document.addEventListener("keydown", down);
 
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+  //   return () => document.removeEventListener("keydown", down);
+  // }, []);
 
   const PanelIcon =
     state === "collapsed" || isMobile ? PanelLeftIcon : PanelLeftCloseIcon;
@@ -43,7 +43,7 @@ export const DashboardNavbar = () => {
           <PanelIcon className="size-4" />
         </Button>
 
-        <Button
+        {/* <Button
           variant="outline"
           size="sm"
           onClick={() => setCommandOpen((open) => !open)}
@@ -52,11 +52,10 @@ export const DashboardNavbar = () => {
           <SearchIcon />
           <p>Search</p>
 
-          {/* Command icon */}
           <kbd className="bg-muted text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[12px] font-medium select-none">
             <span className="text-[8px]">&#8984;</span>K
           </kbd>
-        </Button>
+        </Button> */}
       </nav>
     </>
   );

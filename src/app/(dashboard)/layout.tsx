@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <DashboardSidebar />
 
       <main className="bg-muted flex h-screen w-screen flex-col py-8">
-        {/* <DashboardNavbar /> */}
+        <DashboardNavbar />
         {children}
       </main>
     </SidebarProvider>
