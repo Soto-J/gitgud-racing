@@ -38,7 +38,7 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
   );
 
   return (
-    <div className="mx-auto max-w-7xl">
+    <>
       <MembersListHeader />
 
       <HydrationBoundary state={dehydrate(queryClient)}>
@@ -48,7 +48,7 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
           </ErrorBoundary>
         </Suspense>
       </HydrationBoundary>
-    </div>
+    </>
   );
 };
 

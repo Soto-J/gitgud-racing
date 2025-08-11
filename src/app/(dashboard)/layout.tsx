@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <SidebarProvider>
       <DashboardSidebar />
 
-      <main className="bg-muted flex h-screen w-screen flex-col">
+      <main className="bg-muted flex w-screen flex-col">
         <DashboardNavbar />
         {children}
       </main>

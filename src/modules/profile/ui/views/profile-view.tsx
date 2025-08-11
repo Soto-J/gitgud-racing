@@ -10,10 +10,12 @@ import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { ProfileCard } from "@/components/profile-card";
+import { BannerHeader } from "@/components/banner-header";
 
 interface ProfileViewProps {
   userId: string;
 }
+
 export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -31,7 +33,15 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
         initialValues={data?.data}
       />
 
-      <ProfileCard data={data?.data} onEdit={() => setOpenDialog(true)} />
+      <BannerHeader
+        section="iRacing profile"
+        title={data.data.user?.name || ""}
+        subTitle1="Professional driver"
+        subTitle2={data.data.profile.isActive ? "Active" : "Inactive"}
+        onEdit={() => setOpenDialog(true)}
+      />
+
+      <ProfileCard data={data?.data} />
     </>
   );
 };

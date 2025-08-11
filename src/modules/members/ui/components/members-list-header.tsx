@@ -32,7 +32,7 @@ export const MembersListHeader = () => {
     });
 
   return (
-    <div className="mx-auto max-w-7xl space-y-4 p-4 md:p-8">
+    <div className="mx-auto space-y-4 p-4 md:p-8 max-w-7xl">
       <BannerHeader
         section="Racing League Members"
         title="Git Gud Fam"
