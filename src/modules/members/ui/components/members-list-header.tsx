@@ -32,7 +32,7 @@ export const MembersListHeader = () => {
     });
 
   return (
-    <div className="mx-auto space-y-4 p-4 md:p-8 max-w-7xl">
+    <div className="space-y-4">
       <BannerHeader
         section="Racing League Members"
         title="Git Gud Fam"
@@ -43,7 +43,7 @@ export const MembersListHeader = () => {
       />
 
       <ScrollArea>
-        <div className="flex items-center gap-x-2 pt-6 pl-1">
+        <div className="flex items-center gap-x-2 py-6 pl-1">
           <MembersSearchFilter />
 
           {isFilterActive && (

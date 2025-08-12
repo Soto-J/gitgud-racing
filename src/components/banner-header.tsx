@@ -21,7 +21,7 @@ export const BannerHeader = ({
   onEdit,
 }: BannerHeaderProps) => {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl max-w-7xl mx-auto my-8">
+    <div className="my-8 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
       <div className="relative bg-gradient-to-r from-red-600 via-red-700 to-red-800 px-8 py-10">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">

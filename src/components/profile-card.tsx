@@ -54,7 +54,7 @@ export const ProfileCard = ({ data }: ProfileCardProps) => {
       ];
 
   return (
-    <div className="mx-auto max-w-7xl space-y-12 py-12">
+    <div className="space-y-12 py-12">
       <div className="space-y-6">
         <h2 className="text-2xl font-bold text-gray-900">Racing Disciplines</h2>
 
