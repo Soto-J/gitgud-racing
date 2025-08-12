@@ -1,8 +1,6 @@
 interface ProfilelayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
-export default function Profilelayout({children}: ProfilelayoutProps) {
-  return (
-    <div className="">{children}</div>
-  )
+export default function Profilelayout({ children }: ProfilelayoutProps) {
+  return <div className="w-[90%] mx-auto py-8">{children}</div>;
 }
