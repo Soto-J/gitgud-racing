@@ -98,7 +98,7 @@ export const iracingRouter = createTRPCRouter({
         isError: false,
         error: null,
         message: "User found",
-        data: member,
+        member,
       };
     }),
 });

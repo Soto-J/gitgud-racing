@@ -27,7 +27,7 @@ export const MembersView = ({ userId }: MembersViewProps) => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <>
       <div className="overflow-hidden rounded-xl bg-white shadow-sm">
         <DataTable
           columns={columns}
@@ -51,7 +51,7 @@ export const MembersView = ({ userId }: MembersViewProps) => {
           Click any member to view their profile and racing stats
         </p>
       </div>
-    </div>
+    </>
   );
 };
 

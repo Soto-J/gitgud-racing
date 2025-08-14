@@ -7,6 +7,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { ProfileCard } from "@/components/profile-card";
+import { Banner } from "@/components/banner";
 
 interface MemberIdViewProps {
   userId: string;
@@ -18,7 +19,17 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
     trpc.iracing.getUser.queryOptions({ userId }),
   );
 
-  return <ProfileCard data={data.data} />;
+  return (
+    <>
+      <Banner
+        section="Profile"
+        title={data.member.user.name || ""}
+        subTitle1="Professional Driver"
+        subTitle2={data.member.profile.isActive ? "Active" : "Inactive"}
+      />
+      <ProfileCard data={data.member} />
+    </>
+  );
 };
 
 export const LoadingMemberIdView = () => (

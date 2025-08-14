@@ -13,7 +13,7 @@ import { MembersSearchFilter } from "@/modules/members/ui/components/members-sea
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { BannerHeader } from "@/components/banner-header";
+import { Banner } from "@/components/banner";
 
 export const MembersListHeader = () => {
   const [filters, setFilters] = useMembersFilters();
@@ -33,7 +33,7 @@ export const MembersListHeader = () => {
 
   return (
     <div className="space-y-4">
-      <BannerHeader
+      <Banner
         section="Racing League Members"
         title="Git Gud Fam"
         subTitle1={`${data.total} Members`}
