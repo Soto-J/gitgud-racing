@@ -23,7 +23,7 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
     <>
       <Banner
         section="Profile"
-        title={data.member.user.name || ""}
+        title={data?.member?.user?.name || ""}
         subTitle1="Professional Driver"
         subTitle2={data.member.profile.isActive ? "Active" : "Inactive"}
       />
