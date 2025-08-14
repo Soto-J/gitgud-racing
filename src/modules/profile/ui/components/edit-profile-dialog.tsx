@@ -30,7 +30,7 @@ import {
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: UserGetOne["data"];
+  initialValues: UserGetOne["member"];
 }
 
 export const EditProfileDialog = ({

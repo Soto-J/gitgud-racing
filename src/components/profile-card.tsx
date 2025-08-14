@@ -14,7 +14,7 @@ import { UserGetOne } from "@/modules/iracing/types";
 import { cn } from "@/lib/utils";
 
 interface ProfileCardProps {
-  data: UserGetOne["data"];
+  data: UserGetOne["member"];
 }
 
 export const ProfileCard = ({ data }: ProfileCardProps) => {
