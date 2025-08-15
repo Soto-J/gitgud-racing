@@ -6,12 +6,12 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { iracingAuth, license, profile } from "@/db/schema";
+import { license, profile } from "@/db/schema";
 
+import { getOrRefreshAuthCode } from "@/lib/iracing-auth";
 import { auth } from "@/lib/auth";
-import { getIracingAuthCookie } from "@/lib/iracing-auth";
 
-import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
+import { IRACING_URL } from "@/constants";
 
 import {
   IRacingFetchResult,
@@ -42,6 +42,16 @@ export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 
+export const cronJobProcedure = baseProcedure.use(async ({ ctx, next }) => {
+  const iracingAuthCode = await getOrRefreshAuthCode();
+  return next({
+    ctx: {
+      ...ctx,
+      iracingAuthCode: iracingAuthCode,
+    },
+  });
+});
+
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -53,9 +63,7 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 });
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  const { role } = ctx.auth.user;
-
-  if (role !== "admin") {
+  if (ctx.auth.user?.role !== "admin") {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Admin access required",
@@ -67,53 +75,12 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
-    const iracingAuthData = await db
-      .select()
-      .from(iracingAuth)
-      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!))
-      .then((value) => value[0]);
-
-    const isValid =
-      iracingAuthData?.expiresAt && iracingAuthData.expiresAt > new Date();
-
-    if (isValid) {
-      console.log("Using cashed iRacing auth....");
-      return next({
-        ctx: {
-          ...ctx,
-          iracingAuthData,
-        },
-      });
-    }
-
-    console.log("Refreshing iRacing auth...");
-    const authCookie = await getIracingAuthCookie();
-
-    await db
-      .insert(iracingAuth)
-      .values({
-        userId: process.env.MY_USER_ID!,
-        authCookie: authCookie,
-        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
-      })
-      .onDuplicateKeyUpdate({
-        set: {
-          authCookie: authCookie,
-          expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
-          updatedAt: new Date(),
-        },
-      });
-
-    const refreshedAuth = await db
-      .select()
-      .from(iracingAuth)
-      .where(eq(iracingAuth.userId, process.env.MY_USER_ID!))
-      .then((value) => value[0]);
+    const iracingAuthCode = await getOrRefreshAuthCode();
 
     return next({
       ctx: {
         ...ctx,
-        iracingAuthData: refreshedAuth,
+        iracingAuthCode: iracingAuthCode,
       },
     });
   },
@@ -128,7 +95,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       .where(eq(profile.userId, ctx.auth.user.id))
       .then((value) => value[0]);
 
-    // If user hasn't input an iracingId/custId return
+    // User hasn't input an iracingId/custId return
     if (!user.profile?.iracingId) {
       return next({ ctx });
     }
@@ -151,7 +118,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
         `${IRACING_URL}/data/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
         {
           headers: {
-            Cookie: `authtoken_members=${ctx.iracingAuthData.authCookie}`,
+            Cookie: `authtoken_members=${ctx.iracingAuthCode}`,
           },
         },
       );
@@ -161,8 +128,11 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       }
 
       const { link } = await response.json();
+
       const dataResponse = await fetch(link);
+
       const iracingData: IRacingFetchResult = await dataResponse.json();
+
       console.log({ iracingData });
 
       const licenses = iracingData.members[0].licenses;
@@ -173,8 +143,8 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       }
 
       const transformedData = transformLicenseData(licenses);
-
       console.log(transformedData);
+
       await db
         .insert(license)
         .values({

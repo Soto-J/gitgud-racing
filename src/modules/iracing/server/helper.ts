@@ -71,15 +71,15 @@ const transformLicenses = (
 
 const fetchData = async ({
   query,
-  authCookie,
+  authCode,
 }: {
   query: string;
-  authCookie: string;
+  authCode: string;
 }) => {
   try {
     const initialResponse = await fetch(`${IRACING_URL}${query}`, {
       headers: {
-        Cookie: `authtoken_members=${authCookie}`,
+        Cookie: `authtoken_members=${authCode}`,
       },
     });
 
