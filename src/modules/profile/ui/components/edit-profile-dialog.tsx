@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { profileInsertSchema } from "@/modules/profile/schema";
+import { EditProfileInsertSchema } from "@/modules/profile/schema";
 
 import { UserGetOne } from "@/modules/iracing/types";
 
@@ -40,8 +40,8 @@ export const EditProfileDialog = ({
 }: EditProfileDialogProps) => {
   const [firstName, lastName] = initialValues.user.name.split(" ");
 
-  const form = useForm<z.infer<typeof profileInsertSchema>>({
-    resolver: zodResolver(profileInsertSchema),
+  const form = useForm<z.infer<typeof EditProfileInsertSchema>>({
+    resolver: zodResolver(EditProfileInsertSchema),
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
@@ -74,7 +74,7 @@ export const EditProfileDialog = ({
     }),
   );
 
-  const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
+  const onSubmit = (values: z.infer<typeof EditProfileInsertSchema>) => {
     editProfile.mutate({
       userId: initialValues.user.id || "",
       ...values,

@@ -6,6 +6,25 @@ export const IracingLoginSchema = z.object({
   userId: z.string(),
 });
 
-export const customerIdSchema = z.object({
+export const CustomerIdSchema = z.object({
   customerId: z.number(),
+});
+
+export const GetUserInputSchema = z.object({
+  userId: z.string().nullish(),
+});
+
+export const GetSeasonInputSchema = z.object({
+  seasonYear: z
+    .string()
+    .regex(/^\d{4}$/, "Season year must be a 4-digit year")
+    .optional()
+    .transform((v) => v ?? new Date().getFullYear().toString()),
+  seasonQuarter: z
+    .string()
+    .regex(/^[1-4]$/, "Season quarter must be 1, 2, 3, or 4")
+    .optional()
+    .transform(
+      (v) => v ?? Math.ceil((new Date().getMonth() + 1) / 3).toString(),
+    ),
 });

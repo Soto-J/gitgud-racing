@@ -1,33 +1,34 @@
-import z from "zod";
-
 import { count, desc, eq, like, and, getTableColumns } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+
 import { db } from "@/db";
 import { profile, user } from "@/db/schema";
 
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-  MAX_PAGE_SIZE,
-  MIN_PAGE_SIZE,
-} from "@/constants";
+  GetManyInputSchema,
+  GetOneInputSchema,
+} from "@/modules/members/schema";
 
 export const membersRouter = createTRPCRouter({
+  getOne: protectedProcedure
+    .input(GetOneInputSchema)
+    .query(async ({ input }) => {
+      const [member] = await db
+        .select({
+          ...getTableColumns(user),
+          isActive: profile.isActive,
+        })
+        .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
+        .where(eq(user.id, input.id));
+
+      return member;
+    }),
+
   getMany: protectedProcedure
-    .input(
-      z.object({
-        page: z.number().default(DEFAULT_PAGE),
-        pageSize: z
-          .number()
-          .min(MIN_PAGE_SIZE)
-          .max(MAX_PAGE_SIZE)
-          .default(DEFAULT_PAGE_SIZE),
-        search: z.string().nullish(),
-        memberId: z.string().nullish(),
-      }),
-    )
+    .input(GetManyInputSchema)
     .query(async ({ input }) => {
       const { memberId, page, pageSize, search } = input;
 
@@ -82,20 +83,5 @@ export const membersRouter = createTRPCRouter({
         total: total.count,
         totalPages,
       };
-    }),
-
-  getOne: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
-      const [member] = await db
-        .select({
-          ...getTableColumns(user),
-          isActive: profile.isActive,
-        })
-        .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
-        .where(eq(user.id, input.id));
-
-      return member;
     }),
 });
