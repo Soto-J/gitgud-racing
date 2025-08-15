@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { license, profile } from "@/db/schema";
 
+import { getOrRefreshAuthCode } from "@/lib/iracing-auth";
 import { auth } from "@/lib/auth";
 
 import { IRACING_URL } from "@/constants";
@@ -17,7 +18,6 @@ import {
   IRacingLicense,
   TransformLicenseData,
 } from "@/modules/iracing/types";
-import { getOrRefreshAuthCode } from "@/lib/utils";
 
 export const createTRPCContext = cache(async () => {
   /**
