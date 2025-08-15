@@ -107,9 +107,14 @@ const fetchData = async ({
 
       return await linkResponse.json();
     } catch (downloadError) {
-      if (downloadError instanceof Error) return downloadError.message;
-      if (typeof downloadError === "string") return downloadError;
-      return "Unknown error occurred";
+      const message =
+        downloadError instanceof Error
+          ? downloadError.message
+          : typeof downloadError === "string"
+            ? downloadError
+            : "Unknown error occurred while downloading iRacing data.";
+
+      throw new Error(message);
     }
   } catch (error) {
     console.error("iRacing API error:", error);

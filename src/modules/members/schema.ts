@@ -1,4 +1,4 @@
-import { z } from "better-auth";
+import { z } from "zod";
 
 import {
   DEFAULT_PAGE,

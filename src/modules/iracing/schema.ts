@@ -18,9 +18,13 @@ export const GetSeasonInputSchema = z.object({
   seasonYear: z
     .string()
     .regex(/^\d{4}$/, "Season year must be a 4-digit year")
-    .default(new Date().getFullYear().toString()),
+    .optional()
+    .transform((v) => v ?? new Date().getFullYear().toString()),
   seasonQuarter: z
     .string()
     .regex(/^[1-4]$/, "Season quarter must be 1, 2, 3, or 4")
-    .default(Math.ceil((new Date().getMonth() + 1) / 3).toString()),
+    .optional()
+    .transform(
+      (v) => v ?? Math.ceil((new Date().getMonth() + 1) / 3).toString(),
+    ),
 });
