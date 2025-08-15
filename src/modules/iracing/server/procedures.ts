@@ -1,10 +1,6 @@
-import z from "zod";
-
 import { eq, getTableColumns } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-
-import { IRACING_URL } from "@/constants";
 
 import { db } from "@/db";
 import { license, profile, user } from "@/db/schema";
@@ -14,6 +10,11 @@ import {
   iracingProcedure,
   syncIracingProfileProcedure,
 } from "@/trpc/init";
+
+import {
+  GetSeasonInputSchema,
+  GetUserInputSchema,
+} from "@/modules/iracing/schema";
 
 import * as helper from "@/modules/iracing/server/helper";
 
@@ -26,11 +27,7 @@ export const iracingRouter = createTRPCRouter({
   }),
 
   getUser: syncIracingProfileProcedure
-    .input(
-      z.object({
-        userId: z.string().nullish(),
-      }),
-    )
+    .input(GetUserInputSchema)
     .query(async ({ input }) => {
       if (!input?.userId) {
         console.error({ code: "NOT_FOUND", message: "userId not found" });
@@ -81,48 +78,14 @@ export const iracingRouter = createTRPCRouter({
     }),
 
   getSeasons: iracingProcedure
-    .input(
-      z.object({
-        seasonYear: z.string(),
-        seasonQuarter: z.string(),
-      }),
-    )
+    .input(GetSeasonInputSchema)
     .query(async ({ ctx, input }) => {
-      const seasonListURL = `${IRACING_URL}/data/season/list?season_year=${input.seasonYear}&season_quarter=${input.seasonQuarter}`;
+      const seasonListURL = `/data/season/list?season_year=${input.seasonYear}&season_quarter=${input.seasonQuarter}`;
 
-      try {
-        const initResponse = await fetch(seasonListURL, {
-          headers: {
-            Cookie: `authtoken_members=${ctx.iracingAuthCode}`,
-          },
-        });
-
-        if (!initResponse.ok) {
-          throw new Error("Failed to get initial response.");
-        }
-
-        const resJson = await initResponse.json();
-
-        if (!resJson?.link) {
-          throw new Error("Failed to get response link.");
-        }
-
-        try {
-          const innerFetch = fetch(resJson?.link, {
-            headers: {
-              Cookie: ctx.iracingAuthCode,
-            },
-          });
-        } catch (downloadError) {
-          if (downloadError instanceof Error) return downloadError.message;
-          if (typeof downloadError === "string") return downloadError;
-          return "Unknown error occurred";
-        }
-      } catch (error) {
-        if (error instanceof Error) return error.message;
-        if (typeof error === "string") return error;
-        return "Unknown error occurred";
-      }
+      const data = await helper.fetchData({
+        query: seasonListURL,
+        authCode: ctx.iracingAuthCode,
+      });
     }),
 
   getSeries: iracingProcedure.query(async ({ ctx, input }) => {}),

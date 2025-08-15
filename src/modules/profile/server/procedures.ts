@@ -8,19 +8,15 @@ import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { license, profile, user } from "@/db/schema";
 
-import { profileUpdateSchema } from "@/modules/profile/schema";
+import {
+  CreateInsertSchema,
+  EditProfileInputSchema,
+  GetOneInsertSchema,
+} from "@/modules/profile/schema";
 
 export const profileRouter = createTRPCRouter({
-  getMany: protectedProcedure.query(async () => {
-    return await db.select().from(profile);
-  }),
-
   getOne: protectedProcedure
-    .input(
-      z.object({
-        userId: z.string().nullish(),
-      }),
-    )
+    .input(GetOneInsertSchema)
     .query(async ({ input }) => {
       if (!input.userId) {
         throw new TRPCError({
@@ -51,8 +47,12 @@ export const profileRouter = createTRPCRouter({
       return profileWithUser;
     }),
 
+  getMany: protectedProcedure.query(async () => {
+    return await db.select().from(profile);
+  }),
+
   create: protectedProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(CreateInsertSchema)
     .mutation(async ({ ctx, input }) => {
       const [response] = await db.insert(profile).values({
         userId: input.userId,
@@ -80,7 +80,7 @@ export const profileRouter = createTRPCRouter({
     }),
 
   edit: protectedProcedure
-    .input(profileUpdateSchema)
+    .input(EditProfileInputSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await db
         .update(profile)

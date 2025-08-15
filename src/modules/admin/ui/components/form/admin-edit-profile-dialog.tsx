@@ -10,10 +10,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { AdminGetUser } from "@/modules/admin/types";
-import { profileInsertSchema } from "@/modules/admin/schema";
+import { ProfileInsertSchema } from "@/modules/admin/schema";
+
+import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
 import { FormActions } from "@/modules/admin/ui/components/form/form-actions";
-
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -32,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
 interface AdminEditProfileDialogProps {
   onOpenDialog: boolean;
@@ -47,8 +47,8 @@ export const AdminEditProfileDialog = ({
 }: AdminEditProfileDialogProps) => {
   const [filters, _] = useMembersFilters();
 
-  const form = useForm<z.infer<typeof profileInsertSchema>>({
-    resolver: zodResolver(profileInsertSchema),
+  const form = useForm<z.infer<typeof ProfileInsertSchema>>({
+    resolver: zodResolver(ProfileInsertSchema),
     defaultValues: {
       team: initialValues.team || "",
       isActive: initialValues.isActive,
@@ -78,7 +78,7 @@ export const AdminEditProfileDialog = ({
     }),
   );
 
-  const onSubmit = (values: z.infer<typeof profileInsertSchema>) => {
+  const onSubmit = (values: z.infer<typeof ProfileInsertSchema>) => {
     editProfile.mutate({
       userId: initialValues.id,
       ...values,

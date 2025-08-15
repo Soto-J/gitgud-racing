@@ -1,4 +1,3 @@
-import z from "zod";
 import { eq, like, and, count, desc } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
@@ -7,129 +6,40 @@ import { adminProcedure, createTRPCRouter } from "@/trpc/init";
 import { db } from "@/db";
 import { profile, user } from "@/db/schema";
 
-import { profileUpdateSchema } from "@/modules/admin/schema";
-
 import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-  MAX_PAGE_SIZE,
-  MIN_PAGE_SIZE,
-} from "@/constants";
+  DeleteUserInputSchema,
+  GetUserInputSchema,
+  GetUsersInputSchema,
+  ProfileEditUserInputSchema,
+} from "@/modules/admin/schema";
 
 export const adminRouter = createTRPCRouter({
-  deleteUser: adminProcedure
-    .input(z.object({ userId: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      if (ctx.auth.user.id === input.userId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Cannot delete self",
-        });
-      }
+  getUser: adminProcedure.input(GetUserInputSchema).query(async ({ input }) => {
+    const [member] = await db
+      .select({
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        banned: user.banned,
+        banReason: user.banReason,
+        banExpires: user.banExpires,
+        createdAt: user.createdAt,
+        team: profile.team,
+        isActive: profile.isActive,
+      })
+      .from(user)
+      .innerJoin(profile, eq(profile.userId, user.id))
+      .where(eq(profile.userId, input.userId));
 
-      const [memberToDelete] = await db
-        .select()
-        .from(user)
-        .where(eq(user.id, input.userId));
+    if (!member) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+    }
 
-      if (!memberToDelete) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Failed to get member",
-        });
-      }
-
-      if (memberToDelete.role === "admin") {
-           throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Failed to get member",
-        });
-      }
-
-      const [result] = await db.delete(user).where(eq(user.id, input.userId));
-
-      return result;
-    }),
-
-  editUser: adminProcedure
-    .input(profileUpdateSchema)
-    .mutation(async ({ input }) => {
-      const { userId, ...updateData } = input;
-
-      const cleanUpdata = Object.fromEntries(
-        Object.entries(updateData).filter(([_, value]) => value !== undefined),
-      );
-
-      const [resultHeader] = await db
-        .update(profile)
-        .set({ ...cleanUpdata })
-        .where(eq(profile.userId, userId));
-
-      if (resultHeader.affectedRows === 0) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update user",
-        });
-      }
-
-      const [updatedMember] = await db
-        .select({
-          id: user.id,
-          name: user.name,
-          role: user.role,
-          banned: user.banned,
-          banReason: user.banReason,
-          banExpires: user.banExpires,
-          createdAt: user.createdAt,
-          team: profile.team,
-          isActive: profile.isActive,
-        })
-        .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
-        .where(eq(profile.userId, userId));
-
-      return updatedMember;
-    }),
-
-  getUser: adminProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      const [member] = await db
-        .select({
-          id: user.id,
-          name: user.name,
-          role: user.role,
-          banned: user.banned,
-          banReason: user.banReason,
-          banExpires: user.banExpires,
-          createdAt: user.createdAt,
-          team: profile.team,
-          isActive: profile.isActive,
-        })
-        .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
-        .where(eq(profile.userId, input.userId));
-
-      if (!member) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-      }
-
-      return member;
-    }),
+    return member;
+  }),
 
   getUsers: adminProcedure
-    .input(
-      z.object({
-        page: z.number().default(DEFAULT_PAGE),
-        pageSize: z
-          .number()
-          .min(MIN_PAGE_SIZE)
-          .max(MAX_PAGE_SIZE)
-          .default(DEFAULT_PAGE_SIZE),
-        search: z.string().nullish(),
-        memberId: z.string().nullish(),
-      }),
-    )
+    .input(GetUsersInputSchema)
     .query(async ({ input }) => {
       const { memberId, search, pageSize, page } = input;
 
@@ -179,5 +89,79 @@ export const adminRouter = createTRPCRouter({
         total: total.count,
         totalPages,
       };
+    }),
+
+  editUser: adminProcedure
+    .input(ProfileEditUserInputSchema)
+    .mutation(async ({ input }) => {
+      const { userId, ...updateData } = input;
+
+      const cleanUpdata = Object.fromEntries(
+        Object.entries(updateData).filter(([_, value]) => value !== undefined),
+      );
+
+      const [resultHeader] = await db
+        .update(profile)
+        .set({ ...cleanUpdata })
+        .where(eq(profile.userId, userId));
+
+      if (resultHeader.affectedRows === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update user",
+        });
+      }
+
+      const [updatedMember] = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          banned: user.banned,
+          banReason: user.banReason,
+          banExpires: user.banExpires,
+          createdAt: user.createdAt,
+          team: profile.team,
+          isActive: profile.isActive,
+        })
+        .from(user)
+        .innerJoin(profile, eq(profile.userId, user.id))
+        .where(eq(profile.userId, userId));
+
+      return updatedMember;
+    }),
+
+  deleteUser: adminProcedure
+    .input(DeleteUserInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.auth.user.id === input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot delete self",
+        });
+      }
+
+      const [memberToDelete] = await db
+        .select()
+        .from(user)
+        .where(eq(user.id, input.userId));
+
+      if (!memberToDelete) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Failed to get member",
+        });
+      }
+
+      if (memberToDelete.role === "admin") {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Failed to get member",
+        });
+      }
+
+      const [result] = await db.delete(user).where(eq(user.id, input.userId));
+
+      return result;
     }),
 });

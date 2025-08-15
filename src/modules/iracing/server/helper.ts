@@ -91,20 +91,26 @@ const fetchData = async ({
 
     const data = await initialResponse.json();
 
-    // Only request that doesnt require a link is documentation
+    // Documentation doesnt require a link
     if (!data?.link) {
       return data;
     }
 
-    const linkResponse = await fetch(data.link);
+    try {
+      const linkResponse = await fetch(data.link);
 
-    if (!linkResponse.ok) {
-      throw new Error(
-        `Failed to fetch data from the provided link. Status ${linkResponse.status}`,
-      );
+      if (!linkResponse.ok) {
+        throw new Error(
+          `Failed to fetch data from the provided link. Status ${linkResponse.status}`,
+        );
+      }
+
+      return await linkResponse.json();
+    } catch (downloadError) {
+      if (downloadError instanceof Error) return downloadError.message;
+      if (typeof downloadError === "string") return downloadError;
+      return "Unknown error occurred";
     }
-
-    return await linkResponse.json();
   } catch (error) {
     console.error("iRacing API error:", error);
 
