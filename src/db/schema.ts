@@ -96,8 +96,8 @@ export const iracingAuth = mysqlTable("iracing_auth", {
     .references(() => user.id, { onDelete: "cascade" }),
 
   // Auth data
-  authCookie: text("auth_cookie").notNull(),
-  authCode: text("auth_code"),
+  authCookie: text("auth_cookie"),
+  authCode: text("auth_code").notNull(),
   customerId: int("customer_id"),
 
   // SSO data (from your response)

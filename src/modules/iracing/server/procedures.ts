@@ -19,31 +19,9 @@ import * as helper from "@/modules/iracing/server/helper";
 
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
-    /*
-    Notes:
-  "https://members-ng.iracing.com/data/member/info",
-
-  body: {
-    all: {
-      link: 'https://members-ng.iracing.com/data/doc',
-      note: 'Documentation for all service methods can be accessed here.'
-    },
-    service: {
-      link: 'https://members-ng.iracing.com/data/doc/car',
-      note: 'Each service has its own documentation page, like above.'
-    },
-    method: {
-      link: 'https://members-ng.iracing.com/data/doc/car/assets',
-      note: 'Each service method also has a documentation page.'
-    }
-  }
-*/
-
-    console.log("Making request to:", `${IRACING_URL}/data/doc`);
-
     return await helper.fetchData({
       query: `/data/doc`,
-      authCookie: ctx.iracingAuthData.authCookie,
+      authCode: ctx.iracingAuthCode,
     });
   }),
 
@@ -101,4 +79,51 @@ export const iracingRouter = createTRPCRouter({
         member,
       };
     }),
+
+  getSeasons: iracingProcedure
+    .input(
+      z.object({
+        seasonYear: z.string(),
+        seasonQuarter: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const seasonListURL = `${IRACING_URL}/data/season/list?season_year=${input.seasonYear}&season_quarter=${input.seasonQuarter}`;
+
+      try {
+        const initResponse = await fetch(seasonListURL, {
+          headers: {
+            Cookie: `authtoken_members=${ctx.iracingAuthCode}`,
+          },
+        });
+
+        if (!initResponse.ok) {
+          throw new Error("Failed to get initial response.");
+        }
+
+        const resJson = await initResponse.json();
+
+        if (!resJson?.link) {
+          throw new Error("Failed to get response link.");
+        }
+
+        try {
+          const innerFetch = fetch(resJson?.link, {
+            headers: {
+              Cookie: ctx.iracingAuthCode,
+            },
+          });
+        } catch (downloadError) {
+          if (downloadError instanceof Error) return downloadError.message;
+          if (typeof downloadError === "string") return downloadError;
+          return "Unknown error occurred";
+        }
+      } catch (error) {
+        if (error instanceof Error) return error.message;
+        if (typeof error === "string") return error;
+        return "Unknown error occurred";
+      }
+    }),
+
+  getSeries: iracingProcedure.query(async ({ ctx, input }) => {}),
 });
