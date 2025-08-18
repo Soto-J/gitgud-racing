@@ -76,6 +76,9 @@ export const getOrRefreshAuthCode = async () => {
 
     const response = await fetch(`${IRACING_URL}/auth`, {
       method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
       body: JSON.stringify({
         email: IRACING_EMAIL,
         password: hashedPassword,
@@ -218,7 +221,6 @@ const fetchData = async ({
     }
 
     try {
-      console.log({ data });
       const linkResponse = await fetch(data.link);
 
       if (!linkResponse.ok) {
@@ -227,7 +229,7 @@ const fetchData = async ({
         );
       }
       const linkData = await linkResponse.json();
-      console.log({ linkData });
+      // console.log({ linkData });
       return linkData;
     } catch (downloadError) {
       const message =
@@ -297,13 +299,13 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
 
     if (cachedSeries.length > 0) {
       console.log("Using cashed series");
-      console.log(cachedSeries);
+      // console.log(cachedSeries);
       return { success: true };
     }
 
     console.log("Refreshing All Series");
     const data: IracingGetAllSeriesResponse[] = await fetchData({
-      query: `/data/series/seasons`,
+      query: `/data/series/get`,
       authCode: authCode,
     });
 
@@ -312,7 +314,6 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
     }
 
     const insertValues = data.map((item) => ({
-      seasonYear: new Date().getFullYear(),
       seriesId: item.series_id.toString(),
       category: item.category,
       seriesName: item.series_name,
