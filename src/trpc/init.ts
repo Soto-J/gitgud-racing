@@ -3,12 +3,11 @@ import { headers } from "next/headers";
 
 import { initTRPC, TRPCError } from "@trpc/server";
 
-import { eq } from "drizzle-orm";
-
+import { eq, gt } from "drizzle-orm";
+import * as helper from "@/modules/iracing/server/helper";
 import { db } from "@/db";
-import { licenseTable, profileTable } from "@/db/schema";
+import { licenseTable, profileTable, seriesTable } from "@/db/schema";
 
-import { getOrRefreshAuthCode } from "@/lib/iracing-auth";
 import { auth } from "@/lib/auth";
 
 import { IRACING_URL } from "@/constants";
@@ -43,7 +42,7 @@ export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 
 export const cronJobProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const iracingAuthCode = await getOrRefreshAuthCode();
+  const iracingAuthCode = await helper.getOrRefreshAuthCode();
   return next({
     ctx: {
       ...ctx,
@@ -75,7 +74,11 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
-    const iracingAuthCode = await getOrRefreshAuthCode();
+    const iracingAuthCode = await helper.getOrRefreshAuthCode();
+
+    await helper.cacheSeries({
+      authCode: iracingAuthCode,
+    });
 
     return next({
       ctx: {

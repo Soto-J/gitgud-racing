@@ -32,8 +32,8 @@ export const GetAllSeriesInputSchema = z.object({
 
 export const GetSeriesResultsInputSchema = z.object({
   series_id: z.string().nullish(),
-  season_year: z.string().nullish(),
-  season_quarter: z.string().nullish(),
+  season_year: z.string(),
+  season_quarter: z.string(),
   event_types: z.string().nullish(),
   official_only: z.boolean().nullish(),
   race_week_num: z.string().nullish(),
@@ -42,4 +42,5 @@ export const GetSeriesResultsInputSchema = z.object({
   cust_id: z.string().nullish(),
   team_id: z.string().nullish(),
   category_id: z.string().nullish(),
+  include_series: z.boolean().default(true),
 });

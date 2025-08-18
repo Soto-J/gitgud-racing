@@ -8,7 +8,13 @@ import {
 } from "@/trpc/init";
 
 import { db } from "@/db";
-import { licenseTable, profileTable, seriesTable, user } from "@/db/schema";
+import {
+  licenseTable,
+  profileTable,
+  seriesTable,
+  seriesWeeklyStatsTable,
+  user,
+} from "@/db/schema";
 
 import {
   GetAllSeriesInputSchema,
@@ -88,48 +94,30 @@ export const iracingRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { include_series, season_year, season_quarter } = input;
 
-      const cachedSeries = await db
-        .select()
-        .from(seriesTable)
-        .where(
-          and(
-            eq(seriesTable.seasonYear, parseInt(season_year)),
-            eq(seriesTable.seasonQuarter, parseInt(season_quarter)),
-            gt(
-              seriesTable.updatedAt,
-              new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-            ), // 7 days
-          ),
-        );
-
-      if (cachedSeries.length > 0) {
-        return cachedSeries;
-      }
-
-      const data: IracingGetAllSeriesResponse = await helper.fetchData({
+      const data: IracingGetSeriesResultsResponse[] = await helper.fetchData({
         query: `/data/series/seasons?include_series=${include_series}&season_year=${season_year}&season_quarter=${season_quarter}`,
         authCode: ctx.iracingAuthCode,
       });
 
-      await Promise.all(
-        data.map((item) =>
-          db
-            .insert(seriesTable)
-            .values({
-              seriesId: item.series_id.toString(),
-              seasonId: item.season_id.toString(),
-              seasonYear: item.season_year,
-              seasonQuarter: item.season_quarter,
-              category: item.schedules[0].category,
-              seriesName: item.schedules[0].schedule_name,
-              licenseGroup: item.license_group,
-              fixedSetup: item.fixed_setup,
-            })
-            .onDuplicateKeyUpdate({
-              set: {},
-            }),
-        ),
-      );
+      // await Promise.all(
+      //   data.map((item) =>
+      //     db
+      //       .insert(seriesTable)
+      //       .values({
+      //         seriesId: item.series_id.toString(),
+      //         seasonId: item.season_id.toString(),
+      //         seasonYear: item.season_year,
+      //         seasonQuarter: item.season_quarter,
+      //         category: item.schedules[0].category,
+      //         seriesName: item.schedules[0].schedule_name,
+      //         licenseGroup: item.license_group,
+      //         fixedSetup: item.fixed_setup,
+      //       })
+      //       .onDuplicateKeyUpdate({
+      //         set: {},
+      //       }),
+      //   ),
+      // );
 
       return await db.select().from(seriesTable);
     }),
@@ -137,17 +125,80 @@ export const iracingRouter = createTRPCRouter({
   getSeriesResults: iracingProcedure
     .input(GetSeriesResultsInputSchema)
     .query(async ({ ctx, input }) => {
-      const params = ["/data/results/search_series"];
+      // Updates every 7 days
+      const weeklyResults = await db
+        .select()
+        .from(seriesWeeklyStatsTable)
+        .where(
+          gt(
+            seriesWeeklyStatsTable.updatedAt,
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          ),
+        );
 
+      // if weekly results are valid
+      if (weeklyResults.length > 0) {
+        console.log("Using cached weekly results.");
+        return weeklyResults;
+      }
+
+      console.log("Refreshing weekly results.");
+
+      const paramsArr = ["/data/results/search_series"];
       Object.entries(input).forEach(([key, value]) => {
         if (value) {
-          params.push(`&${key}=${value}`);
+          paramsArr.push(`&${key}=${value}`);
         }
       });
-      
-      const data: IracingGetSeriesResultsResponse = await helper.fetchData({
-        query: params.join(""),
-        authCode: ctx.iracingAuthCode,
-      });
+      const allSeries = await db.select().from(seriesTable);
+      const params = paramsArr.join("");
+
+      const fetchArr = allSeries.map((series) =>
+        helper.fetchData({
+          query: params + `&series_id=${series.seriesId}`,
+          authCode: ctx.iracingAuthCode,
+        }),
+      );
+
+      const results = await Promise.allSettled(fetchArr);
+
+      const successfulResults: IracingGetSeriesResultsResponse[][] = results
+        .filter((result) => result.status === "fulfilled")
+        .map((result) => result.value);
+
+      const updateWeeklySeries = successfulResults
+        .filter((series) => series.length > 0)
+        .map((series) => {
+          // Group by start_time to count unique races
+          const uniqueRaces = new Set(series.map((split) => split.start_time))
+            .size;
+
+          const avgSplitsPerRace = series.length / uniqueRaces;
+
+          const totalDrivers = series.reduce(
+            (total, split) => total + split.num_drivers,
+            0,
+          );
+
+          const avgEntrants =
+            Math.round((totalDrivers / series.length) * 100) / 100; // Round to 2 decimal
+
+          return db
+            .insert(seriesWeeklyStatsTable)
+            .values({
+              seriesId: series[0].series_id.toString(),
+              seasonYear: series[0].season_year,
+              seasonQuarter: series[0].season_quarter,
+              raceWeekNum: series[0].race_week_num,
+              averageEntrants: avgEntrants.toFixed(5),
+              averageSplits: avgSplitsPerRace.toFixed(5),
+              totalSplits: series.length,
+            })
+            .onDuplicateKeyUpdate({ set: {} });
+        });
+
+      await Promise.all(updateWeeklySeries);
+
+      return successfulResults;
     }),
 });

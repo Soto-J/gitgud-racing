@@ -11,9 +11,16 @@ const DashboardPage = async () => {
 
   if (!session) redirect("/sign-in");
 
+  const queryOptions = {
+    season_year: "2025",
+    season_quarter: "4",
+  };
+
   // const queryClient = getQueryClient();
-  // void queryClient.prefetchQuery(trpc.iracing.getDocumentation.queryOptions());
-  return <HomeView />;
+  // void queryClient.prefetchQuery(
+  //   trpc.iracing.getSeriesResults.queryOptions({ ...queryOptions }),
+  // );
+  return <HomeView queryOptions={queryOptions} />;
 };
 
 export default DashboardPage;

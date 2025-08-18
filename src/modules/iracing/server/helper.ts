@@ -1,12 +1,131 @@
+import { and, eq, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
-import { IRACING_URL } from "@/constants";
+import { db } from "@/db";
+import { iracingAuthTable, seriesTable } from "@/db/schema";
+
+import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
 
 import {
   TransformLicensesInput,
   TransformLicensesOutput,
   LicenseDiscipline,
+  IracingGetAllSeriesResponse,
 } from "@/modules/iracing/types";
+
+const requiredEnvVars = {
+  email: process.env.IRACING_EMAIL,
+  password: process.env.IRACING_PASSWORD,
+  userId: process.env.MY_USER_ID,
+};
+
+export const getOrRefreshAuthCode = async () => {
+  const IRACING_EMAIL = process.env?.IRACING_EMAIL;
+  const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
+  const MY_USER_ID = process.env?.MY_USER_ID;
+  if (!MY_USER_ID) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: `Missing required environment variables: MY_USER_ID`,
+    });
+  }
+  if (!IRACING_PASSWORD) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: `Missing required environment variables: IRACING_PASSWORD`,
+    });
+  }
+  if (!IRACING_EMAIL) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: `Missing required environment variables: IRACING_EMAIL`,
+    });
+  }
+
+  const iracingAuthInfo = await db
+    .select()
+    .from(iracingAuthTable)
+    .where(eq(iracingAuthTable.userId, requiredEnvVars.userId!))
+    .then((value) => value[0]);
+
+  // Check if cached auth is still valid
+  if (iracingAuthInfo?.expiresAt && iracingAuthInfo.expiresAt > new Date()) {
+    const timeLeft = iracingAuthInfo.expiresAt.getTime() - Date.now();
+    console.log(
+      `Using cached iRacing auth (expires in ${Math.round(timeLeft / 1000 / 60)} minutes)`,
+    );
+
+    return iracingAuthInfo.authCode;
+  }
+
+  // Refresh iRacing authcode
+  console.log("Refreshing iRacing auth...");
+  try {
+    const hashedPassword = CryptoJS.enc.Base64.stringify(
+      CryptoJS.SHA256(IRACING_PASSWORD + IRACING_EMAIL.toLowerCase()),
+    );
+
+    if (!hashedPassword) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to hash password.",
+      });
+    }
+
+    const response = await fetch(`${IRACING_URL}/auth`, {
+      method: "POST",
+      body: JSON.stringify({
+        email: IRACING_EMAIL,
+        password: hashedPassword,
+      }),
+      credentials: "include", // Important for cookies
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
+
+    if (!response.ok) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Failed to authenticate iRacing: ${response.status}`,
+      });
+    }
+
+    const authCode = response.headers
+      .get("set-cookie")
+      ?.match(/authtoken_members=([^;]+)/)?.[1];
+
+    if (!authCode) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "No valid auth cookie received from iRacing",
+      });
+    }
+
+    await db
+      .insert(iracingAuthTable)
+      .values({
+        userId: MY_USER_ID,
+        authCode,
+        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+      })
+      .onDuplicateKeyUpdate({
+        set: {
+          authCode,
+          expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+        },
+      });
+
+    return authCode;
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: error instanceof Error ? error.message : "Authentication failed",
+    });
+  }
+};
 
 const transformLicenses = (
   member: TransformLicensesInput,
@@ -97,6 +216,7 @@ const fetchData = async ({
     }
 
     try {
+      console.log({ data });
       const linkResponse = await fetch(data.link);
 
       if (!linkResponse.ok) {
@@ -104,8 +224,9 @@ const fetchData = async ({
           `Failed to fetch data from the provided link. Status ${linkResponse.status}`,
         );
       }
-
-      return await linkResponse.json();
+      const linkData = await linkResponse.json();
+      console.log({ linkData });
+      return linkData;
     } catch (downloadError) {
       const message =
         downloadError instanceof Error
@@ -159,4 +280,52 @@ const fetchData = async ({
   }
 };
 
-export { transformLicenses, fetchData };
+// Update series every 7 days
+const cacheSeries = async ({ authCode }: { authCode: string }) => {
+  try {
+    const cachedSeries = await db
+      .select()
+      .from(seriesTable)
+      .where(
+        gt(
+          seriesTable.updatedAt,
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        ),
+      );
+
+    if (cachedSeries.length > 0) {
+      console.log("Using cashed series");
+      console.log(cachedSeries);
+      return { success: true };
+    }
+
+    console.log("Refreshing All Series");
+    const data: IracingGetAllSeriesResponse[] = await fetchData({
+      query: `/data/series/seasons`,
+      authCode: authCode,
+    });
+
+    if (!data) {
+      throw new Error("Failed to get series");
+    }
+
+    const insertValues = data.map((item) => ({
+      seasonYear: new Date().getFullYear(),
+      seriesId: item.series_id.toString(),
+      category: item.category,
+      seriesName: item.series_name,
+    }));
+
+    await db.delete(seriesTable);
+    await db.insert(seriesTable).values(insertValues);
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error in cacheSeries:", error);
+      return { success: false, error: error.message };
+    }
+  }
+};
+
+export { transformLicenses, fetchData, cacheSeries };
