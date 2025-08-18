@@ -1,4 +1,6 @@
-import { and, eq, gt } from "drizzle-orm";
+import CryptoJS from "crypto-js";
+
+import { eq, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
