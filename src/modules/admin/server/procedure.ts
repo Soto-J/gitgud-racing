@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { adminProcedure, createTRPCRouter } from "@/trpc/init";
 
 import { db } from "@/db";
-import { profile, user } from "@/db/schema";
+import { profileTable, user } from "@/db/schema";
 
 import {
   DeleteUserInputSchema,
@@ -24,12 +24,12 @@ export const adminRouter = createTRPCRouter({
         banReason: user.banReason,
         banExpires: user.banExpires,
         createdAt: user.createdAt,
-        team: profile.team,
-        isActive: profile.isActive,
+        team: profileTable.team,
+        isActive: profileTable.isActive,
       })
       .from(user)
-      .innerJoin(profile, eq(profile.userId, user.id))
-      .where(eq(profile.userId, input.userId));
+      .innerJoin(profileTable, eq(profileTable.userId, user.id))
+      .where(eq(profileTable.userId, input.userId));
 
     if (!member) {
       throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
@@ -52,11 +52,11 @@ export const adminRouter = createTRPCRouter({
           banReason: user.banReason,
           banExpires: user.banExpires,
           createdAt: user.createdAt,
-          team: profile.team,
-          isActive: profile.isActive,
+          team: profileTable.team,
+          isActive: profileTable.isActive,
         })
         .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
@@ -74,7 +74,7 @@ export const adminRouter = createTRPCRouter({
       const [total] = await db
         .select({ count: count() })
         .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
@@ -101,9 +101,9 @@ export const adminRouter = createTRPCRouter({
       );
 
       const [resultHeader] = await db
-        .update(profile)
+        .update(profileTable)
         .set({ ...cleanUpdata })
-        .where(eq(profile.userId, userId));
+        .where(eq(profileTable.userId, userId));
 
       if (resultHeader.affectedRows === 0) {
         throw new TRPCError({
@@ -121,12 +121,12 @@ export const adminRouter = createTRPCRouter({
           banReason: user.banReason,
           banExpires: user.banExpires,
           createdAt: user.createdAt,
-          team: profile.team,
-          isActive: profile.isActive,
+          team: profileTable.team,
+          isActive: profileTable.isActive,
         })
         .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
-        .where(eq(profile.userId, userId));
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .where(eq(profileTable.userId, userId));
 
       return updatedMember;
     }),

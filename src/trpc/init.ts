@@ -6,7 +6,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { license, profile } from "@/db/schema";
+import { licenseTable, profileTable } from "@/db/schema";
 
 import { getOrRefreshAuthCode } from "@/lib/iracing-auth";
 import { auth } from "@/lib/auth";
@@ -90,9 +90,9 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
   async ({ ctx, next }) => {
     const user = await db
       .select()
-      .from(profile)
-      .leftJoin(license, eq(license.userId, ctx.auth.user.id))
-      .where(eq(profile.userId, ctx.auth.user.id))
+      .from(profileTable)
+      .leftJoin(licenseTable, eq(licenseTable.userId, ctx.auth.user.id))
+      .where(eq(profileTable.userId, ctx.auth.user.id))
       .then((value) => value[0]);
 
     // User hasn't input an iracingId/custId return
@@ -101,7 +101,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
     }
 
     // Check if we need to sync (e.g., data is stale)
-    const lastSync = user?.license?.lastIracingSync;
+    const lastSync = user?.license?.updatedAt;
     const shouldSync =
       !lastSync ||
       new Date().getTime() - lastSync.getTime() > 24 * 60 * 60 * 1000; // 24 hours
@@ -133,9 +133,7 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
 
       const iracingData: IRacingFetchResult = await dataResponse.json();
 
-      console.log({ iracingData });
-
-      const licenses = iracingData.members[0].licenses;
+      const licenses = iracingData.members[0]?.licenses;
 
       if (!licenses) {
         console.error("No licenses found on iRacing api");
@@ -143,19 +141,16 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       }
 
       const transformedData = transformLicenseData(licenses);
-      console.log(transformedData);
 
       await db
-        .insert(license)
+        .insert(licenseTable)
         .values({
           ...transformedData,
           userId: ctx.auth.user.id,
-          lastIracingSync: new Date(),
         })
         .onDuplicateKeyUpdate({
           set: {
             ...transformedData,
-            lastIracingSync: new Date(),
           },
         });
 

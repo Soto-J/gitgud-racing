@@ -7,7 +7,7 @@ import { TRPCError } from "@trpc/server";
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
 
 import { db } from "@/db";
-import { iracingAuth } from "@/db/schema";
+import { iracingAuthTable } from "@/db/schema";
 
 const requiredEnvVars = {
   email: process.env.IRACING_EMAIL,
@@ -31,8 +31,8 @@ export const getOrRefreshAuthCode = async () => {
   // get auth info and check if it expired
   const iracingAuthInfo = await db
     .select()
-    .from(iracingAuth)
-    .where(eq(iracingAuth.userId, requiredEnvVars.userId!))
+    .from(iracingAuthTable)
+    .where(eq(iracingAuthTable.userId, requiredEnvVars.userId!))
     .then((value) => value[0]);
 
   if (iracingAuthInfo?.expiresAt && iracingAuthInfo.expiresAt > new Date()) {
@@ -80,8 +80,9 @@ export const getOrRefreshAuthCode = async () => {
       });
     }
 
-    const setCookieHeader = response.headers.get("set-cookie");
-    const authCode = setCookieHeader?.match(/authtoken_members=([^;]+)/)?.[1];
+    const authCode = response.headers
+      .get("set-cookie")
+      ?.match(/authtoken_members=([^;]+)/)?.[1];
 
     if (!authCode) {
       throw new TRPCError({
@@ -91,7 +92,7 @@ export const getOrRefreshAuthCode = async () => {
     }
 
     await db
-      .insert(iracingAuth)
+      .insert(iracingAuthTable)
       .values({
         userId: process.env.MY_USER_ID!,
         authCode,

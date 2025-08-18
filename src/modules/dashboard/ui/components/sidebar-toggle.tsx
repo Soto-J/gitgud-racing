@@ -8,7 +8,7 @@ import { DashboardCommand } from "@/modules/dashboard/ui/components/dashboard-co
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
 
-export const DashboardNavbar = () => {
+export const SidebarToggle = () => {
   const [commandOpen, setCommandOpen] = useState(false);
 
   const { toggleSidebar, state, isMobile } = useSidebar();

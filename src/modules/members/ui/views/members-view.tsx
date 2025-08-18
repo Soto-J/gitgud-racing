@@ -17,6 +17,7 @@ import { columns } from "@/modules/members/ui/components/columns";
 interface MembersViewProps {
   userId: string;
 }
+
 export const MembersView = ({ userId }: MembersViewProps) => {
   const [filters, setFilters] = useMembersFilters();
   const router = useRouter();

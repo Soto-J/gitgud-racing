@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { profile, user } from "@/db/schema";
+import { profileTable, user } from "@/db/schema";
 
 import {
   GetManyInputSchema,
@@ -18,10 +18,10 @@ export const membersRouter = createTRPCRouter({
       const [member] = await db
         .select({
           ...getTableColumns(user),
-          isActive: profile.isActive,
+          isActive: profileTable.isActive,
         })
         .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
         .where(eq(user.id, input.id));
 
       return member;
@@ -35,10 +35,10 @@ export const membersRouter = createTRPCRouter({
       const members = await db
         .select({
           ...getTableColumns(user),
-          isActive: profile.isActive,
+          isActive: profileTable.isActive,
         })
         .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
@@ -66,12 +66,12 @@ export const membersRouter = createTRPCRouter({
       const [totalActive] = await db
         .select({ count: count() })
         .from(user)
-        .innerJoin(profile, eq(profile.userId, user.id))
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
         .where(
           and(
             memberId ? eq(user.id, memberId) : undefined,
             search ? like(user.name, `%${search}%`) : undefined,
-            eq(profile.isActive, true),
+            eq(profileTable.isActive, true),
           ),
         );
 
