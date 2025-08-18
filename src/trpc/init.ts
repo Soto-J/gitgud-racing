@@ -3,14 +3,14 @@ import { headers } from "next/headers";
 
 import { initTRPC, TRPCError } from "@trpc/server";
 
-import { eq, gt } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+
 import * as helper from "@/modules/iracing/server/helper";
+
 import { db } from "@/db";
-import { licenseTable, profileTable, seriesTable } from "@/db/schema";
+import { licenseTable, profileTable } from "@/db/schema";
 
 import { auth } from "@/lib/auth";
-
-import { IRACING_URL } from "@/constants";
 
 import {
   IRacingFetchResult,
@@ -43,6 +43,7 @@ export const baseProcedure = t.procedure;
 
 export const cronJobProcedure = baseProcedure.use(async ({ ctx, next }) => {
   const iracingAuthCode = await helper.getOrRefreshAuthCode();
+
   return next({
     ctx: {
       ...ctx,
@@ -75,10 +76,6 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
     const iracingAuthCode = await helper.getOrRefreshAuthCode();
-
-    await helper.cacheSeries({
-      authCode: iracingAuthCode,
-    });
 
     return next({
       ctx: {
@@ -115,57 +112,51 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
     }
 
     // Otherwise we either update or create licenses for user
-    try {
-      // Fetch from iRacing API
-      const response = await fetch(
-        `${IRACING_URL}/data/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
-        {
-          headers: {
-            Cookie: `authtoken_members=${ctx.iracingAuthCode}`,
-          },
-        },
-      );
+    const iRacingUserData: IRacingFetchResult = await helper.fetchData({
+      query: `/data/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
+      authCode: ctx.iracingAuthCode,
+    });
 
-      if (!response.ok) {
-        return next({ ctx });
-      }
-
-      const { link } = await response.json();
-
-      const dataResponse = await fetch(link);
-
-      const iracingData: IRacingFetchResult = await dataResponse.json();
-
-      const licenses = iracingData.members[0]?.licenses;
-
-      if (!licenses) {
-        console.error("No licenses found on iRacing api");
-        return next({ ctx });
-      }
-
-      const transformedData = transformLicenseData(licenses);
-
-      await db
-        .insert(licenseTable)
-        .values({
-          ...transformedData,
-          userId: ctx.auth.user.id,
-        })
-        .onDuplicateKeyUpdate({
-          set: {
-            ...transformedData,
-          },
-        });
-
-      console.log("iRacing profile data synced");
-      return next({ ctx });
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Failed to sync iRacing data:", error.message);
-      }
-
+    if (!iRacingUserData) {
       return next({ ctx });
     }
+
+    const member = iRacingUserData?.members?.[0];
+
+    if (!member) {
+      console.error("No member data found in iRacing response");
+      return next({ ctx });
+    }
+
+    const licenses = member?.licenses;
+
+    if (!licenses) {
+      console.error("No licenses found on iRacing api");
+      return next({ ctx });
+    }
+
+    const transformedData = transformLicenseData(licenses);
+
+    const updateSuccess = await db
+      .insert(licenseTable)
+      .values({
+        ...transformedData,
+        userId: ctx.auth.user.id,
+      })
+      .onDuplicateKeyUpdate({
+        set: {
+          ...transformedData,
+        },
+      })
+      .$returningId();
+
+    if (!updateSuccess) {
+      console.error("Failed to update licenses.");
+      return next({ ctx });
+    }
+
+    console.log("iRacing profile data synced.");
+    return next({ ctx });
   },
 );
 
