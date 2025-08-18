@@ -9,6 +9,7 @@ import {
   mysqlEnum,
   int,
   decimal,
+  index,
 } from "drizzle-orm/mysql-core";
 
 export const user = mysqlTable("user", {
@@ -191,7 +192,7 @@ export const seriesTable = mysqlTable("series", {
   seasonYear: int("season_year").notNull(),
   seasonQuarter: int("season_quarter").notNull(),
   category: varchar("category", { length: 25 }).notNull(),
-  seriesName: varchar("series_name", { length: 25 }).notNull(),
+  seriesName: varchar("series_name", { length: 100 }).notNull(),
 
   licenseGroup: int("license_group").notNull(),
   fixedSetup: boolean("fixed_setup").notNull().default(false),
@@ -199,3 +200,8 @@ export const seriesTable = mysqlTable("series", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });
+
+export const seriesSeasonIndex = index("idx_series_season").on(
+  seriesTable.seasonYear,
+  seriesTable.seasonQuarter,
+);

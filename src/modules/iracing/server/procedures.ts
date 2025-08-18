@@ -111,7 +111,7 @@ export const iracingRouter = createTRPCRouter({
         authCode: ctx.iracingAuthCode,
       });
 
-      Promise.all(
+      await Promise.all(
         data.map((item) =>
           db
             .insert(seriesTable)
@@ -139,10 +139,12 @@ export const iracingRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const params = ["/data/results/search_series"];
 
-      for (const [key, value] of Object.entries(input)) {
-        params.push(`${key}=${value}`);
-      }
-
+      Object.entries(input).forEach(([key, value]) => {
+        if (value) {
+          params.push(`&${key}=${value}`);
+        }
+      });
+      
       const data: IracingGetSeriesResultsResponse = await helper.fetchData({
         query: params.join(""),
         authCode: ctx.iracingAuthCode,

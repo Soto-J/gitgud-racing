@@ -30,8 +30,8 @@ export const profileRouter = createTRPCRouter({
           memberName: user.name,
         })
         .from(profileTable)
-        .innerJoin(user, eq(profileTable.userId, input.userId))
-        .leftJoin(licenseTable, eq(licenseTable.userId, input.userId))
+        .innerJoin(user, eq(user.id, profileTable.userId))
+        .leftJoin(licenseTable, eq(licenseTable.userId, profileTable.userId))
         .where(eq(profileTable.userId, input.userId))
         .then((results) => results[0]);
 

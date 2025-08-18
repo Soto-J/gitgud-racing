@@ -176,7 +176,7 @@ export type IracingGetAllSeriesResponse = {
       power_adjust_pct: number;
       weight_penalty_kg: number;
     }[];
-    category: "oval" | "sports_car" | "dirt_oval" | "formula_car";
+    category: "oval" | "sports_car" | "dirt_oval" | "dirt_road" | "formula_car";
     category_id: number;
     enable_pitlane_collisions: boolean;
     full_course_cautions: boolean;
@@ -297,7 +297,7 @@ export type IracingGetSeriesResultsResponse = {
     track_id: number;
     track_name: string;
   };
-  official_session: true;
+  official_session: boolean;
   season_id: number;
   season_year: number;
   season_quarter: number;
