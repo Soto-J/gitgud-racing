@@ -2,8 +2,6 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, createAuthMiddleware } from "better-auth/plugins";
 
-import { eq } from "drizzle-orm";
-
 import { db } from "@/db";
 import * as dbSchema from "@/db/schema";
 
@@ -31,14 +29,10 @@ export const auth = betterAuth({
       if (!user) return;
 
       await db
-        .insert(dbSchema.profile)
-        .values({
-          userId: user.id,
-        })
+        .insert(dbSchema.profileTable)
+        .values({ userId: user.id })
         .onDuplicateKeyUpdate({
-          set: {
-            userId: user.id,
-          },
+          set: { userId: user.id },
         });
     }),
   },

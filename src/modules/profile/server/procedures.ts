@@ -1,12 +1,10 @@
-import z from "zod";
-
 import { and, eq, getTableColumns } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { license, profile, user } from "@/db/schema";
+import { licenseTable, profileTable, user } from "@/db/schema";
 
 import {
   CreateInsertSchema,
@@ -27,14 +25,14 @@ export const profileRouter = createTRPCRouter({
 
       const profileWithUser = await db
         .select({
-          ...getTableColumns(profile),
-          ...getTableColumns(license),
+          ...getTableColumns(profileTable),
+          ...getTableColumns(licenseTable),
           memberName: user.name,
         })
-        .from(profile)
-        .innerJoin(user, eq(profile.userId, input.userId))
-        .leftJoin(license, eq(license.userId, input.userId)) // gets profile even if there's no license
-        .where(eq(profile.userId, input.userId))
+        .from(profileTable)
+        .innerJoin(user, eq(profileTable.userId, input.userId))
+        .leftJoin(licenseTable, eq(licenseTable.userId, input.userId))
+        .where(eq(profileTable.userId, input.userId))
         .then((results) => results[0]);
 
       if (!profileWithUser) {
@@ -48,13 +46,13 @@ export const profileRouter = createTRPCRouter({
     }),
 
   getMany: protectedProcedure.query(async () => {
-    return await db.select().from(profile);
+    return await db.select().from(profileTable);
   }),
 
   create: protectedProcedure
     .input(CreateInsertSchema)
     .mutation(async ({ ctx, input }) => {
-      const [response] = await db.insert(profile).values({
+      const [response] = await db.insert(profileTable).values({
         userId: input.userId,
       });
 
@@ -67,12 +65,12 @@ export const profileRouter = createTRPCRouter({
 
       const [createProfile] = await db
         .select()
-        .from(profile)
-        .innerJoin(user, eq(user.id, profile.userId))
+        .from(profileTable)
+        .innerJoin(user, eq(user.id, profileTable.userId))
         .where(
           and(
-            eq(profile.userId, input.userId),
-            eq(profile.userId, ctx.auth.user.id),
+            eq(profileTable.userId, input.userId),
+            eq(profileTable.userId, ctx.auth.user.id),
           ),
         );
 
@@ -83,7 +81,7 @@ export const profileRouter = createTRPCRouter({
     .input(EditProfileInputSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await db
-        .update(profile)
+        .update(profileTable)
         .set({
           iracingId: input.iRacingId.trim(),
           // team: input.team,
@@ -92,8 +90,8 @@ export const profileRouter = createTRPCRouter({
         })
         .where(
           and(
-            eq(profile.userId, input.userId),
-            eq(profile.userId, ctx.auth.user.id),
+            eq(profileTable.userId, input.userId),
+            eq(profileTable.userId, ctx.auth.user.id),
           ),
         )
         .then((result) => result[0]);
@@ -109,8 +107,8 @@ export const profileRouter = createTRPCRouter({
 
       const [editedProfile] = await db
         .select()
-        .from(profile)
-        .where(eq(profile.userId, input.userId));
+        .from(profileTable)
+        .where(eq(profileTable.userId, input.userId));
 
       return editedProfile;
     }),

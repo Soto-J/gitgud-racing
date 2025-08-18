@@ -1,3 +1,8 @@
+interface QuickStatsCardProps {
+  iracingId: number;
+  averageIrating: number;
+}
+
 export const QuickStatsCard = () => {
   return (
     <div className="mt-6 rounded-xl border border-red-700/30 bg-gradient-to-br from-red-900/30 to-red-800/30 p-4 backdrop-blur-sm">

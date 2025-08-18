@@ -86,33 +86,7 @@ export const verification = mysqlTable("verification", {
   ),
 });
 
-export const iracingAuth = mysqlTable("iracing_auth", {
-  id: varchar("id", { length: 21 })
-    .primaryKey()
-    .$default(() => nanoid()),
-  userId: varchar("user_id", { length: 36 })
-    .notNull()
-    .unique()
-    .references(() => user.id, { onDelete: "cascade" }),
-
-  // Auth data
-  authCookie: text("auth_cookie"),
-  authCode: text("auth_code").notNull(),
-  customerId: int("customer_id"),
-
-  // SSO data (from your response)
-  ssoCookieValue: text("sso_cookie_value"),
-
-  // Timing
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-  expiresAt: timestamp("expires_at"), // createdAt + 1 hour
-
-  // Status
-  isActive: boolean("is_active").default(true),
-});
-
-export const profile = mysqlTable("profile", {
+export const profileTable = mysqlTable("profile", {
   id: varchar("id", { length: 21 })
     .notNull()
     .primaryKey()
@@ -133,9 +107,28 @@ export const profile = mysqlTable("profile", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// iRacing
+export const iracingAuthTable = mysqlTable("iracing_auth", {
+  id: varchar("id", { length: 21 })
+    .primaryKey()
+    .$default(() => nanoid()),
+  userId: varchar("user_id", { length: 36 })
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  authCode: text("auth_code").notNull(),
+
+  ssoCookieValue: text("sso_cookie_value"),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  expiresAt: timestamp("expires_at"), // createdAt + 1 hour
+});
+
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
 
-export const license = mysqlTable("license", {
+export const licenseTable = mysqlTable("license", {
   id: varchar("id", { length: 21 })
     .notNull()
     .primaryKey()
@@ -145,14 +138,12 @@ export const license = mysqlTable("license", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  // Oval
   ovalIRating: int("oval_i_rating"),
   ovalSafetyRating: decimal("oval_safety_rating", { precision: 4, scale: 2 }),
   ovalLicenseClass: mysqlEnum("oval_license_class", safetyClassValues)
     .notNull()
     .default("R"),
 
-  // Sports Car
   sportsCarIRating: int("sports_car_i_rating"),
   sportsCarSafetyRating: decimal("sports_car_safety_rating", {
     precision: 4,
@@ -162,7 +153,6 @@ export const license = mysqlTable("license", {
     .notNull()
     .default("R"),
 
-  // Formula Car
   formulaCarIRating: int("formula_car_i_rating"),
   formulaCarSafetyRating: decimal("formula_car_safety_rating", {
     precision: 4,
@@ -172,7 +162,6 @@ export const license = mysqlTable("license", {
     .notNull()
     .default("R"),
 
-  // Dirt oval road
   dirtOvalIRating: int("dirt_oval_i_rating"),
   dirtOvalSafetyRating: decimal("dirt_oval_safety_rating", {
     precision: 4,
@@ -182,7 +171,6 @@ export const license = mysqlTable("license", {
     .notNull()
     .default("R"),
 
-  // Dirt road
   dirtRoadIRating: int("dirt_road_i_rating"),
   dirtRoadSafetyRating: decimal("dirt_road_safety_rating", {
     precision: 4,
@@ -192,9 +180,22 @@ export const license = mysqlTable("license", {
     .notNull()
     .default("R"),
 
-  // Meta fields
-  lastIracingSync: timestamp("last_iracing_sync"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+});
 
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+export const seriesTable = mysqlTable("series", {
+  seriesId: varchar("series_id", { length: 36 }).primaryKey().notNull(),
+  seasonId: varchar("season_id", { length: 36 }).notNull(),
+
+  seasonYear: int("season_year").notNull(),
+  seasonQuarter: int("season_quarter").notNull(),
+  category: varchar("category", { length: 25 }).notNull(),
+  seriesName: varchar("series_name", { length: 25 }).notNull(),
+
+  licenseGroup: int("license_group").notNull(),
+  fixedSetup: boolean("fixed_setup").notNull().default(false),
+
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });
