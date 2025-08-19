@@ -18,7 +18,6 @@ import {
 
 import {
   GetAllSeriesInputSchema,
-  GetSeriesResultsInputSchema,
   GetUserInputSchema,
 } from "@/modules/iracing/schema";
 
@@ -98,26 +97,6 @@ export const iracingRouter = createTRPCRouter({
         query: `/data/series/seasons?include_series=${include_series}&season_year=${season_year}&season_quarter=${season_quarter}`,
         authCode: ctx.iracingAuthCode,
       });
-
-      // await Promise.all(
-      //   data.map((item) =>
-      //     db
-      //       .insert(seriesTable)
-      //       .values({
-      //         seriesId: item.series_id.toString(),
-      //         seasonId: item.season_id.toString(),
-      //         seasonYear: item.season_year,
-      //         seasonQuarter: item.season_quarter,
-      //         category: item.schedules[0].category,
-      //         seriesName: item.schedules[0].schedule_name,
-      //         licenseGroup: item.license_group,
-      //         fixedSetup: item.fixed_setup,
-      //       })
-      //       .onDuplicateKeyUpdate({
-      //         set: {},
-      //       }),
-      //   ),
-      // );
 
       return await db.select().from(seriesTable);
     }),
@@ -201,4 +180,8 @@ export const iracingRouter = createTRPCRouter({
 
       return successfulResults;
     }),
+
+  seriesWeeklyResults: iracingProcedure.query(async () => {
+    return await db.select().from(seriesWeeklyStatsTable);
+  }),
 });

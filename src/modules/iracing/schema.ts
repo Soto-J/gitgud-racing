@@ -30,17 +30,17 @@ export const GetAllSeriesInputSchema = z.object({
   include_series: z.boolean().default(true),
 });
 
-export const GetSeriesResultsInputSchema = z.object({
-  series_id: z.string().nullish(),
-  season_year: z.string(),
-  season_quarter: z.string(),
-  event_types: z.string().nullish(),
-  official_only: z.boolean().nullish(),
-  race_week_num: z.string().nullish(),
-  start_range_begin: z.string().nullish(),
-  start_range_end: z.string().nullish(),
-  cust_id: z.string().nullish(),
-  team_id: z.string().nullish(),
-  category_id: z.string().nullish(),
-  include_series: z.boolean().default(true),
-});
+// export const WeeklyResultsInputSchema = z.object({
+//   series_id: z.string().nullish(),
+//   season_year: z.string(),
+//   season_quarter: z.string(),
+//   event_types: z.string().nullish(),
+//   official_only: z.boolean().nullish(),
+//   race_week_num: z.string().nullish(),
+//   start_range_begin: z.string().nullish(),
+//   start_range_end: z.string().nullish(),
+//   cust_id: z.string().nullish(),
+//   team_id: z.string().nullish(),
+//   category_id: z.string().nullish(),
+//   include_series: z.boolean().default(true),
+// });

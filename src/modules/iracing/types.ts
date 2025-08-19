@@ -113,8 +113,6 @@ export type TransformLicensesOutput = {
   } | null;
 };
 
-
-
 export type IracingGetSeriesResultsResponse = {
   session_id: number;
   subsession_id: number;
@@ -335,3 +333,67 @@ export type IracingGetAllSeriesResponse = {
 //   track_types: { track_type: string }[];
 //   unsport_conduct_rule_mode: number;
 // }[];
+
+export type CacheWeeklyResultsInput = {
+  authCode: string;
+  params: {
+    series_id: string;
+    season_year: string;
+    season_quarter: string;
+    event_types: string;
+    official_only: boolean;
+    race_week_num: string;
+    start_range_begin: string;
+    start_range_end: string;
+    cust_id: string;
+    team_id: string;
+    category_id: string;
+    include_series: string;
+  };
+};
+
+export type SeasonResultsResponse = {
+  session_id: number;
+  subsession_id: number;
+  race_week_num: number;
+  car_classes: {
+    car_class_id: 74;
+    short_name: string;
+    name: string;
+    num_entries: number;
+    strength_of_field: number;
+  }[];
+  driver_changes: boolean;
+  event_best_lap_time: number;
+  event_strength_of_field: number;
+  event_type: number;
+  event_type_name: string;
+  farm: {
+    farm_id: number;
+    display_name: string;
+    image_path: string;
+    displayed: boolean;
+  };
+  num_caution_laps: number;
+  num_cautions: number;
+  num_drivers: number;
+  num_lead_changes: number;
+  official_session: boolean;
+  start_time: string;
+  track: {
+    config_name: string;
+    track_id: number;
+    track_name: string;
+  };
+  winner_helmet: {
+    pattern: number;
+    color1: string;
+    color2: string;
+    color3: string;
+    face_type: number;
+    helmet_type: number;
+  };
+  winner_id: number;
+  winner_license_level: number;
+  winner_name: string;
+};
