@@ -400,7 +400,7 @@ export type ResultsList = {
 export type SeasonResultsResponse = {
   success: boolean;
   season_id: number;
-  race_week_num: 0;
-  event_type: 5;
+  race_week_num: number;
+  event_type: number;
   results_list: ResultsList[];
 };
