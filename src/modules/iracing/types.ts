@@ -357,7 +357,7 @@ export type SeasonResultsResponse = {
   subsession_id: number;
   race_week_num: number;
   car_classes: {
-    car_class_id: 74;
+    car_class_id: number;
     short_name: string;
     name: string;
     num_entries: number;

@@ -199,13 +199,13 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
     .primaryKey()
     .$default(() => nanoid()),
 
-  sessionId: int("session_id").notNull(),
+  sessionId: int("session_id").unique().notNull(),
   subSessionId: int("subsession_id").notNull(),
   seasonYear: int("season_year").notNull(),
   seasonQuarter: int("season_quarter").notNull(),
-  name: varchar("name", { length: 30 }).notNull(),
-  shortName: varchar("short_name", { length: 30 }).notNull(),
-  trackName: varchar("track_name", { length: 30 }),
+  name: varchar("name", { length: 100 }).notNull(),
+  shortName: varchar("short_name", { length: 100 }).notNull(),
+  trackName: varchar("track_name", { length: 100 }),
   raceWeek: int("race_week").notNull(),
 
   startTime: varchar("start_time", { length: 30 }).notNull(),

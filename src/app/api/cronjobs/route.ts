@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   }
 
   const currentWeek = calculateCurrentWeek();
-  
+
   const params = {
     season_id: "5559", // 2025
     event_type: "5",
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!cachedWeeklyResults) {
-    console.error("Cron job error:", seriesCached?.error);
+    console.error("Cron job error: Failed to cache weekly results.");
     return Response.json({ success: false }, { status: 500 });
   }
 
@@ -58,11 +58,17 @@ const calculateCurrentWeek = () => {
   let currentSeasonIndex = 0;
   let seasonStartDate = seasonStarts[0];
 
-  for (let i = seasonStarts.length - 1; i >= 0; i--) {
-    if (now >= seasonStarts[i]) {
-      currentSeasonIndex = i;
-      seasonStartDate = seasonStarts[i];
-      break;
+  if (now < seasonStarts[0]) {
+    // Before Season 1 of the current year: treat as last year's Season 4
+    currentSeasonIndex = 3;
+    seasonStartDate = new Date(year - 1, 11, 10);
+  } else {
+    for (let i = seasonStarts.length - 1; i >= 0; i--) {
+      if (now >= seasonStarts[i]) {
+        currentSeasonIndex = i;
+        seasonStartDate = seasonStarts[i];
+        break;
+      }
     }
   }
 
@@ -73,7 +79,7 @@ const calculateCurrentWeek = () => {
   );
 
   return {
-    currentWeek: Math.min(weeksSinceStart, 12), // Cap at 12 (0-12 = 13 weeks)
+    currentWeek: Math.max(0, Math.min(weeksSinceStart, 12)), // Clamp to [0, 12]
     currentSeason: currentSeasonIndex + 1,
     seasonStartDate,
   };

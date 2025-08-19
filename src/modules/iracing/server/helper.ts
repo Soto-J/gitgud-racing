@@ -324,7 +324,7 @@ const cacheWeeklyResults = async ({
       {} as Record<string, SeasonResultsResponse[]>,
     );
 
-    const currentQuarter = Math.ceil(new Date().getMonth() + 1 / 3);
+    const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
 
     const perRaceStats = Object.entries(groupedBySeries).map(
       ([seriesName, sessions]) => {
