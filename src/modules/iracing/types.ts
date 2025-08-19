@@ -352,7 +352,7 @@ export type CacheWeeklyResultsInput = {
   };
 };
 
-export type SeasonResultsResponse = {
+export type ResultsList = {
   session_id: number;
   subsession_id: number;
   race_week_num: number;
@@ -396,4 +396,11 @@ export type SeasonResultsResponse = {
   winner_id: number;
   winner_license_level: number;
   winner_name: string;
+};
+export type SeasonResultsResponse = {
+  success: boolean;
+  season_id: number;
+  race_week_num: 0;
+  event_type: 5;
+  results_list: ResultsList[];
 };

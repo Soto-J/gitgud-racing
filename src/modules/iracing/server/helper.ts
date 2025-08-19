@@ -19,6 +19,7 @@ import {
   IracingGetAllSeriesResponse,
   CacheWeeklyResultsInput,
   SeasonResultsResponse,
+  ResultsList,
 } from "@/modules/iracing/types";
 
 const requiredEnvVars = {
@@ -305,12 +306,12 @@ const cacheWeeklyResults = async ({
 
     console.log("Refreshing weekly results.");
 
-    const allSessions: SeasonResultsResponse[] = await fetchData({
+    const response: SeasonResultsResponse = await fetchData({
       query: `/data/results/season_results?season_id=${params.season_id}&event_type=${params.event_type}&race_week_num=${params.race_week_num}`,
       authCode: authCode,
     });
 
-    const groupedBySeries = allSessions.reduce(
+    const groupedBySeries = response.results_list.reduce(
       (obj, session) => {
         const seriesName = session.car_classes[0].name; // or short_name
 
@@ -321,7 +322,7 @@ const cacheWeeklyResults = async ({
         obj[seriesName].push(session);
         return obj;
       },
-      {} as Record<string, SeasonResultsResponse[]>,
+      {} as Record<string, ResultsList[]>,
     );
 
     const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
@@ -336,7 +337,7 @@ const cacheWeeklyResults = async ({
             obj[session.start_time].push(session);
             return obj;
           },
-          {} as Record<string, SeasonResultsResponse[]>,
+          {} as Record<string, ResultsList[]>,
         );
 
         const totalRaces = Object.keys(groupedByStartTime).length;
