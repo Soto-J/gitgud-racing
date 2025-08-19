@@ -306,7 +306,7 @@ const cacheWeeklyResults = async ({
     console.log("Refreshing weekly results.");
 
     const allSessions: SeasonResultsResponse[] = await fetchData({
-      query: `/result/season_result&season_id=${params.season_id}&event_type=${params.event_type}&race_week_num=${params.race_week_num}`,
+      query: `/results/season_results&season_id=${params.season_id}&event_type=${params.event_type}&race_week_num=${params.race_week_num}`,
       authCode: authCode,
     });
 
