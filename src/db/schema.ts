@@ -198,18 +198,30 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-  seriesId: varchar("series_id", { length: 36 })
-    .notNull()
-    .unique()
-    .references(() => seriesTable.seriesId, { onDelete: "cascade" }),
 
+  sessionId: int("session_id").unique().notNull(),
+  subSessionId: int("subsession_id").notNull(),
   seasonYear: int("season_year").notNull(),
   seasonQuarter: int("season_quarter").notNull(),
-  raceWeekNum: int("race_week_num").notNull(),
-  averageEntrants: decimal("average_entrants", { precision: 5, scale: 2 }),
-  averageSplits: decimal("average_splits", { precision: 5, scale: 2 }),
-  totalSplits: int("total_splits"),
+  name: varchar("name", { length: 100 }).notNull(),
+  shortName: varchar("short_name", { length: 100 }).notNull(),
+  trackName: varchar("track_name", { length: 100 }),
+  raceWeek: int("race_week").notNull(),
+
+  startTime: varchar("start_time", { length: 30 }).notNull(),
+  strengthOfField: int("strength_of_field").notNull(), // ← Fixed this
+  totalSplits: int("total_splits").notNull(),
+  totalDrivers: int("total_drivers").notNull(),
+
+  averageEntrants: decimal("average_entrants", {
+    precision: 5,
+    scale: 2,
+  }).notNull(),
+  averageSplits: decimal("average_splits", {
+    precision: 5,
+    scale: 2,
+  }).notNull(),
 
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("last_updated").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });

@@ -4,7 +4,11 @@ import { eq, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
-import { iracingAuthTable, seriesTable } from "@/db/schema";
+import {
+  iracingAuthTable,
+  seriesTable,
+  seriesWeeklyStatsTable,
+} from "@/db/schema";
 
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
 
@@ -13,6 +17,8 @@ import {
   TransformLicensesOutput,
   LicenseDiscipline,
   IracingGetAllSeriesResponse,
+  CacheWeeklyResultsInput,
+  SeasonResultsResponse,
 } from "@/modules/iracing/types";
 
 const requiredEnvVars = {
@@ -130,67 +136,6 @@ export const getOrRefreshAuthCode = async () => {
       message: error instanceof Error ? error.message : "Authentication failed",
     });
   }
-};
-
-const transformLicenses = (
-  member: TransformLicensesInput,
-): TransformLicensesOutput => {
-  if (!member?.licenses) {
-    const { licenses, ...restData } = member;
-    return {
-      ...restData,
-      licenses: null,
-    };
-  }
-
-  // Extract the licenses object
-  const licenseData = member.licenses;
-
-  // Create an array of license objects
-  const disciplinesArray: LicenseDiscipline[] = [
-    {
-      category: "Oval",
-      iRating: licenseData.ovalIRating,
-      safetyRating: licenseData.ovalSafetyRating,
-      licenseClass: licenseData.ovalLicenseClass,
-    },
-    {
-      category: "Sports",
-      iRating: licenseData.sportsCarIRating,
-      safetyRating: licenseData.sportsCarSafetyRating,
-      licenseClass: licenseData.sportsCarLicenseClass,
-    },
-    {
-      category: "Formula",
-      iRating: licenseData.formulaCarIRating,
-      safetyRating: licenseData.formulaCarSafetyRating,
-      licenseClass: licenseData.formulaCarLicenseClass,
-    },
-    {
-      category: "Dirt Oval",
-      iRating: licenseData.dirtOvalIRating,
-      safetyRating: licenseData.dirtOvalSafetyRating,
-      licenseClass: licenseData.dirtOvalLicenseClass,
-    },
-    {
-      category: "Dirt Road",
-      iRating: licenseData.dirtRoadIRating,
-      safetyRating: licenseData.dirtRoadSafetyRating,
-      licenseClass: licenseData.dirtRoadLicenseClass,
-    },
-  ];
-
-  // Excluding the old licenses field
-  const { licenses, ...restOfMember } = member;
-
-  return {
-    ...restOfMember,
-    licenses: {
-      id: licenses.id,
-
-      disciplines: disciplinesArray,
-    },
-  };
 };
 
 const fetchData = async ({
@@ -331,4 +276,170 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
   }
 };
 
-export { transformLicenses, fetchData, cacheSeries };
+const cacheWeeklyResults = async ({
+  authCode,
+  params,
+}: {
+  authCode: string;
+  params: {
+    season_id: string;
+    event_type: string;
+    race_week_num: string;
+  };
+}) => {
+  try {
+    const weeklyResults = await db
+      .select()
+      .from(seriesWeeklyStatsTable)
+      .where(
+        gt(
+          seriesWeeklyStatsTable.updatedAt,
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        ),
+      );
+
+    if (weeklyResults.length > 0) {
+      console.log("Using cached weekly results.");
+      return { success: true };
+    }
+
+    console.log("Refreshing weekly results.");
+
+    const allSessions: SeasonResultsResponse[] = await fetchData({
+      query: `/result/season_result&season_id=${params.season_id}&event_type=${params.event_type}&race_week_num=${params.race_week_num}`,
+      authCode: authCode,
+    });
+
+    const groupedBySeries = allSessions.reduce(
+      (obj, session) => {
+        const seriesName = session.car_classes[0].name; // or short_name
+
+        if (!obj[seriesName]) {
+          obj[seriesName] = [];
+        }
+
+        obj[seriesName].push(session);
+        return obj;
+      },
+      {} as Record<string, SeasonResultsResponse[]>,
+    );
+
+    const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
+
+    const perRaceStats = Object.entries(groupedBySeries).map(
+      ([seriesName, sessions]) => {
+        const groupedByStartTime = sessions.reduce(
+          (obj, session) => {
+            if (!obj[session.start_time]) {
+              obj[session.start_time] = [];
+            }
+            obj[session.start_time].push(session);
+            return obj;
+          },
+          {} as Record<string, SeasonResultsResponse[]>,
+        );
+
+        const totalRaces = Object.keys(groupedByStartTime).length;
+        const totalSplits = sessions.length;
+        const totalDrivers = sessions.reduce(
+          (sum, session) => sum + session.num_drivers,
+          0,
+        );
+
+        const averageSplits = (totalSplits / totalRaces).toString();
+        const averageEntrants = (totalDrivers / totalSplits).toString();
+        const seasonYear = new Date(sessions[0].start_time).getFullYear();
+
+        return {
+          sessionId: sessions[0].session_id,
+          subSessionId: sessions[0].subsession_id,
+          seasonYear: seasonYear,
+          seasonQuarter: currentQuarter,
+          name: seriesName,
+          shortName: sessions[0].car_classes[0].short_name,
+          trackName: sessions[0].track.track_name,
+          raceWeek: sessions[0].race_week_num,
+
+          startTime: sessions[0].start_time,
+          strengthOfField: sessions[0].event_strength_of_field,
+          totalSplits,
+          totalDrivers,
+          averageEntrants,
+          averageSplits,
+        };
+      },
+    );
+
+    await db.insert(seriesWeeklyStatsTable).values(perRaceStats);
+
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error in cacheWeeklyResults:", error);
+      return { success: false, error: error.message };
+    }
+  }
+};
+
+const transformLicenses = (
+  member: TransformLicensesInput,
+): TransformLicensesOutput => {
+  if (!member?.licenses) {
+    const { licenses, ...restData } = member;
+    return {
+      ...restData,
+      licenses: null,
+    };
+  }
+
+  // Extract the licenses object
+  const licenseData = member.licenses;
+
+  // Create an array of license objects
+  const disciplinesArray: LicenseDiscipline[] = [
+    {
+      category: "Oval",
+      iRating: licenseData.ovalIRating,
+      safetyRating: licenseData.ovalSafetyRating,
+      licenseClass: licenseData.ovalLicenseClass,
+    },
+    {
+      category: "Sports",
+      iRating: licenseData.sportsCarIRating,
+      safetyRating: licenseData.sportsCarSafetyRating,
+      licenseClass: licenseData.sportsCarLicenseClass,
+    },
+    {
+      category: "Formula",
+      iRating: licenseData.formulaCarIRating,
+      safetyRating: licenseData.formulaCarSafetyRating,
+      licenseClass: licenseData.formulaCarLicenseClass,
+    },
+    {
+      category: "Dirt Oval",
+      iRating: licenseData.dirtOvalIRating,
+      safetyRating: licenseData.dirtOvalSafetyRating,
+      licenseClass: licenseData.dirtOvalLicenseClass,
+    },
+    {
+      category: "Dirt Road",
+      iRating: licenseData.dirtRoadIRating,
+      safetyRating: licenseData.dirtRoadSafetyRating,
+      licenseClass: licenseData.dirtRoadLicenseClass,
+    },
+  ];
+
+  // Excluding the old licenses field
+  const { licenses, ...restOfMember } = member;
+
+  return {
+    ...restOfMember,
+    licenses: {
+      id: licenses.id,
+
+      disciplines: disciplinesArray,
+    },
+  };
+};
+
+export { transformLicenses, fetchData, cacheSeries, cacheWeeklyResults };
