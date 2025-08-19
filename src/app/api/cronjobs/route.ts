@@ -21,16 +21,28 @@ export async function GET(request: NextRequest) {
   }
 
   const currentWeek = calculateCurrentWeek();
-
+  const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
+  
   const params = {
-    season_id: "5559", // 2025
-    event_type: "5",
-    race_week_num: "0",
+    series_id: "213",
+    season_year: "2025",
+    season_quarter: "2",
+    event_types: "5",
+    official_only: "true",
+    race_week_num: "8",
+
+    start_range_begin: "",
+    start_range_end: "",
+    cust_id: "",
+    team_id: "",
+    category_id: "",
   };
+
+  const searchParams = createSearchParams(params);
 
   const cachedWeeklyResults = await helper.cacheWeeklyResults({
     authCode,
-    params,
+    searchParams,
   });
 
   if (!cachedWeeklyResults) {
@@ -83,4 +95,28 @@ const calculateCurrentWeek = () => {
     currentSeason: currentSeasonIndex + 1,
     seasonStartDate,
   };
+};
+
+const createSearchParams = (params: {
+  series_id?: string;
+  season_year: string;
+  season_quarter: string;
+  event_types?: string;
+  official_only?: string;
+  race_week_num?: string;
+  start_range_begin?: string;
+  start_range_end?: string;
+  cust_id?: string;
+  team_id?: string;
+  category_id?: string;
+}) => {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      searchParams.append(key, value);
+    }
+  });
+
+  return searchParams.toString() ? `?${searchParams.toString()}` : "";
 };

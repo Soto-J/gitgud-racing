@@ -198,20 +198,22 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
+  seriesId: varchar("series_id", { length: 36 })
+    .unique()
+    .references(() => seriesTable.seriesId, { onDelete: "cascade" }),
+  seasonId: varchar("season_id", { length: 100 }),
+  sessionId: varchar("session_id", { length: 100 }).unique().notNull(),
 
-  sessionId: int("session_id").unique().notNull(),
-  subSessionId: int("subsession_id").notNull(),
-  seasonYear: int("season_year").notNull(),
-  seasonQuarter: int("season_quarter").notNull(),
   name: varchar("name", { length: 100 }).notNull(),
   shortName: varchar("short_name", { length: 100 }).notNull(),
-  trackName: varchar("track_name", { length: 100 }),
+  seasonYear: int("season_year").notNull(),
+  seasonQuarter: int("season_quarter").notNull(),
   raceWeek: int("race_week").notNull(),
-
+  trackName: varchar("track_name", { length: 100 }),
   startTime: varchar("start_time", { length: 30 }).notNull(),
-  strengthOfField: int("strength_of_field").notNull(), // ← Fixed this
   totalSplits: int("total_splits").notNull(),
   totalDrivers: int("total_drivers").notNull(),
+  strengthOfField: int("strength_of_field").notNull(),
 
   averageEntrants: decimal("average_entrants", {
     precision: 5,

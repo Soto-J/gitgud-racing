@@ -25,7 +25,7 @@ import * as helper from "@/modules/iracing/server/helper";
 
 import {
   IracingGetAllSeriesResponse,
-  IracingGetSeriesResultsResponse,
+  IracingSeriesResultsResponse,
 } from "../types";
 
 export const iracingRouter = createTRPCRouter({
@@ -93,7 +93,7 @@ export const iracingRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { include_series, season_year, season_quarter } = input;
 
-      const data: IracingGetSeriesResultsResponse[] = await helper.fetchData({
+      const data: IracingSeriesResultsResponse[] = await helper.fetchData({
         query: `/data/series/seasons?include_series=${include_series}&season_year=${season_year}&season_quarter=${season_quarter}`,
         authCode: ctx.iracingAuthCode,
       });

@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 
-import { eq, gt } from "drizzle-orm";
+import { desc, eq, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
@@ -20,6 +20,7 @@ import {
   CacheWeeklyResultsInput,
   SeasonResultsResponse,
   ResultsList,
+  IracingSeriesResultsResponse,
 } from "@/modules/iracing/types";
 
 const requiredEnvVars = {
@@ -162,12 +163,28 @@ const fetchData = async ({
     const data = await initialResponse.json();
 
     // Documentation doesnt require a link
-    if (!data?.link) {
+    if (!data?.link && data.type !== "search_series_results") {
       return data;
     }
 
+    let link = data?.link;
+
+    if (data?.type === "search_series_results") {
+      const chunkInfo = data.chunk_info;
+
+      const baseDownloadUrl = chunkInfo.base_download_url;
+      const [chunkFileNames] = chunkInfo.chunk_file_names;
+
+      if (!chunkFileNames) {
+        throw new Error("No chunk file names found");
+      }
+
+      const link = `${baseDownloadUrl}${chunkFileNames}`;
+      console.log("Download URL:", link);
+    }
+
     try {
-      const linkResponse = await fetch(data.link);
+      const linkResponse = await fetch(link);
 
       if (!linkResponse.ok) {
         throw new Error(
@@ -175,7 +192,7 @@ const fetchData = async ({
         );
       }
       const linkData = await linkResponse.json();
-      // console.log({ linkData });
+
       return linkData;
     } catch (downloadError) {
       const message =
@@ -191,38 +208,41 @@ const fetchData = async ({
     console.error("iRacing API error:", error);
 
     if (error instanceof Error) {
-      if (error.message.includes("401")) {
-        throw new TRPCError({
+      // Map specific errors to TRPC codes
+      const errorMappings = [
+        {
+          includes: "401",
           code: "UNAUTHORIZED",
           message: "iRacing authentication failed.",
-        });
-      }
-
-      if (
-        error.message.includes("404") ||
-        error.message.includes("did not contain a data link")
-      ) {
-        throw new TRPCError({
+        },
+        {
+          includes: "404",
           code: "NOT_FOUND",
           message: "Requested iRacing resource not found.",
-        });
-      }
-
-      if (error.message.includes("Failed to parse")) {
-        throw new TRPCError({
+        },
+        {
+          includes: "Failed to parse",
           code: "PARSE_ERROR",
           message: "Failed to parse iRacing API response.",
-        });
+        },
+      ] as const;
+
+      for (const mapping of errorMappings) {
+        if (error.message.includes(mapping.includes)) {
+          throw new TRPCError({
+            code: mapping.code,
+            message: mapping.message,
+          });
+        }
       }
 
-      // Default generic error
+      // Default error
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: error.message,
       });
     }
 
-    // Fallback for non-Error objects
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: "An unknown error occurred while fetching iRacing data.",
@@ -279,14 +299,10 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
 
 const cacheWeeklyResults = async ({
   authCode,
-  params,
+  searchParams,
 }: {
   authCode: string;
-  params: {
-    season_id: string;
-    event_type: string;
-    race_week_num: string;
-  };
+  searchParams: string;
 }) => {
   try {
     const weeklyResults = await db
@@ -306,70 +322,72 @@ const cacheWeeklyResults = async ({
 
     console.log("Refreshing weekly results.");
 
-    const response: SeasonResultsResponse = await fetchData({
-      query: `/data/results/season_results?season_id=${params.season_id}&event_type=${params.event_type}&race_week_num=${params.race_week_num}`,
-      authCode: authCode,
+    const allSeries = await db
+      .select()
+      .from(seriesTable)
+      .orderBy(desc(seriesTable.seriesId));
+
+    if (!allSeries) {
+      console.error("Failed to retrieve series table.");
+      return { success: false };
+    }
+
+    const promiseArr = allSeries.map((series) =>
+      fetchData({
+        query: `/data/results/search_series${searchParams}&series_id=${series.seriesId}`,
+        authCode: authCode,
+      }),
+    );
+
+    const seriesResultsSettled = await Promise.allSettled(promiseArr);
+
+    const seriesResults: IracingSeriesResultsResponse[][] = seriesResultsSettled
+      .filter((result) => result.status === "fulfilled")
+      .map((result) => result.value);
+
+    const perRaceStats = seriesResults.map((series) => {
+      const uniqueRaces = series.reduce(
+        (obj, session) => {
+          if (!obj[session.start_time]) {
+            obj[session.start_time] = [];
+          }
+
+          obj[session.start_time].push(session);
+          return obj;
+        },
+        {} as Record<string, IracingSeriesResultsResponse[]>,
+      );
+
+      const totalRaces = Object.values(uniqueRaces).length;
+
+      const totalSplits = series.length;
+
+      const totalDrivers = series.reduce(
+        (total, session) => total + session.num_drivers,
+        0,
+      );
+
+      const avgSplitPerRace = (totalSplits / totalRaces).toString();
+      const avgEntrantPerSeries = (totalDrivers / totalSplits).toString();
+
+      return {
+        seriesId: series[0].series_id.toString(),
+        seasonId: series[0].season_id.toString(),
+        sessionId: series[0].season_id.toString(),
+        name: series[0].series_name,
+        shortName: series[0].series_short_name,
+        seasonYear: series[0].season_year,
+        seasonQuarter: series[0].season_quarter,
+        raceWeek: series[0].race_week_num,
+        trackName: series[0].track.track_name,
+        startTime: series[0].start_time,
+        totalSplits,
+        totalDrivers,
+        strengthOfField: series[0].event_strength_of_field,
+        averageEntrants: avgEntrantPerSeries,
+        averageSplits: avgSplitPerRace,
+      };
     });
-
-    const groupedBySeries = response.results_list.reduce(
-      (obj, session) => {
-        const seriesName = session.car_classes[0].name; // or short_name
-
-        if (!obj[seriesName]) {
-          obj[seriesName] = [];
-        }
-
-        obj[seriesName].push(session);
-        return obj;
-      },
-      {} as Record<string, ResultsList[]>,
-    );
-
-    const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
-
-    const perRaceStats = Object.entries(groupedBySeries).map(
-      ([seriesName, sessions]) => {
-        const groupedByStartTime = sessions.reduce(
-          (obj, session) => {
-            if (!obj[session.start_time]) {
-              obj[session.start_time] = [];
-            }
-            obj[session.start_time].push(session);
-            return obj;
-          },
-          {} as Record<string, ResultsList[]>,
-        );
-
-        const totalRaces = Object.keys(groupedByStartTime).length;
-        const totalSplits = sessions.length;
-        const totalDrivers = sessions.reduce(
-          (sum, session) => sum + session.num_drivers,
-          0,
-        );
-
-        const averageSplits = (totalSplits / totalRaces).toString();
-        const averageEntrants = (totalDrivers / totalSplits).toString();
-        const seasonYear = new Date(sessions[0].start_time).getFullYear();
-
-        return {
-          sessionId: sessions[0].session_id,
-          subSessionId: sessions[0].subsession_id,
-          seasonYear: seasonYear,
-          seasonQuarter: currentQuarter,
-          name: seriesName,
-          shortName: sessions[0].car_classes[0].short_name,
-          trackName: sessions[0].track.track_name,
-          raceWeek: sessions[0].race_week_num,
-
-          startTime: sessions[0].start_time,
-          strengthOfField: sessions[0].event_strength_of_field,
-          totalSplits,
-          totalDrivers,
-          averageEntrants,
-          averageSplits,
-        };
-      },
-    );
 
     await db.insert(seriesWeeklyStatsTable).values(perRaceStats);
 
@@ -393,7 +411,6 @@ const transformLicenses = (
     };
   }
 
-  // Extract the licenses object
   const licenseData = member.licenses;
 
   // Create an array of license objects
