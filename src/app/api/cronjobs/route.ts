@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   }
 
   const currentWeek = calculateCurrentWeek();
-  const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
+  const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3).toString();
 
   const params = {
     season_year: "2025",
@@ -97,7 +97,6 @@ const calculateCurrentWeek = () => {
 };
 
 const createSearchParams = (params: {
-  series_id?: string;
   season_year: string;
   season_quarter: string;
   event_types?: string;
