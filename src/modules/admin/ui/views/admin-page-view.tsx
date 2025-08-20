@@ -5,7 +5,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
-import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/admin/hooks/use-members-filter";
 
 import { DataTable } from "@/modules/admin/ui/components/table/data-table";
 import { columns } from "@/modules/admin/ui/components/table/columns";
@@ -22,7 +22,7 @@ export const AdminPageView = () => {
   const { data } = useSuspenseQuery(
     trpc.admin.getUsers.queryOptions({ ...filters }),
   );
-  
+
   const [ConfirmationDialog, confirmDelete] = useConfirm({
     title: "Delete Member Account",
     description:

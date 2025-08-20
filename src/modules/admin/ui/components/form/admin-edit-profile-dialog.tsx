@@ -12,7 +12,7 @@ import { useTRPC } from "@/trpc/client";
 import { AdminGetUser } from "@/modules/admin/types";
 import { ProfileInsertSchema } from "@/modules/admin/schema";
 
-import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/admin/hooks/use-members-filter";
 
 import { FormActions } from "@/modules/admin/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
