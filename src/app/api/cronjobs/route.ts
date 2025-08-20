@@ -22,13 +22,13 @@ export async function GET(request: NextRequest) {
 
   const currentWeek = calculateCurrentWeek();
   const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
-  
+
   const params = {
     season_year: "2025",
-    season_quarter: "2",
+    season_quarter: currentQuarter,
     event_types: "5",
     official_only: "true",
-    race_week_num: "8",
+    race_week_num: "9",
 
     start_range_begin: "",
     start_range_end: "",
