@@ -96,7 +96,7 @@ export const iracingRouter = createTRPCRouter({
     if (!allSeries) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Failed to retrieve weekly results",
+        message: "No series found",
       });
     }
   }),
@@ -110,7 +110,7 @@ export const iracingRouter = createTRPCRouter({
     if (!weeklyResults) {
       throw new TRPCError({
         code: "NOT_FOUND",
-        message: "Failed to retrieve weekly results",
+        message: "No weekly results found",
       });
     }
 
