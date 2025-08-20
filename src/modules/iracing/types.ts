@@ -113,7 +113,7 @@ export type TransformLicensesOutput = {
   } | null;
 };
 
-export type IracingGetSeriesResultsResponse = {
+export type IracingSeriesResultsResponse = {
   session_id: number;
   subsession_id: number;
   start_time: string;
