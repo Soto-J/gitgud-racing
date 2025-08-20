@@ -156,7 +156,7 @@ const fetchData = async ({
 
     if (!initialResponse.ok) {
       throw new Error(
-        `Failed to get data link. Status: ${initialResponse.status}`,
+        `Initial fetch failed, Status: ${initialResponse.status}`,
       );
     }
 
@@ -170,7 +170,7 @@ const fetchData = async ({
     let link = data?.link ?? "";
 
     if (data?.type === "search_series_results") {
-      const chunkInfo = data.chunk_info;
+      const chunkInfo = data.data.chunk_info;
 
       const baseDownloadUrl = chunkInfo.base_download_url;
       const [chunkFileNames] = chunkInfo.chunk_file_names;
