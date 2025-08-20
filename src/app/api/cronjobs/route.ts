@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
   const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3);
   
   const params = {
-    series_id: "213",
     season_year: "2025",
     season_quarter: "2",
     event_types: "5",

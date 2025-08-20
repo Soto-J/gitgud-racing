@@ -198,9 +198,10 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-  seriesId: varchar("series_id", { length: 36 })
-    .unique()
-    .references(() => seriesTable.seriesId, { onDelete: "cascade" }),
+  seriesId: varchar("series_id", { length: 36 }).references(
+    () => seriesTable.seriesId,
+    { onDelete: "cascade" },
+  ),
   seasonId: varchar("season_id", { length: 100 }),
   sessionId: varchar("session_id", { length: 100 }).unique().notNull(),
 

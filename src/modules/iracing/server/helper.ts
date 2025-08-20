@@ -167,7 +167,7 @@ const fetchData = async ({
       return data;
     }
 
-    let link = data?.link;
+    let link = data?.link ?? "";
 
     if (data?.type === "search_series_results") {
       const chunkInfo = data.chunk_info;
@@ -179,8 +179,12 @@ const fetchData = async ({
         throw new Error("No chunk file names found");
       }
 
-      const link = `${baseDownloadUrl}${chunkFileNames}`;
+      link = `${baseDownloadUrl}${chunkFileNames}`;
       console.log("Download URL:", link);
+    }
+
+    if (!link) {
+      throw new Error("No download link available from iRacing response.");
     }
 
     try {
@@ -191,6 +195,7 @@ const fetchData = async ({
           `Failed to fetch data from the provided link. Status ${linkResponse.status}`,
         );
       }
+
       const linkData = await linkResponse.json();
 
       return linkData;
@@ -345,49 +350,53 @@ const cacheWeeklyResults = async ({
       .filter((result) => result.status === "fulfilled")
       .map((result) => result.value);
 
-    const perRaceStats = seriesResults.map((series) => {
-      const uniqueRaces = series.reduce(
-        (obj, session) => {
-          if (!obj[session.start_time]) {
-            obj[session.start_time] = [];
-          }
+    const perRaceStats = seriesResults
+      .filter((series) => series.length > 0)
+      .map((series) => {
+        const uniqueRaces = series.reduce(
+          (obj, session) => {
+            if (!obj[session.start_time]) {
+              obj[session.start_time] = [];
+            }
 
-          obj[session.start_time].push(session);
-          return obj;
-        },
-        {} as Record<string, IracingSeriesResultsResponse[]>,
-      );
+            obj[session.start_time].push(session);
+            return obj;
+          },
+          {} as Record<string, IracingSeriesResultsResponse[]>,
+        );
 
-      const totalRaces = Object.values(uniqueRaces).length;
+        const totalRaces = Object.values(uniqueRaces).length;
 
-      const totalSplits = series.length;
+        const totalSplits = series.length;
 
-      const totalDrivers = series.reduce(
-        (total, session) => total + session.num_drivers,
-        0,
-      );
+        const totalDrivers = series.reduce(
+          (total, session) => total + session.num_drivers,
+          0,
+        );
 
-      const avgSplitPerRace = (totalSplits / totalRaces).toString();
-      const avgEntrantPerSeries = (totalDrivers / totalSplits).toString();
+        const avgSplitPerRace =
+          totalRaces > 0 ? (totalSplits / totalRaces).toFixed(2) : "0";
+        const avgEntrantPerSeries =
+          totalSplits > 0 ? (totalDrivers / totalSplits).toFixed(2) : "0";
 
-      return {
-        seriesId: series[0].series_id.toString(),
-        seasonId: series[0].season_id.toString(),
-        sessionId: series[0].season_id.toString(),
-        name: series[0].series_name,
-        shortName: series[0].series_short_name,
-        seasonYear: series[0].season_year,
-        seasonQuarter: series[0].season_quarter,
-        raceWeek: series[0].race_week_num,
-        trackName: series[0].track.track_name,
-        startTime: series[0].start_time,
-        totalSplits,
-        totalDrivers,
-        strengthOfField: series[0].event_strength_of_field,
-        averageEntrants: avgEntrantPerSeries,
-        averageSplits: avgSplitPerRace,
-      };
-    });
+        return {
+          seriesId: series[0].series_id.toString(),
+          seasonId: series[0].season_id.toString(),
+          sessionId: series[0].session_id.toString(),
+          name: series[0].series_name,
+          shortName: series[0].series_short_name,
+          seasonYear: series[0].season_year,
+          seasonQuarter: series[0].season_quarter,
+          raceWeek: series[0].race_week_num,
+          trackName: series[0].track.track_name,
+          startTime: series[0].start_time,
+          totalSplits,
+          totalDrivers,
+          strengthOfField: series[0].event_strength_of_field,
+          averageEntrants: avgEntrantPerSeries,
+          averageSplits: avgSplitPerRace,
+        };
+      });
 
     await db.insert(seriesWeeklyStatsTable).values(perRaceStats);
 
