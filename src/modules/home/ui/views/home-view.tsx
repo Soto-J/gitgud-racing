@@ -1,9 +1,12 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQueries, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { useChartDataFilters } from "@/modules/home/hooks/use-chart-data-filter";
+
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ChartPagination } from "../components/chart-pagination";
 import {
   type ChartConfig,
   ChartContainer,
@@ -12,15 +15,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-const chartData = [
-  { month: "January", averageEntrants: 186, averageSplits: 80 },
-  { month: "February", averageEntrants: 305, averageSplits: 200 },
-  { month: "March", averageEntrants: 237, averageSplits: 120 },
-  { month: "April", averageEntrants: 73, averageSplits: 190 },
-  { month: "May", averageEntrants: 209, averageSplits: 130 },
-  { month: "June", averageEntrants: 214, averageSplits: 140 },
-];
 
 const chartConfig = {
   averageEntrants: {
@@ -33,47 +27,132 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface HomeViewProps {
-  queryOptions: {
-    season_year: string;
-    season_quarter: string;
-  };
-}
+export const HomeView = () => {
+  const [filters, setFilters] = useChartDataFilters();
 
-export const HomeView = ({ queryOptions }: HomeViewProps) => {
-  // const trpc = useTRPC();
-  // const { data } = useSuspenseQuery(
-  //   trpc.iracing.getSeriesResults.queryOptions({ ...queryOptions }),
-  // );
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(
+    trpc.iracing.weeklySeriesResults.queryOptions(),
+  );
 
-  // console.log(data);
+  console.log(data);
   return (
-    <div className="bg-background flex h-screen flex-col items-center justify-center">
-      <ChartContainer config={chartConfig} className="h-[500px] w-[80%]">
-        <BarChart accessibilityLayer data={chartData}>
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            tickMargin={10}
-            axisLine={false}
-            tickFormatter={(value) => value.slice(0, 3)}
-          />
-          <ChartTooltip content={<ChartTooltipContent />} />
-          <ChartLegend content={<ChartLegendContent />} />
+    <div className="bg-background flex h-screen flex-col items-center justify-center p-6">
+      <div className="w-full max-w-7xl">
+        {/* Chart Header */}
+        <div className="mb-6 py-8 text-center">
+          <h2 className="text-foreground mb-2 text-2xl font-bold">
+            Series Statistics Overview
+          </h2>
+          <p className="text-muted-foreground">
+            Average entrants and splits per week
+          </p>
+        </div>
 
-          <Bar
-            dataKey="averageEntrants"
-            fill="var(--color-averageEntrants)"
-            radius={4}
-          />
-          <Bar
-            dataKey="averageSplits"
-            fill="var(--color-averageSplits)"
-            radius={4}
-          />
-        </BarChart>
-      </ChartContainer>
+        <ChartPagination
+          page={filters.page}
+          totalPages={0}
+          onPageChange={(page) => setFilters({ page })}
+        />
+
+        <ChartContainer config={chartConfig} className="h-[500px] w-full">
+          <BarChart
+            accessibilityLayer
+            data={data.slice(0, 12)} // Show only 12 months at a time
+            margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+          >
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="3 3"
+              stroke="hsl(var(--muted-foreground))"
+              opacity={0.3}
+            />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              tickMargin={16}
+              axisLine={false}
+              angle={-45}
+              textAnchor="end"
+              height={80}
+              interval={0} // Show all ticks
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12 }}
+              width={60}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  formatter={(value, name) => [
+                    typeof value === "number" ? value.toFixed(1) : value,
+                    name === "averageEntrants"
+                      ? " Avg Entrants"
+                      : " Avg Splits",
+                  ]}
+                />
+              }
+            />
+            <ChartLegend
+              content={<ChartLegendContent />}
+              wrapperStyle={{ paddingTop: "20px" }}
+            />
+
+            <Bar
+              dataKey="averageEntrants"
+              fill="var(--color-averageEntrants)"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={60}
+            />
+            <Bar
+              dataKey="averageSplits"
+              fill="var(--color-averageSplits)"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={60}
+            />
+          </BarChart>
+        </ChartContainer>
+
+        {/* Summary Stats */}
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="bg-card rounded-lg border p-4">
+            <h3 className="text-muted-foreground text-sm font-medium">
+              Total Months
+            </h3>
+            <p className="text-2xl font-bold">{data.length}</p>
+          </div>
+          <div className="bg-card rounded-lg border p-4">
+            <h3 className="text-muted-foreground text-sm font-medium">
+              Avg Entrants
+            </h3>
+            <p className="text-2xl font-bold">
+              {(
+                data.reduce(
+                  (acc, item) => acc + parseFloat(item.averageEntrants),
+                  0,
+                ) / data.length
+              ).toFixed(1)}
+            </p>
+          </div>
+          <div className="bg-card rounded-lg border p-4">
+            <h3 className="text-muted-foreground text-sm font-medium">
+              Avg Splits
+            </h3>
+            <p className="text-2xl font-bold">
+              {(
+                data.reduce(
+                  (acc, item) => acc + parseFloat(item.averageSplits),
+                  0,
+                ) / data.length
+              ).toFixed(1)}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

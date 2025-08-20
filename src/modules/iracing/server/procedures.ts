@@ -1,4 +1,4 @@
-import { and, eq, getTableColumns, gt } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, gt } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import {
@@ -87,27 +87,33 @@ export const iracingRouter = createTRPCRouter({
       };
     }),
 
-  // Returns all series from a year and quarter
-  getAllSeries: iracingProcedure
-    .input(GetAllSeriesInputSchema)
-    .query(async ({ ctx, input }) => {
-      const { include_series, season_year, season_quarter } = input;
+  getAllSeries: iracingProcedure.query(async ({ ctx, input }) => {
+    const allSeries = await db
+      .select()
+      .from(seriesTable)
+      .orderBy(desc(seriesTable.seriesName));
 
-      const data: IracingSeriesResultsResponse[] = await helper.fetchData({
-        query: `/data/series/seasons?include_series=${include_series}&season_year=${season_year}&season_quarter=${season_quarter}`,
-        authCode: ctx.iracingAuthCode,
+    if (!allSeries) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No series found",
       });
+    }
+  }),
 
-      return await db.select().from(seriesTable);
-    }),
+  weeklySeriesResults: iracingProcedure.query(async () => {
+    const weeklyResults = await db
+      .select()
+      .from(seriesWeeklyStatsTable)
+      .orderBy(desc(seriesWeeklyStatsTable.averageEntrants));
 
-  getSeriesResults: iracingProcedure
-    .input(GetAllSeriesInputSchema)
-    .query(async ({ ctx, input }) => {
-     // TODO
-    }),
+    if (!weeklyResults) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "No weekly results found",
+      });
+    }
 
-  seriesWeeklyResults: iracingProcedure.query(async () => {
-    return await db.select().from(seriesWeeklyStatsTable);
+    return weeklyResults;
   }),
 });
