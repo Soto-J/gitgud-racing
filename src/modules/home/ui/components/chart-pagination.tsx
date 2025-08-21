@@ -3,20 +3,20 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChartPaginationProps {
-  length?: number;
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
 export const ChartPagination = ({
-  length,
   page,
   totalPages,
   onPageChange,
 }: ChartPaginationProps) => {
+    const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3).toString();
+
   return (
-    <div className="mb-4 flex items-center justify-between">
+    <div className="flex items-center justify-between py-8">
       <button
         className="bg-secondary hover:bg-secondary/80 flex items-center gap-2 rounded-md px-3 py-2 text-sm"
         onClick={() => onPageChange(Math.max(1, page - 1))}
@@ -26,9 +26,9 @@ export const ChartPagination = ({
       </button>
 
       <span className="text-muted-foreground text-sm">
-        Showing 1-12 of {length || 0} months
+        Page {page} / {totalPages} 
       </span>
-      
+
       <button
         className="bg-secondary hover:bg-secondary/80 flex items-center gap-2 rounded-md px-3 py-2 text-sm"
         onClick={() => onPageChange(Math.min(totalPages, page + 1))}

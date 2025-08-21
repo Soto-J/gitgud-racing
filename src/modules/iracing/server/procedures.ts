@@ -1,4 +1,4 @@
-import { and, like, desc, eq, getTableColumns, or } from "drizzle-orm";
+import { and, like, desc, eq, getTableColumns, or, count } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import {
@@ -100,23 +100,23 @@ export const iracingRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { search, page, pageSize } = input;
 
+      const orClause = search
+        ? or(
+            like(seriesWeeklyStatsTable.name, `%${search}%`),
+            like(seriesWeeklyStatsTable.shortName, `%${search}%`),
+            like(seriesWeeklyStatsTable.trackName, `%${search}%`),
+          )
+        : undefined;
+
       const weeklyResults = await db
         .select()
         .from(seriesWeeklyStatsTable)
-        .where(
-          search
-            ? or(
-                like(seriesWeeklyStatsTable.name, `%${search}%`),
-                like(seriesWeeklyStatsTable.shortName, `%${search}%`),
-                like(seriesWeeklyStatsTable.trackName, `%${search}%`),
-              )
-            : undefined,
-        )
+        .where(orClause)
         .orderBy(
           desc(seriesWeeklyStatsTable.averageEntrants),
           desc(seriesWeeklyStatsTable.averageSplits),
         )
-        .limit(0)
+        .limit(pageSize)
         .offset((page - 1) * pageSize);
 
       if (!weeklyResults) {
@@ -126,6 +126,17 @@ export const iracingRouter = createTRPCRouter({
         });
       }
 
-      return weeklyResults;
+      const [total] = await db
+        .select({ count: count() })
+        .from(seriesWeeklyStatsTable)
+        .where(orClause);
+
+      const totalPages = Math.ceil(total.count / pageSize);
+
+      return {
+        series: weeklyResults,
+        total: total.count,
+        totalPages,
+      };
     }),
 });

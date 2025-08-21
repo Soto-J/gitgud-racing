@@ -7,6 +7,9 @@ import { AppRouter } from "@/trpc/routers/_app";
 
 export type UserGetOne = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
 
+export type WeeklySeriesResults =
+  inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
+
 // Init
 export type IRacingLicense = {
   category_id: number;
