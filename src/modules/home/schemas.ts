@@ -1,9 +1,14 @@
 import z from "zod";
 
-import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  MAX_PAGE_SIZE,
+  MIN_PAGE_SIZE,
+} from "./constants";
 
 export const WeeklySeriesResultsInput = z.object({
-  page: z.number(),
+  page: z.number().default(DEFAULT_PAGE),
   pageSize: z
     .number()
     .min(MIN_PAGE_SIZE)

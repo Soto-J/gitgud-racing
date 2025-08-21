@@ -1,4 +1,4 @@
-import { and, desc, eq, getTableColumns, gt } from "drizzle-orm";
+import { and, like, desc, eq, getTableColumns, or } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import {
@@ -16,18 +16,10 @@ import {
   user,
 } from "@/db/schema";
 
-import {
-  GetAllSeriesInputSchema,
-  GetUserInputSchema,
-} from "@/modules/iracing/schema";
+import { GetUserInputSchema } from "@/modules/iracing/schema";
 
 import * as helper from "@/modules/iracing/server/helper";
 
-import {
-  IracingGetAllSeriesResponse,
-  IracingSeriesResultsResponse,
-} from "../types";
-import z from "zod";
 import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
 
 export const iracingRouter = createTRPCRouter({
@@ -105,11 +97,27 @@ export const iracingRouter = createTRPCRouter({
 
   weeklySeriesResults: iracingProcedure
     .input(WeeklySeriesResultsInput)
-    .query(async () => {
+    .query(async ({ input }) => {
+      const { search, page, pageSize } = input;
+
       const weeklyResults = await db
         .select()
         .from(seriesWeeklyStatsTable)
-        .orderBy(desc(seriesWeeklyStatsTable.averageEntrants));
+        .where(
+          search
+            ? or(
+                like(seriesWeeklyStatsTable.name, `%${search}%`),
+                like(seriesWeeklyStatsTable.shortName, `%${search}%`),
+                like(seriesWeeklyStatsTable.trackName, `%${search}%`),
+              )
+            : undefined,
+        )
+        .orderBy(
+          desc(seriesWeeklyStatsTable.averageEntrants),
+          desc(seriesWeeklyStatsTable.averageSplits),
+        )
+        .limit(0)
+        .offset((page - 1) * pageSize);
 
       if (!weeklyResults) {
         throw new TRPCError({

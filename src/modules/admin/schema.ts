@@ -2,10 +2,10 @@ import z from "zod";
 
 import {
   DEFAULT_PAGE,
-  MIN_PAGE_SIZE,
-  MAX_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
-} from "@/constants";
+  MAX_PAGE_SIZE,
+  MIN_PAGE_SIZE,
+} from "@/modules/admin/constants";
 
 export const ProfileInsertSchema = z.object({
   team: z.string(),

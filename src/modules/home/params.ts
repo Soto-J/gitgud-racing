@@ -1,6 +1,6 @@
 import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 
-import { DEFAULT_PAGE } from "@/modules/iracing/constants";
+import { DEFAULT_PAGE } from "@/modules/home/constants";
 
 export const filtersSearchParams = {
   search: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
