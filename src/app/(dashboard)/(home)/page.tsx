@@ -1,28 +1,35 @@
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 
-import { ErrorBoundary } from "react-error-boundary";
-import { Suspense } from "react";
+import { SearchParams } from "nuqs";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { auth } from "@/lib/auth";
+import { loadSearchParams } from "@/modules/home/params";
 
-import { useChartDataFilters } from "@/modules/home/hooks/use-chart-data-filter";
+import { auth } from "@/lib/auth";
 
 import { HomeView } from "@/modules/home/ui/views/home-view";
 
-const DashboardPage = async () => {
+interface HomePageProps {
+  searchParams: Promise<SearchParams>;
+}
+
+const HomePage = async ({ searchParams }: HomePageProps) => {
   const session = await auth.api.getSession({ headers: await headers() });
-  const [filters, _] = useChartDataFilters();
-  
+
   if (!session) redirect("/sign-in");
 
+  const filters = await loadSearchParams(searchParams);
+
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(
+  void (await queryClient.prefetchQuery(
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
-  );
+  ));
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<p>Loading</p>}>
@@ -34,4 +41,4 @@ const DashboardPage = async () => {
   );
 };
 
-export default DashboardPage;
+export default HomePage;

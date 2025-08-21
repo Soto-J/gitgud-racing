@@ -1,6 +1,6 @@
-import { DEFAULT_PAGE } from "@/constants";
-
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+
+import { DEFAULT_PAGE } from "@/modules/home/constants";
 
 // if input is empty clears URL to default ""
 // E.g. http://localhost:3000/agents?search=test
@@ -11,9 +11,5 @@ export const useChartDataFilters = () =>
 
     page: parseAsInteger
       .withDefault(DEFAULT_PAGE)
-      .withOptions({ clearOnDefault: true }),
-
-    memberId: parseAsString
-      .withDefault("")
       .withOptions({ clearOnDefault: true }),
   });
