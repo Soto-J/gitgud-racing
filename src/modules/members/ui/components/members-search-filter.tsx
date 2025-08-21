@@ -1,6 +1,6 @@
 import { SearchIcon } from "lucide-react";
 
-import { useMembersFilters } from "../../hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
 import { Input } from "@/components/ui/input";
 
