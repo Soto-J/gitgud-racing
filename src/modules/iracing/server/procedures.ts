@@ -100,15 +100,13 @@ export const iracingRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { search, page, pageSize } = input;
 
-      const orClause = or(
-        search ? like(seriesWeeklyStatsTable.name, `%${search}%`) : undefined,
-        search
-          ? like(seriesWeeklyStatsTable.shortName, `%${search}%`)
-          : undefined,
-        search
-          ? like(seriesWeeklyStatsTable.trackName, `%${search}%`)
-          : undefined,
-      );
+      const orClause = search
+        ? or(
+            like(seriesWeeklyStatsTable.name, `%${search}%`),
+            like(seriesWeeklyStatsTable.shortName, `%${search}%`),
+            like(seriesWeeklyStatsTable.trackName, `%${search}%`),
+          )
+        : undefined;
 
       const weeklyResults = await db
         .select()
