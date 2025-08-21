@@ -32,7 +32,7 @@ export const HomeView = () => {
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.iracing.weeklySeriesResults.queryOptions(),
+    trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
   );
 
   console.log(data);

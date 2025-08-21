@@ -27,6 +27,8 @@ import {
   IracingGetAllSeriesResponse,
   IracingSeriesResultsResponse,
 } from "../types";
+import z from "zod";
+import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
 
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
@@ -101,19 +103,21 @@ export const iracingRouter = createTRPCRouter({
     }
   }),
 
-  weeklySeriesResults: iracingProcedure.query(async () => {
-    const weeklyResults = await db
-      .select()
-      .from(seriesWeeklyStatsTable)
-      .orderBy(desc(seriesWeeklyStatsTable.averageEntrants));
+  weeklySeriesResults: iracingProcedure
+    .input(WeeklySeriesResultsInput)
+    .query(async () => {
+      const weeklyResults = await db
+        .select()
+        .from(seriesWeeklyStatsTable)
+        .orderBy(desc(seriesWeeklyStatsTable.averageEntrants));
 
-    if (!weeklyResults) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "No weekly results found",
-      });
-    }
+      if (!weeklyResults) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "No weekly results found",
+        });
+      }
 
-    return weeklyResults;
-  }),
+      return weeklyResults;
+    }),
 });
