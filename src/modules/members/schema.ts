@@ -5,7 +5,7 @@ import {
   MIN_PAGE_SIZE,
   MAX_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
-} from "@/constants";
+} from "@/modules/members/constants";
 
 export const GetOneInputSchema = z.object({ id: z.string() });
 
