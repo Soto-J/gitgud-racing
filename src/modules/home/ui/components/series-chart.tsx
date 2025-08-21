@@ -1,5 +1,4 @@
 import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
-import Image from "next/image";
 import {
   ChartContainer,
   ChartTooltip,
@@ -46,7 +45,7 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
           axisLine={false}
           angle={-45}
           height={80}
-          interval={0} 
+          interval={0}
           tick={<ImageTick />}
         />
         <YAxis
@@ -88,8 +87,21 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
   );
 };
 
-const ImageTick = (props: any) => {
-  const { x, y, payload } = props;
+const ImageTick = ({
+  x,
+  y,
+  payload,
+}: {
+  x?: number;
+  y?: number;
+  payload?: {
+    value: string;
+  };
+}) => {
+  if (!payload?.value) {
+    return null;
+  }
+
   return (
     <g transform={`translate(${x},${y})`}>
       <image
@@ -97,10 +109,9 @@ const ImageTick = (props: any) => {
         y={0}
         width={30}
         height={30}
-        href={`/Official_Series_Logos/Sports Car/${payload.value}.png`}
+        href={`/Official_Series_Logos/Sports Car/${payload?.value}.png`}
       />
     </g>
   );
-}
+};
 
-    //  href={`https://images-static.iracing.com/seriesid_${payload.value}.png`}
