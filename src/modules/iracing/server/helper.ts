@@ -303,59 +303,59 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
 };
 
 const IRACING_IMAGE_URL = "https://images-static.iracing.com";
-const cacheSeriesImage2 = async () => {
-  const authCode = await getOrRefreshAuthCode();
+// const cacheSeriesImage2 = async () => {
+//   const authCode = await getOrRefreshAuthCode();
 
-  // Get the official asset mappings
-  const data = await fetchData({
-    query: `/data/series/assets`,
-    authCode,
-  });
+//   // Get the official asset mappings
+//   const data = await fetchData({
+//     query: `/data/series/assets`,
+//     authCode,
+//   });
 
-  // Let's see what other series have and try different patterns
-  const seriesWithLogos: any = Object.values(data)
-    .filter((series: any) => series?.logo)
-    .slice(0, 10);
+//   // Let's see what other series have and try different patterns
+//   const seriesWithLogos: any = Object.values(data)
+//     .filter((series: any) => series?.logo)
+//     .slice(0, 10);
 
-  console.log(
-    "Series with logos:",
-    seriesWithLogos.map((s: any) => ({
-      id: s.series_id,
-      logo: s.logo,
-    })),
-  );
+//   console.log(
+//     "Series with logos:",
+//     seriesWithLogos.map((s: any) => ({
+//       id: s.series_id,
+//       logo: s.logo,
+//     })),
+//   );
 
-  const testUrls = [
-    `https://images-static.iracing.com/${seriesWithLogos[0].logo}`,
-    `https://images-static.iracing.com/series/${seriesWithLogos[0].logo}`,
-    `https://images-static.iracing.com/logos/${seriesWithLogos[0].logo}`,
+//   const testUrls = [
+//     `https://images-static.iracing.com/${seriesWithLogos[0].logo}`,
+//     `https://images-static.iracing.com/series/${seriesWithLogos[0].logo}`,
+//     `https://images-static.iracing.com/logos/${seriesWithLogos[0].logo}`,
 
-    `https://images-static.iracing.com/${seriesWithLogos[0].series_id}.png`,
-  ];
+//     `https://images-static.iracing.com/${seriesWithLogos[0].series_id}.png`,
+//   ];
 
-  for (const url of testUrls) {
-    try {
-      console.log(`\nTrying: ${url}`);
-      const response = await fetch(url, {
-        headers: {
-          Cookie: `authtoken_members=${authCode}`,
-        },
-      });
+//   for (const url of testUrls) {
+//     try {
+//       console.log(`\nTrying: ${url}`);
+//       const response = await fetch(url, {
+//         headers: {
+//           Cookie: `authtoken_members=${authCode}`,
+//         },
+//       });
 
-      console.log(`Status: ${response.status}`);
-      console.log(`Content-Type: ${response.headers.get("content-type")}`);
+//       console.log(`Status: ${response.status}`);
+//       console.log(`Content-Type: ${response.headers.get("content-type")}`);
 
-      if (response.ok) {
-        console.log("SUCCESS! This URL pattern works");
-        break;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(`Error: ${error.message}`);
-      }
-    }
-  }
-};
+//       if (response.ok) {
+//         console.log("SUCCESS! This URL pattern works");
+//         break;
+//       }
+//     } catch (error) {
+//       if (error instanceof Error) {
+//         console.log(`Error: ${error.message}`);
+//       }
+//     }
+//   }
+// };
 
 // Download series assets to public/series-logos
 const cacheSeriesImages = async () => {
@@ -595,5 +595,5 @@ export {
   cacheSeries,
   cacheWeeklyResults,
   cacheSeriesImages,
-  cacheSeriesImage2,
+  // cacheSeriesImage2,
 };
