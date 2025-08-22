@@ -109,9 +109,8 @@ const ImageTick = ({
         y={0}
         width={30}
         height={30}
-        href={`/Official_Series_Logos/Sports Car/${payload?.value}.png`}
+        href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
       />
     </g>
   );
 };
-

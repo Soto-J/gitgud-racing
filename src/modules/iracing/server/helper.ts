@@ -3,6 +3,9 @@ import CryptoJS from "crypto-js";
 import { desc, eq, gt } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
+import fs from "fs";
+import path from "path";
+
 import { db } from "@/db";
 import {
   iracingAuthTable,
@@ -99,6 +102,7 @@ export const getOrRefreshAuthCode = async () => {
       });
     }
 
+    console.log(response);
     const authCode = response.headers
       .get("set-cookie")
       ?.match(/authtoken_members=([^;]+)/)?.[1];
@@ -150,7 +154,6 @@ const fetchData = async ({
         Cookie: `authtoken_members=${authCode}`,
       },
     });
-
     if (!initialResponse.ok) {
       throw new Error(
         `Initial fetch failed, Status: ${initialResponse.status}`,
@@ -266,7 +269,7 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
       );
 
     if (cachedSeries.length > 0) {
-      console.log("Using cashed series");
+      console.log("Using cached series");
       // console.log(cachedSeries);
       return { success: true };
     }
@@ -296,6 +299,126 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
       console.error("Error in cacheSeries:", error);
       return { success: false, error: error.message };
     }
+  }
+};
+
+const IRACING_IMAGE_URL = "https://images-static.iracing.com";
+const cacheSeriesImage2 = async () => {
+  const authCode = await getOrRefreshAuthCode();
+
+  // Get the official asset mappings
+  const data = await fetchData({
+    query: `/data/series/assets`,
+    authCode,
+  });
+
+  // Let's see what other series have and try different patterns
+  const seriesWithLogos: any = Object.values(data)
+    .filter((series: any) => series?.logo)
+    .slice(0, 10);
+
+  console.log(
+    "Series with logos:",
+    seriesWithLogos.map((s: any) => ({
+      id: s.series_id,
+      logo: s.logo,
+    })),
+  );
+
+  const testUrls = [
+    `https://images-static.iracing.com/${seriesWithLogos[0].logo}`,
+    `https://images-static.iracing.com/series/${seriesWithLogos[0].logo}`,
+    `https://images-static.iracing.com/logos/${seriesWithLogos[0].logo}`,
+
+    `https://images-static.iracing.com/${seriesWithLogos[0].series_id}.png`,
+  ];
+
+  for (const url of testUrls) {
+    try {
+      console.log(`\nTrying: ${url}`);
+      const response = await fetch(url, {
+        headers: {
+          Cookie: `authtoken_members=${authCode}`,
+        },
+      });
+
+      console.log(`Status: ${response.status}`);
+      console.log(`Content-Type: ${response.headers.get("content-type")}`);
+
+      if (response.ok) {
+        console.log("SUCCESS! This URL pattern works");
+        break;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log(`Error: ${error.message}`);
+      }
+    }
+  }
+};
+
+// Download series assets to public/series-logos
+const cacheSeriesImages = async () => {
+  const allSeries = await db.select().from(seriesTable);
+
+  if (!allSeries || allSeries.length === 0) {
+    console.error("No series found.");
+    return;
+  }
+
+  // Create directory if it doesn't exist
+  const logoDir = path.join(process.cwd(), "public", "series-logos");
+  if (!fs.existsSync(logoDir)) {
+    fs.mkdirSync(logoDir, { recursive: true });
+  }
+
+  const authCode = await getOrRefreshAuthCode();
+
+  try {
+    const promiseArr = allSeries.map(async (series) => {
+      const imageUrl = `${IRACING_URL}/data/series/${series.seriesId}/logo`;
+
+      const response = await fetch(imageUrl, {
+        headers: {
+          Cookie: `authtoken_members=${authCode}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.log("Response", response);
+        throw new Error(
+          `Failed to fetrch image for series ${series.seriesName}, seriesId${series.seriesId}`,
+        );
+      }
+
+      console.log("Response", response);
+      return {
+        seriesId: series.seriesId,
+        seriesName: series.seriesName,
+        buffer: await response.arrayBuffer(),
+      };
+    });
+
+    const results = await Promise.allSettled(promiseArr);
+
+    results.forEach((result) => {
+      if (result.status === "fulfilled") {
+        const { seriesId, seriesName, buffer } = result.value;
+
+        const filename = `${seriesName}.png`;
+        const filepath = path.join(logoDir, filename);
+
+        try {
+          fs.writeFileSync(filepath, Buffer.from(buffer));
+        } catch (writeError) {
+          console.error(`Failed to write ${filename}:`, writeError);
+        }
+      }
+    });
+
+    console.log(`Finished caching series images. Check ${logoDir}`);
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -466,4 +589,11 @@ const transformLicenses = (
   };
 };
 
-export { transformLicenses, fetchData, cacheSeries, cacheWeeklyResults };
+export {
+  transformLicenses,
+  fetchData,
+  cacheSeries,
+  cacheWeeklyResults,
+  cacheSeriesImages,
+  cacheSeriesImage2,
+};
