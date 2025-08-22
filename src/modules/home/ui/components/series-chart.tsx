@@ -105,10 +105,10 @@ const ImageTick = ({
   return (
     <g transform={`translate(${x},${y})`}>
       <image
-        x={-15}
+        x={-25}
         y={0}
-        width={30}
-        height={30}
+        width={50}
+        height={50}
         href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
       />
     </g>
