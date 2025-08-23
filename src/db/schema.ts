@@ -112,10 +112,6 @@ export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-  userId: varchar("user_id", { length: 36 })
-    .notNull()
-    .unique()
-    .references(() => user.id, { onDelete: "cascade" }),
 
   authCode: text("auth_code").notNull(),
 
@@ -206,7 +202,6 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
   sessionId: varchar("session_id", { length: 100 }).unique().notNull(),
 
   name: varchar("name", { length: 100 }).notNull(),
-  shortName: varchar("short_name", { length: 100 }).notNull(),
   seasonYear: int("season_year").notNull(),
   seasonQuarter: int("season_quarter").notNull(),
   raceWeek: int("race_week").notNull(),

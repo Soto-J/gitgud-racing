@@ -1,4 +1,7 @@
 import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
+
+import { WeeklySeriesResults } from "@/modules/iracing/types";
+
 import {
   ChartContainer,
   ChartTooltip,
@@ -7,7 +10,6 @@ import {
   ChartLegendContent,
   ChartConfig,
 } from "@/components/ui/chart";
-import { WeeklySeriesResults } from "@/modules/iracing/types";
 
 const chartConfig = {
   averageEntrants: {
@@ -107,9 +109,8 @@ const ImageTick = ({
       <image
         x={-25}
         y={0}
-        width={50}
-        height={50}
         href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
+        className="h-6 w-6 md:h-10 md:w-10"
       />
     </g>
   );

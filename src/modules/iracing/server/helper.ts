@@ -23,22 +23,9 @@ import {
   IracingSeriesResultsResponse,
 } from "@/modules/iracing/types";
 
-const requiredEnvVars = {
-  email: process.env.IRACING_EMAIL,
-  password: process.env.IRACING_PASSWORD,
-  userId: process.env.MY_USER_ID,
-};
-
 export const getOrRefreshAuthCode = async () => {
   const IRACING_EMAIL = process.env?.IRACING_EMAIL;
   const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
-  const MY_USER_ID = process.env?.MY_USER_ID;
-  if (!MY_USER_ID) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `Missing required environment variables: MY_USER_ID`,
-    });
-  }
   if (!IRACING_PASSWORD) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
@@ -55,7 +42,6 @@ export const getOrRefreshAuthCode = async () => {
   const iracingAuthInfo = await db
     .select()
     .from(iracingAuthTable)
-    .where(eq(iracingAuthTable.userId, requiredEnvVars.userId!))
     .then((value) => value[0]);
 
   // Check if cached auth is still valid
@@ -117,7 +103,6 @@ export const getOrRefreshAuthCode = async () => {
     await db
       .insert(iracingAuthTable)
       .values({
-        userId: MY_USER_ID,
         authCode,
         expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
       })
