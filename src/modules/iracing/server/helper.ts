@@ -489,7 +489,6 @@ const cacheWeeklyResults = async ({
           seasonId: series[0].season_id.toString(),
           sessionId: series[0].session_id.toString(),
           name: series[0].series_name.trim(),
-          shortName: series[0].series_short_name.trim(),
           seasonYear: series[0].season_year,
           seasonQuarter: series[0].season_quarter,
           raceWeek: series[0].race_week_num,

@@ -103,7 +103,6 @@ export const iracingRouter = createTRPCRouter({
       const orClause = search
         ? or(
             like(seriesWeeklyStatsTable.name, `%${search}%`),
-            like(seriesWeeklyStatsTable.shortName, `%${search}%`),
             like(seriesWeeklyStatsTable.trackName, `%${search}%`),
           )
         : undefined;
