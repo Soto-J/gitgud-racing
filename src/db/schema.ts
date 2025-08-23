@@ -112,12 +112,12 @@ export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-
+    
   authCode: text("auth_code").notNull(),
 
   ssoCookieValue: text("sso_cookie_value"),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   expiresAt: timestamp("expires_at"), // createdAt + 1 hour
 });
@@ -176,8 +176,8 @@ export const licenseTable = mysqlTable("license", {
     .notNull()
     .default("R"),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const seriesTable = mysqlTable("series", {
@@ -186,8 +186,8 @@ export const seriesTable = mysqlTable("series", {
   category: varchar("category", { length: 25 }).notNull(),
   seriesName: varchar("series_name", { length: 100 }).notNull(),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
@@ -220,6 +220,6 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
     scale: 2,
   }).notNull(),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

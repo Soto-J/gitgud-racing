@@ -32,7 +32,6 @@ export const getOrRefreshAuthCode = async () => {
   const iracingAuthInfo = await db
     .select()
     .from(iracingAuthTable)
-    .where(eq(iracingAuthTable.userId, requiredEnvVars.userId!))
     .then((value) => value[0]);
 
   if (iracingAuthInfo?.expiresAt && iracingAuthInfo.expiresAt > new Date()) {
@@ -94,7 +93,6 @@ export const getOrRefreshAuthCode = async () => {
     await db
       .insert(iracingAuthTable)
       .values({
-        userId: process.env.MY_USER_ID!,
         authCode,
         expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
       })
@@ -102,7 +100,6 @@ export const getOrRefreshAuthCode = async () => {
         set: {
           authCode,
           expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
-          updatedAt: new Date(),
         },
       });
 
