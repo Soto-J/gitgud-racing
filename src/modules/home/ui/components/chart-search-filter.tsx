@@ -1,11 +1,11 @@
 import { SearchIcon } from "lucide-react";
 
-import { useChartDataFilters } from "@/modules/home/hooks/use-chart-data-filter";
+import { useChartFilter } from "@/modules/home/hooks/use-chart-data-filter";
 
 import { Input } from "@/components/ui/input";
 
 export const ChartSearchFilter = () => {
-  const [filters, setFilters] = useChartDataFilters();
+  const [filters, setFilters] = useChartFilter();
 
   return (
     <div className="relative">

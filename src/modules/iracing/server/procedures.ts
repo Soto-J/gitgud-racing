@@ -1,4 +1,4 @@
-import { and, like, desc, eq, getTableColumns, or, count } from "drizzle-orm";
+import { like, desc, eq, getTableColumns, or, count } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import {

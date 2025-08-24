@@ -66,11 +66,11 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
             />
           }
         />
-
         <ChartLegend
           content={<ChartLegendContent />}
-          wrapperStyle={{ paddingTop: "0px" }}
+          // wrapperStyle={{ paddingTop: "0px" }}
         />
+
 
         <Bar
           dataKey="averageEntrants"

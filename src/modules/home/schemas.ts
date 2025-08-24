@@ -8,11 +8,12 @@ import {
 } from "./constants";
 
 export const WeeklySeriesResultsInput = z.object({
-  page: z.number().default(DEFAULT_PAGE),
+  search: z.string().nullish(),
+
   pageSize: z
     .number()
     .min(MIN_PAGE_SIZE)
     .max(MAX_PAGE_SIZE)
     .default(DEFAULT_PAGE_SIZE),
-  search: z.string().nullish(),
+  page: z.number().default(DEFAULT_PAGE),
 });

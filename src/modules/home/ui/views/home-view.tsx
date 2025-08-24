@@ -1,14 +1,18 @@
 "use client";
 
-import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
-import { useChartDataFilters } from "@/modules/home/hooks/use-chart-data-filter";
+import { useChartFilter } from "@/modules/home/hooks/use-chart-data-filter";
 
-import { SeriesChart } from "../components/series-chart";
+import { ChartPagination } from "@/modules/home/ui/components/chart-pagination";
+import { SeriesChart } from "@/modules/home/ui/components/series-chart";
+
+import { LoadingState } from "@/components/loading-state";
+import { ErrorState } from "@/components/error-state";
 
 export const HomeView = () => {
-  const [filters, setFilters] = useChartDataFilters();
+  const [filters, setFilters] = useChartFilter();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
@@ -18,6 +22,12 @@ export const HomeView = () => {
   console.log(data);
   return (
     <div className="bg-background p-6">
+      <ChartPagination
+        page={filters.page}
+        onPageChange={(page) => setFilters({ page })}
+        totalPages={data.totalPages}
+      />
+      
       <SeriesChart data={data} />
 
       {/* Summary Stats */}
@@ -58,3 +68,10 @@ export const HomeView = () => {
     </div>
   );
 };
+
+export const LoadingHomeView = () => (
+  <LoadingState title="Loading" description="This make take a few seconds" />
+);
+export const ErrorHomeView = () => (
+  <ErrorState title="Error" description="Something went wrong" />
+);
