@@ -51,7 +51,7 @@ export const HomeHeader = () => {
         <div className="absolute right-0 bottom-0 left-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       </div>
 
-      <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between pt-8 ">
         <ChartPagination
           page={filters.page}
           totalPages={data.totalPages}

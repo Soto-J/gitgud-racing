@@ -29,64 +29,74 @@ interface SeriesChartProps {
 export const SeriesChart = ({ data }: SeriesChartProps) => {
   return (
     <div className="relative">
-      <ChartContainer config={chartConfig} className="h-[500px] w-full">
-        <BarChart
-          accessibilityLayer
-          data={data.series}
-          margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
-        >
+      <div className="rounded-2xl border border-gray-200 bg-white px-8 pt-8 shadow-lg">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Series Performance
+            </h2>
+            <p className="text-gray-600">Weekly averages across all series</p>
+          </div>
+        </div>
 
-          <CartesianGrid
-            vertical={false}
-            strokeDasharray="2 4"
-            stroke="hsl(var(--muted-foreground))"
-            opacity={0.2}
-          />
-          <XAxis
-            dataKey="name"
-            tickLine={false}
-            tickMargin={20}
-            axisLine={false}
-            angle={-45}
-            height={90}
-            interval={0}
-            tick={<ImageTick />}
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
-            width={60}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                className="rounded-lg border border-gray-200 bg-white/95 backdrop-blur-sm shadow-lg"
-                formatter={(value, name) => [
-                  typeof value === "number" ? value.toFixed(1) : value,
-                  name === "averageEntrants" ? " Avg Entrants" : " Avg Splits",
-                ]}
-              />
-            }
-          />
-          <ChartLegend
-            content={<ChartLegendContent className="mt-4" />}
-          />
+        <ChartContainer config={chartConfig} className="h-[500px] w-full">
+          <BarChart
+            accessibilityLayer
+            data={data.series}
+            margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+          >
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="2 4"
+              stroke="hsl(var(--muted-foreground))"
+              opacity={0.2}
+            />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              tickMargin={20}
+              axisLine={false}
+              angle={-45}
+              height={90}
+              interval={0}
+              tick={<ImageTick />}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+              width={60}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="rounded-lg border border-gray-200 bg-white/95 shadow-lg backdrop-blur-sm"
+                  formatter={(value, name) => [
+                    typeof value === "number" ? value.toFixed(1) : value,
+                    name === "averageEntrants"
+                      ? " Avg Entrants"
+                      : " Avg Splits",
+                  ]}
+                />
+              }
+            />
+            <ChartLegend content={<ChartLegendContent className="mt-4" />} />
 
-          <Bar
-            dataKey="averageEntrants"
-            fill="var(--color-averageEntrants)"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={50}
-          />
-          <Bar
-            dataKey="averageSplits"
-            fill="var(--color-averageSplits)"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={50}
-          />
-        </BarChart>
-      </ChartContainer>
+            <Bar
+              dataKey="averageEntrants"
+              fill="var(--color-averageEntrants)"
+              radius={[6, 6, 0, 0]}
+              maxBarSize={50}
+            />
+            <Bar
+              dataKey="averageSplits"
+              fill="var(--color-averageSplits)"
+              radius={[6, 6, 0, 0]}
+              maxBarSize={50}
+            />
+          </BarChart>
+        </ChartContainer>
+      </div>
     </div>
   );
 };

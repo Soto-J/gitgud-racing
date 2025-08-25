@@ -13,7 +13,11 @@ import { loadSearchParams } from "@/modules/home/params";
 
 import { auth } from "@/lib/auth";
 
-import { HomeView } from "@/modules/home/ui/views/home-view";
+import {
+  ErrorHomeView,
+  HomeView,
+  LoadingHomeView,
+} from "@/modules/home/ui/views/home-view";
 import { HomeHeader } from "@/modules/home/ui/components/home-header";
 
 interface HomePageProps {
@@ -28,7 +32,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
   const filters = await loadSearchParams(searchParams);
 
   const queryClient = getQueryClient();
-  
+
   void (await queryClient.prefetchQuery(
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
   ));
@@ -40,8 +44,8 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
       <HomeHeader />
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<p>Loading</p>}>
-          <ErrorBoundary fallback={<p>Error</p>}>
+        <Suspense fallback={<LoadingHomeView />}>
+          <ErrorBoundary fallback={<ErrorHomeView />}>
             <HomeView />
           </ErrorBoundary>
         </Suspense>

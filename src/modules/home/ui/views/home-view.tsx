@@ -21,24 +21,7 @@ export const HomeView = () => {
   console.log(data);
   return (
     <div className="space-y-8 p-6">
-      {/* Main Chart Section */}
-      <div className="rounded-2xl border border-gray-200 bg-white px-8 pt-8 shadow-lg">
-        <div className="mb-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Series Performance
-            </h2>
-            <p className="text-gray-600">Weekly averages across all series</p>
-          </div>
-
-          <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2">
-            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-            <span className="text-sm font-medium text-blue-700">Live Data</span>
-          </div>
-        </div>
-
-        <SeriesChart data={data} />
-      </div>
+      <SeriesChart data={data} />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -70,11 +53,11 @@ export const HomeView = () => {
                 ENTRANTS
               </span>
             </div>
-           
+
             <h3 className="mb-1 text-sm font-medium text-gray-600">
               Avg Entrants
             </h3>
-           
+
             <p className="text-3xl font-bold text-gray-900">
               {(
                 data.series.reduce(
@@ -96,11 +79,11 @@ export const HomeView = () => {
                 SPLITS
               </span>
             </div>
-            
+
             <h3 className="mb-1 text-sm font-medium text-gray-600">
               Avg Splits
             </h3>
-            
+
             <p className="text-3xl font-bold text-gray-900">
               {(
                 data.series.reduce(
