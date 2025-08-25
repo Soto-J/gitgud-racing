@@ -49,9 +49,11 @@ export const HomeView = () => {
               <div className="h-2 w-2 rounded-full bg-blue-500"></div>
               <span className="text-xs font-medium text-blue-700">TOTAL</span>
             </div>
+
             <h3 className="mb-1 text-sm font-medium text-gray-600">
-              Total Series
+              Total Pages
             </h3>
+
             <p className="text-3xl font-bold text-gray-900">
               {data.totalPages}
             </p>
@@ -68,9 +70,11 @@ export const HomeView = () => {
                 ENTRANTS
               </span>
             </div>
+           
             <h3 className="mb-1 text-sm font-medium text-gray-600">
               Avg Entrants
             </h3>
+           
             <p className="text-3xl font-bold text-gray-900">
               {(
                 data.series.reduce(
@@ -92,9 +96,11 @@ export const HomeView = () => {
                 SPLITS
               </span>
             </div>
+            
             <h3 className="mb-1 text-sm font-medium text-gray-600">
               Avg Splits
             </h3>
+            
             <p className="text-3xl font-bold text-gray-900">
               {(
                 data.series.reduce(
