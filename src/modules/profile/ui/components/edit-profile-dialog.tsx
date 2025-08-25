@@ -83,8 +83,8 @@ export const EditProfileDialog = ({
 
   return (
     <ResponsiveDialog
-      title="Profile"
-      description="Edit your profile"
+      title="Edit Profile"
+      description="Update your racing profile information"
       isOpen={onOpenDialog}
       onOpenChange={onCloseDialog}
     >
@@ -95,95 +95,155 @@ export const EditProfileDialog = ({
         >
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
-              <FormField
-                name="firstName"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>First Name</FormLabel>
+              {/* Personal Information Section */}
+              <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100 p-4">
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">👤</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Personal Information</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    name="firstName"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">First Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="John" 
+                            {...field}
+                            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                    <FormControl>
-                      <Input placeholder="John" {...field} />
-                    </FormControl>
+                  <FormField
+                    name="lastName"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium text-gray-700">Last Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Smith" 
+                            {...field}
+                            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* Racing Information Section */}
+              <div className="rounded-xl bg-gradient-to-br from-red-50 to-white border border-red-100 p-4">
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-red-500 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">🏁</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Racing Information</h3>
+                </div>
 
-              <FormField
-                name="lastName"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                <FormField
+                  name="iRacingId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">iRacing ID</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter your iRacing ID" 
+                          {...field}
+                          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                    <FormControl>
-                      <Input placeholder="Smith" {...field} />
-                    </FormControl>
+              {/* Contact Information Section */}
+              <div className="rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-4">
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-purple-500 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">💬</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900">Contact Information</h3>
+                </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  name="discord"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Discord Username</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="username#1234" 
+                          {...field}
+                          className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <FormField
-                name="iRacingId"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IRacing ID</FormLabel>
+              {/* Bio Section */}
+              <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border border-green-100 p-4">
+                <div className="mb-4 flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-green-500 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">📝</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900">About You</h3>
+                </div>
 
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="discord"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discord</FormLabel>
-
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name="bio"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Bio</FormLabel>
-
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  name="bio"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-gray-700">Driver Bio</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field}
+                          placeholder="Tell us about your racing journey, favorite series, achievements..."
+                          className="border-gray-300 focus:border-green-500 focus:ring-green-500 min-h-[100px] resize-none"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           </ScrollArea>
 
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200 bg-white">
             <Button
               type="button"
               variant="outline"
               disabled={editProfile.isPending}
               onClick={onCloseDialog}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Button>
-            <Button type="submit" size="lg" disabled={editProfile.isPending}>
-              Update
+            <Button 
+              type="submit" 
+              size="lg" 
+              disabled={editProfile.isPending}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg"
+            >
+              {editProfile.isPending ? "Updating..." : "Update Profile"}
             </Button>
           </div>
         </form>

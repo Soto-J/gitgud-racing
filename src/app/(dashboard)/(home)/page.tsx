@@ -28,8 +28,12 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
   const filters = await loadSearchParams(searchParams);
 
   const queryClient = getQueryClient();
+  
   void (await queryClient.prefetchQuery(
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
+  ));
+  void (await queryClient.prefetchQuery(
+    trpc.iracing.getTotalSeriesCount.queryOptions({ ...filters }),
   ));
   return (
     <>
