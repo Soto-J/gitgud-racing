@@ -1,4 +1,5 @@
 import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
+import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,14 @@ interface SeriesChartProps {
 }
 
 export const SeriesChart = ({ data }: SeriesChartProps) => {
+  const router = useRouter();
+
+  const handleBarClick = (data: any) => {
+    if (data?.seriesId) {
+      router.push(`/home/${data.seriesId}`);
+    }
+  };
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-white px-8 pt-8 shadow-lg">
       <div className="mb-4 flex items-center justify-between">
@@ -36,6 +45,7 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
           <h2 className="text-2xl font-bold text-gray-900">
             Series Performance
           </h2>
+
           <p className="text-gray-600">Weekly averages across all series</p>
         </div>
       </div>
@@ -63,7 +73,7 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
             angle={-45}
             height={90}
             interval={0}
-            tick={<ImageTick />}
+            tick={<ImageTick data={data} />}
           />
           <YAxis
             tickLine={false}
@@ -75,10 +85,10 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
             content={
               <ChartTooltipContent
                 className="rounded-lg border border-gray-200 bg-white/95 shadow-lg backdrop-blur-sm"
-                formatter={(value, name, { color }) => {
+                formatter={(value, name, payload) => {
                   const isAvgSplit = name === "averageEntrants";
                   const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
-
+                  console.log(payload);
                   return (
                     <div className="flex items-center gap-x-2">
                       <span
@@ -124,16 +134,35 @@ const ImageTick = ({
   x,
   y,
   payload,
+  data,
 }: {
   x?: number;
   y?: number;
   payload?: {
     value: string;
+    coordinate: number;
+    index: number;
+    offset: number;
   };
+  data?: WeeklySeriesResults;
 }) => {
+  const router = useRouter();
+
   if (!payload?.value) {
     return null;
   }
+
+  const handleImageClick = () => {
+    const seriesData = data?.series.find(
+      (series) => series.name === payload.value,
+    );
+
+    if (!seriesData?.seriesId) {
+      return;
+    }
+
+    router.push(`/home/${seriesData.seriesId}`);
+  };
 
   return (
     <g transform={`translate(${x},${y})`}>
@@ -142,7 +171,7 @@ const ImageTick = ({
         y={0}
         href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
         className="h-6 w-6 cursor-pointer md:h-10 md:w-10"
-        onClick={() => console.log(payload.value)}
+        onClick={handleImageClick}
       />
     </g>
   );

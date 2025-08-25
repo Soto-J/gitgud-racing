@@ -32,10 +32,11 @@ export const HomeHeader = () => {
   return (
     <>
       <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 px-8 py-12 text-white shadow-2xl">
-        <div className="absolute inset-0 bg-[url('/iRacing-Brandmarks/iRacing-Icon-BW-White.svg')] bg-[length:80px] bg-center bg-no-repeat opacity-10"></div>
+        <div className="absolute inset-0 bg-[url('/iRacing-Brandmarks/iRacing-Icon-BW-White.svg')] bg-[length:250px] bg-center bg-no-repeat opacity-10" />
+
         <div className="relative z-10 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-green-400"></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
             iRacing Series Analytics
           </div>
 
@@ -51,7 +52,7 @@ export const HomeHeader = () => {
         <div className="absolute right-0 bottom-0 left-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
       </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between pt-8 ">
+      <div className="flex flex-col gap-6 pt-8 lg:flex-row lg:items-center lg:justify-between">
         <ChartPagination
           page={filters.page}
           totalPages={data.totalPages}

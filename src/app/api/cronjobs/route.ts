@@ -20,11 +20,12 @@ export async function GET(request: NextRequest) {
     return Response.json({ success: false }, { status: 500 });
   }
 
+  const currentYear = new Date().getFullYear().toString();
   const currentWeek = calculateCurrentWeek();
   const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3).toString();
 
   const params = {
-    season_year: "2025",
+    season_year: currentYear,
     season_quarter: currentQuarter,
     event_types: "5",
     official_only: "true",
