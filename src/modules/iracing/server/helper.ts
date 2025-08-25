@@ -88,7 +88,6 @@ export const getOrRefreshAuthCode = async () => {
       });
     }
 
-    console.log(response);
     const authCode = response.headers
       .get("set-cookie")
       ?.match(/authtoken_members=([^;]+)/)?.[1];
