@@ -32,10 +32,12 @@ interface SeriesChartProps {
 export const SeriesChart = ({ data }: SeriesChartProps) => {
   const router = useRouter();
 
-  const handleBarClick = (data: any) => {
-    if (data?.seriesId) {
-      router.push(`/home/${data.seriesId}`);
-    }
+  const handleBarClick = (data: WeeklySeriesResults["series"]) => {
+    // if (data?.seriesId) {
+    //   router.push(`/home/${data.seriesId}`);
+    // }
+    //TODO
+    return; 
   };
 
   return (
