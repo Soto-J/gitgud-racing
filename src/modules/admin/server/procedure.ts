@@ -94,18 +94,30 @@ export const adminRouter = createTRPCRouter({
   editUser: adminProcedure
     .input(ProfileEditUserInputSchema)
     .mutation(async ({ input }) => {
-      const { userId, ...updateData } = input;
+      const { userId, role, team, isActive } = input;
+      console.log({ input });
 
-      const cleanUpdata = Object.fromEntries(
-        Object.entries(updateData).filter(([_, value]) => value !== undefined),
-      );
-
-      const [resultHeader] = await db
+      const [profileResHeader] = await db
         .update(profileTable)
-        .set({ ...cleanUpdata })
+        .set({
+          team,
+          isActive,
+        })
         .where(eq(profileTable.userId, userId));
 
-      if (resultHeader.affectedRows === 0) {
+      if (profileResHeader.affectedRows === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update profile",
+        });
+      }
+
+      const [userResHeader] = await db
+        .update(user)
+        .set({ role })
+        .where(eq(user.id, userId));
+
+      if (userResHeader.affectedRows === 0) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to update user",

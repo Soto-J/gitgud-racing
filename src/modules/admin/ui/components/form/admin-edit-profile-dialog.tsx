@@ -249,6 +249,18 @@ export const AdminEditProfileDialog = ({
                                 className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                               >
                                 <div className="flex w-full items-center justify-between gap-x-2">
+                                  <span className="font-medium">Staff</span>
+                                  <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                    Limited Access
+                                  </span>
+                                </div>
+                              </SelectItem>
+
+                              <SelectItem
+                                value="member"
+                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                              >
+                                <div className="flex w-full items-center justify-between gap-x-2">
                                   <span className="font-medium">Member</span>
                                   <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                                     Limited Access

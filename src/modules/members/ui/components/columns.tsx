@@ -1,9 +1,12 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { MembersGetOne } from "@/modules/members/types";
-import { cn } from "@/lib/utils";
 import { Crown } from "lucide-react";
+
+import { ColumnDef } from "@tanstack/react-table";
+
+import { cn } from "@/lib/utils";
+
+import { MembersGetOne } from "@/modules/members/types";
 
 export const columns: ColumnDef<MembersGetOne>[] = [
   {
@@ -27,7 +30,8 @@ export const columns: ColumnDef<MembersGetOne>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const isAdmin = row.original.role === "admin";
+      const isAdmin =
+        row.original.role === "admin" || row.original.role === "staff";
 
       return (
         <div className="flex items-center justify-center gap-x-2">

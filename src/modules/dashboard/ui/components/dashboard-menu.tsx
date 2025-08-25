@@ -43,12 +43,14 @@ const secondSection = [
   { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
   { icon: IoPeopleOutline, label: "Members", href: "/members" },
   { icon: Flag, label: "Teams", href: "/teams" },
-  { icon: Crown, label: "Admin", href: "/admin", adminTab: true },
+  { icon: Crown, label: "Manage Users", href: "/admin", adminTab: true },
 ];
 
 export const DashboardMenu = () => {
   const { data: session } = authClient.useSession();
-  const currentUserIsAdmin = session?.user.role === "admin";
+
+  const currentUserIsAdmin =
+    session?.user.role === "admin" || session?.user.role === "staff";
   const pathname = usePathname();
 
   // const trpc = useTRPC();

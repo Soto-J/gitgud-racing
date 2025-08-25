@@ -10,7 +10,11 @@ import {
 export const ProfileInsertSchema = z.object({
   team: z.string(),
   isActive: z.boolean(),
-  role: z.string(),
+  role: z.enum(["admin", "staff", "member"]),
+});
+
+export const ProfileEditUserInputSchema = ProfileInsertSchema.extend({
+  userId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const GetUserInputSchema = z.object({
@@ -26,10 +30,6 @@ export const GetUsersInputSchema = z.object({
     .default(DEFAULT_PAGE_SIZE),
   search: z.string().nullish(),
   memberId: z.string().nullish(),
-});
-
-export const ProfileEditUserInputSchema = ProfileInsertSchema.extend({
-  userId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const DeleteUserInputSchema = z.object({

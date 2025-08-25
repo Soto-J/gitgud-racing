@@ -21,7 +21,9 @@ export const user = mysqlTable("user", {
   image: text("image"),
 
   // admin plugin attributes
-  role: mysqlEnum("role", ["admin", "member"]).notNull().default("member"),
+  role: mysqlEnum("role", ["admin", "staff", "member"])
+    .notNull()
+    .default("member"),
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
@@ -112,7 +114,7 @@ export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-    
+
   authCode: text("auth_code").notNull(),
 
   ssoCookieValue: text("sso_cookie_value"),
