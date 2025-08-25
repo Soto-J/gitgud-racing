@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MembersGetOne } from "@/modules/members/types";
 import { cn } from "@/lib/utils";
+import { Crown } from "lucide-react";
 
 export const columns: ColumnDef<MembersGetOne>[] = [
   {
@@ -26,7 +27,14 @@ export const columns: ColumnDef<MembersGetOne>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      return <p className="">{row.original.name}</p>;
+      const isAdmin = row.original.role === "admin";
+
+      return (
+        <div className="flex items-center justify-center gap-x-2">
+          {isAdmin && <Crown size={12} />}
+          {row.original.name}
+        </div>
+      );
     },
   },
   {

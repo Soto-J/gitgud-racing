@@ -1,5 +1,9 @@
-import { cn } from "@/lib/utils";
+"use client";
+
 import { LucideIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface DisciplineCardProps {
   icon: LucideIcon;
@@ -25,27 +29,52 @@ export const DisciplineCard = ({
   safetyRating,
   licenseClass,
 }: DisciplineCardProps) => {
+  const router = useRouter();
+
+  const label = title.split(" ").join("");
+  const path = `/profile/${label}`;
   const accentColor = classColors[licenseClass as keyof typeof classColors];
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-white hover:to-white">
+    <div
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:from-white hover:to-white hover:shadow-xl"
+      onClick={() => router.push(path)}
+    >
       {/* Decorative background element */}
       <div className="absolute -top-4 -right-4 h-16 w-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 opacity-20 transition-transform duration-500 group-hover:scale-110"></div>
-      
+
       {/* Accent corner */}
-      <div className={cn("absolute top-0 left-0 h-16 w-16 rounded-br-2xl opacity-10", accentColor)}></div>
-      
+      <div
+        className={cn(
+          "absolute top-0 left-0 h-16 w-16 rounded-br-2xl opacity-10",
+          accentColor,
+        )}
+      ></div>
+
       {/* Racing stripe */}
-      <div className={cn("absolute top-0 left-0 h-full w-1 rounded-l-2xl", accentColor)}></div>
+      <div
+        className={cn(
+          "absolute top-0 left-0 h-full w-1 rounded-l-2xl",
+          accentColor,
+        )}
+      ></div>
 
       {/* Header */}
       <div className="relative mb-6 flex items-center gap-3">
-        <div className={cn("rounded-xl p-3 text-white shadow-lg transition-transform duration-300 group-hover:scale-110", accentColor)}>
+        <div
+          className={cn(
+            "rounded-xl p-3 text-white shadow-lg transition-transform duration-300 group-hover:scale-110",
+            accentColor,
+          )}
+        >
           <Icon size={24} />
         </div>
+
         <div>
           <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-          <p className="text-xs text-gray-500 uppercase tracking-wide">Racing Category</p>
+          <p className="text-xs tracking-wide text-gray-500 uppercase">
+            Racing Category
+          </p>
         </div>
       </div>
 
@@ -54,12 +83,16 @@ export const DisciplineCard = ({
         {/* iRating */}
         <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
           <div>
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">iRating</span>
+            <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
+              iRating
+            </span>
+
             <div className="text-2xl font-bold text-gray-900">
               {iRating ? iRating.toLocaleString() : "—"}
             </div>
           </div>
-          <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
+
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
             <div className="h-4 w-4 rounded-full bg-blue-500"></div>
           </div>
         </div>
@@ -67,12 +100,14 @@ export const DisciplineCard = ({
         {/* Safety Rating */}
         <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
           <div>
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Safety</span>
+            <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
+              Safety
+            </span>
             <div className="text-2xl font-bold text-gray-900">
               {safetyRating ? safetyRating : "—"}
             </div>
           </div>
-          <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
             <div className="h-4 w-4 rounded-full bg-green-500"></div>
           </div>
         </div>
@@ -80,19 +115,24 @@ export const DisciplineCard = ({
         {/* License Class */}
         <div className="flex items-center justify-between rounded-lg bg-white p-3 shadow-sm">
           <div>
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">License</span>
+            <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
+              License
+            </span>
             <div className="mt-1">
               <span
                 className={cn(
-                  "inline-flex items-center justify-center h-8 w-8 rounded-full text-lg font-bold text-white shadow-md",
-                  classColors[licenseClass as keyof typeof classColors] || "bg-gray-600",
+                  "inline-flex h-8 w-8 items-center justify-center rounded-full text-lg font-bold text-white shadow-md",
+                  classColors[licenseClass as keyof typeof classColors] ||
+                    "bg-gray-600",
                 )}
               >
                 {licenseClass}
               </span>
             </div>
           </div>
-          <div className={cn("h-8 w-8 rounded-full opacity-20", accentColor)}></div>
+          <div
+            className={cn("h-8 w-8 rounded-full opacity-20", accentColor)}
+          ></div>
         </div>
       </div>
     </div>
