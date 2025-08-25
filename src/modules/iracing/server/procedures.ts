@@ -138,4 +138,30 @@ export const iracingRouter = createTRPCRouter({
         totalPages,
       };
     }),
+
+  getTotalSeriesCount: iracingProcedure
+    .input(
+      WeeklySeriesResultsInput.pick({
+        search: true,
+        pageSize: true,
+      }),
+    )
+    .query(async ({ input }) => {
+      const { search, pageSize } = input;
+      const orClause = search
+        ? or(
+            like(seriesWeeklyStatsTable.name, `%${search}%`),
+            like(seriesWeeklyStatsTable.trackName, `%${search}%`),
+          )
+        : undefined;
+
+      const [total] = await db
+        .select({ count: count() })
+        .from(seriesWeeklyStatsTable)
+        .where(orClause);
+
+      const totalPages = Math.ceil(total.count / pageSize);
+
+      return { totalPages };
+    }),
 });

@@ -10,13 +10,13 @@ export const ChartSearchFilter = () => {
   return (
     <div className="relative">
       <Input
-        placeholder="Filter by name"
+        placeholder="Search series or tracks..."
         value={filters.search}
         onChange={(e) => setFilters({ search: e.target.value })}
-        className="h-9 w-[200px] bg-white pl-7"
+        className="h-10 w-64 rounded-xl border-gray-300 bg-white pl-10 pr-4 text-sm shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
       />
 
-      <SearchIcon className="text-muted-foreground absolute top-1/2 left-2 size-4 -translate-y-1/2" />
+      <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400" />
     </div>
   );
 };
