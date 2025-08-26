@@ -34,4 +34,5 @@ export const GetUsersInputSchema = z.object({
 
 export const DeleteUserInputSchema = z.object({
   userId: z.string(),
+  role: z.string(),
 });

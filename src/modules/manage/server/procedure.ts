@@ -156,6 +156,17 @@ export const manageRouter = createTRPCRouter({
   deleteUser: manageProcedure
     .input(DeleteUserInputSchema)
     .mutation(async ({ ctx, input }) => {
+      const unauthorized =
+        ctx.auth.user?.role === "staff" &&
+        (input.role === "admin" || input.role === "staff");
+
+      if (unauthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Only an admin can edit a staff",
+        });
+      }
+
       if (ctx.auth.user.id === input.userId) {
         throw new TRPCError({
           code: "BAD_REQUEST",

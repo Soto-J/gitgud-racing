@@ -29,7 +29,7 @@ const ManagePage = async ({ searchParams }: ManagePageProps) => {
     redirect("/sign-in");
   }
 
-  if (session.user.role !== "admin") {
+  if (session.user?.role !== "admin" && session.user?.role !== "staff") {
     redirect("/");
   }
 
@@ -44,7 +44,7 @@ const ManagePage = async ({ searchParams }: ManagePageProps) => {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<ManageLoadingPage />}>
         <ErrorBoundary fallback={<ManageErrorPage />}>
-          <ManagePageView />
+          <ManagePageView currentUserId={session.user.id}/>
         </ErrorBoundary>
       </Suspense>
     </HydrationBoundary>
