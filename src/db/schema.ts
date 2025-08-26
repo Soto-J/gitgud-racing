@@ -11,6 +11,8 @@ import {
   decimal,
 } from "drizzle-orm/mysql-core";
 
+export const roles = ["admin", "staff", "member"] as const;
+
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 }).primaryKey(),
   name: text("name").notNull(),
@@ -21,9 +23,7 @@ export const user = mysqlTable("user", {
   image: text("image"),
 
   // admin plugin attributes
-  role: mysqlEnum("role", ["admin", "staff", "member"])
-    .notNull()
-    .default("member"),
+  role: mysqlEnum("role", roles).notNull().default("member"),
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),

@@ -14,15 +14,9 @@ import { DataPagination } from "@/components/data-pagination";
 
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
-import { useRouter } from "next/navigation";
 
-interface ManagePageViewProps {
-  currentUserId: string;
-}
-
-export const ManagePageView = ({ currentUserId }: ManagePageViewProps) => {
+export const ManagePageView = () => {
   const [filters, setFilters] = useMembersFilters();
-  const router = useRouter();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
