@@ -2,16 +2,16 @@ import z from "zod";
 
 export const IracingLoginSchema = z.object({
   email: z.email(),
-  password: z.string().min(1),
-  userId: z.string(),
+  password: z.string().min(1, { message: "Password requiree" }),
+  userId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const CustomerIdSchema = z.object({
-  customerId: z.number(),
+  customerId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const GetUserInputSchema = z.object({
-  userId: z.string().nullish(),
+  userId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const GetAllSeriesInputSchema = z.object({
@@ -29,18 +29,3 @@ export const GetAllSeriesInputSchema = z.object({
     ),
   include_series: z.boolean().default(true),
 });
-
-// export const WeeklyResultsInputSchema = z.object({
-//   series_id: z.string().nullish(),
-//   season_year: z.string(),
-//   season_quarter: z.string(),
-//   event_types: z.string().nullish(),
-//   official_only: z.boolean().nullish(),
-//   race_week_num: z.string().nullish(),
-//   start_range_begin: z.string().nullish(),
-//   start_range_end: z.string().nullish(),
-//   cust_id: z.string().nullish(),
-//   team_id: z.string().nullish(),
-//   category_id: z.string().nullish(),
-//   include_series: z.boolean().default(true),
-// });

@@ -7,6 +7,8 @@ import {
   MIN_PAGE_SIZE,
 } from "@/modules/manage/constants";
 
+import { roles } from "@/db/schema";
+
 export const ProfileInsertSchema = z.object({
   team: z.string(),
   isActive: z.boolean(),
@@ -18,7 +20,7 @@ export const ProfileEditUserInputSchema = ProfileInsertSchema.extend({
 });
 
 export const GetUserInputSchema = z.object({
-  userId: z.string(),
+  userId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const GetUsersInputSchema = z.object({
@@ -33,6 +35,5 @@ export const GetUsersInputSchema = z.object({
 });
 
 export const DeleteUserInputSchema = z.object({
-  userId: z.string(),
-  role: z.string(),
+  userId: z.string().min(1, { message: "Id is required" }),
 });

@@ -44,7 +44,7 @@ const ManagePage = async ({ searchParams }: ManagePageProps) => {
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<ManageLoadingPage />}>
         <ErrorBoundary fallback={<ManageErrorPage />}>
-          <ManagePageView currentUserId={session.user.id}/>
+          <ManagePageView />
         </ErrorBoundary>
       </Suspense>
     </HydrationBoundary>

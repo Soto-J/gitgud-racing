@@ -16,13 +16,6 @@ export const profileRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(GetOneInsertSchema)
     .query(async ({ input }) => {
-      if (!input.userId) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "User ID is missing",
-        });
-      }
-
       const profileWithUser = await db
         .select({
           ...getTableColumns(profileTable),

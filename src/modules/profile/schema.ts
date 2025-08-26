@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const GetOneInsertSchema = z.object({
-  userId: z.string().nullish(),
+  userId: z.string().min(1, { message: "Id is required" }),
 });
 
 export const EditProfileInsertSchema = z.object({
@@ -17,4 +17,6 @@ export const EditProfileInputSchema = EditProfileInsertSchema.extend({
   userId: z.string().min(1, { message: "Id is required" }),
 });
 
-export const CreateInsertSchema = z.object({ userId: z.string() });
+export const CreateInsertSchema = z.object({
+  userId: z.string().min(1, { message: "Id is required" }),
+});

@@ -96,9 +96,15 @@ export const manageRouter = createTRPCRouter({
   editUser: manageProcedure
     .input(ProfileEditUserInputSchema)
     .mutation(async ({ ctx, input }) => {
+      const userToEdit = await db
+        .select({ role: user.role })
+        .from(user)
+        .where(eq(user.id, input.userId))
+        .then((val) => val[0]);
+
       const unauthorized =
         ctx.auth.user?.role === "staff" &&
-        (input.role === "admin" || input.role === "staff");
+        (userToEdit.role === "admin" || userToEdit.role === "staff");
 
       if (unauthorized) {
         throw new TRPCError({
@@ -156,9 +162,15 @@ export const manageRouter = createTRPCRouter({
   deleteUser: manageProcedure
     .input(DeleteUserInputSchema)
     .mutation(async ({ ctx, input }) => {
+      const userToDelete = await db
+        .select({ role: user.role })
+        .from(user)
+        .where(eq(user.id, input.userId))
+        .then((val) => val[0]);
+
       const unauthorized =
         ctx.auth.user?.role === "staff" &&
-        (input.role === "admin" || input.role === "staff");
+        (userToDelete.role === "admin" || userToDelete.role === "staff");
 
       if (unauthorized) {
         throw new TRPCError({

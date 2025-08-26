@@ -14,8 +14,9 @@ import { authClient } from "@/lib/auth-client";
 
 import { AdminGetUser } from "@/modules/manage/types";
 
+import { ManageEditProfileDialog } from "@/modules/manage/ui/components/form/manage-edit-profile-dialog";
+
 import { Button } from "@/components/ui/button";
-import { ManageEditProfileDialog } from "../form/manage-edit-profile-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,16 +61,16 @@ export const TableActions = ({
   );
 
   const onDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
     const Ok = await confirmDelete();
 
     if (!Ok) {
       return;
     }
 
-    deleteUser.mutate({
-      userId: user.id,
-      role: user.role,
-    });
+    deleteUser.mutate({ userId: user.id });
   };
 
   const onEdit = (e: React.MouseEvent) => {
@@ -80,7 +81,7 @@ export const TableActions = ({
 
   const disableAction = data?.user?.role === "staff" && user.role === "admin";
   const routeTo =
-    data?.session.userId === user.id ? `/profile` : `/member/${user.id}`;
+    data?.session.userId === user.id ? `/profile` : `/members/${user.id}`;
 
   return (
     <>
