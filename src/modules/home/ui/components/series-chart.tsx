@@ -1,5 +1,6 @@
-import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 import { useRouter } from "next/navigation";
+
+import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 
 import { cn } from "@/lib/utils";
 
@@ -17,11 +18,11 @@ import {
 const chartConfig = {
   averageEntrants: {
     label: "Avg Entrants",
-    color: "hsl(217, 91%, 60%)",
+    color: "hsl(220, 70%, 50%)",
   },
   averageSplits: {
     label: "Avg # of splits",
-    color: "hsl(142, 76%, 36%)",
+    color: "hsl(160, 60%, 45%)",
   },
 } satisfies ChartConfig;
 
@@ -30,79 +31,92 @@ interface SeriesChartProps {
 }
 
 export const SeriesChart = ({ data }: SeriesChartProps) => {
-  const router = useRouter();
-
-  const handleBarClick = (data: WeeklySeriesResults["series"]) => {
-    // if (data?.seriesId) {
-    //   router.push(`/home/${data.seriesId}`);
-    // }
-    //TODO
-    return; 
-  };
+  const seasonYear = data.series[0]?.seasonYear || "0";
+  const seasonQuarter = data.series[0]?.seasonQuarter || "0";
+  const seasonWeek = data.series[0]?.raceWeek || "0";
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white px-8 pt-8 shadow-lg">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">
+    <div className="group rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-gray-50/30 p-3 shadow-xl transition-all duration-300 hover:border-gray-200 hover:shadow-2xl sm:rounded-3xl sm:p-8">
+      <div className="mb-4 flex flex-col items-center gap-2 sm:mb-6 sm:flex-row sm:justify-between sm:gap-3">
+        <div className="flex items-center gap-3">
+          <div className="h-1 w-8 rounded-full bg-gradient-to-r from-blue-500 to-green-500" />
+
+          <h2 className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent sm:text-2xl lg:text-3xl">
             Series Performance
           </h2>
+        </div>
 
-          <p className="text-gray-600">Weekly averages across all series</p>
+        <div className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
+          {seasonYear} S{seasonQuarter} • Week {seasonWeek} / 13
         </div>
       </div>
 
       <ChartContainer
         config={chartConfig}
-        className="h-[500px] w-full cursor-pointer"
+        className="h-[300px] w-full transition-all duration-300 group-hover:scale-[1.02] sm:h-[400px] lg:h-[500px]"
       >
         <BarChart
           accessibilityLayer
           data={data.series}
-          margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
+          margin={{ top: 25, right: 4, left: 2, bottom: 70 }}
         >
           <CartesianGrid
             vertical={false}
-            strokeDasharray="2 4"
-            stroke="hsl(var(--muted-foreground))"
-            opacity={0.2}
+            strokeDasharray="3 6"
+            stroke="hsl(220, 13%, 91%)"
+            opacity={0.8}
           />
           <XAxis
             dataKey="name"
             tickLine={false}
-            tickMargin={20}
+            tickMargin={8}
             axisLine={false}
             angle={-45}
-            height={90}
+            height={60}
             interval={0}
             tick={<ImageTick data={data} />}
           />
           <YAxis
             tickLine={false}
             axisLine={false}
-            tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
+            tick={{ fontSize: 11, fill: "hsl(220, 9%, 46%)", fontWeight: 500 }}
             width={60}
           />
           <ChartTooltip
             content={
               <ChartTooltipContent
-                className="rounded-lg border border-gray-200 bg-white/95 shadow-lg backdrop-blur-sm"
-                formatter={(value, name, payload) => {
+                className="rounded-xl border border-gray-100 bg-white/98 shadow-xl backdrop-blur-md"
+                labelFormatter={(label, payload) => {
+                  const trackName = payload?.[0]?.payload?.trackName;
+
+                  return (
+                    <div>
+                      <div className="text-sm font-semibold text-gray-800">
+                        {label}
+                      </div>
+
+                      <div className="border-b border-gray-200 pb-1">
+                        {trackName}
+                      </div>
+                    </div>
+                  );
+                }}
+                formatter={(value, name) => {
                   const isAvgSplit = name === "averageEntrants";
                   const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
-                  console.log(payload);
+
                   return (
-                    <div className="flex items-center gap-x-2">
+                    <div className="flex items-center gap-x-3">
                       <span
                         className={cn(
-                          "h-2 w-2",
+                          "h-3 w-3 rounded-full",
                           isAvgSplit
-                            ? `bg-[hsl(142,76%,36%)]`
-                            : "bg-[hsl(217,91%,60%)]",
+                            ? "bg-[hsl(160,60%,45%)]"
+                            : "bg-[hsl(220,70%,50%)]",
                         )}
-                      ></span>
+                      />
 
-                      <span>
+                      <span className="font-medium text-gray-900">
                         {label}:{" "}
                         {typeof value === "number" ? value.toFixed(1) : value}
                       </span>
@@ -112,19 +126,23 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
               />
             }
           />
-          <ChartLegend content={<ChartLegendContent className="mt-4" />} />
+          <ChartLegend
+            content={
+              <ChartLegendContent className="mt-6 text-sm font-medium" />
+            }
+          />
 
           <Bar
             dataKey="averageEntrants"
             fill="var(--color-averageEntrants)"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={50}
+            radius={[8, 8, 0, 0]}
+            maxBarSize={40}
           />
           <Bar
             dataKey="averageSplits"
             fill="var(--color-averageSplits)"
-            radius={[6, 6, 0, 0]}
-            maxBarSize={50}
+            radius={[8, 8, 0, 0]}
+            maxBarSize={40}
           />
         </BarChart>
       </ChartContainer>
@@ -169,10 +187,10 @@ const ImageTick = ({
   return (
     <g transform={`translate(${x},${y})`}>
       <image
-        x={-25}
+        x={-20}
         y={0}
         href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
-        className="h-6 w-6 cursor-pointer md:h-10 md:w-10"
+        className="h-8 w-8 cursor-pointer rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-lg md:h-12 md:w-12"
         onClick={handleImageClick}
       />
     </g>

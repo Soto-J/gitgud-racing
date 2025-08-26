@@ -59,7 +59,7 @@ export const HomeHeader = () => {
           onPageChange={(page) => setFilters({ page })}
         />
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 justify-center">
           <ChartSearchFilter />
 
           {isFilterActive && (
