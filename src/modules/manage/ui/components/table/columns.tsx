@@ -4,9 +4,9 @@ import Link from "next/link";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { AdminGetUser } from "@/modules/admin/types";
+import { AdminGetUser } from "@/modules/manage/types";
 
-import { TableActions } from "@/modules/admin/ui/components/table/table-actions";
+import { TableActions } from "@/modules/manage/ui/components/table/table-actions";
 
 export const columns: ColumnDef<AdminGetUser>[] = [
   {

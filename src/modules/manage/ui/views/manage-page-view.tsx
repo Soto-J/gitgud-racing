@@ -5,22 +5,22 @@ import { useTRPC } from "@/trpc/client";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
-import { useMembersFilters } from "@/modules/admin/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
 
-import { DataTable } from "@/modules/admin/ui/components/table/data-table";
-import { columns } from "@/modules/admin/ui/components/table/columns";
+import { DataTable } from "@/modules/manage/ui/components/table/data-table";
+import { columns } from "@/modules/manage/ui/components/table/columns";
 
 import { DataPagination } from "@/components/data-pagination";
 
 import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 
-export const AdminPageView = () => {
+export const ManagePageView = () => {
   const [filters, setFilters] = useMembersFilters();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.admin.getUsers.queryOptions({ ...filters }),
+    trpc.manage.getUsers.queryOptions({ ...filters }),
   );
 
   const [ConfirmationDialog, confirmDelete] = useConfirm({
@@ -51,9 +51,9 @@ export const AdminPageView = () => {
   );
 };
 
-export const AdminLoadingPage = () => (
+export const ManageLoadingPage = () => (
   <LoadingState title="Loading" description="This may take a few seconds." />
 );
-export const AdminErrorPage = () => (
+export const ManageErrorPage = () => (
   <ErrorState title="Error" description="Something went wrong" />
 );

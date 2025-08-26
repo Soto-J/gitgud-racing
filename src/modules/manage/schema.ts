@@ -5,7 +5,7 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
-} from "@/modules/admin/constants";
+} from "@/modules/manage/constants";
 
 export const ProfileInsertSchema = z.object({
   team: z.string(),

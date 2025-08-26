@@ -9,12 +9,12 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { AdminGetUser } from "@/modules/admin/types";
-import { ProfileInsertSchema } from "@/modules/admin/schema";
+import { AdminGetUser } from "@/modules/manage/types";
+import { ProfileInsertSchema } from "@/modules/manage/schema";
 
-import { useMembersFilters } from "@/modules/admin/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
 
-import { FormActions } from "@/modules/admin/ui/components/form/form-actions";
+import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -34,17 +34,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface AdminEditProfileDialogProps {
+interface ManageEditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
   initialValues: AdminGetUser;
 }
 
-export const AdminEditProfileDialog = ({
+export const ManageEditProfileDialog = ({
   onOpenDialog,
   onCloseDialog,
   initialValues,
-}: AdminEditProfileDialogProps) => {
+}: ManageEditProfileDialogProps) => {
   const [filters, _] = useMembersFilters();
 
   const form = useForm<z.infer<typeof ProfileInsertSchema>>({
@@ -59,10 +59,10 @@ export const AdminEditProfileDialog = ({
   const queryClient = useQueryClient();
 
   const editProfile = useMutation(
-    trpc.admin.editUser.mutationOptions({
+    trpc.manage.editUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.admin.getUsers.queryOptions({
+          trpc.manage.getUsers.queryOptions({
             ...filters,
           }),
         );
