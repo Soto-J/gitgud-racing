@@ -108,7 +108,7 @@ export const manageRouter = createTRPCRouter({
 
       if (unauthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Only an admin can edit a staff",
         });
       }
@@ -174,7 +174,7 @@ export const manageRouter = createTRPCRouter({
 
       if (unauthorized) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "FORBIDDEN",
           message: "Only an admin can edit a staff",
         });
       }
