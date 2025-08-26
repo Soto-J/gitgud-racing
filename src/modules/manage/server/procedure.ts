@@ -1,7 +1,7 @@
 import { eq, like, and, count, desc } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import { adminProcedure, createTRPCRouter } from "@/trpc/init";
+import { createTRPCRouter, manageProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
 import { profileTable, user } from "@/db/schema";
@@ -14,31 +14,33 @@ import {
 } from "@/modules/manage/schema";
 
 export const manageRouter = createTRPCRouter({
-  getUser: adminProcedure.input(GetUserInputSchema).query(async ({ input }) => {
-    const [member] = await db
-      .select({
-        id: user.id,
-        name: user.name,
-        role: user.role,
-        banned: user.banned,
-        banReason: user.banReason,
-        banExpires: user.banExpires,
-        createdAt: user.createdAt,
-        team: profileTable.team,
-        isActive: profileTable.isActive,
-      })
-      .from(user)
-      .innerJoin(profileTable, eq(profileTable.userId, user.id))
-      .where(eq(profileTable.userId, input.userId));
+  getUser: manageProcedure
+    .input(GetUserInputSchema)
+    .query(async ({ input }) => {
+      const [member] = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          role: user.role,
+          banned: user.banned,
+          banReason: user.banReason,
+          banExpires: user.banExpires,
+          createdAt: user.createdAt,
+          team: profileTable.team,
+          isActive: profileTable.isActive,
+        })
+        .from(user)
+        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .where(eq(profileTable.userId, input.userId));
 
-    if (!member) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
-    }
+      if (!member) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
 
-    return member;
-  }),
+      return member;
+    }),
 
-  getUsers: adminProcedure
+  getUsers: manageProcedure
     .input(GetUsersInputSchema)
     .query(async ({ input }) => {
       const { memberId, search, pageSize, page } = input;
@@ -91,19 +93,27 @@ export const manageRouter = createTRPCRouter({
       };
     }),
 
-  editUser: adminProcedure
+  editUser: manageProcedure
     .input(ProfileEditUserInputSchema)
-    .mutation(async ({ input }) => {
-      const { userId, role, team, isActive } = input;
-      console.log({ input });
+    .mutation(async ({ ctx, input }) => {
+      const unauthorized =
+        ctx.auth.user?.role === "staff" &&
+        (input.role === "admin" || input.role === "staff");
+
+      if (unauthorized) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Only an admin can edit a staff",
+        });
+      }
 
       const [profileResHeader] = await db
         .update(profileTable)
         .set({
-          team,
-          isActive,
+          team: input.team,
+          isActive: input.isActive,
         })
-        .where(eq(profileTable.userId, userId));
+        .where(eq(profileTable.userId, input.userId));
 
       if (profileResHeader.affectedRows === 0) {
         throw new TRPCError({
@@ -114,8 +124,8 @@ export const manageRouter = createTRPCRouter({
 
       const [userResHeader] = await db
         .update(user)
-        .set({ role })
-        .where(eq(user.id, userId));
+        .set({ role: input.role })
+        .where(eq(user.id, input.userId));
 
       if (userResHeader.affectedRows === 0) {
         throw new TRPCError({
@@ -138,12 +148,12 @@ export const manageRouter = createTRPCRouter({
         })
         .from(user)
         .innerJoin(profileTable, eq(profileTable.userId, user.id))
-        .where(eq(profileTable.userId, userId));
+        .where(eq(profileTable.userId, input.userId));
 
       return updatedMember;
     }),
 
-  deleteUser: adminProcedure
+  deleteUser: manageProcedure
     .input(DeleteUserInputSchema)
     .mutation(async ({ ctx, input }) => {
       if (ctx.auth.user.id === input.userId) {
