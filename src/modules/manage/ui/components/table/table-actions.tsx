@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { IoPersonOutline } from "react-icons/io5";
 
 import { Ellipsis, Edit, Trash2 } from "lucide-react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+
+import { authClient } from "@/lib/auth-client";
 
 import { AdminGetUser } from "@/modules/manage/types";
 
@@ -20,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface ActionsProps {
+interface TableActionsProps {
   user: AdminGetUser;
   filters: {
     search: string;
@@ -34,11 +39,13 @@ export const TableActions = ({
   user,
   filters,
   confirmDelete,
-}: ActionsProps) => {
+}: TableActionsProps) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const router = useRouter();
+
+  const { data } = authClient.useSession();
 
   const trpc = useTRPC();
-
   const queryClient = useQueryClient();
 
   const deleteUser = useMutation(
@@ -52,15 +59,28 @@ export const TableActions = ({
     }),
   );
 
-  const onDelete = async () => {
+  const onDelete = async (e: React.MouseEvent) => {
     const Ok = await confirmDelete();
 
     if (!Ok) {
       return;
     }
 
-    deleteUser.mutate({ userId: user.id });
+    deleteUser.mutate({
+      userId: user.id,
+      role: user.role,
+    });
   };
+
+  const onEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    setOpenDialog(true);
+  };
+
+  const disableAction = data?.user?.role === "staff" && user.role === "admin";
+  const routeTo =
+    data?.session.userId === user.id ? `/profile` : `/member/${user.id}`;
 
   return (
     <>
@@ -75,7 +95,11 @@ export const TableActions = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 hover:bg-zinc-800/50"
+            className="z-99 h-8 w-8 p-0 hover:bg-zinc-800/50"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
           >
             <span className="sr-only">Open menu</span>
             <Ellipsis className="h-4 w-4" />
@@ -88,8 +112,20 @@ export const TableActions = ({
         >
           <DropdownMenuGroup>
             <DropdownMenuItem
-              onClick={() => setOpenDialog(true)}
-              className="group cursor-pointer text-zinc-300 focus:bg-zinc-800"
+              disabled={disableAction}
+              onClick={() => router.push(routeTo)}
+              className="group z-99 cursor-pointer text-zinc-300 focus:bg-zinc-800"
+            >
+              <IoPersonOutline className="mr-2 h-4 w-4 group-focus:text-zinc-300" />
+              <span className="group-focus:text-zinc-300">View Profile</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              disabled={disableAction}
+              onClick={onEdit}
+              className="group z-99 cursor-pointer text-zinc-300 focus:bg-zinc-800"
             >
               <Edit className="mr-2 h-4 w-4 group-focus:text-zinc-300" />
               <span className="group-focus:text-zinc-300">Edit Member</span>
@@ -100,7 +136,8 @@ export const TableActions = ({
 
           <DropdownMenuGroup>
             <DropdownMenuItem
-              className="group cursor-pointer text-red-400 focus:bg-red-500/20 focus:text-red-600"
+              disabled={disableAction}
+              className="group z-99 cursor-pointer text-red-400 focus:bg-red-500/20 focus:text-red-600"
               onClick={onDelete}
             >
               <Trash2 className="mr-2 h-4 w-4 group-focus:text-red-600" />

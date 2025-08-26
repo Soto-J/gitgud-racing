@@ -43,7 +43,7 @@ const secondSection = [
   { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
   { icon: IoPeopleOutline, label: "Members", href: "/members" },
   { icon: Flag, label: "Teams", href: "/teams" },
-  { icon: Crown, label: "Manage Users", href: "/manage", adminTab: true },
+  { icon: Crown, label: "Manage", href: "/manage", manageTab: true },
 ];
 
 export const DashboardMenu = () => {
@@ -128,8 +128,8 @@ export const DashboardMenu = () => {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {secondSection.map(({ href, label, icon: Icon, adminTab }) => {
-                if (adminTab && currentUserIsAdmin === false) {
+              {secondSection.map(({ href, label, icon: Icon, manageTab }) => {
+                if (manageTab && currentUserIsAdmin === false) {
                   return null;
                 }
 

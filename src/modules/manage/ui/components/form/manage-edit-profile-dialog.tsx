@@ -164,6 +164,7 @@ export const ManageEditProfileDialog = ({
                           <SelectTrigger className="h-10 w-full border-gray-300 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600">
                             <SelectValue placeholder="Choose team" />
                           </SelectTrigger>
+
                           <SelectContent className="z-50">
                             <SelectGroup>
                               <SelectItem
@@ -245,10 +246,10 @@ export const ManageEditProfileDialog = ({
                               </SelectItem>
 
                               <SelectItem
-                                value="member"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                                value="staff"
+                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2"
                               >
-                                <div className="flex w-full items-center justify-between gap-x-2">
+                                <div className="flex items-center justify-between gap-x-2">
                                   <span className="font-medium">Staff</span>
                                   <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                                     Limited Access
@@ -263,7 +264,7 @@ export const ManageEditProfileDialog = ({
                                 <div className="flex w-full items-center justify-between gap-x-2">
                                   <span className="font-medium">Member</span>
                                   <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                                    Limited Access
+                                    Minimum Access
                                   </span>
                                 </div>
                               </SelectItem>

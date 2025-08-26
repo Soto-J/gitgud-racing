@@ -7,6 +7,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { AdminGetUser } from "@/modules/manage/types";
 
 import { TableActions } from "@/modules/manage/ui/components/table/table-actions";
+import { Crown } from "lucide-react";
 
 export const columns: ColumnDef<AdminGetUser>[] = [
   {
@@ -27,9 +28,16 @@ export const columns: ColumnDef<AdminGetUser>[] = [
   {
     accessorKey: "name",
     cell: ({ row }) => {
+      const isAdmin =
+        row.original.role === "admin" || row.original.role === "staff";
+
       return (
         <div className="cursor-pointer">
-          <Link href={`/members/${row.original.id}`} className="capitalize">
+          <Link
+            href={`/members/${row.original.id}`}
+            className="flex items-center justify-center gap-x-2 capitalize"
+          >
+            {isAdmin && <Crown key="crown" size={12} />}
             {row.original.name}
           </Link>
         </div>

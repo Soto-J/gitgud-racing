@@ -18,6 +18,7 @@ import {
   HomeView,
   LoadingHomeView,
 } from "@/modules/home/ui/views/home-view";
+
 import { HomeHeader } from "@/modules/home/ui/components/home-header";
 
 interface HomePageProps {
@@ -41,9 +42,9 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
   ));
   return (
     <>
-      <HomeHeader />
-
       <HydrationBoundary state={dehydrate(queryClient)}>
+        <HomeHeader />
+        
         <Suspense fallback={<LoadingHomeView />}>
           <ErrorBoundary fallback={<ErrorHomeView />}>
             <HomeView />
