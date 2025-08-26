@@ -11,9 +11,9 @@ import {
   GetUserInputSchema,
   GetUsersInputSchema,
   ProfileEditUserInputSchema,
-} from "@/modules/admin/schema";
+} from "@/modules/manage/schema";
 
-export const adminRouter = createTRPCRouter({
+export const manageRouter = createTRPCRouter({
   getUser: adminProcedure.input(GetUserInputSchema).query(async ({ input }) => {
     const [member] = await db
       .select({

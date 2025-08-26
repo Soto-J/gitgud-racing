@@ -78,7 +78,7 @@ src/
 ├── app/                    # Next.js App Router pages
 ├── components/             # Shared UI components
 ├── modules/               # Feature modules
-│   ├── admin/            # Admin management
+│   ├── manage/           # User management
 │   ├── auth/             # Authentication
 │   ├── dashboard/        # Dashboard components
 │   ├── home/             # Home page features

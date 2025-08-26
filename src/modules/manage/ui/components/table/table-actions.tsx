@@ -7,10 +7,10 @@ import { Ellipsis, Edit, Trash2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { AdminGetUser } from "@/modules/admin/types";
+import { AdminGetUser } from "@/modules/manage/types";
 
 import { Button } from "@/components/ui/button";
-import { AdminEditProfileDialog } from "../form/admin-edit-profile-dialog";
+import { ManageEditProfileDialog } from "../form/manage-edit-profile-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,10 +42,10 @@ export const TableActions = ({
   const queryClient = useQueryClient();
 
   const deleteUser = useMutation(
-    trpc.admin.deleteUser.mutationOptions({
+    trpc.manage.deleteUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.admin.getUsers.queryOptions({ ...filters }),
+          trpc.manage.getUsers.queryOptions({ ...filters }),
         );
       },
       onError: (error) => console.error(error.message),
@@ -64,7 +64,7 @@ export const TableActions = ({
 
   return (
     <>
-      <AdminEditProfileDialog
+      <ManageEditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
         initialValues={user}

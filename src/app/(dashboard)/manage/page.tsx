@@ -8,21 +8,21 @@ import { SearchParams } from "nuqs";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { loadSearchParams } from "@/modules/admin/params";
+import { loadSearchParams } from "@/modules/manage/params";
 
 import { auth } from "@/lib/auth";
 
 import {
-  AdminErrorPage,
-  AdminLoadingPage,
-  AdminPageView,
-} from "@/modules/admin/ui/views/admin-page-view";
+  ManageErrorPage,
+  ManageLoadingPage,
+  ManagePageView,
+} from "@/modules/manage/ui/views/manage-page-view";
 
-interface AdminPageProps {
+interface ManagePageProps {
   searchParams: Promise<SearchParams>;
 }
 
-const AdminPage = async ({ searchParams }: AdminPageProps) => {
+const ManagePage = async ({ searchParams }: ManagePageProps) => {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -37,18 +37,18 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.admin.getUsers.queryOptions({ ...filters }),
+    trpc.manage.getUsers.queryOptions({ ...filters }),
   );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<AdminLoadingPage />}>
-        <ErrorBoundary fallback={<AdminErrorPage />}>
-          <AdminPageView />
+      <Suspense fallback={<ManageLoadingPage />}>
+        <ErrorBoundary fallback={<ManageErrorPage />}>
+          <ManagePageView />
         </ErrorBoundary>
       </Suspense>
     </HydrationBoundary>
   );
 };
 
-export default AdminPage;
+export default ManagePage;

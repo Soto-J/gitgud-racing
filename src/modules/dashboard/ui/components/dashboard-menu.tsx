@@ -43,7 +43,7 @@ const secondSection = [
   { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
   { icon: IoPeopleOutline, label: "Members", href: "/members" },
   { icon: Flag, label: "Teams", href: "/teams" },
-  { icon: Crown, label: "Manage Users", href: "/admin", adminTab: true },
+  { icon: Crown, label: "Manage Users", href: "/manage", adminTab: true },
 ];
 
 export const DashboardMenu = () => {
