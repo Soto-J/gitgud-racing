@@ -3,11 +3,6 @@ import {
   Trophy,
   Users,
   MessageCircle,
-  Car,
-  Mountain,
-  CircleDot,
-  Zap,
-  Truck,
 } from "lucide-react";
 
 import { DisciplineCard } from "./discipline-card";
@@ -18,19 +13,6 @@ import { cn } from "@/lib/utils";
 interface ProfileCardProps {
   data: UserGetOne["member"];
 }
-
-// Icon mapping for racing disciplines
-const getDisciplineIcon = (category: string) => {
-  const iconMap = {
-    Oval: CircleDot,
-    Sports: Car,
-    Formula: Zap,
-    "Dirt Oval": Mountain,
-    "Dirt Road": Truck,
-  };
-
-  return iconMap[category as keyof typeof iconMap] || Car;
-};
 
 export const ProfileCard = ({ data }: ProfileCardProps) => {
   const disciplines = data.licenses?.disciplines
@@ -107,7 +89,6 @@ export const ProfileCard = ({ data }: ProfileCardProps) => {
             >
               <DisciplineCard
                 title={val.category}
-                icon={getDisciplineIcon(val.category)}
                 iRating={val.iRating || 0}
                 licenseClass={val.licenseClass}
                 safetyRating={val.safetyRating || "0.0"}
