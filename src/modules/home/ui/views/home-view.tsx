@@ -17,8 +17,6 @@ export const HomeView = () => {
   const { data } = useSuspenseQuery(
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
   );
-
-  console.log(data);
   return (
     <div className="space-y-8 p-6">
       <SeriesChart data={data} />

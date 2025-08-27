@@ -575,15 +575,42 @@ const transformLicenses = (
   };
 };
 
-const shouldRefreshChartData = (chartData: ChartDataRecord) => {
-  if (!chartData) return true;
-
-  const lastUpdate = DateTime.fromJSDate(chartData.updatedAt);
-  const resetDay = lastUpdate
-    .plus({ days: (8 - lastUpdate.weekday) % 7 || 7 }) // next Monday
-    .startOf("day");
-
-  return DateTime.now() >= resetDay;
+/**
+   * Determines if chart data needs to be refreshed based on iRacing's weekly 
+  schedule.
+   * 
+   * iRacing releases new data every Monday. This function checks if enough   
+  time has 
+   * passed since the last data update to warrant fetching fresh data from the     
+   API.
+   * 
+   * @param latestRecord - The most recent chart data record from the 
+  database, or undefined if no data exists
+   * @returns true if fresh data should be fetched (no existing data OR 
+  current time is past the next Monday after last update)
+   * 
+   * @example
+   * // If last update was Wednesday, and today is the following Tuesday
+   * // Next Monday would be 5 days after Wednesday, so refresh would be 
+  needed
+   * shouldRefreshChartData(lastRecord) // returns true
+   */
+const shouldRefreshChartData = (latestRecord: ChartDataRecord | undefined) => {
+  if (!latestRecord) return true;
+  
+  return (
+    DateTime.now() >=
+    DateTime.fromJSDate(latestRecord.updatedAt)
+      .setZone("America/New_York")
+      .set({
+        weekday: 1,
+        hour: 20,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      })
+      .plus({ day: 7 })
+  );
 };
 
 export {
