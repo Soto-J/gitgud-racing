@@ -28,12 +28,14 @@ import {
   userChartDataTable,
 } from "@/db/schema";
 
-import { GetUserInputSchema } from "@/modules/iracing/schema";
+import {
+  GetUserInputSchema,
+  UserChartDataInputSchema,
+} from "@/modules/iracing/schema";
 
 import * as helper from "@/modules/iracing/server/helper";
 
 import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
-import z from "zod";
 
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
@@ -109,12 +111,7 @@ export const iracingRouter = createTRPCRouter({
   }),
 
   userChartData: iracingProcedure
-    .input(
-      z.object({
-        custId: z.string(),
-        categoryId: z.int(),
-      }),
-    )
+    .input(UserChartDataInputSchema)
     .query(async ({ ctx, input }) => {
       const chartData = await db
         .select()
@@ -131,45 +128,18 @@ export const iracingRouter = createTRPCRouter({
         )
         .orderBy(desc(userChartDataTable.updatedAt));
 
-      // Check if we need to fetch fresh data
-      const nowUtc = DateTime.utc();
-      const estNow = nowUtc.setZone("America/New_York");
-      const isMondayAfter8PM = estNow.weekday === 1 && estNow.hour >= 20;
+      const shouldRefresh = helper.shouldRefreshChartData(chartData[0]);
 
-      let shouldFetchFreshData = false;
-
-      if (chartData.length === 0) {
-        shouldFetchFreshData = true;
-      } else if (isMondayAfter8PM) {
-        // Check if lastest data is from before monday 8 pm
-        const lastUpdate = chartData[0].updatedAt;
-        const resetDate = estNow
-          .set({
-            weekday: 1,
-            hour: 20,
-            minute: 0,
-            second: 0,
-            millisecond: 0,
-          })
-          .toUTC();
-
-        if (DateTime.fromJSDate(lastUpdate) < resetDate) {
-          shouldFetchFreshData = true;
-        }
+      if (shouldRefresh) {
+        const data = await helper.fetchData({
+          query: "",
+          authCode: ctx.iracingAuthCode,
+        });
+        // TODO: persist `data` into userChartDataTable
+        return data;
       }
 
-      if (!shouldFetchFreshData) {
-        return { chartData, shouldRefresh: false };
-      }
-
-      // TODO: Fetch fresh data from iRacing API and store in database
-      // For now, return existing data with refresh flag
-      const data = await helper.fetchData({
-        query: "",
-        authCode: ctx.iracingAuthCode,
-      });
-
-      return { chartData, shouldRefresh: true };
+      return chartData;
     }),
 
   weeklySeriesResults: iracingProcedure

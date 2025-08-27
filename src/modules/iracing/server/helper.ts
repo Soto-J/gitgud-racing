@@ -11,6 +11,7 @@ import {
   iracingAuthTable,
   seriesTable,
   seriesWeeklyStatsTable,
+  userChartDataTable,
 } from "@/db/schema";
 
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL } from "@/constants";
@@ -21,7 +22,9 @@ import {
   LicenseDiscipline,
   IracingGetAllSeriesResponse,
   IracingSeriesResultsResponse,
+  ChartDataRecord,
 } from "@/modules/iracing/types";
+import { DateTime } from "luxon";
 
 export const getOrRefreshAuthCode = async () => {
   const IRACING_EMAIL = process.env?.IRACING_EMAIL;
@@ -572,11 +575,23 @@ const transformLicenses = (
   };
 };
 
+const shouldRefreshChartData = (chartData: ChartDataRecord) => {
+  if (!chartData) return true;
+
+  const lastUpdate = DateTime.fromJSDate(chartData.updatedAt);
+  const resetDay = lastUpdate
+    .plus({ days: (8 - lastUpdate.weekday) % 7 || 7 }) // next Monday
+    .startOf("day");
+
+  return DateTime.now() >= resetDay;
+};
+
 export {
   transformLicenses,
   fetchData,
   cacheSeries,
   cacheWeeklyResults,
   cacheSeriesImages,
+  shouldRefreshChartData,
   // cacheSeriesImage2,
 };

@@ -29,3 +29,8 @@ export const GetAllSeriesInputSchema = z.object({
     ),
   include_series: z.boolean().default(true),
 });
+
+export const UserChartDataInputSchema = z.object({
+  custId: z.string(),
+  categoryId: z.number(),
+});
