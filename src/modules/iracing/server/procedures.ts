@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 import {
   like,
   desc,
@@ -114,7 +116,6 @@ export const iracingRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // Get existing chart data
       const chartData = await db
         .select()
         .from(userChartDataTable)
@@ -122,46 +123,53 @@ export const iracingRouter = createTRPCRouter({
           and(
             eq(userChartDataTable.userId, ctx.auth.user.id),
             eq(userChartDataTable.categoryId, input.categoryId),
+            gt(
+              userChartDataTable.updatedAt,
+              DateTime.now().minus({ days: 7 }).toJSDate(),
+            ),
           ),
         )
         .orderBy(desc(userChartDataTable.updatedAt));
 
       // Check if we need to fetch fresh data
-      const now = new Date();
-      const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
-      const isMondayAfter8PM = estNow.getDay() === 1 && estNow.getHours() >= 20;
+      const nowUtc = DateTime.utc();
+      const estNow = nowUtc.setZone("America/New_York");
+      const isMondayAfter8PM = estNow.weekday === 1 && estNow.hour >= 20;
 
       let shouldFetchFreshData = false;
 
       if (chartData.length === 0) {
-        // No data exists, fetch fresh data
         shouldFetchFreshData = true;
       } else if (isMondayAfter8PM) {
-        // It's Monday after 8pm EST, check if our latest data is from before this Monday's 8pm
-        const latestData = chartData[0];
-        const mondayDataReleaseTime = new Date(estNow);
-        mondayDataReleaseTime.setHours(20, 0, 0, 0);
-        
-        if (latestData.updatedAt < mondayDataReleaseTime) {
-          shouldFetchFreshData = true;
-        }
-      } else {
-        // Check if data is older than 7 days
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        const latestData = chartData[0];
-        
-        if (latestData.updatedAt < sevenDaysAgo) {
+        // Check if lastest data is from before monday 8 pm
+        const lastUpdate = chartData[0].updatedAt;
+        const resetDate = estNow
+          .set({
+            weekday: 1,
+            hour: 20,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          })
+          .toUTC();
+
+        if (DateTime.fromJSDate(lastUpdate) < resetDate) {
           shouldFetchFreshData = true;
         }
       }
 
-      if (shouldFetchFreshData) {
-        // TODO: Fetch fresh data from iRacing API and store in database
-        // For now, return existing data with refresh flag
-        return { chartData, shouldRefresh: true };
+      if (!shouldFetchFreshData) {
+        return { chartData, shouldRefresh: false };
       }
 
-      return { chartData, shouldRefresh: false };
+      // TODO: Fetch fresh data from iRacing API and store in database
+      // For now, return existing data with refresh flag
+      const data = await helper.fetchData({
+        query: "",
+        authCode: ctx.iracingAuthCode,
+      });
+
+      return { chartData, shouldRefresh: true };
     }),
 
   weeklySeriesResults: iracingProcedure
@@ -234,3 +242,23 @@ export const iracingRouter = createTRPCRouter({
       return { totalPages };
     }),
 });
+
+// Might use for condidition checks
+
+// function isMondayAfter8PM(date: DateTime): boolean {
+//   return date.weekday === 1 && date.hour >= 20;
+// }
+
+// function needsRefresh(latestUpdatedAt: Date, nowEst: DateTime): boolean {
+//   const mondayReleaseUtc = nowEst
+//     .set({ weekday: 1, hour: 20, minute: 0, second: 0, millisecond: 0 })
+//     .toUTC();
+
+//   return DateTime.fromJSDate(latestUpdatedAt) < mondayReleaseUtc;
+// }
+
+// example:
+// const shouldFetchFreshData =
+//   chartData.length === 0 ||
+//   (isMondayAfter8PM(estNow) &&
+//    needsRefresh(chartData[0].updatedAt, estNow));
