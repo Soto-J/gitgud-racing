@@ -1,4 +1,4 @@
-import { like, desc, eq, getTableColumns, or, count } from "drizzle-orm";
+import { like, desc, eq, getTableColumns, or, count, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import {
@@ -14,6 +14,7 @@ import {
   seriesTable,
   seriesWeeklyStatsTable,
   user,
+  userChartDataTable,
 } from "@/db/schema";
 
 import { GetUserInputSchema } from "@/modules/iracing/schema";
@@ -21,6 +22,7 @@ import { GetUserInputSchema } from "@/modules/iracing/schema";
 import * as helper from "@/modules/iracing/server/helper";
 
 import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
+import z from "zod";
 
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
@@ -94,6 +96,22 @@ export const iracingRouter = createTRPCRouter({
       });
     }
   }),
+
+  userChartData: iracingProcedure
+    .input(z.object({ custId: z.string(), categoryId: z.int() }))
+    .query(async ({ ctx, input }) => {
+      const chartData = await db
+        .select()
+        .from(userChartDataTable)
+        .where(
+          and(
+            eq(userChartDataTable.userId, ctx.auth.user.id),
+            eq(userChartDataTable.categoryId, input.categoryId),
+          ),
+        );
+
+      return;
+    }),
 
   weeklySeriesResults: iracingProcedure
     .input(WeeklySeriesResultsInput)

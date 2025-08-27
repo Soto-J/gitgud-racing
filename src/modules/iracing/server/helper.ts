@@ -269,7 +269,7 @@ const cacheSeries = async ({ authCode }: { authCode: string }) => {
     }
 
     const insertValues = data.map((item) => ({
-      seriesId: item.series_id.toString(),
+      seriesId: item.series_id,
       category: item.category,
       seriesName: item.series_name,
     }));
@@ -484,9 +484,9 @@ const cacheWeeklyResults = async ({
           totalSplits > 0 ? (totalDrivers / totalSplits).toFixed(2) : "0";
 
         return {
-          seriesId: series[0].series_id.toString(),
-          seasonId: series[0].season_id.toString(),
-          sessionId: series[0].session_id.toString(),
+          seriesId: series[0].series_id,
+          seasonId: series[0].season_id,
+          sessionId: series[0].session_id,
           name: series[0].series_name.trim(),
           seasonYear: series[0].season_year,
           seasonQuarter: series[0].season_quarter,
