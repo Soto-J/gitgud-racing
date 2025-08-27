@@ -1,4 +1,13 @@
-import { like, desc, eq, getTableColumns, or, count, and } from "drizzle-orm";
+import {
+  like,
+  desc,
+  eq,
+  getTableColumns,
+  or,
+  count,
+  and,
+  gt,
+} from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import {
@@ -98,8 +107,14 @@ export const iracingRouter = createTRPCRouter({
   }),
 
   userChartData: iracingProcedure
-    .input(z.object({ custId: z.string(), categoryId: z.int() }))
+    .input(
+      z.object({
+        custId: z.string(),
+        categoryId: z.int(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
+      // Get existing chart data
       const chartData = await db
         .select()
         .from(userChartDataTable)
@@ -108,9 +123,45 @@ export const iracingRouter = createTRPCRouter({
             eq(userChartDataTable.userId, ctx.auth.user.id),
             eq(userChartDataTable.categoryId, input.categoryId),
           ),
-        );
+        )
+        .orderBy(desc(userChartDataTable.updatedAt));
 
-      return;
+      // Check if we need to fetch fresh data
+      const now = new Date();
+      const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+      const isMondayAfter8PM = estNow.getDay() === 1 && estNow.getHours() >= 20;
+
+      let shouldFetchFreshData = false;
+
+      if (chartData.length === 0) {
+        // No data exists, fetch fresh data
+        shouldFetchFreshData = true;
+      } else if (isMondayAfter8PM) {
+        // It's Monday after 8pm EST, check if our latest data is from before this Monday's 8pm
+        const latestData = chartData[0];
+        const mondayDataReleaseTime = new Date(estNow);
+        mondayDataReleaseTime.setHours(20, 0, 0, 0);
+        
+        if (latestData.updatedAt < mondayDataReleaseTime) {
+          shouldFetchFreshData = true;
+        }
+      } else {
+        // Check if data is older than 7 days
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const latestData = chartData[0];
+        
+        if (latestData.updatedAt < sevenDaysAgo) {
+          shouldFetchFreshData = true;
+        }
+      }
+
+      if (shouldFetchFreshData) {
+        // TODO: Fetch fresh data from iRacing API and store in database
+        // For now, return existing data with refresh flag
+        return { chartData, shouldRefresh: true };
+      }
+
+      return { chartData, shouldRefresh: false };
     }),
 
   weeklySeriesResults: iracingProcedure
