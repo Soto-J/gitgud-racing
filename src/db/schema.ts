@@ -9,6 +9,8 @@ import {
   mysqlEnum,
   int,
   decimal,
+  date,
+  unique,
 } from "drizzle-orm/mysql-core";
 
 export const roles = ["admin", "staff", "member"] as const;
@@ -183,7 +185,7 @@ export const licenseTable = mysqlTable("license", {
 });
 
 export const seriesTable = mysqlTable("series", {
-  seriesId: varchar("series_id", { length: 36 }).primaryKey().notNull(),
+  seriesId: int("series_id").primaryKey().notNull(),
 
   category: varchar("category", { length: 25 }).notNull(),
   seriesName: varchar("series_name", { length: 100 }).notNull(),
@@ -192,16 +194,38 @@ export const seriesTable = mysqlTable("series", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
+export const userChartDataTable = mysqlTable("user_chart_data", {
+  id: varchar("id", { length: 21 })
+    .primaryKey()
+    .$default(() => nanoid()),
+  userId: varchar("user_id", { length: 36 })
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  categoryId: int("category_id"),
+  category: varchar("category", { length: 50 }).notNull(),
+
+  chartType: varchar("chart_type", { length: 50 }).notNull(),
+
+  when: date("when").notNull(),
+  value: int("value").notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  // Prevent duplicate entries for same user, category, chart type, and date
+  uniqueUserChartData: unique().on(table.userId, table.category, table.chartType, table.when),
+}));
+
 export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-  seriesId: varchar("series_id", { length: 36 }).references(
-    () => seriesTable.seriesId,
-    { onDelete: "cascade" },
-  ),
-  seasonId: varchar("season_id", { length: 100 }),
-  sessionId: varchar("session_id", { length: 100 }).unique().notNull(),
+  seriesId: int("series_id").references(() => seriesTable.seriesId, {
+    onDelete: "cascade",
+  }),
+  seasonId: int("season_id"),
+  sessionId: int("session_id").unique().notNull(),
 
   name: varchar("name", { length: 100 }).notNull(),
   seasonYear: int("season_year").notNull(),
