@@ -33,7 +33,7 @@ import {
   UserChartDataInputSchema,
 } from "@/modules/iracing/schema";
 
-import * as helper from "@/modules/iracing/server/helper";
+import * as helper from "@/modules/iracing/server";
 
 import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
 

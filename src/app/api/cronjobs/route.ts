@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import * as helper from "@/modules/iracing/server/helper";
+import * as helper from "@/modules/iracing/server";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
