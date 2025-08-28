@@ -124,7 +124,7 @@ export const transformLicenses = (
  * shouldRefreshChartData(lastRecord) // returns true
  */
 export const shouldRefreshChartData = (
-  latestRecord: ChartDataRecord | undefined,
+  latestRecord: ChartDataRecord | undefined | null,
 ): boolean => {
   if (!latestRecord) return true;
 

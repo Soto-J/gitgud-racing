@@ -151,7 +151,7 @@ export const cacheWeeklyResults = async ({
 
     const seriesResultsSettled = await Promise.allSettled(promiseArr);
 
-    const seriesResults: IracingSeriesResultsResponse[][] = seriesResultsSettled
+    const seriesResults = seriesResultsSettled
       .filter((result) => result.status === "fulfilled")
       .map((result) => result.value as IracingSeriesResultsResponse[]);
 

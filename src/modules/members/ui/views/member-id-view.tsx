@@ -2,7 +2,7 @@
 
 import { useTRPC } from "@/trpc/client";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries, useSuspenseQuery } from "@tanstack/react-query";
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
@@ -15,19 +15,27 @@ interface MemberIdViewProps {
 export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   const trpc = useTRPC();
 
-  const { data } = useSuspenseQuery(
-    trpc.iracing.getUser.queryOptions({ userId }),
-  );
+  const [userPayload, chartDataPayload] = useSuspenseQueries({
+    queries: [
+      trpc.iracing.getUser.queryOptions({ userId }),
+      trpc.iracing.userChartData.queryOptions({ userId }),
+    ],
+  });
 
   return (
     <>
       <Banner
         section="Profile"
-        title={data?.member?.user?.name || ""}
+        title={userPayload.data?.member?.user?.name || ""}
         subTitle1="Professional Driver"
-        subTitle2={data.member.profile.isActive ? "Active" : "Inactive"}
+        subTitle2={
+          userPayload.data.member.profile.isActive ? "Active" : "Inactive"
+        }
       />
-      <ProfileCard data={data.member} />
+      <ProfileCard
+        member={userPayload.data.member}
+        chartData={chartDataPayload.data}
+      />
     </>
   );
 };

@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 
 import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 
@@ -20,28 +20,34 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const trpc = useTRPC();
-
-  const { data } = useSuspenseQuery(
-    trpc.iracing.getUser.queryOptions({ userId }, { retry: false }),
-  );
-
+  const [userPayload, chartPayload] = useSuspenseQueries({
+    queries: [
+      trpc.iracing.getUser.queryOptions({ userId }, { retry: false }),
+      trpc.iracing.userChartData.queryOptions({ userId }),
+    ],
+  });
   return (
     <>
       <EditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={data?.member}
+        initialValues={userPayload.data?.member}
       />
 
       <Banner
         section="iRacing profile"
-        title={data.member.user?.name || ""}
+        title={userPayload.data.member.user?.name || ""}
         subTitle1="Professional driver"
-        subTitle2={data.member.profile.isActive ? "Active" : "Inactive"}
+        subTitle2={
+          userPayload.data.member.profile.isActive ? "Active" : "Inactive"
+        }
         onEdit={() => setOpenDialog(true)}
       />
 
-      <ProfileCard data={data?.member} />
+      <ProfileCard
+        member={userPayload.data.member}
+        chartData={chartPayload.data}
+      />
     </>
   );
 };

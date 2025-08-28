@@ -6,6 +6,57 @@ import { iracingAuthTable } from "@/db/schema";
 
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL, API_TIMEOUT_MS } from "./config";
 
+// In-memory cache to prevent concurrent auth requests
+let authPromise: Promise<string> | null = null;
+let lastAuthAttempt = 0;
+const AUTH_RETRY_DELAY = 5000; // 5 seconds between failed attempts
+
+/**
+ * Validates iRacing environment configuration
+ *
+ * @returns {boolean} True if configuration is valid
+ * @throws {TRPCError} If configuration is invalid
+ */
+export const validateIRacingConfig = (): boolean => {
+  const IRACING_EMAIL = process.env?.IRACING_EMAIL;
+  const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
+
+  if (!IRACING_EMAIL) {
+    console.error(
+      "iRacing configuration error: IRACING_EMAIL environment variable is missing",
+    );
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Missing required environment variable: IRACING_EMAIL",
+    });
+  }
+
+  if (!IRACING_PASSWORD) {
+    console.error(
+      "iRacing configuration error: IRACING_PASSWORD environment variable is missing",
+    );
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Missing required environment variable: IRACING_PASSWORD",
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(IRACING_EMAIL)) {
+    console.error(
+      "iRacing configuration error: IRACING_EMAIL has invalid format:",
+      IRACING_EMAIL,
+    );
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Invalid email format in IRACING_EMAIL environment variable",
+    });
+  }
+
+  console.log("iRacing configuration validated successfully");
+  return true;
+};
+
 /**
  * Gets or refreshes the iRacing authentication code
  *
@@ -26,19 +77,64 @@ import { COOKIE_EXPIRES_IN_MS, IRACING_URL, API_TIMEOUT_MS } from "./config";
  * ```
  */
 export const getOrRefreshAuthCode = async (): Promise<string> => {
+  // Rate limiting: prevent too many failed auth attempts
+  // const now = Date.now();
+  // if (lastAuthAttempt > 0 && now - lastAuthAttempt < AUTH_RETRY_DELAY) {
+  //   const waitTime = AUTH_RETRY_DELAY - (now - lastAuthAttempt);
+  //   console.log(`Rate limiting: waiting ${waitTime}ms before retry`);
+  //   await new Promise((resolve) => setTimeout(resolve, waitTime));
+  // }
+
+  // Create the auth promise and cache it
+  
+  return performAuthentication();
+
+  try {
+    const result = await authPromise;
+    authPromise = null; // Clear on success
+    return result;
+  } catch (error) {
+    authPromise = null; // Clear on failure
+    lastAuthAttempt = Date.now();
+    throw error;
+  }
+};
+
+/**
+ * Internal function that performs the actual authentication
+ */
+const performAuthentication = async (): Promise<string> => {
   const IRACING_EMAIL = process.env?.IRACING_EMAIL;
   const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
 
   if (!IRACING_PASSWORD) {
+    console.error(
+      "iRacing authentication error: IRACING_PASSWORD environment variable is missing",
+    );
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Missing required environment variables: IRACING_PASSWORD`,
     });
   }
   if (!IRACING_EMAIL) {
+    console.error(
+      "iRacing authentication error: IRACING_EMAIL environment variable is missing",
+    );
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Missing required environment variables: IRACING_EMAIL`,
+    });
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(IRACING_EMAIL)) {
+    console.error(
+      "iRacing authentication error: IRACING_EMAIL has invalid format",
+    );
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Invalid email format in IRACING_EMAIL environment variable",
     });
   }
 
@@ -85,9 +181,42 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     });
 
     if (!response.ok) {
+      let errorBody = "";
+      try {
+        errorBody = await response.text();
+        console.error("iRacing authentication failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries()),
+          body: errorBody,
+        });
+      } catch (bodyError) {
+        console.error(
+          "Failed to read authentication error response:",
+          bodyError,
+        );
+      }
+
+      // Provide more specific error messages based on status codes
+      if (response.status === 401 || response.status === 403) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "Invalid iRacing credentials. Please check your IRACING_EMAIL and IRACING_PASSWORD.",
+        });
+      }
+
+      if (response.status >= 500) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message:
+            "iRacing authentication service is temporarily unavailable. Please try again later.",
+        });
+      }
+
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Failed to authenticate iRacing: ${response.status}`,
+        message: `Failed to authenticate with iRacing: ${response.status} ${response.statusText}`,
       });
     }
 
@@ -102,19 +231,18 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       });
     }
 
-    await db
-      .insert(iracingAuthTable)
-      .values({
-        authCode,
-        expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
-      })
-      .onDuplicateKeyUpdate({
-        set: {
-          authCode,
-          expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
-        },
-      });
+    console.log("HERRO!!!!!!!!");
+    // Delete existing auth records and insert new one (single auth record approach)
+    await db.delete(iracingAuthTable);
 
+    await db.insert(iracingAuthTable).values({
+      authCode,
+      expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+    });
+
+    console.log(
+      `Successfully stored auth code (expires in ${COOKIE_EXPIRES_IN_MS / 1000 / 60} minutes)`,
+    );
     return authCode;
   } catch (error) {
     if (error instanceof TRPCError) {

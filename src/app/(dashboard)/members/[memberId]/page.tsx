@@ -28,7 +28,9 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
   void queryClient.prefetchQuery(
     trpc.iracing.getUser.queryOptions({ userId: memberId }),
   );
-
+  void queryClient.prefetchQuery(
+    trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
+  );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingMemberIdView />}>

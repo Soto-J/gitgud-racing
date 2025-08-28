@@ -145,13 +145,17 @@ export const Banner = ({
         </div>
 
         {/* Subtle overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute inset-0 bg-black/10" />
 
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-            {/* Dynamic Icon */}
+            {/* Dynamic Icon - Hidden on mobile */}
             <div
-              className={`flex ${sizeStyles.iconContainer} items-center justify-center rounded-full bg-gradient-to-br ${themeStyles.iconBg} shadow-lg ring-4 ring-white/20 transition-transform duration-300 hover:scale-110`}
+              className={cn(
+                `hidden items-center justify-center rounded-full bg-gradient-to-br shadow-lg ring-4 ring-white/20 transition-transform duration-300 hover:scale-110 sm:flex`,
+                sizeStyles.iconContainer,
+                themeStyles.iconBg,
+              )}
             >
               <DisplayIcon
                 className={iconColor || themeStyles.iconColor}
@@ -177,7 +181,7 @@ export const Banner = ({
                     "h-1 w-8 rounded-full shadow-sm",
                     themeStyles.accent,
                   )}
-                ></div>
+                />
               </div>
 
               <h2

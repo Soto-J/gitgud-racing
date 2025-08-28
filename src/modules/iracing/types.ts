@@ -10,8 +10,6 @@ export type UserGetOne = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
 export type WeeklySeriesResults =
   inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
 
-export type ChartDataRecord = typeof userChartDataTable.$inferSelect;
-
 // Init
 export type IRacingLicense = {
   category_id: number;
@@ -247,4 +245,21 @@ export type SeasonResultsResponse = {
   race_week_num: number;
   event_type: number;
   results_list: ResultsList[];
+};
+
+// Chart Data
+
+export type ChartData =
+  inferRouterOutputs<AppRouter>["iracing"]["userChartData"];
+export type ChartDataRecord = typeof userChartDataTable.$inferSelect;
+export type UserChartDataResponse = {
+  blackout: boolean;
+  category_id: number;
+  chart_type: number;
+  data: {
+    when: Date;
+    value: number;
+  }[];
+  success: boolean;
+  cust_id: number;
 };
