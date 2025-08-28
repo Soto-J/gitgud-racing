@@ -5,7 +5,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 
 import { eq } from "drizzle-orm";
 
-import * as helper from "@/modules/iracing/server/helper";
+import * as helper from "@/modules/iracing/server";
 
 import { db } from "@/db";
 import { licenseTable, profileTable } from "@/db/schema";
@@ -112,10 +112,10 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
     }
 
     // Otherwise we either update or create licenses for user
-    const iRacingUserData: IRacingFetchResult = await helper.fetchData({
+    const iRacingUserData = await helper.fetchData({
       query: `/data/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
       authCode: ctx.iracingAuthCode,
-    });
+    }) as IRacingFetchResult;
 
     if (!iRacingUserData) {
       return next({ ctx });
