@@ -74,7 +74,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     const response = await fetch(`${IRACING_URL}/auth`, {
       method: "POST",
       headers: {
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         email: IRACING_EMAIL,

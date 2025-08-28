@@ -258,7 +258,7 @@ export const cacheSeriesImages = async (): Promise<void> => {
       if (!response.ok) {
         console.log("Response", response);
         throw new Error(
-          `Failed to fetch image for series ${series.seriesName}, seriesId${series.seriesId}`,
+          `Failed to fetch image for series ${series.seriesName}, seriesId: ${series.seriesId}`,
         );
       }
 
