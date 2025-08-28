@@ -77,6 +77,7 @@ export const validateIRacingConfig = (): boolean => {
  * ```
  */
 export const getOrRefreshAuthCode = async (): Promise<string> => {
+  // TODO
   // Rate limiting: prevent too many failed auth attempts
   // const now = Date.now();
   // if (lastAuthAttempt > 0 && now - lastAuthAttempt < AUTH_RETRY_DELAY) {
