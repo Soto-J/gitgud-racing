@@ -5,11 +5,12 @@ import { db } from "@/db";
 import { iracingAuthTable } from "@/db/schema";
 
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL, API_TIMEOUT_MS } from "./config";
+import { DateTime } from "luxon";
 
-// In-memory cache to prevent concurrent auth requests
-let authPromise: Promise<string> | null = null;
-let lastAuthAttempt = 0;
-const AUTH_RETRY_DELAY = 5000; // 5 seconds between failed attempts
+// In-memory cache to prevent concurrent auth requests (unused for now)
+// let authPromise: Promise<string> | null = null;
+// let lastAuthAttempt = 0;
+// const AUTH_RETRY_DELAY = 5000; // 5 seconds between failed attempts
 
 /**
  * Validates iRacing environment configuration
@@ -77,34 +78,6 @@ export const validateIRacingConfig = (): boolean => {
  * ```
  */
 export const getOrRefreshAuthCode = async (): Promise<string> => {
-  // TODO
-  // Rate limiting: prevent too many failed auth attempts
-  // const now = Date.now();
-  // if (lastAuthAttempt > 0 && now - lastAuthAttempt < AUTH_RETRY_DELAY) {
-  //   const waitTime = AUTH_RETRY_DELAY - (now - lastAuthAttempt);
-  //   console.log(`Rate limiting: waiting ${waitTime}ms before retry`);
-  //   await new Promise((resolve) => setTimeout(resolve, waitTime));
-  // }
-
-  // Create the auth promise and cache it
-  
-  return performAuthentication();
-
-  try {
-    const result = await authPromise;
-    authPromise = null; // Clear on success
-    return result;
-  } catch (error) {
-    authPromise = null; // Clear on failure
-    lastAuthAttempt = Date.now();
-    throw error;
-  }
-};
-
-/**
- * Internal function that performs the actual authentication
- */
-const performAuthentication = async (): Promise<string> => {
   const IRACING_EMAIL = process.env?.IRACING_EMAIL;
   const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
 
@@ -118,24 +91,9 @@ const performAuthentication = async (): Promise<string> => {
     });
   }
   if (!IRACING_EMAIL) {
-    console.error(
-      "iRacing authentication error: IRACING_EMAIL environment variable is missing",
-    );
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Missing required environment variables: IRACING_EMAIL`,
-    });
-  }
-
-  // Validate email format
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(IRACING_EMAIL)) {
-    console.error(
-      "iRacing authentication error: IRACING_EMAIL has invalid format",
-    );
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Invalid email format in IRACING_EMAIL environment variable",
     });
   }
 
@@ -144,11 +102,15 @@ const performAuthentication = async (): Promise<string> => {
     .from(iracingAuthTable)
     .then((value) => value[0]);
 
-  // Check if cached auth is still valid
-  if (iracingAuthInfo?.expiresAt && iracingAuthInfo.expiresAt > new Date()) {
-    const timeLeft = iracingAuthInfo.expiresAt.getTime() - Date.now();
+  if (
+    iracingAuthInfo &&
+    iracingAuthInfo.expiresAt &&
+    iracingAuthInfo.expiresAt.getTime() > DateTime.now().toMillis()
+  ) {
+    const timeLeft = DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow();
+
     console.log(
-      `Using cached iRacing auth (expires in ${Math.round(timeLeft / 1000 / 60)} minutes)`,
+      `Using cached iRacing auth (expires in ${Math.round(timeLeft.minutes)} minutes)`,
     );
 
     return iracingAuthInfo.authCode;
@@ -182,22 +144,6 @@ const performAuthentication = async (): Promise<string> => {
     });
 
     if (!response.ok) {
-      let errorBody = "";
-      try {
-        errorBody = await response.text();
-        console.error("iRacing authentication failed:", {
-          status: response.status,
-          statusText: response.statusText,
-          headers: Object.fromEntries(response.headers.entries()),
-          body: errorBody,
-        });
-      } catch (bodyError) {
-        console.error(
-          "Failed to read authentication error response:",
-          bodyError,
-        );
-      }
-
       // Provide more specific error messages based on status codes
       if (response.status === 401 || response.status === 403) {
         throw new TRPCError({
@@ -231,14 +177,12 @@ const performAuthentication = async (): Promise<string> => {
         message: "No valid auth cookie received from iRacing",
       });
     }
-
-    console.log("HERRO!!!!!!!!");
     // Delete existing auth records and insert new one (single auth record approach)
     await db.delete(iracingAuthTable);
 
     await db.insert(iracingAuthTable).values({
       authCode,
-      expiresAt: new Date(Date.now() + COOKIE_EXPIRES_IN_MS),
+      expiresAt: DateTime.now().plus({ hours: 1 }).toJSDate(),
     });
 
     console.log(
