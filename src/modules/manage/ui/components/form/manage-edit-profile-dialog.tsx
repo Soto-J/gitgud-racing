@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface ManageEditProfileDialogProps {
   onOpenDialog: boolean;
@@ -111,21 +112,25 @@ export const ManageEditProfileDialog = ({
                       >
                         Member Status
                       </FormLabel>
+                      
                       <p className="text-xs text-gray-600 dark:text-gray-400">
                         Toggle member&apos;s active status
                       </p>
                     </div>
+
                     <FormControl>
                       <div className="flex items-center space-x-3">
                         <span
-                          className={`text-sm font-medium transition-colors ${
+                          className={cn(
+                            `text-sm font-medium transition-colors`,
                             field.value
                               ? "text-green-700 dark:text-green-300"
-                              : "text-gray-500 dark:text-gray-400"
-                          }`}
+                              : "text-gray-500 dark:text-gray-400",
+                          )}
                         >
                           {field.value ? "Active" : "Inactive"}
                         </span>
+
                         <Switch
                           id="isActive"
                           checked={field.value}
@@ -151,6 +156,7 @@ export const ManageEditProfileDialog = ({
                       <FormLabel className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                         Team Assignment
                       </FormLabel>
+
                       <p className="text-xs text-gray-600 dark:text-gray-400">
                         Select the team for this member
                       </p>
@@ -247,7 +253,7 @@ export const ManageEditProfileDialog = ({
 
                               <SelectItem
                                 value="staff"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 px-2"
+                                className="cursor-pointer px-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                               >
                                 <div className="flex items-center justify-between gap-x-2">
                                   <span className="font-medium">Staff</span>

@@ -12,7 +12,6 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 
 const chartConfig = {
@@ -37,7 +36,7 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
       DateTime.fromISO(a.when).toMillis() - DateTime.fromISO(b.when).toMillis(),
   );
 
-  const latestEntry = sortedByDate[0];
+  const latestEntry = sortedByDate[sortedByDate.length - 1];
   const formattedDate = DateTime.fromISO(latestEntry.when).toFormat(
     "MMM dd, yyyy",
   );
@@ -106,17 +105,39 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                 interval="preserveStartEnd"
                 minTickGap={60}
                 tickFormatter={(value) => {
-                  const date = DateTime.fromISO(value);
-                  const dataSpan = DateTime.fromISO(
-                    sortedByDate[sortedByDate.length - 1].when,
-                  ).diff(DateTime.fromISO(sortedByDate[0].when), "days").days;
+                  const date =
+                    typeof value === "string"
+                      ? DateTime.fromISO(value)
+                      : DateTime.fromJSDate(new Date(value));
+
+                  if (!date.isValid) {
+                    return String(value);
+                  }
+
+                  const startDate =
+                    typeof sortedByDate[0].when === "string"
+                      ? DateTime.fromISO(sortedByDate[0].when)
+                      : DateTime.fromJSDate(new Date(sortedByDate[0].when));
+                  
+                  // End date sometimes returns an object
+                  const endDate =
+                    typeof sortedByDate[sortedByDate.length - 1].when ===
+                    "string"
+                      ? DateTime.fromISO(
+                          sortedByDate[sortedByDate.length - 1].when,
+                        )
+                      : DateTime.fromJSDate(
+                          new Date(sortedByDate[sortedByDate.length - 1].when),
+                        );
+
+                  const dataSpan = endDate.diff(startDate, "days").days;
 
                   if (dataSpan > 365) {
                     return date.toFormat("MMM yyyy");
                   } else if (dataSpan > 30) {
                     return date.toFormat("MMM dd");
                   } else {
-                    return date.toFormat("dd");
+                    return date.toFormat("MMM dd");
                   }
                 }}
                 tick={{
@@ -145,10 +166,19 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                 cursor={{ stroke: "var(--color-value)", strokeWidth: 2 }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
+                    const date =
+                      typeof label === "string"
+                        ? DateTime.fromISO(label)
+                        : DateTime.fromJSDate(new Date(label));
+
+                    const formattedDate = date.isValid
+                      ? date.toFormat("MMM dd, yyyy")
+                      : String(label);
+
                     return (
                       <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
                         <p className="text-sm font-medium text-gray-900">
-                          {DateTime.fromISO(label).toFormat("MMM dd, yyyy")}
+                          {formattedDate}
                         </p>
                         <p className="text-sm text-gray-600">
                           iRating:{" "}
