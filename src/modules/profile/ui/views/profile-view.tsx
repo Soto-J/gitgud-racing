@@ -9,7 +9,7 @@ import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
-import { ProfileCard } from "@/components/profile-card";
+import { ProfileCard } from "@/components/profile-card/profile-card";
 import { Banner } from "@/components/banner";
 
 interface ProfileViewProps {

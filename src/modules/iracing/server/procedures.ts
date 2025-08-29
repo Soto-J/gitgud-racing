@@ -9,7 +9,6 @@ import {
   count,
   and,
   gt,
-  asc,
 } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
@@ -117,53 +116,48 @@ export const iracingRouter = createTRPCRouter({
   userChartData: iracingProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
-      // Use authenticated user ID, ignore input.userId for security
-      const userId = ctx.auth.user.id;
-
-      // First, get the user's profile
-      const profile = await db
+      const userProfile = await db
         .select({ iracingId: profileTable.iracingId })
         .from(profileTable)
         .where(eq(profileTable.userId, input.userId))
         .then((val) => val[0]);
 
-      if (!profile?.iracingId) {
+      if (!userProfile?.iracingId) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "User profile not found",
         });
       }
 
+      const resetDate = DateTime.now()
+        .set({
+          weekday: 1,
+          hour: 20,
+        })
+        .toJSDate();
+
       const chartData = await db
         .select()
         .from(userChartDataTable)
         .where(
           and(
-            eq(userChartDataTable.userId, userId),
-            gt(
-              userChartDataTable.updatedAt,
-              DateTime.now().minus({ days: 7 }).toJSDate(),
-            ),
+            eq(userChartDataTable.userId, input.userId),
+            gt(userChartDataTable.updatedAt, resetDate),
           ),
         )
         .orderBy(desc(userChartDataTable.updatedAt));
 
-      const shouldRefresh =
-        helper.shouldRefreshChartData(chartData[0]) || chartData.length === 0;
-    
-      if (!shouldRefresh) {
+      if (chartData.length > 0) {
         return transformCharts(chartData);
       }
 
       try {
-        const promiseArr = Object.keys(categoryMap)
-          .slice(0, 1)
-          .map((categoryId) =>
-            helper.fetchData({
-              query: `/data/member/chart_data?chart_type=1&cust_id=${profile.iracingId}&category_id=${categoryId}`,
-              authCode: ctx.iracingAuthCode,
-            }),
-          );
+        const promiseArr = Object.keys(categoryMap).map((categoryId) =>
+          helper.fetchData({
+            query: `/data/member/chart_data?chart_type=1&cust_id=${userProfile.iracingId}&category_id=${categoryId}`,
+            authCode: ctx.iracingAuthCode,
+          }),
+        );
 
         const results = await Promise.allSettled(promiseArr);
         const failedResults = results.filter(
@@ -187,7 +181,7 @@ export const iracingRouter = createTRPCRouter({
 
         const dataToInsert = data.flatMap((res) =>
           res.data.map((d) => ({
-            userId: userId,
+            userId: input.userId,
             categoryId: res.category_id,
             category: categoryMap[res.category_id as keyof typeof categoryMap],
             chartTypeId: res.chart_type,
@@ -197,16 +191,13 @@ export const iracingRouter = createTRPCRouter({
           })),
         );
         console.log({ dataToInsert });
-        if (dataToInsert.length > 0) {
-          // await db.insert(userChartDataTable).values(dataToInsert);
-          return;
-        }
 
-        // Return the newly inserted data in the same format as cached data
+        await db.insert(userChartDataTable).values(dataToInsert);
+
         const newChartData = await db
           .select()
           .from(userChartDataTable)
-          .where(eq(userChartDataTable.userId, userId))
+          .where(eq(userChartDataTable.userId, input.userId))
           .orderBy(desc(userChartDataTable.updatedAt));
 
         return transformCharts(newChartData);
@@ -295,19 +286,19 @@ const transformCharts = (charts: ChartDataRecord[]) => {
     return {};
   }
 
-  return charts.reduce(
+  const grouped = charts.reduce(
     (acc, chart) => {
-      const category = chart.category;
+      const discipline =
+        chart.category.toLowerCase() === "sport" ? "Sports" : chart.category;
 
-      if (!acc[category]) {
-        acc[category] = {
-          discipline: category,
+      if (!acc[discipline]) {
+        acc[discipline] = {
+          discipline,
           chartData: [],
-          tabValue: category.toLowerCase().replace(/\s+/g, "-"),
         };
       }
 
-      acc[category].chartData.push(chart);
+      acc[discipline].chartData.push(chart);
       return acc;
     },
     {} as Record<
@@ -315,8 +306,9 @@ const transformCharts = (charts: ChartDataRecord[]) => {
       {
         discipline: string;
         chartData: ChartDataRecord[];
-        tabValue: string;
       }
     >,
   );
+
+  return grouped;
 };

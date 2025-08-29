@@ -11,7 +11,7 @@ const SchedulePage = async () => {
 
   if (!session) redirect("/sign-in");
 
-  const dt = DateTime.now().setZone("America/New_York");
+  const dt = DateTime.now();
   const resetDay = dt
     .set({
       weekday: 1,

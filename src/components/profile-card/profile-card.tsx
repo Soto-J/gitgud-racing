@@ -1,24 +1,21 @@
 import { User, Users, MessageCircle } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-
 import { ChartData, UserGetOne } from "@/modules/iracing/types";
+import { seedData } from "@/modules/iracing/constants";
 
 import { DisciplineCard } from "./discipline-card";
 import { InfoCard } from "./info-card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+
+import { ProfileChart } from "./profile-chart";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "./ui/card";
-import { seedData } from "@/modules/iracing/constants";
+} from "@/components/ui/card";
 
 interface ProfileCardProps {
   member: UserGetOne["member"];
@@ -26,43 +23,11 @@ interface ProfileCardProps {
 }
 
 export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
-  // Category mapping to handle inconsistencies between discipline and chart data
-  const categoryMapping = {
-    Oval: "Oval",
-    Sports: "Sport",
-    Formula: "Formula",
-    "Dirt Oval": "Dirt Oval",
-    "Dirt Road": "Dirt Road",
-  } as const;
-
   const disciplines = member.licenses?.disciplines
     ? member.licenses.disciplines
     : seedData;
 
-  // Create a map of discipline data with their corresponding chart data
-  // const disciplineChartMap = disciplines.reduce(
-  //   (acc, discipline) => {
-  //     const chartCategory = categoryMapping[discipline.category];
-  //     const disciplineChartData =
-  //       chartData?.filter((data) => data.category === chartCategory) || [];
-
-  //     acc[discipline.category] = {
-  //       discipline,
-  //       chartData: disciplineChartData,
-  //       tabValue: discipline.category.toLowerCase().replace(/\s+/g, "-"), // consistent tab values
-  //     };
-
-  //     return acc;
-  //   },
-  //   {} as Record<
-  //     string,
-  //     {
-  //       discipline: (typeof disciplines)[0];
-  //       chartData: ChartData;
-  //       tabValue: string;
-  //     }
-  //   >,
-  // );
+  console.log({ chartData });
   return (
     <div className="space-y-12">
       <Tabs defaultValue="oval" className="mx-auto">
@@ -79,43 +44,23 @@ export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
           ))}
         </TabsList>
 
-        {chartData &&
-          Object.entries(chartData).map(
-            ([categoryKey, { discipline, chartData, tabValue }]) => (
-              <TabsContent value={tabValue} key={categoryKey}>
+        {Object.values(chartData).map(
+          ({ discipline, chartData: disciplineChartData }) => (
+            <TabsContent value={discipline} key={discipline}>
+              {disciplineChartData?.length > 0 ? (
+                <ProfileChart data={disciplineChartData} title={discipline} />
+              ) : (
                 <Card>
-                  <CardHeader>
-                    <CardTitle>{discipline}</CardTitle>
-                    <CardDescription>
-                      {chartData?.length > 0
-                        ? `Chart data showing ${chartData.length} data points for ${discipline}`
-                        : `No chart data available for ${discipline}`}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="grid gap-6">
-                    {chartData?.length > 0 ? (
-                      <div className="grid gap-3">
-                        <div className="text-sm text-gray-600">
-                          Latest data:{" "}
-                          {chartData[0]?.when
-                            ? new Date(chartData[0].when).toLocaleDateString()
-                            : "N/A"}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          Chart Type: {chartData[0]?.chartType || "N/A"}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="py-8 text-center text-gray-500">
-                        No chart data available for this category
-                      </div>
-                    )}
+                  <CardContent>
+                    <div className="py-8 text-center text-gray-500">
+                      No chart data available for this category
+                    </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
-            ),
-          )}
+              )}
+            </TabsContent>
+          ),
+        )}
       </Tabs>
 
       {/* Driver Information Section */}
