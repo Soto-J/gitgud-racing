@@ -76,7 +76,7 @@ export const manageProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
     const iracingAuthCode = await helper.getOrRefreshAuthCode();
-
+    
     return next({
       ctx: {
         ...ctx,

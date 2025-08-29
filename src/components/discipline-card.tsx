@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
+
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 
 interface DisciplineCardProps {
   title: string;
@@ -38,72 +38,71 @@ export const DisciplineCard = ({
   safetyRating,
   licenseClass,
 }: DisciplineCardProps) => {
-  const router = useRouter();
-
-  const label = title.split(" ").join("");
-  const path = `/profile/${label}`;
   const logoSrc = getCategoryLogo(title);
 
   return (
-    <div
-      className="group relative cursor-pointer overflow-hidden rounded-lg bg-[#27313B] p-6 transition-all duration-200 hover:bg-[#2d3740] hover:shadow-lg"
-      onClick={() => router.push(path)}
-    >
-      {/* Header */}
-      <div className="mb-6 flex items-center space-x-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gradient-to-br from-slate-600 to-slate-700 p-3">
-          <Image
-            src={logoSrc}
-            alt={`${title} racing category logo`}
-            width={32}
-            height={32}
-            className="h-8 w-8 object-contain"
-          />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white">
-            {title}
-          </h3>
-          <p className="text-sm text-slate-400">
-            Racing Category
-          </p>
-        </div>
-      </div>
+    <div className="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-5 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:from-slate-700 hover:via-slate-800 hover:to-slate-900 hover:shadow-2xl">
+      {/* Subtle glow effect */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        {/* iRating */}
-        <div className="text-center">
-          <div className="text-xl font-bold text-white">
-            {iRating ? iRating.toLocaleString() : "—"}
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="mb-5 flex items-center space-x-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm">
+            <Image
+              src={logoSrc}
+              alt={`${title} racing category logo`}
+              width={24}
+              height={24}
+              className="h-6 w-6 object-contain"
+            />
           </div>
-          <div className="text-xs text-slate-400 uppercase tracking-wide">
-            iRating
+
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate text-start text-base font-bold text-white">
+              {title}
+            </h3>
+            <div className="mt-1 h-0.5 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500" />
           </div>
         </div>
 
-        {/* Safety Rating */}
-        <div className="text-center">
-          <div className="text-xl font-bold text-white">
-            {safetyRating || "—"}
+        {/* Stats Grid */}
+        <div className="grid grid-cols-3 gap-3">
+          {/* iRating */}
+          <div className="text-center">
+            <div className="mb-1 text-lg font-bold text-white">
+              {iRating ? iRating.toLocaleString() : "—"}
+            </div>
+            <div className="text-[10px] font-medium tracking-wider text-slate-400 uppercase">
+              iRating
+            </div>
           </div>
-          <div className="text-xs text-slate-400 uppercase tracking-wide">
-            Safety
-          </div>
-        </div>
 
-        {/* License Class */}
-        <div className="flex flex-col items-center">
-          <div
-            className={cn(
-              "flex h-8 w-8 items-center justify-center rounded text-sm font-bold text-white",
-              classColors[licenseClass as keyof typeof classColors] || "bg-slate-600"
-            )}
-          >
-            {licenseClass}
+          {/* Safety Rating */}
+          <div className="text-center">
+            <div className="mb-1 text-lg font-bold text-white">
+              {safetyRating || "—"}
+            </div>
+            <div className="text-[10px] font-medium tracking-wider text-slate-400 uppercase">
+              Safety
+            </div>
           </div>
-          <div className="mt-1 text-xs text-slate-400 uppercase tracking-wide">
-            License
+
+          {/* License Class */}
+          <div className="flex flex-col items-center">
+            <div
+              className={cn(
+                "flex h-7 w-7 items-center justify-center rounded-lg text-xs font-black text-white shadow-lg transition-all duration-200 group-hover:scale-110",
+                classColors[licenseClass as keyof typeof classColors] ||
+                  "bg-slate-600",
+              )}
+            >
+              {licenseClass}
+            </div>
+            <div className="mt-1.5 text-[10px] font-medium tracking-wider text-slate-400 uppercase">
+              License
+            </div>
           </div>
         </div>
       </div>

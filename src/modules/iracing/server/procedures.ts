@@ -9,6 +9,7 @@ import {
   count,
   and,
   gt,
+  asc,
 } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
@@ -36,6 +37,9 @@ import {
 import * as helper from "@/modules/iracing/server";
 
 import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
+import z from "zod";
+import { ChartDataRecord, UserChartDataResponse } from "../types";
+import { categoryMap, chartTypeMap } from "../constants";
 
 export const iracingRouter = createTRPCRouter({
   getDocumentation: iracingProcedure.query(async ({ ctx }) => {
@@ -111,15 +115,31 @@ export const iracingRouter = createTRPCRouter({
   }),
 
   userChartData: iracingProcedure
-    .input(UserChartDataInputSchema)
+    .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
+      // Use authenticated user ID, ignore input.userId for security
+      const userId = ctx.auth.user.id;
+
+      // First, get the user's profile
+      const profile = await db
+        .select({ iracingId: profileTable.iracingId })
+        .from(profileTable)
+        .where(eq(profileTable.userId, input.userId))
+        .then((val) => val[0]);
+
+      if (!profile?.iracingId) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User profile not found",
+        });
+      }
+
       const chartData = await db
         .select()
         .from(userChartDataTable)
         .where(
           and(
-            eq(userChartDataTable.userId, ctx.auth.user.id),
-            eq(userChartDataTable.categoryId, input.categoryId),
+            eq(userChartDataTable.userId, userId),
             gt(
               userChartDataTable.updatedAt,
               DateTime.now().minus({ days: 7 }).toJSDate(),
@@ -128,18 +148,75 @@ export const iracingRouter = createTRPCRouter({
         )
         .orderBy(desc(userChartDataTable.updatedAt));
 
-      const shouldRefresh = helper.shouldRefreshChartData(chartData[0]);
-
-      if (shouldRefresh) {
-        const data = await helper.fetchData({
-          query: "",
-          authCode: ctx.iracingAuthCode,
-        });
-        // TODO: persist `data` into userChartDataTable
-        return data;
+      const shouldRefresh =
+        helper.shouldRefreshChartData(chartData[0]) || chartData.length === 0;
+    
+      if (!shouldRefresh) {
+        return transformCharts(chartData);
       }
 
-      return chartData;
+      try {
+        const promiseArr = Object.keys(categoryMap)
+          .slice(0, 1)
+          .map((categoryId) =>
+            helper.fetchData({
+              query: `/data/member/chart_data?chart_type=1&cust_id=${profile.iracingId}&category_id=${categoryId}`,
+              authCode: ctx.iracingAuthCode,
+            }),
+          );
+
+        const results = await Promise.allSettled(promiseArr);
+        const failedResults = results.filter(
+          (res) => res.status === "rejected",
+        );
+
+        if (failedResults.length > 0) {
+          console.warn("Some chart data requests failed:", failedResults);
+        }
+
+        const data = results
+          .filter((res) => res.status === "fulfilled")
+          .map((res) => res.value) as UserChartDataResponse[];
+
+        if (data.length === 0) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch chart data from iRacing API",
+          });
+        }
+
+        const dataToInsert = data.flatMap((res) =>
+          res.data.map((d) => ({
+            userId: userId,
+            categoryId: res.category_id,
+            category: categoryMap[res.category_id as keyof typeof categoryMap],
+            chartTypeId: res.chart_type,
+            chartType:
+              chartTypeMap[res.chart_type as keyof typeof chartTypeMap],
+            ...d, // spread fields from each object inside res.data
+          })),
+        );
+        console.log({ dataToInsert });
+        if (dataToInsert.length > 0) {
+          // await db.insert(userChartDataTable).values(dataToInsert);
+          return;
+        }
+
+        // Return the newly inserted data in the same format as cached data
+        const newChartData = await db
+          .select()
+          .from(userChartDataTable)
+          .where(eq(userChartDataTable.userId, userId))
+          .orderBy(desc(userChartDataTable.updatedAt));
+
+        return transformCharts(newChartData);
+      } catch (error) {
+        console.error("Error refreshing chart data:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to refresh chart data",
+        });
+      }
     }),
 
   weeklySeriesResults: iracingProcedure
@@ -213,22 +290,33 @@ export const iracingRouter = createTRPCRouter({
     }),
 });
 
-// Might use for condidition checks
+const transformCharts = (charts: ChartDataRecord[]) => {
+  if (!charts || charts.length === 0) {
+    return {};
+  }
 
-// function isMondayAfter8PM(date: DateTime): boolean {
-//   return date.weekday === 1 && date.hour >= 20;
-// }
+  return charts.reduce(
+    (acc, chart) => {
+      const category = chart.category;
 
-// function needsRefresh(latestUpdatedAt: Date, nowEst: DateTime): boolean {
-//   const mondayReleaseUtc = nowEst
-//     .set({ weekday: 1, hour: 20, minute: 0, second: 0, millisecond: 0 })
-//     .toUTC();
+      if (!acc[category]) {
+        acc[category] = {
+          discipline: category,
+          chartData: [],
+          tabValue: category.toLowerCase().replace(/\s+/g, "-"),
+        };
+      }
 
-//   return DateTime.fromJSDate(latestUpdatedAt) < mondayReleaseUtc;
-// }
-
-// example:
-// const shouldFetchFreshData =
-//   chartData.length === 0 ||
-//   (isMondayAfter8PM(estNow) &&
-//    needsRefresh(chartData[0].updatedAt, estNow));
+      acc[category].chartData.push(chart);
+      return acc;
+    },
+    {} as Record<
+      string,
+      {
+        discipline: string;
+        chartData: ChartDataRecord[];
+        tabValue: string;
+      }
+    >,
+  );
+};

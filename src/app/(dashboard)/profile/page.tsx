@@ -27,7 +27,9 @@ const ProfilePage = async () => {
       { retry: false },
     ),
   );
-
+  void queryClient.prefetchQuery(
+    trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
+  );
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<LoadingProfileView />}>

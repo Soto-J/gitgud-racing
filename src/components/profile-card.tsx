@@ -1,102 +1,122 @@
-import {
-  User,
-  Trophy,
-  Users,
-  MessageCircle,
-} from "lucide-react";
+import { User, Users, MessageCircle } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+import { ChartData, UserGetOne } from "@/modules/iracing/types";
 
 import { DisciplineCard } from "./discipline-card";
 import { InfoCard } from "./info-card";
-import { UserGetOne } from "@/modules/iracing/types";
-import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "./ui/card";
+import { seedData } from "@/modules/iracing/constants";
 
 interface ProfileCardProps {
-  data: UserGetOne["member"];
+  member: UserGetOne["member"];
+  chartData: ChartData;
 }
 
-export const ProfileCard = ({ data }: ProfileCardProps) => {
-  const disciplines = data.licenses?.disciplines
-    ? data.licenses.disciplines
-    : [
-        {
-          category: "Oval" as const,
-          iRating: null,
-          safetyRating: null,
-          licenseClass: "R",
-        },
-        {
-          category: "Sports" as const,
-          iRating: null,
-          safetyRating: null,
-          licenseClass: "R",
-        },
-        {
-          category: "Formula" as const,
-          iRating: null,
-          safetyRating: null,
-          licenseClass: "R",
-        },
-        {
-          category: "Dirt Oval" as const,
-          iRating: null,
-          safetyRating: null,
-          licenseClass: "R",
-        },
-        {
-          category: "Dirt Road" as const,
-          iRating: null,
-          safetyRating: null,
-          licenseClass: "R",
-        },
-      ];
+export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
+  // Category mapping to handle inconsistencies between discipline and chart data
+  const categoryMapping = {
+    Oval: "Oval",
+    Sports: "Sport",
+    Formula: "Formula",
+    "Dirt Oval": "Dirt Oval",
+    "Dirt Road": "Dirt Road",
+  } as const;
 
+  const disciplines = member.licenses?.disciplines
+    ? member.licenses.disciplines
+    : seedData;
+
+  // Create a map of discipline data with their corresponding chart data
+  // const disciplineChartMap = disciplines.reduce(
+  //   (acc, discipline) => {
+  //     const chartCategory = categoryMapping[discipline.category];
+  //     const disciplineChartData =
+  //       chartData?.filter((data) => data.category === chartCategory) || [];
+
+  //     acc[discipline.category] = {
+  //       discipline,
+  //       chartData: disciplineChartData,
+  //       tabValue: discipline.category.toLowerCase().replace(/\s+/g, "-"), // consistent tab values
+  //     };
+
+  //     return acc;
+  //   },
+  //   {} as Record<
+  //     string,
+  //     {
+  //       discipline: (typeof disciplines)[0];
+  //       chartData: ChartData;
+  //       tabValue: string;
+  //     }
+  //   >,
+  // );
   return (
-    <div className="space-y-10 py-8">
-      {/* Racing Disciplines Section */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg">
-              <Trophy className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                Racing Disciplines
-              </h2>
-              <p className="text-gray-600">
-                License classes and performance metrics
-              </p>
-            </div>
-          </div>
-          <div className="hidden items-center gap-2 rounded-lg bg-red-50 px-3 py-2 sm:flex">
-            <div className="h-2 w-2 rounded-full bg-red-500"></div>
-            <span className="text-sm font-medium text-red-700">
-              Active Driver
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-6">
-          {disciplines.map((val, idx) => (
-            <div
-              key={val.category}
-              className={cn(
-                "transition-all duration-300 hover:scale-[1.02]",
-                idx <= 2 ? "lg:col-span-2" : "",
-                idx === 3 ? "lg:col-span-2 lg:col-start-2" : "",
-                idx === 4 ? "lg:col-span-2 lg:col-start-4" : "",
-              )}
-            >
+    <div className="space-y-12">
+      <Tabs defaultValue="oval" className="mx-auto">
+        <TabsList className="flex flex-wrap items-center justify-center">
+          {disciplines.map((discipline, idx) => (
+            <TabsTrigger value={discipline.category} key={idx} className="">
               <DisciplineCard
-                title={val.category}
-                iRating={val.iRating || 0}
-                licenseClass={val.licenseClass}
-                safetyRating={val.safetyRating || "0.0"}
+                title={discipline.category}
+                iRating={discipline.iRating || 0}
+                licenseClass={discipline.licenseClass}
+                safetyRating={discipline.safetyRating || "0.0"}
               />
-            </div>
+            </TabsTrigger>
           ))}
-        </div>
-      </div>
+        </TabsList>
+
+        {chartData &&
+          Object.entries(chartData).map(
+            ([categoryKey, { discipline, chartData, tabValue }]) => (
+              <TabsContent value={tabValue} key={categoryKey}>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>{discipline}</CardTitle>
+                    <CardDescription>
+                      {chartData?.length > 0
+                        ? `Chart data showing ${chartData.length} data points for ${discipline}`
+                        : `No chart data available for ${discipline}`}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="grid gap-6">
+                    {chartData?.length > 0 ? (
+                      <div className="grid gap-3">
+                        <div className="text-sm text-gray-600">
+                          Latest data:{" "}
+                          {chartData[0]?.when
+                            ? new Date(chartData[0].when).toLocaleDateString()
+                            : "N/A"}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Chart Type: {chartData[0]?.chartType || "N/A"}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-gray-500">
+                        No chart data available for this category
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            ),
+          )}
+      </Tabs>
 
       {/* Driver Information Section */}
       <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
@@ -119,14 +139,14 @@ export const ProfileCard = ({ data }: ProfileCardProps) => {
             <InfoCard
               icon={Users}
               label="Team"
-              value={data.profile.team || "N/a"}
+              value={member.profile.team || "N/a"}
               accentColor="bg-purple-600"
             />
 
             <InfoCard
               icon={MessageCircle}
               label="Discord"
-              value={data.profile.discord || ""}
+              value={member.profile.discord || ""}
               accentColor="bg-indigo-600"
             />
           </div>
@@ -142,10 +162,10 @@ export const ProfileCard = ({ data }: ProfileCardProps) => {
                 <h3 className="text-xl font-bold text-gray-900">Driver Bio</h3>
               </div>
               <div className="prose max-w-none">
-                {data.profile.bio ? (
+                {member.profile.bio ? (
                   <div className="rounded-lg border border-gray-100 bg-white p-4">
                     <p className="leading-relaxed text-gray-700">
-                      {data.profile.bio}
+                      {member.profile.bio}
                     </p>
                   </div>
                 ) : (

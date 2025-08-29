@@ -6,8 +6,7 @@
  */
 
 /** Base URL for iRacing API endpoints */
-export const IRACING_URL =
-  process.env.IRACING_URL || "https://members-ng.iracing.com";
+export const IRACING_URL = "https://members-ng.iracing.com";
 
 /** Base URL for iRacing static images */
 export const IRACING_IMAGE_URL = "https://images-static.iracing.com";
