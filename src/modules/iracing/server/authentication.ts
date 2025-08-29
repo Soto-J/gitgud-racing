@@ -12,57 +12,6 @@ import { iracingAuthTable } from "@/db/schema";
 
 import { IRACING_URL, API_TIMEOUT_MS } from "./config";
 
-// In-memory cache to prevent concurrent auth requests (unused for now)
-// let authPromise: Promise<string> | null = null;
-// let lastAuthAttempt = 0;
-// const AUTH_RETRY_DELAY = 5000; // 5 seconds between failed attempts
-
-/**
- * Validates iRacing environment configuration
- *
- * @returns {boolean} True if configuration is valid
- * @throws {TRPCError} If configuration is invalid
- */
-export const validateIRacingConfig = (): boolean => {
-  const IRACING_EMAIL = process.env?.IRACING_EMAIL;
-  const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
-
-  if (!IRACING_EMAIL) {
-    console.error(
-      "iRacing configuration error: IRACING_EMAIL environment variable is missing",
-    );
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Missing required environment variable: IRACING_EMAIL",
-    });
-  }
-
-  if (!IRACING_PASSWORD) {
-    console.error(
-      "iRacing configuration error: IRACING_PASSWORD environment variable is missing",
-    );
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Missing required environment variable: IRACING_PASSWORD",
-    });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(IRACING_EMAIL)) {
-    console.error(
-      "iRacing configuration error: IRACING_EMAIL has invalid format:",
-      IRACING_EMAIL,
-    );
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Invalid email format in IRACING_EMAIL environment variable",
-    });
-  }
-
-  console.log("iRacing configuration validated successfully");
-  return true;
-};
-
 /**
  * Gets or refreshes the iRacing authentication code
  *
@@ -85,20 +34,22 @@ export const validateIRacingConfig = (): boolean => {
 export const getOrRefreshAuthCode = async (): Promise<string> => {
   const IRACING_EMAIL = process.env?.IRACING_EMAIL;
   const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
+  const MY_USER_ID = process.env?.MY_USER_ID;
 
   if (!IRACING_PASSWORD) {
-    console.error(
-      "iRacing authentication error: IRACING_PASSWORD environment variable is missing",
-    );
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Missing required environment variables: IRACING_PASSWORD`,
     });
-  }
-  if (!IRACING_EMAIL) {
+  } else if (!IRACING_EMAIL) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Missing required environment variables: IRACING_EMAIL`,
+    });
+  } else if (!MY_USER_ID) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: `Missing required environment variables: MY_USER_ID`,
     });
   }
 
@@ -187,10 +138,9 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         message: "No valid auth cookie received from iRacing",
       });
     }
-    // Delete existing auth records and insert new one (single auth record approach)
-    await db.delete(iracingAuthTable);
 
     await db.insert(iracingAuthTable).values({
+      userId: MY_USER_ID,
       authCode,
       expiresAt: DateTime.now().plus({ hours: 1 }).toJSDate(),
     });

@@ -96,9 +96,9 @@ export const profileTable = mysqlTable("profile", {
     .primaryKey()
     .$default(() => nanoid()),
   userId: varchar("user_id", { length: 36 })
-    .notNull()
+    .references(() => user.id, { onDelete: "cascade" })
     .unique()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .notNull(),
 
   iracingId: varchar("iracing_id", { length: 10 }).unique(),
   isActive: boolean("is_active").notNull().default(false),
@@ -116,14 +116,16 @@ export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-
+  userId: varchar("user_id", {length: 36})
+    .references(() => user.id)
+    .unique()
+    .notNull(),
+    
   authCode: text("auth_code").notNull(),
-
-  ssoCookieValue: text("sso_cookie_value"),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-  expiresAt: timestamp("expires_at"), // createdAt + 1 hour
+  expiresAt: timestamp("expires_at").notNull(), // createdAt + 1 hour
 });
 
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
