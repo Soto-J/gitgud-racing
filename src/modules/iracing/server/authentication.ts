@@ -1,11 +1,16 @@
 import CryptoJS from "crypto-js";
+
+import { DateTime } from "luxon";
+
 import { TRPCError } from "@trpc/server";
 
+import { gt } from "drizzle-orm";
+
 import { db } from "@/db";
+
 import { iracingAuthTable } from "@/db/schema";
 
 import { COOKIE_EXPIRES_IN_MS, IRACING_URL, API_TIMEOUT_MS } from "./config";
-import { DateTime } from "luxon";
 
 // In-memory cache to prevent concurrent auth requests (unused for now)
 // let authPromise: Promise<string> | null = null;
@@ -100,13 +105,15 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
   const iracingAuthInfo = await db
     .select()
     .from(iracingAuthTable)
+    .where(
+      gt(
+        iracingAuthTable.updatedAt,
+        DateTime.now().minus({ hour: 1 }).toJSDate(), // Resets hourly
+      ),
+    )
     .then((value) => value[0]);
 
-  if (
-    iracingAuthInfo &&
-    iracingAuthInfo.expiresAt &&
-    iracingAuthInfo.expiresAt.getTime() > DateTime.now().toMillis()
-  ) {
+  if (iracingAuthInfo?.expiresAt) {
     const timeLeft = DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow();
 
     console.log(
@@ -186,7 +193,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     });
 
     console.log(
-      `Successfully stored auth code (expires in ${COOKIE_EXPIRES_IN_MS / 1000 / 60} minutes)`,
+      `Successfully stored auth code (expires in ${DateTime.now().plus({ hours: 1 }).minute} minutes)`,
     );
     return authCode;
   } catch (error) {
