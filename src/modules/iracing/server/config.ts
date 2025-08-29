@@ -11,9 +11,6 @@ export const IRACING_URL = "https://members-ng.iracing.com";
 /** Base URL for iRacing static images */
 export const IRACING_IMAGE_URL = "https://images-static.iracing.com";
 
-/** Duration in milliseconds that iRacing auth cookies remain valid */
-export const COOKIE_EXPIRES_IN_MS = 12 * 60 * 60 * 1000; // 12 hours
-
 /** Duration in milliseconds for caching series and weekly results */
 export const CACHE_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 

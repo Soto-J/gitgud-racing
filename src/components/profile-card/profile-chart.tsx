@@ -9,14 +9,6 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { ChartData } from "@/modules/iracing/types";
 
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
@@ -36,7 +28,10 @@ interface ProfileChartProps {
 }
 
 export const ProfileChart = ({ data, title }: ProfileChartProps) => {
-  // Sort oldest to newest for proper chronological display
+  if (data.length === 0) {
+    return <div>No chart data available</div>;
+  }
+
   const sortedByDate = [...data].sort(
     (a, b) =>
       DateTime.fromISO(a.when).toMillis() - DateTime.fromISO(b.when).toMillis(),

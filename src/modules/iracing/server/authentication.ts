@@ -4,13 +4,13 @@ import { DateTime } from "luxon";
 
 import { TRPCError } from "@trpc/server";
 
-import { gt } from "drizzle-orm";
+import { gt, and } from "drizzle-orm";
 
 import { db } from "@/db";
 
 import { iracingAuthTable } from "@/db/schema";
 
-import { COOKIE_EXPIRES_IN_MS, IRACING_URL, API_TIMEOUT_MS } from "./config";
+import { IRACING_URL, API_TIMEOUT_MS } from "./config";
 
 // In-memory cache to prevent concurrent auth requests (unused for now)
 // let authPromise: Promise<string> | null = null;
@@ -106,9 +106,12 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     .select()
     .from(iracingAuthTable)
     .where(
-      gt(
-        iracingAuthTable.updatedAt,
-        DateTime.now().minus({ hour: 1 }).toJSDate(), // Resets hourly
+      and(
+        gt(
+          iracingAuthTable.updatedAt,
+          DateTime.now().minus({ hour: 1 }).toJSDate(), // Resets hourly
+        ),
+        gt(iracingAuthTable.expiresAt, new Date()),
       ),
     )
     .then((value) => value[0]);
