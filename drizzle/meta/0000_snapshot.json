@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "1064008c-a7eb-428a-acc3-16577d101444",
+  "id": "87d31b5e-dec1-482f-ad86-b0ef40922bd8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -136,18 +136,18 @@
           "notNull": true,
           "autoincrement": false
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "auth_code": {
           "name": "auth_code",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "sso_cookie_value": {
-          "name": "sso_cookie_value",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "created_at": {
@@ -171,12 +171,26 @@
           "name": "expires_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "iracing_auth_user_id_user_id_fk": {
+          "name": "iracing_auth_user_id_user_id_fk",
+          "tableFrom": "iracing_auth",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {
         "iracing_auth_id": {
           "name": "iracing_auth_id",
@@ -185,7 +199,14 @@
           ]
         }
       },
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "iracing_auth_user_id_unique": {
+          "name": "iracing_auth_user_id_unique",
+          "columns": [
+            "user_id"
+          ]
+        }
+      },
       "checkConstraint": {}
     },
     "license": {
@@ -919,7 +940,7 @@
           "name": "category_id",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "category": {
@@ -929,9 +950,16 @@
           "notNull": true,
           "autoincrement": false
         },
+        "chart_type_id": {
+          "name": "chart_type_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "chart_type": {
           "name": "chart_type",
-          "type": "varchar(50)",
+          "type": "varchar(30)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

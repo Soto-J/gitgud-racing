@@ -26,6 +26,12 @@ interface ProfileChartProps {
   title: string;
 }
 
+const parseDateTime = (dateValue: string | Date): DateTime => {
+  return typeof dateValue === "string"
+    ? DateTime.fromISO(dateValue)
+    : DateTime.fromJSDate(new Date(dateValue));
+};
+
 export const ProfileChart = ({ data, title }: ProfileChartProps) => {
   if (data.length === 0) {
     return <div>No chart data available</div>;
@@ -33,11 +39,11 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
 
   const sortedByDate = [...data].sort(
     (a, b) =>
-      DateTime.fromISO(a.when).toMillis() - DateTime.fromISO(b.when).toMillis(),
+      parseDateTime(a.when).toMillis() - parseDateTime(b.when).toMillis(),
   );
 
   const latestEntry = sortedByDate[sortedByDate.length - 1];
-  const formattedDate = DateTime.fromISO(latestEntry.when).toFormat(
+  const formattedDate = parseDateTime(latestEntry.when).toFormat(
     "MMM dd, yyyy",
   );
   return (
@@ -105,30 +111,18 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                 interval="preserveStartEnd"
                 minTickGap={60}
                 tickFormatter={(value) => {
-                  const date =
-                    typeof value === "string"
-                      ? DateTime.fromISO(value)
-                      : DateTime.fromJSDate(new Date(value));
+                  const date = parseDateTime(value);
 
                   if (!date.isValid) {
                     return String(value);
                   }
 
-                  const startDate =
-                    typeof sortedByDate[0].when === "string"
-                      ? DateTime.fromISO(sortedByDate[0].when)
-                      : DateTime.fromJSDate(new Date(sortedByDate[0].when));
-                  
+                  const startDate = parseDateTime(sortedByDate[0].when);
+
                   // End date sometimes returns an object
-                  const endDate =
-                    typeof sortedByDate[sortedByDate.length - 1].when ===
-                    "string"
-                      ? DateTime.fromISO(
-                          sortedByDate[sortedByDate.length - 1].when,
-                        )
-                      : DateTime.fromJSDate(
-                          new Date(sortedByDate[sortedByDate.length - 1].when),
-                        );
+                  const endDate = parseDateTime(
+                    sortedByDate[sortedByDate.length - 1].when,
+                  );
 
                   const dataSpan = endDate.diff(startDate, "days").days;
 
@@ -166,20 +160,18 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                 cursor={{ stroke: "var(--color-value)", strokeWidth: 2 }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
-                    const date =
-                      typeof label === "string"
-                        ? DateTime.fromISO(label)
-                        : DateTime.fromJSDate(new Date(label));
-
-                    const formattedDate = date.isValid
+                    const date = parseDateTime(label);
+                    
+                    const tooltipFormattedDate = date.isValid
                       ? date.toFormat("MMM dd, yyyy")
                       : String(label);
 
                     return (
                       <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
                         <p className="text-sm font-medium text-gray-900">
-                          {formattedDate}
+                          {tooltipFormattedDate}
                         </p>
+                        
                         <p className="text-sm text-gray-600">
                           iRating:{" "}
                           <span className="font-semibold">
@@ -220,7 +212,7 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2 text-gray-600">
               <div className="h-2 w-2 rounded-full bg-gradient-to-r from-green-400 to-green-500"></div>
-              <span>Latest:</span>
+              <span>Latest: {formattedDate}</span>
             </div>
             <div className="text-gray-500">
               {sortedByDate.length} total entries

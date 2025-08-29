@@ -1,3 +1,5 @@
+import z from "zod";
+
 import { DateTime } from "luxon";
 
 import {
@@ -18,6 +20,12 @@ import {
   syncIracingProfileProcedure,
 } from "@/trpc/init";
 
+import * as helper from "@/modules/iracing/server";
+
+import { ChartDataRecord, UserChartDataResponse } from "../types";
+import { GetUserInputSchema } from "@/modules/iracing/schema";
+import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
+
 import { db } from "@/db";
 import {
   licenseTable,
@@ -28,16 +36,6 @@ import {
   userChartDataTable,
 } from "@/db/schema";
 
-import {
-  GetUserInputSchema,
-  UserChartDataInputSchema,
-} from "@/modules/iracing/schema";
-
-import * as helper from "@/modules/iracing/server";
-
-import { WeeklySeriesResultsInput } from "@/modules/home/schemas";
-import z from "zod";
-import { ChartDataRecord, UserChartDataResponse } from "../types";
 import { categoryMap, chartTypeMap } from "../constants";
 
 export const iracingRouter = createTRPCRouter({
