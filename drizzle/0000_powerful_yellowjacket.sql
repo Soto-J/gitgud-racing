@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `account` (
+CREATE TABLE `account` (
 	`id` varchar(36) NOT NULL,
 	`account_id` text NOT NULL,
 	`provider_id` text NOT NULL,
@@ -15,17 +15,18 @@ CREATE TABLE IF NOT EXISTS `account` (
 	CONSTRAINT `account_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `iracing_auth` (
+CREATE TABLE `iracing_auth` (
 	`id` varchar(21) NOT NULL,
+	`user_id` varchar(36) NOT NULL,
 	`auth_code` text NOT NULL,
-	`sso_cookie_value` text,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
-	`expires_at` timestamp,
-	CONSTRAINT `iracing_auth_id` PRIMARY KEY(`id`)
+	`expires_at` timestamp NOT NULL,
+	CONSTRAINT `iracing_auth_id` PRIMARY KEY(`id`),
+	CONSTRAINT `iracing_auth_user_id_unique` UNIQUE(`user_id`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `license` (
+CREATE TABLE `license` (
 	`id` varchar(21) NOT NULL,
 	`user_id` varchar(36) NOT NULL,
 	`oval_i_rating` int,
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `license` (
 	CONSTRAINT `license_user_id_unique` UNIQUE(`user_id`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `profile` (
+CREATE TABLE `profile` (
 	`id` varchar(21) NOT NULL,
 	`user_id` varchar(36) NOT NULL,
 	`iracing_id` varchar(10),
@@ -64,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `profile` (
 	CONSTRAINT `profile_iracing_id_unique` UNIQUE(`iracing_id`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `series` (
+CREATE TABLE `series` (
 	`series_id` int NOT NULL,
 	`category` varchar(25) NOT NULL,
 	`series_name` varchar(100) NOT NULL,
@@ -73,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `series` (
 	CONSTRAINT `series_series_id` PRIMARY KEY(`series_id`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `series_weekly_stats` (
+CREATE TABLE `series_weekly_stats` (
 	`id` varchar(21) NOT NULL,
 	`series_id` int,
 	`season_id` int,
@@ -95,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `series_weekly_stats` (
 	CONSTRAINT `series_weekly_stats_session_id_unique` UNIQUE(`session_id`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `session` (
+CREATE TABLE `session` (
 	`id` varchar(36) NOT NULL,
 	`user_id` varchar(36) NOT NULL,
 	`token` varchar(255) NOT NULL,
@@ -109,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `session` (
 	CONSTRAINT `session_token_unique` UNIQUE(`token`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE `user` (
 	`id` varchar(36) NOT NULL,
 	`name` text NOT NULL,
 	`email` varchar(255) NOT NULL,
@@ -125,12 +126,13 @@ CREATE TABLE IF NOT EXISTS `user` (
 	CONSTRAINT `user_email_unique` UNIQUE(`email`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `user_chart_data` (
+CREATE TABLE `user_chart_data` (
 	`id` varchar(21) NOT NULL,
 	`user_id` varchar(36) NOT NULL,
-	`category_id` int,
+	`category_id` int NOT NULL,
 	`category` varchar(50) NOT NULL,
-	`chart_type` varchar(50) NOT NULL,
+	`chart_type_id` int NOT NULL,
+	`chart_type` varchar(30) NOT NULL,
 	`when` date NOT NULL,
 	`value` int NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
@@ -139,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `user_chart_data` (
 	CONSTRAINT `user_chart_data_user_id_category_chart_type_when_unique` UNIQUE(`user_id`,`category`,`chart_type`,`when`)
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `verification` (
+CREATE TABLE `verification` (
 	`id` varchar(36) NOT NULL,
 	`identifier` text NOT NULL,
 	`value` text NOT NULL,
@@ -150,6 +152,7 @@ CREATE TABLE IF NOT EXISTS `verification` (
 );
 --> statement-breakpoint
 ALTER TABLE `account` ADD CONSTRAINT `account_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `iracing_auth` ADD CONSTRAINT `iracing_auth_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `license` ADD CONSTRAINT `license_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `profile` ADD CONSTRAINT `profile_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `series_weekly_stats` ADD CONSTRAINT `series_weekly_stats_series_id_series_series_id_fk` FOREIGN KEY (`series_id`) REFERENCES `series`(`series_id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+
 import * as helper from "@/modules/iracing/server";
 
 export async function GET(request: NextRequest) {
@@ -20,16 +21,14 @@ export async function GET(request: NextRequest) {
     return Response.json({ success: false }, { status: 500 });
   }
 
-  const currentYear = new Date().getFullYear().toString();
-  const currentWeek = calculateCurrentWeek();
-  const currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3).toString();
+  const seasonInfo = getCurrentSeasonInfo();
 
   const params = {
-    season_year: currentYear,
-    season_quarter: currentQuarter,
+    season_year: seasonInfo.currentYear,
+    season_quarter: seasonInfo.currentQuarter,
     event_types: "5",
     official_only: "true",
-    race_week_num: "9",
+    race_week_num: seasonInfo.currentRaceWeek,
 
     start_range_begin: "",
     start_range_end: "",
@@ -54,7 +53,7 @@ export async function GET(request: NextRequest) {
   return Response.json({ success: true });
 }
 
-const calculateCurrentWeek = () => {
+const getCurrentSeasonInfo = () => {
   const now = new Date();
   const year = now.getFullYear();
 
@@ -90,10 +89,16 @@ const calculateCurrentWeek = () => {
     (now.getTime() - seasonStartDate.getTime()) / msPerWeek,
   );
 
+  const currentRaceWeek = (
+    Math.max(0, Math.min(weeksSinceStart, 12)) - 1
+  ).toString();
+  const currentQuarter = Math.ceil((now.getMonth() + 1) / 3).toString();
+  const currentSeasonYear = now.getFullYear().toString();
+
   return {
-    currentWeek: Math.max(0, Math.min(weeksSinceStart, 12)), // Clamp to [0, 12]
-    currentSeason: currentSeasonIndex + 1,
-    seasonStartDate,
+    currentRaceWeek,
+    currentQuarter,
+    currentYear: currentSeasonYear,
   };
 };
 
