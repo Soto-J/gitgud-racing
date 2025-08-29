@@ -189,6 +189,12 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         userId: MY_USER_ID,
         authCode,
         expiresAt: DateTime.now().plus({ hours: 1 }).toJSDate(),
+      }).onDuplicateKeyUpdate({
+        set: {
+          authCode: authCode,
+          expiresAt: DateTime.now().plus({ hours: 1 }).toJSDate(),
+          updatedAt: new Date(),
+        }
       });
 
       console.log(
