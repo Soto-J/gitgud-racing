@@ -77,12 +77,15 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
           </div>
         </div>
 
-        <div className="p-6">
-          <ChartContainer config={chartConfig} className="rounded-xl">
+        <div className="p-4">
+          <ChartContainer
+            config={chartConfig}
+            className="h-64 w-full rounded-xl"
+          >
             <AreaChart
               accessibilityLayer
               data={sortedByDate}
-              margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
+              margin={{ left: -10, right: 15, top: 20, bottom: 20 }}
               className="rounded-xl"
             >
               <defs>
@@ -99,6 +102,7 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                   />
                 </linearGradient>
               </defs>
+
               <CartesianGrid
                 strokeDasharray="3 3"
                 stroke="#f0f0f0"
@@ -161,7 +165,7 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     const date = parseDateTime(label);
-                    
+
                     const tooltipFormattedDate = date.isValid
                       ? date.toFormat("MMM dd, yyyy")
                       : String(label);
@@ -171,7 +175,7 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                         <p className="text-sm font-medium text-gray-900">
                           {tooltipFormattedDate}
                         </p>
-                        
+
                         <p className="text-sm text-gray-600">
                           iRating:{" "}
                           <span className="font-semibold">

@@ -49,13 +49,13 @@ export const DisciplineCard = ({
       <div className="relative z-10">
         {/* Header */}
         <div className="mb-5 flex items-center space-x-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm">
             <Image
               src={logoSrc}
               alt={`${title} racing category logo`}
-              width={24}
-              height={24}
-              className="h-6 w-6 object-contain"
+              width={26}
+              height={26}
+              className="h-9 w-9 object-contain"
             />
           </div>
 

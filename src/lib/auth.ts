@@ -26,7 +26,7 @@ export const auth = betterAuth({
     after: createAuthMiddleware(async (ctx) => {
       const user = ctx.context.session?.user;
 
-      if (!user) return;
+      if (!user) return ctx;
 
       await db
         .insert(dbSchema.profileTable)
@@ -34,8 +34,21 @@ export const auth = betterAuth({
         .onDuplicateKeyUpdate({
           set: { userId: user.id },
         });
+
+      await db
+        .insert(dbSchema.licenseTable)
+        .values({ userId: user.id })
+        .onDuplicateKeyUpdate({
+          set: { userId: user.id },
+        });
+
+      return ctx;
     }),
   },
 
-  plugins: [admin({ defaultRole: "member" })],
+  plugins: [
+    admin({
+      defaultRole: "member",
+    }),
+  ],
 });
