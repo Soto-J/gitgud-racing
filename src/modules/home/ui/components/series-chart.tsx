@@ -58,7 +58,7 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
         <BarChart
           accessibilityLayer
           data={data.series}
-          margin={{ top: 25, right: 4, left: 2, bottom: 70 }}
+          margin={{ top: 25, right: 4, left: -40, bottom: 40 }}
         >
           <CartesianGrid
             vertical={false}

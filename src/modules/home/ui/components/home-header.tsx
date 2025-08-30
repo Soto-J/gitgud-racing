@@ -53,13 +53,7 @@ export const HomeHeader = () => {
       </div>
 
       <div className="flex flex-col gap-6 pt-8 lg:flex-row lg:items-center lg:justify-between">
-        <ChartPagination
-          page={filters.page}
-          totalPages={data.totalPages}
-          onPageChange={(page) => setFilters({ page })}
-        />
-
-        <div className="flex items-center gap-3 justify-center">
+        <div className="flex items-center justify-center gap-3">
           <ChartSearchFilter />
 
           {isFilterActive && (
@@ -74,6 +68,11 @@ export const HomeHeader = () => {
             </Button>
           )}
         </div>
+        <ChartPagination
+          page={filters.page}
+          totalPages={data.totalPages}
+          onPageChange={(page) => setFilters({ page })}
+        />
       </div>
     </>
   );
