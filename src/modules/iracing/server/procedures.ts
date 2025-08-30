@@ -75,10 +75,17 @@ export const iracingRouter = createTRPCRouter({
           licenses: { ...getTableColumns(licenseTable) },
         })
         .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .leftJoin(profileTable, eq(profileTable.userId, user.id))
         .leftJoin(licenseTable, eq(licenseTable.userId, user.id))
         .where(eq(user.id, input.userId))
-        .then((value) => value[0]);
+        .then((rows) => {
+          const row = rows[0];
+
+          return {
+            ...row,
+            // licenses: row.licenses ? [row.licenses] : [],
+          };
+        });
 
       if (!result) {
         throw new TRPCError({

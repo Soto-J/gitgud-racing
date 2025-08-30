@@ -21,6 +21,10 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
       trpc.iracing.userChartData.queryOptions({ userId }),
     ],
   });
+  
+  if (!chartDataPayload.error && !userPayload.error) {
+    return <p>iRacing ID hasnt been provided</p>;
+  }
 
   return (
     <>
