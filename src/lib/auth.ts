@@ -9,10 +9,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "mysql",
     schema: {
-      user: dbSchema.user,
-      session: dbSchema.session,
-      account: dbSchema.account,
-      verification: dbSchema.verification,
+      ...dbSchema,
     },
   }),
 
@@ -31,7 +28,7 @@ export const auth = betterAuth({
     after: createAuthMiddleware(async (ctx) => {
       const user = ctx.context.session?.user;
 
-      if (!user) return ctx;
+      if (!user) return;
 
       await db
         .insert(dbSchema.profileTable)
@@ -46,8 +43,6 @@ export const auth = betterAuth({
         .onDuplicateKeyUpdate({
           set: { userId: user.id },
         });
-
-      return ctx;
     }),
   },
 
