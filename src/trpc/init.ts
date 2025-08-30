@@ -97,15 +97,16 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
       .then((value) => value[0]);
 
     // User hasn't input an iracingId/custId return
-    if (!user.profile?.iracingId || !user?.license) {
+    if (!user.profile?.iracingId) {
       return next({ ctx });
     }
 
     // Check if we need to sync (e.g., data is stale)
-    const lastSync = DateTime.fromISO(user.license.updatedAt);
-    const shouldSync = !lastSync || DateTime.now().diff(lastSync).hours > 24;
+    const lastSync = user.license && DateTime.fromISO(user.license.updatedAt);
+    const shouldSync =
+      !lastSync?.isValid || DateTime.now().diff(lastSync).hours > 24;
 
-    if (!shouldSync && lastSync) {
+    if (!shouldSync) {
       console.log("Using cached iRacing userData Data");
       return next({ ctx });
     }
