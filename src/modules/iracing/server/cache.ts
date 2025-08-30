@@ -14,6 +14,7 @@ import {
   IracingGetAllSeriesResponse,
   IracingSeriesResultsResponse,
 } from "@/modules/iracing/types";
+import { DateTime } from "luxon";
 
 /**
  * Caches all iRacing series data to the database
@@ -48,7 +49,11 @@ export const cacheSeries = async ({
       .select()
       .from(seriesTable)
       .where(
-        gt(seriesTable.updatedAt, new Date(Date.now() - CACHE_DURATION_MS)),
+        gt(
+          seriesTable.updatedAt,
+          DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
+          // new Date(Date.now() - CACHE_DURATION_MS).toISOString(),
+        ),
       );
 
     if (cachedSeries.length > 0) {
@@ -121,7 +126,8 @@ export const cacheWeeklyResults = async ({
       .where(
         gt(
           seriesWeeklyStatsTable.updatedAt,
-          new Date(Date.now() - CACHE_DURATION_MS),
+          DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
+          // (Date.now() - CACHE_DURATION_MS).toISOString(),
         ),
       );
 

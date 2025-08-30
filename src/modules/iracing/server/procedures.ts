@@ -132,7 +132,7 @@ export const iracingRouter = createTRPCRouter({
           weekday: 1,
           hour: 20,
         })
-        .toJSDate();
+        .toISO();
 
       const chartData = await db
         .select()
@@ -185,7 +185,8 @@ export const iracingRouter = createTRPCRouter({
             chartTypeId: res.chart_type,
             chartType:
               chartTypeMap[res.chart_type as keyof typeof chartTypeMap],
-            ...d, // spread fields from each object inside res.data
+            when: d.when.toISOString(),
+            value: d.value,
           })),
         );
         console.log({ dataToInsert });
