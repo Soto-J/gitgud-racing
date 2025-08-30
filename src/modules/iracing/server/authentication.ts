@@ -12,6 +12,8 @@ import { iracingAuthTable } from "@/db/schema";
 
 import { IRACING_URL, API_TIMEOUT_MS } from "./config";
 
+import env from "@/env";
+
 /**
  * Rate limiting for iRacing authentication requests
  */
@@ -54,27 +56,6 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
   if (authPromise) {
     console.log("Auth request already in progress, waiting...");
     return authPromise;
-  }
-
-  const IRACING_EMAIL = process.env?.IRACING_EMAIL;
-  const IRACING_PASSWORD = process.env?.IRACING_PASSWORD;
-  const MY_USER_ID = process.env?.MY_USER_ID;
-
-  if (!IRACING_PASSWORD) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `Missing required environment variables: IRACING_PASSWORD`,
-    });
-  } else if (!IRACING_EMAIL) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `Missing required environment variables: IRACING_EMAIL`,
-    });
-  } else if (!MY_USER_ID) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: `Missing required environment variables: MY_USER_ID`,
-    });
   }
 
   const iracingAuthInfo = await db
@@ -122,7 +103,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       console.log("Refreshing iRacing auth...");
 
       const hashedPassword = CryptoJS.enc.Base64.stringify(
-        CryptoJS.SHA256(IRACING_PASSWORD + IRACING_EMAIL.toLowerCase()),
+        CryptoJS.SHA256(env.IRACING_PASSWORD + env.IRACING_EMAIL.toLowerCase()),
       );
 
       if (!hashedPassword) {
@@ -138,7 +119,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: IRACING_EMAIL,
+          email: env.IRACING_EMAIL,
           password: hashedPassword,
         }),
         credentials: "include", // Important for cookies
@@ -190,7 +171,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       await db
         .insert(iracingAuthTable)
         .values({
-          userId: MY_USER_ID,
+          userId: env.MY_USER_ID,
           authCode,
           expiresAt: DateTime.now().plus({ hours: 1 }).toISO(),
         })

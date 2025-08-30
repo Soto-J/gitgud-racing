@@ -5,6 +5,7 @@ import { DateTime } from "luxon";
 
 import { ScheduleView } from "@/modules/schedule/ui/views/schedule-view";
 import { auth } from "@/lib/auth";
+import { CACHE_DURATION_MS } from "@/modules/iracing/server/config";
 
 const SchedulePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -26,7 +27,9 @@ const SchedulePage = async () => {
 
   console.log("Date:", dt.day);
   console.log("Reset Day:", resetDay.day);
-
+  console.log(
+    DateTime.local(2025, 3, 12).toLocaleString(DateTime.DATETIME_MED),
+  );
   return <ScheduleView />;
 };
 

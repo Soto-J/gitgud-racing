@@ -52,7 +52,6 @@ export const cacheSeries = async ({
         gt(
           seriesTable.updatedAt,
           DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
-          // new Date(Date.now() - CACHE_DURATION_MS).toISOString(),
         ),
       );
 
