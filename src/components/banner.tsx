@@ -192,14 +192,14 @@ export const Banner = ({
 
               <div
                 className={cn(
-                  "flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4",
+                  "flex justify-between gap-2 sm:flex-row sm:items-center sm:gap-4",
                   themeStyles.textColor,
                 )}
               >
                 <div className="flex items-center gap-2">
                   <User size={18} aria-hidden="true" />
                   <span className={cn("font-medium", sizeStyles.subtitle)}>
-                    {subTitle1}
+                    {subTitle1} 
                   </span>
                 </div>
 
@@ -208,7 +208,7 @@ export const Banner = ({
                     "hidden h-4 w-px sm:block",
                     themeStyles.divider,
                   )}
-                ></div>
+                />
 
                 <div className="flex items-center gap-2">
                   <Shield size={18} aria-hidden="true" />
@@ -235,7 +235,7 @@ export const Banner = ({
                 className="transition-transform duration-300 group-hover:rotate-12"
               />
               <span className="whitespace-nowrap">{editText}</span>
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
             </button>
           )}
         </div>
