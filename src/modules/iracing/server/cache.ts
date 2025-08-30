@@ -51,7 +51,8 @@ export const cacheSeries = async ({
       .where(
         gt(
           seriesTable.updatedAt,
-          new Date(Date.now() - CACHE_DURATION_MS).toISOString(),
+          DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
+          // new Date(Date.now() - CACHE_DURATION_MS).toISOString(),
         ),
       );
 
@@ -125,7 +126,8 @@ export const cacheWeeklyResults = async ({
       .where(
         gt(
           seriesWeeklyStatsTable.updatedAt,
-          new Date(Date.now() - CACHE_DURATION_MS).toISOString(),
+          DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
+          // (Date.now() - CACHE_DURATION_MS).toISOString(),
         ),
       );
 
