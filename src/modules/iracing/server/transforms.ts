@@ -130,7 +130,7 @@ export const shouldRefreshChartData = (
 
   return (
     DateTime.now() >=
-    DateTime.fromJSDate(latestRecord.updatedAt)
+    DateTime.fromISO(latestRecord.updatedAt)
       .setZone("America/New_York")
       .set({
         weekday: 1,

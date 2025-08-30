@@ -24,7 +24,7 @@ export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
   console.log({ chartData });
   return (
     <div className="space-y-12">
-      <Tabs defaultValue="oval" className="mx-auto">
+      <Tabs defaultValue="Oval" className="mx-auto">
         <TabsList className="flex flex-wrap items-center justify-center">
           {disciplines.map((discipline, idx) => (
             <TabsTrigger value={discipline.category} key={idx} className="">

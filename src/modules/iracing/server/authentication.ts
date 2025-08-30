@@ -26,7 +26,7 @@ let authPromise: Promise<string> | null = null;
 /**
  * Utility function to wait for a specified duration
  */
-const sleep = (ms: number): Promise<void> => 
+const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
@@ -84,15 +84,15 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       and(
         gt(
           iracingAuthTable.updatedAt,
-          DateTime.now().minus({ hour: 1 }).toJSDate(), // Resets hourly
+          DateTime.now().minus({ hour: 1 }).toISO(), // Resets hourly
         ),
-        gt(iracingAuthTable.expiresAt, new Date()),
+        gt(iracingAuthTable.expiresAt, DateTime.now().toISO()),
       ),
     )
     .then((value) => value[0]);
 
   if (iracingAuthInfo?.expiresAt) {
-    const timeLeft = DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow();
+    const timeLeft = DateTime.fromISO(iracingAuthInfo.expiresAt).diffNow();
 
     console.log(
       `Using cached iRacing auth (expires in ${Math.round(timeLeft.minutes)} minutes)`,
@@ -107,13 +107,15 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       // Check rate limiting before attempting authentication
       const now = Date.now();
       const timeSinceLastAuth = now - lastAuthAttempt;
-      
+
       if (timeSinceLastAuth < MIN_AUTH_INTERVAL) {
         const waitTime = MIN_AUTH_INTERVAL - timeSinceLastAuth;
-        console.log(`Rate limiting: waiting ${Math.round(waitTime / 1000)}s before auth attempt...`);
+        console.log(
+          `Rate limiting: waiting ${Math.round(waitTime / 1000)}s before auth attempt...`,
+        );
         await sleep(waitTime);
       }
-      
+
       lastAuthAttempt = Date.now();
 
       // Refresh iRacing authcode
@@ -185,17 +187,20 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         });
       }
 
-      await db.insert(iracingAuthTable).values({
-        userId: MY_USER_ID,
-        authCode,
-        expiresAt: DateTime.now().plus({ hours: 1 }).toJSDate(),
-      }).onDuplicateKeyUpdate({
-        set: {
-          authCode: authCode,
-          expiresAt: DateTime.now().plus({ hours: 1 }).toJSDate(),
-          updatedAt: new Date(),
-        }
-      });
+      await db
+        .insert(iracingAuthTable)
+        .values({
+          userId: MY_USER_ID,
+          authCode,
+          expiresAt: DateTime.now().plus({ hours: 1 }).toISO(),
+        })
+        .onDuplicateKeyUpdate({
+          set: {
+            authCode: authCode,
+            expiresAt: DateTime.now().plus({ hours: 1 }).toISO(),
+            updatedAt: DateTime.now().toISO(),
+          },
+        });
 
       console.log(
         `Successfully stored auth code (expires in ${DateTime.now().plus({ hours: 1 }).minute} minutes)`,

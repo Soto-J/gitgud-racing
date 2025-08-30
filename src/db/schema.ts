@@ -107,8 +107,8 @@ export const profileTable = mysqlTable("profile", {
   team: varchar("team", { length: 20 }).default(""),
   bio: text("bio").default(""),
 
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
 });
 
 // iRacing
@@ -116,74 +116,80 @@ export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
     .$default(() => nanoid()),
-  userId: varchar("user_id", {length: 36})
+  userId: varchar("user_id", { length: 36 })
     .references(() => user.id)
     .unique()
     .notNull(),
-    
+
   authCode: text("auth_code").notNull(),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-  expiresAt: timestamp("expires_at").notNull(), // createdAt + 1 hour
+  expiresAt: timestamp("expires_at", { mode: "string" }).notNull(), // createdAt + 1 hour
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "string" })
+    .defaultNow()
+    .onUpdateNow()
+    .notNull(),
 });
 
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
 
 export const licenseTable = mysqlTable("license", {
   id: varchar("id", { length: 21 })
-    .notNull()
     .primaryKey()
-    .$default(() => nanoid()),
+    .$default(() => nanoid())
+    .notNull(),
   userId: varchar("user_id", { length: 36 })
-    .notNull()
+    .references(() => user.id, { onDelete: "cascade" })
     .unique()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .notNull(),
 
-  ovalIRating: int("oval_i_rating"),
-  ovalSafetyRating: decimal("oval_safety_rating", { precision: 4, scale: 2 }),
+  ovalIRating: int("oval_i_rating").notNull(),
+  ovalSafetyRating: decimal("oval_safety_rating", { precision: 4, scale: 2 }).notNull(),
   ovalLicenseClass: mysqlEnum("oval_license_class", safetyClassValues)
-    .notNull()
-    .default("R"),
+    .default("R")
+    .notNull(),
 
-  sportsCarIRating: int("sports_car_i_rating"),
+  sportsCarIRating: int("sports_car_i_rating").notNull(),
   sportsCarSafetyRating: decimal("sports_car_safety_rating", {
     precision: 4,
     scale: 2,
-  }),
+  }).notNull(),
   sportsCarLicenseClass: mysqlEnum("sports_license_class", safetyClassValues)
-    .notNull()
-    .default("R"),
+    .default("R")
+    .notNull(),
 
-  formulaCarIRating: int("formula_car_i_rating"),
+  formulaCarIRating: int("formula_car_i_rating").notNull(),
   formulaCarSafetyRating: decimal("formula_car_safety_rating", {
     precision: 4,
     scale: 2,
-  }),
+  }).notNull(),
   formulaCarLicenseClass: mysqlEnum("formula_license_class", safetyClassValues)
-    .notNull()
-    .default("R"),
+    .default("R")
+    .notNull(),
 
-  dirtOvalIRating: int("dirt_oval_i_rating"),
+  dirtOvalIRating: int("dirt_oval_i_rating").default(0).notNull(),
   dirtOvalSafetyRating: decimal("dirt_oval_safety_rating", {
     precision: 4,
     scale: 2,
-  }),
+  }).notNull(),
   dirtOvalLicenseClass: mysqlEnum("dirt_oval_license_class", safetyClassValues)
-    .notNull()
-    .default("R"),
+    .default("R")
+    .notNull(),
 
-  dirtRoadIRating: int("dirt_road_i_rating"),
+  dirtRoadIRating: int("dirt_road_i_rating").default(0).notNull(),
   dirtRoadSafetyRating: decimal("dirt_road_safety_rating", {
     precision: 4,
     scale: 2,
-  }),
+  }).notNull(),
   dirtRoadLicenseClass: mysqlEnum("dirt_road_license_class", safetyClassValues)
-    .notNull()
-    .default("R"),
+    .default("R")
+    .notNull(),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "string" })
+    .defaultNow()
+    .onUpdateNow()
+    .notNull(),
 });
 
 export const seriesTable = mysqlTable("series", {
@@ -192,8 +198,11 @@ export const seriesTable = mysqlTable("series", {
   category: varchar("category", { length: 25 }).notNull(),
   seriesName: varchar("series_name", { length: 100 }).notNull(),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "string" })
+    .defaultNow()
+    .onUpdateNow()
+    .notNull(),
 });
 
 export const userChartDataTable = mysqlTable(
@@ -212,11 +221,16 @@ export const userChartDataTable = mysqlTable(
     chartTypeId: int("chart_type_id").notNull(),
     chartType: varchar("chart_type", { length: 30 }).notNull(),
 
-    when: date("when").notNull(),
+    when: date("when", { mode: "string" }).notNull(),
     value: int("value").notNull(),
 
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { mode: "string" })
+      .defaultNow()
+      .onUpdateNow()
+      .notNull(),
   },
   (table) => ({
     // Prevent duplicate entries for same user, category, chart type, and date
@@ -236,14 +250,14 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
   seriesId: int("series_id").references(() => seriesTable.seriesId, {
     onDelete: "cascade",
   }),
-  seasonId: int("season_id"),
+  seasonId: int("season_id").notNull(),
   sessionId: int("session_id").unique().notNull(),
 
   name: varchar("name", { length: 100 }).notNull(),
   seasonYear: int("season_year").notNull(),
   seasonQuarter: int("season_quarter").notNull(),
   raceWeek: int("race_week").notNull(),
-  trackName: varchar("track_name", { length: 100 }),
+  trackName: varchar("track_name", { length: 100 }).notNull(),
   startTime: varchar("start_time", { length: 30 }).notNull(),
   totalSplits: int("total_splits").notNull(),
   totalDrivers: int("total_drivers").notNull(),
@@ -258,6 +272,9 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
     scale: 2,
   }).notNull(),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "string" })
+    .defaultNow()
+    .onUpdateNow()
+    .notNull(),
 });

@@ -36,13 +36,6 @@ export const auth = betterAuth({
         .onDuplicateKeyUpdate({
           set: { userId: user.id },
         });
-
-      await db
-        .insert(dbSchema.licenseTable)
-        .values({ userId: user.id })
-        .onDuplicateKeyUpdate({
-          set: { userId: user.id },
-        });
     }),
   },
 
