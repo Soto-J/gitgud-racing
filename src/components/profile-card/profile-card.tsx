@@ -9,13 +9,7 @@ import { InfoCard } from "./info-card";
 import { ProfileChart } from "./profile-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ProfileCardProps {
   member: UserGetOne["member"];
