@@ -27,9 +27,15 @@ interface ProfileChartProps {
 }
 
 const parseDateTime = (dateValue: string | Date): DateTime => {
-  return typeof dateValue === "string"
-    ? DateTime.fromISO(dateValue)
-    : DateTime.fromJSDate(new Date(dateValue));
+  if (typeof dateValue === "string") {
+    return DateTime.fromISO(dateValue);
+  } else if (dateValue instanceof Date) {
+    return DateTime.fromJSDate(dateValue);
+  } else if (typeof dateValue === "number") {
+    return DateTime.fromMillis(dateValue);
+  } else {
+    throw new Error("Unsupported date value");
+  }
 };
 
 export const ProfileChart = ({ data, title }: ProfileChartProps) => {

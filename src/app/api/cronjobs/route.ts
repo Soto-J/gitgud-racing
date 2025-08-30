@@ -1,16 +1,23 @@
 import type { NextRequest } from "next/server";
 
+import env from "@/env";
+
 import * as helper from "@/modules/iracing/server";
+
+import { DateTime } from "luxon";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
 
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
     return new Response("Unauthorized", {
       status: 401,
     });
   }
-  console.log("Cron job started at:", new Date().toISOString());
+  console.log(
+    "Cron job started at:",
+    DateTime.now().toLocaleString(DateTime.DATETIME_MED),
+  );
 
   const authCode = await helper.getOrRefreshAuthCode();
 
@@ -54,28 +61,27 @@ export async function GET(request: NextRequest) {
 }
 
 const getCurrentSeasonInfo = () => {
-  const now = new Date();
-  const year = now.getFullYear();
+  const year = DateTime.now().year;
 
   // iRacing seasons typically start on these dates (adjust based on actual schedule)
   const seasonStarts = [
-    new Date(year, 2, 12), // Season 1: ~March 12 (Week 0)
-    new Date(year, 5, 11), // Season 2: ~June 11 (Week 0)
-    new Date(year, 8, 10), // Season 3: ~September 10 (Week 0)
-    new Date(year, 11, 10), // Season 4: ~December 10 (Week 0)
+    DateTime.local(year, 3, 12), // Season 1: ~March 12 (Week 0)
+    DateTime.local(year, 5, 11), // Season 2: ~June 11 (Week 0)
+    DateTime.local(year, 8, 10), // Season 3: ~September 10 (Week 0)
+    DateTime.local(year, 11, 10), // Season 4: ~December 10 (Week 0)
   ];
 
   // Find current season
   let currentSeasonIndex = 0;
   let seasonStartDate = seasonStarts[0];
 
-  if (now < seasonStarts[0]) {
+  if (DateTime.now() < seasonStarts[0]) {
     // Before Season 1 of the current year: treat as last year's Season 4
     currentSeasonIndex = 3;
-    seasonStartDate = new Date(year - 1, 11, 10);
+    seasonStartDate = DateTime.local(year - 1, 11, 10);
   } else {
     for (let i = seasonStarts.length - 1; i >= 0; i--) {
-      if (now >= seasonStarts[i]) {
+      if (DateTime.now() >= seasonStarts[i]) {
         currentSeasonIndex = i;
         seasonStartDate = seasonStarts[i];
         break;
@@ -84,16 +90,16 @@ const getCurrentSeasonInfo = () => {
   }
 
   // Calculate weeks since season start
-  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
   const weeksSinceStart = Math.floor(
-    (now.getTime() - seasonStartDate.getTime()) / msPerWeek,
+    DateTime.now().diff(seasonStartDate).weeks,
   );
 
   const currentRaceWeek = (
     Math.max(0, Math.min(weeksSinceStart, 12)) - 1
   ).toString();
-  const currentQuarter = Math.ceil((now.getMonth() + 1) / 3).toString();
-  const currentSeasonYear = now.getFullYear().toString();
+
+  const currentQuarter = Math.ceil((DateTime.now().month + 1) / 3).toString();
+  const currentSeasonYear = DateTime.now().year.toString();
 
   return {
     currentRaceWeek,

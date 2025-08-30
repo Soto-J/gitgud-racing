@@ -17,6 +17,7 @@ import {
   IRacingLicense,
   TransformLicenseData,
 } from "@/modules/iracing/types";
+import { DateTime } from "luxon";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -76,7 +77,7 @@ export const manageProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
     const iracingAuthCode = await helper.getOrRefreshAuthCode();
-    
+
     return next({
       ctx: {
         ...ctx,
@@ -101,21 +102,20 @@ export const syncIracingProfileProcedure = iracingProcedure.use(
     }
 
     // Check if we need to sync (e.g., data is stale)
-    const lastSync = user?.license?.updatedAt;
+    const lastSync = user.license && DateTime.fromISO(user.license.updatedAt);
     const shouldSync =
-      !lastSync ||
-      new Date().getTime() - new Date(lastSync).getTime() > 24 * 60 * 60 * 1000; // 24 hours
+      !lastSync?.isValid || DateTime.now().diff(lastSync).hours > 24;
 
-    if (!shouldSync && lastSync) {
+    if (!shouldSync) {
       console.log("Using cached iRacing userData Data");
       return next({ ctx });
     }
 
     // Otherwise we either update or create licenses for user
-    const iRacingUserData = await helper.fetchData({
+    const iRacingUserData = (await helper.fetchData({
       query: `/data/member/get?cust_ids=${user.profile.iracingId}&include_licenses=true`,
       authCode: ctx.iracingAuthCode,
-    }) as IRacingFetchResult;
+    })) as IRacingFetchResult;
 
     if (!iRacingUserData) {
       return next({ ctx });
