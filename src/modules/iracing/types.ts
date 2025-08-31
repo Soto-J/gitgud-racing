@@ -1,7 +1,7 @@
 import { InferSelectModel } from "drizzle-orm";
 
 import { inferRouterOutputs } from "@trpc/server";
-import { licenseTable, userChartDataTable } from "@/db/schema";
+import { licenseTable, profileTable, userChartDataTable, user } from "@/db/schema";
 
 import { AppRouter } from "@/trpc/routers/_app";
 
@@ -93,8 +93,8 @@ type Profile = {
 
 // Input
 export type TransformLicensesInput = {
-  user: user;
-  profile: Profile;
+  user: InferSelectModel<typeof user>;
+  profile: InferSelectModel<typeof profileTable> | null;
   licenses: InferSelectModel<typeof licenseTable> | null;
 };
 
@@ -106,15 +106,15 @@ export type LicenseDiscipline = {
   licenseClass: string;
 };
 
-export type TransformLicensesOutput = {
-  user: user;
-  profile: Profile;
-  licenses: {
-    id: string;
+// export type TransformLicensesOutput = {
+//   user: user;
+//   profile: Profile;
+//   licenses: {
+//     id: string;
 
-    disciplines: LicenseDiscipline[];
-  } | null;
-};
+//     disciplines: LicenseDiscipline[];
+//   } | null;
+// };
 
 export type IracingSeriesResultsResponse = {
   session_id: number;

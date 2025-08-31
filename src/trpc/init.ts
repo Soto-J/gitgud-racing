@@ -1,6 +1,8 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 
+import { DateTime } from "luxon";
+
 import { initTRPC, TRPCError } from "@trpc/server";
 
 import { eq } from "drizzle-orm";
@@ -17,7 +19,6 @@ import {
   IRacingLicense,
   TransformLicenseData,
 } from "@/modules/iracing/types";
-import { DateTime } from "luxon";
 
 export const createTRPCContext = cache(async () => {
   /**

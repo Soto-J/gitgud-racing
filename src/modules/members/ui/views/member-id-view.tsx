@@ -15,31 +15,23 @@ interface MemberIdViewProps {
 export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   const trpc = useTRPC();
 
-  const [userPayload, chartDataPayload] = useSuspenseQueries({
+  const [userPayload, chartPayload] = useSuspenseQueries({
     queries: [
       trpc.iracing.getUser.queryOptions({ userId }),
       trpc.iracing.userChartData.queryOptions({ userId }),
     ],
   });
-  
-  if (!chartDataPayload.error && !userPayload.error) {
-    return <p>iRacing ID hasnt been provided</p>;
-  }
 
+ 
   return (
     <>
       <Banner
         section="Profile"
-        title={userPayload.data?.member?.user?.name || ""}
+        title={userPayload.data.user.name || ""}
         subTitle1="Professional Driver"
-        subTitle2={
-          userPayload.data.member.profile.isActive ? "Active" : "Inactive"
-        }
+        subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
       />
-      <ProfileCard
-        member={userPayload.data.member}
-        chartData={chartDataPayload.data}
-      />
+      <ProfileCard member={userPayload.data} chartData={chartPayload.data} />
     </>
   );
 };

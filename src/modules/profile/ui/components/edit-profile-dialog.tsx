@@ -30,7 +30,7 @@ import {
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: UserGetOne["member"];
+  initialValues: UserGetOne;
 }
 
 export const EditProfileDialog = ({
@@ -38,7 +38,7 @@ export const EditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) => {
-  const [firstName, lastName] = initialValues.user.name.split(" ");
+  const [firstName, lastName] = initialValues?.user?.name.split(" ") || "";
 
   const form = useForm<z.infer<typeof EditProfileInsertSchema>>({
     resolver: zodResolver(EditProfileInsertSchema),
@@ -59,7 +59,7 @@ export const EditProfileDialog = ({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.profile.getOne.queryOptions({
-            userId: initialValues.user.id,
+            userId: initialValues!.user.id,
           }),
         );
 
@@ -76,7 +76,7 @@ export const EditProfileDialog = ({
 
   const onSubmit = (values: z.infer<typeof EditProfileInsertSchema>) => {
     editProfile.mutate({
-      userId: initialValues.user.id || "",
+      userId: initialValues!.user.id || "",
       ...values,
     });
   };
@@ -96,24 +96,28 @@ export const EditProfileDialog = ({
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
               {/* Personal Information Section */}
-              <div className="rounded-xl bg-gradient-to-br from-blue-50 to-white border border-blue-100 p-4">
+              <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">👤</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500">
+                    <span className="text-sm font-bold text-white">👤</span>
                   </div>
-                  <h3 className="font-semibold text-gray-900">Personal Information</h3>
+                  <h3 className="font-semibold text-gray-900">
+                    Personal Information
+                  </h3>
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     name="firstName"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">First Name</FormLabel>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          First Name
+                        </FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="John" 
+                          <Input
+                            placeholder="John"
                             {...field}
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           />
@@ -128,10 +132,12 @@ export const EditProfileDialog = ({
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">Last Name</FormLabel>
+                        <FormLabel className="text-sm font-medium text-gray-700">
+                          Last Name
+                        </FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Smith" 
+                          <Input
+                            placeholder="Smith"
                             {...field}
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           />
@@ -144,12 +150,14 @@ export const EditProfileDialog = ({
               </div>
 
               {/* Racing Information Section */}
-              <div className="rounded-xl bg-gradient-to-br from-red-50 to-white border border-red-100 p-4">
+              <div className="rounded-xl border border-red-100 bg-gradient-to-br from-red-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-red-500 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">🏁</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500">
+                    <span className="text-sm font-bold text-white">🏁</span>
                   </div>
-                  <h3 className="font-semibold text-gray-900">Racing Information</h3>
+                  <h3 className="font-semibold text-gray-900">
+                    Racing Information
+                  </h3>
                 </div>
 
                 <FormField
@@ -157,10 +165,12 @@ export const EditProfileDialog = ({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">iRacing ID</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        iRacing ID
+                      </FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter your iRacing ID" 
+                        <Input
+                          placeholder="Enter your iRacing ID"
                           {...field}
                           className="border-gray-300 focus:border-red-500 focus:ring-red-500"
                         />
@@ -172,12 +182,14 @@ export const EditProfileDialog = ({
               </div>
 
               {/* Contact Information Section */}
-              <div className="rounded-xl bg-gradient-to-br from-purple-50 to-white border border-purple-100 p-4">
+              <div className="rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-purple-500 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">💬</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500">
+                    <span className="text-sm font-bold text-white">💬</span>
                   </div>
-                  <h3 className="font-semibold text-gray-900">Contact Information</h3>
+                  <h3 className="font-semibold text-gray-900">
+                    Contact Information
+                  </h3>
                 </div>
 
                 <FormField
@@ -185,10 +197,12 @@ export const EditProfileDialog = ({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">Discord Username</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Discord Username
+                      </FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="username#1234" 
+                        <Input
+                          placeholder="username#1234"
                           {...field}
                           className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
                         />
@@ -199,10 +213,10 @@ export const EditProfileDialog = ({
               </div>
 
               {/* Bio Section */}
-              <div className="rounded-xl bg-gradient-to-br from-green-50 to-white border border-green-100 p-4">
+              <div className="rounded-xl border border-green-100 bg-gradient-to-br from-green-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-green-500 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">📝</span>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500">
+                    <span className="text-sm font-bold text-white">📝</span>
                   </div>
                   <h3 className="font-semibold text-gray-900">About You</h3>
                 </div>
@@ -212,12 +226,14 @@ export const EditProfileDialog = ({
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">Driver Bio</FormLabel>
+                      <FormLabel className="text-sm font-medium text-gray-700">
+                        Driver Bio
+                      </FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           {...field}
                           placeholder="Tell us about your racing journey, favorite series, achievements..."
-                          className="border-gray-300 focus:border-green-500 focus:ring-green-500 min-h-[100px] resize-none"
+                          className="min-h-[100px] resize-none border-gray-300 focus:border-green-500 focus:ring-green-500"
                         />
                       </FormControl>
                     </FormItem>
@@ -227,7 +243,7 @@ export const EditProfileDialog = ({
             </div>
           </ScrollArea>
 
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200 bg-white">
+          <div className="flex items-center justify-between border-t border-gray-200 bg-white pt-4">
             <Button
               type="button"
               variant="outline"
@@ -237,11 +253,11 @@ export const EditProfileDialog = ({
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              size="lg" 
+            <Button
+              type="submit"
+              size="lg"
               disabled={editProfile.isPending}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:from-blue-700 hover:to-blue-800"
             >
               {editProfile.isPending ? "Updating..." : "Update Profile"}
             </Button>
