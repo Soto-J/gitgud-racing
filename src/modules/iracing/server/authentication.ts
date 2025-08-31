@@ -53,10 +53,10 @@ const sleep = (ms: number): Promise<void> =>
  */
 export const getOrRefreshAuthCode = async (): Promise<string> => {
   // If there's already an auth request in progress, wait for it
-  // if (authPromise) {
-  //   console.log("Auth request already in progress, waiting...");
-  //   return authPromise;
-  // }
+  if (authPromise) {
+    console.log("Auth request already in progress, waiting...");
+    return authPromise;
+  }
 
   const iracingAuthInfo = await db
     .select()
@@ -65,18 +65,25 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       and(
         gt(
           iracingAuthTable.updatedAt, // updatedAt > now - 1h
-          DateTime.now().minus({ hour: 1 }).toISO(), // Resets hourly
+          DateTime.now().minus({ hour: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'), // Resets hourly
         ),
-        gt(iracingAuthTable.expiresAt, DateTime.now().toISO()), // expiresAt > now
+        gt(iracingAuthTable.expiresAt, DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')), // expiresAt > now
       ),
     )
     .then((value) => value[0]);
 
   if (iracingAuthInfo?.expiresAt) {
-    const timeLeft = DateTime.fromISO(iracingAuthInfo.expiresAt).diffNow();
+    const timeLeft = DateTime.fromSQL(iracingAuthInfo.expiresAt).diffNow();
+    console.log(
+      "expiresAt value:",
+      iracingAuthInfo.expiresAt,
+      typeof iracingAuthInfo.expiresAt,
+    );
 
     console.log(
-      `Using cached iRacing auth (expires in ${Math.round(timeLeft.as("minutes"))} minutes)`,
+      `Using cached iRacing auth (expires in ${Math.round(
+        timeLeft.as("minutes"),
+      )} minutes)`,
     );
 
     return iracingAuthInfo.authCode;
@@ -173,18 +180,18 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         .values({
           userId: env.MY_USER_ID,
           authCode,
-          expiresAt: DateTime.now().plus({ hours: 1 }).toISO(),
+          expiresAt: DateTime.now().plus({ hours: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'),
         })
         .onDuplicateKeyUpdate({
           set: {
             authCode: authCode,
-            expiresAt: DateTime.now().plus({ hours: 1 }).toISO(),
-            updatedAt: DateTime.now().toISO(),
+            expiresAt: DateTime.now().plus({ hours: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'),
+            updatedAt: DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'),
           },
         });
 
       console.log(
-        `Successfully stored auth code (expires in ${DateTime.now().plus({ hours: 1 }).minute} minutes)`,
+        `Successfully stored auth code (expires in 60 minutes)`,
       );
       return authCode;
     } finally {

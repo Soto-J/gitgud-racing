@@ -77,7 +77,7 @@ export const iracingRouter = createTRPCRouter({
       }
 
       const member = helper.transformLicenses(result);
-      console.log(member)
+      console.log(member);
       return member;
     }),
 
@@ -170,7 +170,6 @@ export const iracingRouter = createTRPCRouter({
             value: d.value,
           })),
         );
-        console.log({ dataToInsert });
 
         await db.insert(userChartDataTable).values(dataToInsert);
 
@@ -183,10 +182,7 @@ export const iracingRouter = createTRPCRouter({
         return transformCharts(newChartData);
       } catch (error) {
         console.error("Error refreshing chart data:", error);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to refresh chart data",
-        });
+        return null;
       }
     }),
 
@@ -243,17 +239,18 @@ export const iracingRouter = createTRPCRouter({
     )
     .query(async ({ input }) => {
       const { search, pageSize } = input;
-      const orClause = search
-        ? or(
-            like(seriesWeeklyStatsTable.name, `%${search}%`),
-            like(seriesWeeklyStatsTable.trackName, `%${search}%`),
-          )
-        : undefined;
 
       const [total] = await db
         .select({ count: count() })
         .from(seriesWeeklyStatsTable)
-        .where(orClause);
+        .where(
+          search
+            ? or(
+                like(seriesWeeklyStatsTable.name, `%${search}%`),
+                like(seriesWeeklyStatsTable.trackName, `%${search}%`),
+              )
+            : undefined,
+        );
 
       const totalPages = Math.ceil(total.count / pageSize);
 
