@@ -4,7 +4,7 @@ import { DateTime } from "luxon";
 
 import { TRPCError } from "@trpc/server";
 
-import { gt, and } from "drizzle-orm";
+import { gt, and, lt } from "drizzle-orm";
 
 import { db } from "@/db";
 
@@ -53,10 +53,10 @@ const sleep = (ms: number): Promise<void> =>
  */
 export const getOrRefreshAuthCode = async (): Promise<string> => {
   // If there's already an auth request in progress, wait for it
-  if (authPromise) {
-    console.log("Auth request already in progress, waiting...");
-    return authPromise;
-  }
+  // if (authPromise) {
+  //   console.log("Auth request already in progress, waiting...");
+  //   return authPromise;
+  // }
 
   const iracingAuthInfo = await db
     .select()
@@ -64,10 +64,10 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     .where(
       and(
         gt(
-          iracingAuthTable.updatedAt,
+          iracingAuthTable.updatedAt, // updatedAt > now - 1h
           DateTime.now().minus({ hour: 1 }).toISO(), // Resets hourly
         ),
-        gt(iracingAuthTable.expiresAt, DateTime.now().toISO()),
+        gt(iracingAuthTable.expiresAt, DateTime.now().toISO()), // expiresAt > now
       ),
     )
     .then((value) => value[0]);
@@ -76,7 +76,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     const timeLeft = DateTime.fromISO(iracingAuthInfo.expiresAt).diffNow();
 
     console.log(
-      `Using cached iRacing auth (expires in ${Math.round(timeLeft.minutes)} minutes)`,
+      `Using cached iRacing auth (expires in ${Math.round(timeLeft.as("minutes"))} minutes)`,
     );
 
     return iracingAuthInfo.authCode;
@@ -97,7 +97,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         await sleep(waitTime);
       }
 
-      lastAuthAttempt = Date.now();
+      lastAuthAttempt = DateTime.now().millisecond;
 
       // Refresh iRacing authcode
       console.log("Refreshing iRacing auth...");
@@ -160,7 +160,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       const authCode = response.headers
         .get("set-cookie")
         ?.match(/authtoken_members=([^;]+)/)?.[1];
-
+      console.log("authCode", authCode);
       if (!authCode) {
         throw new TRPCError({
           code: "UNAUTHORIZED",

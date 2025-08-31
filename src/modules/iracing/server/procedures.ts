@@ -59,28 +59,17 @@ export const iracingRouter = createTRPCRouter({
 
       const result = await db
         .select({
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-          },
-          profile: {
-            id: profileTable.id,
-            iracingId: profileTable.iracingId,
-            discord: profileTable.discord,
-            team: profileTable.team,
-            bio: profileTable.bio,
-            isActive: profileTable.isActive,
-          },
+          user: { ...getTableColumns(user) },
+          profile: { ...getTableColumns(profileTable) },
           licenses: { ...getTableColumns(licenseTable) },
         })
         .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .leftJoin(profileTable, eq(profileTable.userId, user.id))
         .leftJoin(licenseTable, eq(licenseTable.userId, user.id))
         .where(eq(user.id, input.userId))
-        .then((value) => value[0]);
+        .then((rows) => rows[0]);
 
-      if (!result) {
+      if (!result.user) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "User not found",
@@ -88,13 +77,8 @@ export const iracingRouter = createTRPCRouter({
       }
 
       const member = helper.transformLicenses(result);
-
-      return {
-        isError: false,
-        error: null,
-        message: "User found",
-        member,
-      };
+      console.log(member)
+      return member;
     }),
 
   getAllSeries: iracingProcedure.query(async ({ ctx, input }) => {
@@ -121,10 +105,7 @@ export const iracingRouter = createTRPCRouter({
         .then((val) => val[0]);
 
       if (!userProfile?.iracingId) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "User profile not found",
-        });
+        return null;
       }
 
       const resetDate = DateTime.now()

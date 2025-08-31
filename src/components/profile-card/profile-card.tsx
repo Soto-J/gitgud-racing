@@ -12,16 +12,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ProfileCardProps {
-  member: UserGetOne["member"];
-  chartData: ChartData;
+  member: UserGetOne;
+  chartData: ChartData | null;
 }
 
 export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
-  const disciplines = member.licenses?.disciplines
-    ? member.licenses.disciplines
-    : seedData;
+  const disciplines =
+    member?.licenses?.disciplines.length > 0
+      ? member.licenses.disciplines
+      : seedData;
 
   console.log({ chartData });
+
   return (
     <div className="space-y-12">
       <Tabs defaultValue="Oval" className="mx-auto">
@@ -38,22 +40,22 @@ export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
           ))}
         </TabsList>
 
-        {Object.values(chartData).map(
-          ({ discipline, chartData: disciplineChartData }) => (
-            <TabsContent value={discipline} key={discipline}>
-              {disciplineChartData?.length > 0 ? (
+        {chartData ? (
+          Object.values(chartData).map(
+            ({ discipline, chartData: disciplineChartData }) => (
+              <TabsContent value={discipline} key={discipline}>
                 <ProfileChart data={disciplineChartData} title={discipline} />
-              ) : (
-                <Card>
-                  <CardContent>
-                    <div className="py-8 text-center text-gray-500">
-                      No chart data available for this category
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </TabsContent>
-          ),
+              </TabsContent>
+            ),
+          )
+        ) : (
+          <Card>
+            <CardContent>
+              <div className="py-8 text-center text-gray-500">
+                No chart data available for this category
+              </div>
+            </CardContent>
+          </Card>
         )}
       </Tabs>
 
@@ -78,21 +80,22 @@ export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
             <InfoCard
               icon={Users}
               label="Team"
-              value={member.profile.team || "N/a"}
+              value={member?.profile?.team || "N/A"}
               accentColor="bg-purple-600"
             />
 
             <InfoCard
               icon={MessageCircle}
               label="Discord"
-              value={member.profile.discord || ""}
+              value={member?.profile?.discord || ""}
               accentColor="bg-indigo-600"
             />
           </div>
 
-          {/* Enhanced Bio Section */}
+          {/*  Bio Section */}
           <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-6 shadow-sm">
-            <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-gray-100 opacity-20"></div>
+            <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-gray-100 opacity-20" />
+
             <div className="relative">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600">
@@ -100,8 +103,9 @@ export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900">Driver Bio</h3>
               </div>
+
               <div className="prose max-w-none">
-                {member.profile.bio ? (
+                {member?.profile?.bio ? (
                   <div className="rounded-lg border border-gray-100 bg-white p-4">
                     <p className="leading-relaxed text-gray-700">
                       {member.profile.bio}

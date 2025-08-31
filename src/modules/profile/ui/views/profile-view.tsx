@@ -31,23 +31,18 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
       <EditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={userPayload.data?.member}
+        initialValues={userPayload.data}
       />
 
       <Banner
         section="iRacing profile"
-        title={userPayload.data.member.user?.name || ""}
+        title={userPayload.data?.user.name || ""}
         subTitle1="Professional driver"
-        subTitle2={
-          userPayload.data.member.profile.isActive ? "Active" : "Inactive"
-        }
+        subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
         onEdit={() => setOpenDialog(true)}
       />
 
-      <ProfileCard
-        member={userPayload.data.member}
-        chartData={chartPayload.data}
-      />
+      <ProfileCard member={userPayload.data} chartData={chartPayload.data} />
     </>
   );
 };

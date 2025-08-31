@@ -2,7 +2,6 @@ import { DateTime } from "luxon";
 
 import {
   TransformLicensesInput,
-  TransformLicensesOutput,
   LicenseDiscipline,
   ChartDataRecord,
 } from "@/modules/iracing/types";
@@ -35,14 +34,16 @@ import {
  * // { category: "Oval", iRating: 2500, safetyRating: "3.45", licenseClass: "A" }
  * ```
  */
-export const transformLicenses = (
-  member: TransformLicensesInput,
-): TransformLicensesOutput => {
+export const transformLicenses = (member: TransformLicensesInput) => {
   if (!member?.licenses) {
-    const { licenses, ...restData } = member;
     return {
-      ...restData,
-      licenses: null,
+      ...member,
+      licenses: {
+        id: null,
+        createdAt: null,
+        updatedAt: null,
+        disciplines: [],
+      },
     };
   }
 
@@ -83,12 +84,14 @@ export const transformLicenses = (
   ];
 
   // Excluding the old licenses field
-  const { licenses, ...restOfMember } = member;
+  const { licenses, ...userAndProfile } = member;
 
   return {
-    ...restOfMember,
+    ...userAndProfile,
     licenses: {
       id: licenses.id,
+      createdAt: licenses.createdAt,
+      updatedAt: licenses.updatedAt,
       disciplines: disciplinesArray,
     },
   };
