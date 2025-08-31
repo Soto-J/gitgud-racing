@@ -59,7 +59,7 @@ export const EditProfileDialog = ({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.profile.getOne.queryOptions({
-            userId: initialValues!.user.id,
+            userId: initialValues.user.id,
           }),
         );
 
@@ -76,7 +76,7 @@ export const EditProfileDialog = ({
 
   const onSubmit = (values: z.infer<typeof EditProfileInsertSchema>) => {
     editProfile.mutate({
-      userId: initialValues!.user.id || "",
+      userId: initialValues.user.id,
       ...values,
     });
   };
