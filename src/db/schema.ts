@@ -30,12 +30,8 @@ export const user = mysqlTable("user", {
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
 
-  createdAt: timestamp("created_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const session = mysqlTable("session", {
@@ -108,10 +104,12 @@ export const profileTable = mysqlTable("profile", {
   bio: text("bio").default(""),
 
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "string" })
+    .defaultNow()
+    .onUpdateNow()
+    .notNull(),
 });
 
-// iRacing
 export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })
     .primaryKey()
@@ -144,7 +142,10 @@ export const licenseTable = mysqlTable("license", {
     .notNull(),
 
   ovalIRating: int("oval_i_rating").notNull(),
-  ovalSafetyRating: decimal("oval_safety_rating", { precision: 4, scale: 2 }).notNull(),
+  ovalSafetyRating: decimal("oval_safety_rating", {
+    precision: 4,
+    scale: 2,
+  }).notNull(),
   ovalLicenseClass: mysqlEnum("oval_license_class", safetyClassValues)
     .default("R")
     .notNull(),

@@ -267,7 +267,6 @@ export const cacheSeriesImages = async (): Promise<void> => {
         );
       }
 
-      console.log("Response", response);
       return {
         seriesId: series.seriesId,
         seriesName: series.seriesName,
