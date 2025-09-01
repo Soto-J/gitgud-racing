@@ -7,11 +7,15 @@ import {
   DEFAULT_PAGE_SIZE,
 } from "@/modules/members/constants";
 
-export const GetOneInputSchema = z.object({
-  id: z.string().min(1, { message: "Id is required" }),
+// =============================================================================
+// MEMBER QUERY SCHEMAS
+// =============================================================================
+
+export const GetMemberInputSchema = z.object({
+  id: z.string().min(1, { message: "Member ID is required" }),
 });
 
-export const GetManyInputSchema = z.object({
+export const GetMembersInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
   pageSize: z
     .number()

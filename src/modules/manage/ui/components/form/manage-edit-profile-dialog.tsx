@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { AdminGetUser } from "@/modules/manage/types";
-import { ProfileInsertSchema } from "@/modules/manage/schema";
+import { UpdateUserProfileInputSchema } from "@/modules/manage/schema";
 
 import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
 
@@ -48,12 +48,14 @@ export const ManageEditProfileDialog = ({
 }: ManageEditProfileDialogProps) => {
   const [filters, _] = useMembersFilters();
 
-  const form = useForm<z.infer<typeof ProfileInsertSchema>>({
-    resolver: zodResolver(ProfileInsertSchema),
+  type FormData = z.infer<typeof UpdateUserProfileInputSchema>;
+  
+  const form = useForm<FormData>({
+    resolver: zodResolver(UpdateUserProfileInputSchema),
     defaultValues: {
       team: initialValues.team || "",
       isActive: initialValues.isActive,
-      role: initialValues.role,
+      role: initialValues.role as "admin" | "staff" | "member",
     },
   });
   const trpc = useTRPC();
@@ -79,7 +81,7 @@ export const ManageEditProfileDialog = ({
     }),
   );
 
-  const onSubmit = (values: z.infer<typeof ProfileInsertSchema>) => {
+  const onSubmit = (values: FormData) => {
     editProfile.mutate({
       userId: initialValues.id,
       ...values,

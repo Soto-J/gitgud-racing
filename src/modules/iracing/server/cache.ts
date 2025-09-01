@@ -11,8 +11,8 @@ import { fetchData } from "./api";
 import { getOrRefreshAuthCode } from "./authentication";
 
 import {
-  IracingGetAllSeriesResponse,
-  IracingSeriesResultsResponse,
+  IRacingGetAllSeriesResponse,
+  IRacingSeriesResultsResponse,
 } from "@/modules/iracing/types";
 import { DateTime } from "luxon";
 
@@ -64,7 +64,7 @@ export const cacheSeries = async ({
     const data = (await fetchData({
       query: `/data/series/get`,
       authCode: authCode,
-    })) as IracingGetAllSeriesResponse[];
+    })) as IRacingGetAllSeriesResponse[];
 
     if (!data) {
       throw new Error("Failed to get series");
@@ -158,7 +158,7 @@ export const cacheWeeklyResults = async ({
 
     const seriesResults = seriesResultsSettled
       .filter((result) => result.status === "fulfilled")
-      .map((result) => result.value as IracingSeriesResultsResponse[]);
+      .map((result) => result.value as IRacingSeriesResultsResponse[]);
 
     const perRaceStats = seriesResults
       .filter((series) => series.length > 0)
@@ -172,7 +172,7 @@ export const cacheWeeklyResults = async ({
             obj[session.start_time].push(session);
             return obj;
           },
-          {} as Record<string, IracingSeriesResultsResponse[]>,
+          {} as Record<string, IRacingSeriesResultsResponse[]>,
         );
 
         const totalRaces = Object.values(uniqueRaces).length;

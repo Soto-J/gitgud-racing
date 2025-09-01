@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { EditProfileInsertSchema } from "@/modules/profile/schema";
+import { ProfileUpdateDataSchema } from "@/modules/profile/schema";
 
-import { UserGetOne } from "@/modules/iracing/types";
+import { IRacingUserData } from "@/modules/iracing/types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import {
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: UserGetOne;
+  initialValues: IRacingUserData;
 }
 
 export const EditProfileDialog = ({
@@ -40,8 +40,8 @@ export const EditProfileDialog = ({
 }: EditProfileDialogProps) => {
   const [firstName, lastName] = initialValues?.user?.name.split(" ") || "";
 
-  const form = useForm<z.infer<typeof EditProfileInsertSchema>>({
-    resolver: zodResolver(EditProfileInsertSchema),
+  const form = useForm<z.infer<typeof ProfileUpdateDataSchema>>({
+    resolver: zodResolver(ProfileUpdateDataSchema),
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
@@ -74,7 +74,7 @@ export const EditProfileDialog = ({
     }),
   );
 
-  const onSubmit = (values: z.infer<typeof EditProfileInsertSchema>) => {
+  const onSubmit = (values: z.infer<typeof ProfileUpdateDataSchema>) => {
     editProfile.mutate({
       userId: initialValues.user.id,
       ...values,
