@@ -60,62 +60,31 @@ export const fetchData = async ({
   query: string;
   authCode: string;
 }): Promise<unknown> => {
-  // Validate inputs
   if (!authCode || authCode.trim() === "") {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Invalid or missing iRacing authentication code",
     });
   }
-  
+
   if (!query || query.trim() === "") {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Invalid or missing API query parameter",
     });
   }
-  
+
   console.log(`Making iRacing API request to: ${query}`);
-  
   try {
     const initialResponse = await fetch(`${IRACING_URL}${query}`, {
       headers: {
-        "Cookie": `authtoken_members=${authCode}`,
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/plain, */*",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Referer": "https://members-ng.iracing.com/",
-        "DNT": "1",
-        "Sec-Fetch-Dest": "empty",
-        "Sec-Fetch-Mode": "cors",
-        "Sec-Fetch-Site": "same-origin",
+        Cookie: `authtoken_members=${authCode}`,
       },
       signal: AbortSignal.timeout(API_TIMEOUT_MS),
     });
-    
+
     if (!initialResponse.ok) {
-      let errorBody = "";
-      let errorMessage = `Initial fetch failed, Status: ${initialResponse.status}`;
-      
-      try {
-        errorBody = await initialResponse.text();
-        console.error("iRacing API Error Details:", {
-          status: initialResponse.status,
-          statusText: initialResponse.statusText,
-          url: `${IRACING_URL}${query}`,
-          headers: Object.fromEntries(initialResponse.headers.entries()),
-          body: errorBody,
-        });
-        
-        if (errorBody) {
-          errorMessage += ` - Response: ${errorBody.substring(0, 200)}`;
-        }
-      } catch (bodyError) {
-        console.error("Failed to read error response body:", bodyError);
-      }
-      
-      throw new Error(errorMessage);
+      console.error("Failed to read error response body:");
     }
 
     const data = await initialResponse.json();
@@ -154,7 +123,7 @@ export const fetchData = async ({
       if (!linkResponse.ok) {
         let linkErrorBody = "";
         let linkErrorMessage = `Failed to fetch data from the provided link. Status ${linkResponse.status}`;
-        
+
         try {
           linkErrorBody = await linkResponse.text();
           console.error("iRacing Link Fetch Error Details:", {
@@ -164,14 +133,14 @@ export const fetchData = async ({
             headers: Object.fromEntries(linkResponse.headers.entries()),
             body: linkErrorBody,
           });
-          
+
           if (linkErrorBody) {
             linkErrorMessage += ` - Response: ${linkErrorBody.substring(0, 200)}`;
           }
         } catch (bodyError) {
           console.error("Failed to read link error response body:", bodyError);
         }
-        
+
         throw new Error(linkErrorMessage);
       }
 
@@ -204,12 +173,17 @@ export const fetchData = async ({
           message: "iRacing API request timed out. Please try again.",
         });
       }
-      
+
       // Handle network errors
-      if (error.message.includes("fetch") && (error.message.includes("network") || error.message.includes("connection"))) {
+      if (
+        error.message.includes("fetch") &&
+        (error.message.includes("network") ||
+          error.message.includes("connection"))
+      ) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Network error connecting to iRacing API. Please check your connection.",
+          message:
+            "Network error connecting to iRacing API. Please check your connection.",
         });
       }
 

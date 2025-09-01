@@ -25,11 +25,14 @@ const SchedulePage = async () => {
       day: 7,
     });
 
-  console.log("Date:", dt.day);
-  console.log("Reset Day:", resetDay.day);
-  console.log(
-    DateTime.local(2025, 3, 12).toLocaleString(DateTime.DATETIME_MED),
-  );
+  // console.log("Date:", dt.day);
+  // console.log("Reset Day:", resetDay.day);
+  // console.log(
+  //   DateTime.local(2025, 3, 12).toLocaleString(DateTime.DATETIME_MED),
+  // );
+
+  console.log("new Date:", new Date());
+  console.log("DateTime.now():", DateTime.now().toJSDate());
   return <ScheduleView />;
 };
 

@@ -65,20 +65,22 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       and(
         gt(
           iracingAuthTable.updatedAt, // updatedAt > now - 1h
-          DateTime.now().minus({ hour: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'), // Resets hourly
+          DateTime.utc().minus({ hour: 1 }).toFormat("yyyy-MM-dd HH:mm:ss"), // Resets hourly
         ),
-        gt(iracingAuthTable.expiresAt, DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss')), // expiresAt > now
+        gt(
+          iracingAuthTable.expiresAt,
+          DateTime.utc().toFormat("yyyy-MM-dd HH:mm:ss"),
+        ), // expiresAt > now
       ),
     )
     .then((value) => value[0]);
 
   if (iracingAuthInfo?.expiresAt) {
-    const timeLeft = DateTime.fromSQL(iracingAuthInfo.expiresAt).diffNow();
-    console.log(
-      "expiresAt value:",
+    const timeLeft = DateTime.fromFormat(
       iracingAuthInfo.expiresAt,
-      typeof iracingAuthInfo.expiresAt,
-    );
+      "yyyy-MM-dd HH:mm:ss",
+      { zone: "utc" },
+    ).diffNow();
 
     console.log(
       `Using cached iRacing auth (expires in ${Math.round(
@@ -167,7 +169,7 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
       const authCode = response.headers
         .get("set-cookie")
         ?.match(/authtoken_members=([^;]+)/)?.[1];
-      console.log("authCode", authCode);
+
       if (!authCode) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -180,19 +182,21 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         .values({
           userId: env.MY_USER_ID,
           authCode,
-          expiresAt: DateTime.now().plus({ hours: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'),
+          expiresAt: DateTime.utc()
+            .plus({ hours: 1 })
+            .toFormat("yyyy-MM-dd HH:mm:ss"),
         })
         .onDuplicateKeyUpdate({
           set: {
             authCode: authCode,
-            expiresAt: DateTime.now().plus({ hours: 1 }).toFormat('yyyy-MM-dd HH:mm:ss'),
-            updatedAt: DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss'),
+            expiresAt: DateTime.utc()
+              .plus({ hours: 1 })
+              .toFormat("yyyy-MM-dd HH:mm:ss"),
+            updatedAt: DateTime.utc().toFormat("yyyy-MM-dd HH:mm:ss"),
           },
         });
 
-      console.log(
-        `Successfully stored auth code (expires in 60 minutes)`,
-      );
+      console.log(`Successfully stored auth code (expires in 60 minutes)`);
       return authCode;
     } finally {
       // Clear the promise when done (success or failure)
