@@ -15,7 +15,7 @@ import { licenseTable, profileTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import {
-  IRacingFetchResult,
+  IRacingMemberData,
   IRacingLicense,
   TransformLicenseData,
 } from "@/modules/iracing/types";

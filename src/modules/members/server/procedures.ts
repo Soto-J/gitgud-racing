@@ -1,87 +1,72 @@
-import { count, desc, eq, like, and, getTableColumns } from "drizzle-orm";
-
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
-import { db } from "@/db";
-import { profileTable, user } from "@/db/schema";
+import {
+  getMemberWithProfile,
+  getMembersWithProfiles,
+  validateMemberSearchFilters,
+} from "./procedure-helpers";
 
 import {
-  GetManyInputSchema,
-  GetOneInputSchema,
+  GetMembersInputSchema,
+  GetMemberInputSchema,
 } from "@/modules/members/schema";
 
-export const membersRouter = createTRPCRouter({
-  getOne: protectedProcedure
-    .input(GetOneInputSchema)
-    .query(async ({ input }) => {
-      const [member] = await db
-        .select({
-          ...getTableColumns(user),
-          isActive: profileTable.isActive,
-        })
-        .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
-        .where(eq(user.id, input.id));
+// =============================================================================
+// MEMBER QUERY PROCEDURES
+// =============================================================================
 
-      return member;
-    }),
+/**
+ * Fetches a single member with their profile information
+ */
+const getMemberProcedure = protectedProcedure
+  .input(GetMemberInputSchema)
+  .query(async ({ input }) => {
+    return await getMemberWithProfile(input.id);
+  });
 
-  getMany: protectedProcedure
-    .input(GetManyInputSchema)
-    .query(async ({ input }) => {
-      const { memberId, page, pageSize, search } = input;
+/**
+ * Fetches multiple members with pagination and search functionality
+ * Includes statistics for total members and active members
+ */
+const getMembersProcedure = protectedProcedure
+  .input(GetMembersInputSchema)
+  .query(async ({ input }) => {
+    const { memberId, page, pageSize, search } = input;
 
-      const members = await db
-        .select({
-          ...getTableColumns(user),
-          isActive: profileTable.isActive,
-        })
-        .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
-        .where(
-          and(
-            memberId ? eq(user.id, memberId) : undefined,
-            search ? like(user.name, `%${search}%`) : undefined,
-          ),
-        )
-        .orderBy(desc(user.createdAt), desc(user.id))
-        .limit(pageSize)
-        .offset((page - 1) * pageSize);
+    // Validate search parameters
+    validateMemberSearchFilters({
+      memberId: memberId || undefined,
+      search: search || undefined,
+      page,
+      pageSize,
+    });
 
-      if (!members) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Users not found" });
+    try {
+      return await getMembersWithProfiles({
+        memberId: memberId || undefined,
+        search: search || undefined,
+        page,
+        pageSize,
+      });
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
       }
 
-      const [total] = await db
-        .select({ count: count() })
-        .from(user)
-        .where(
-          and(
-            memberId ? eq(user.id, memberId) : undefined,
-            search ? like(user.name, `%${search}%`) : undefined,
-          ),
-        );
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch members",
+      });
+    }
+  });
 
-      const [totalActive] = await db
-        .select({ count: count() })
-        .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
-        .where(
-          and(
-            memberId ? eq(user.id, memberId) : undefined,
-            search ? like(user.name, `%${search}%`) : undefined,
-            eq(profileTable.isActive, true),
-          ),
-        );
+// =============================================================================
+// ROUTER EXPORT
+// =============================================================================
 
-      const totalPages = Math.ceil(total.count / pageSize);
-
-      return {
-        members,
-        totalActive: totalActive.count,
-        total: total.count,
-        totalPages,
-      };
-    }),
+export const membersRouter = createTRPCRouter({
+  // Member query procedures
+  getOne: getMemberProcedure,
+  getMany: getMembersProcedure,
 });

@@ -1,108 +1,113 @@
-import { and, eq, getTableColumns } from "drizzle-orm";
-
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
-import { db } from "@/db";
-import { licenseTable, profileTable, user } from "@/db/schema";
+import {
+  getCompleteProfile,
+  getAllProfiles,
+  createUserProfile,
+  updateUserProfile,
+  validateProfileData,
+} from "./procedure-helpers";
 
 import {
-  CreateInsertSchema,
-  EditProfileInputSchema,
-  GetOneInsertSchema,
+  CreateProfileInputSchema,
+  UpdateProfileInputSchema,
+  GetProfileInputSchema,
 } from "@/modules/profile/schema";
 
-export const profileRouter = createTRPCRouter({
-  getOne: protectedProcedure
-    .input(GetOneInsertSchema)
-    .query(async ({ input }) => {
-      const profileWithUser = await db
-        .select({
-          ...getTableColumns(profileTable),
-          ...getTableColumns(licenseTable),
-          memberName: user.name,
-        })
-        .from(profileTable)
-        .innerJoin(user, eq(user.id, profileTable.userId))
-        .leftJoin(licenseTable, eq(licenseTable.userId, profileTable.userId))
-        .where(eq(profileTable.userId, input.userId))
-        .then((results) => results[0]);
+// =============================================================================
+// PROFILE QUERY PROCEDURES
+// =============================================================================
 
-      if (!profileWithUser) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `Profile not found for user_id: ${input.userId}`,
-        });
+/**
+ * Fetches a complete profile with user and license information
+ */
+const getProfileProcedure = protectedProcedure
+  .input(GetProfileInputSchema)
+  .query(async ({ input }) => {
+    return await getCompleteProfile(input.userId);
+  });
+
+/**
+ * Fetches all user profiles (admin/staff functionality)
+ */
+const getAllProfilesProcedure = protectedProcedure.query(async () => {
+  return await getAllProfiles();
+});
+
+// =============================================================================
+// PROFILE MANAGEMENT PROCEDURES
+// =============================================================================
+
+/**
+ * Creates a new profile for the authenticated user
+ */
+const createProfileProcedure = protectedProcedure
+  .input(CreateProfileInputSchema)
+  .mutation(async ({ ctx, input }) => {
+    try {
+      return await createUserProfile(input.userId, ctx.auth.user.id);
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
       }
 
-      return profileWithUser;
-    }),
-
-  getMany: protectedProcedure.query(async () => {
-    return await db.select().from(profileTable);
-  }),
-
-  create: protectedProcedure
-    .input(CreateInsertSchema)
-    .mutation(async ({ ctx, input }) => {
-      const [response] = await db.insert(profileTable).values({
-        userId: input.userId,
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create profile",
       });
+    }
+  });
 
-      if (!response) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Problem creating profile",
-        });
+/**
+ * Updates profile information for the authenticated user
+ */
+const updateProfileProcedure = protectedProcedure
+  .input(UpdateProfileInputSchema)
+  .mutation(async ({ ctx, input }) => {
+    // Validate input data
+    validateProfileData({
+      firstName: input.firstName,
+      lastName: input.lastName,
+      iRacingId: input.iRacingId,
+      discord: input.discord,
+      bio: input.bio,
+    });
+
+    try {
+      return await updateUserProfile(
+        input.userId,
+        ctx.auth.user.id,
+        {
+          firstName: input.firstName,
+          lastName: input.lastName,
+          iRacingId: input.iRacingId,
+          discord: input.discord,
+          bio: input.bio,
+        }
+      );
+    } catch (error) {
+      if (error instanceof TRPCError) {
+        throw error;
       }
 
-      const [createProfile] = await db
-        .select()
-        .from(profileTable)
-        .innerJoin(user, eq(user.id, profileTable.userId))
-        .where(
-          and(
-            eq(profileTable.userId, input.userId),
-            eq(profileTable.userId, ctx.auth.user.id),
-          ),
-        );
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to update profile",
+      });
+    }
+  });
 
-      return createProfile;
-    }),
+// =============================================================================
+// ROUTER EXPORT
+// =============================================================================
 
-  edit: protectedProcedure
-    .input(EditProfileInputSchema)
-    .mutation(async ({ ctx, input }) => {
-      const result = await db
-        .update(profileTable)
-        .set({
-          iracingId: input.iRacingId.trim(),
-          // team: input.team,
-          discord: input.discord.trim(),
-          bio: input.bio.trim(),
-        })
-        .where(
-          and(
-            eq(profileTable.userId, input.userId),
-            eq(profileTable.userId, ctx.auth.user.id),
-          ),
-        )
-        .then((result) => result[0]);
+export const profileRouter = createTRPCRouter({
+  // Profile query procedures
+  getOne: getProfileProcedure,
+  getMany: getAllProfilesProcedure,
 
-      if (!result) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
-      }
-
-      const { firstName, lastName } = input;
-      const name = `${firstName.trim()} ${lastName.trim()}`;
-
-      await db.update(user).set({ name }).where(eq(user.id, ctx.auth.user.id));
-
-      const [editedProfile] = await db
-        .select()
-        .from(profileTable)
-        .where(eq(profileTable.userId, input.userId));
-
-      return editedProfile;
-    }),
+  // Profile management procedures
+  create: createProfileProcedure,
+  edit: updateProfileProcedure,
 });

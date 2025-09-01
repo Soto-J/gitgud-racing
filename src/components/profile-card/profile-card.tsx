@@ -1,6 +1,6 @@
 import { User, Users, MessageCircle } from "lucide-react";
 
-import { ChartData, UserGetOne } from "@/modules/iracing/types";
+import { IRacingChartData, IRacingUserData } from "@/modules/iracing/types";
 import { seedData } from "@/modules/iracing/constants";
 
 import { DisciplineCard } from "./discipline-card";
@@ -12,8 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface ProfileCardProps {
-  member: UserGetOne;
-  chartData: ChartData | null;
+  member: IRacingUserData;
+  chartData: IRacingChartData | null;
 }
 
 export const ProfileCard = ({ member, chartData }: ProfileCardProps) => {

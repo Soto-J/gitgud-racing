@@ -7,20 +7,22 @@ import {
   MIN_PAGE_SIZE,
 } from "@/modules/manage/constants";
 
-import { roles } from "@/db/schema";
+// =============================================================================
+// USER MANAGEMENT SCHEMAS
+// =============================================================================
 
-export const ProfileInsertSchema = z.object({
+export const UpdateUserProfileInputSchema = z.object({
   team: z.string(),
   isActive: z.boolean(),
   role: z.enum(["admin", "staff", "member"]),
 });
 
-export const ProfileEditUserInputSchema = ProfileInsertSchema.extend({
-  userId: z.string().min(1, { message: "Id is required" }),
+export const UpdateUserInputSchema = UpdateUserProfileInputSchema.extend({
+  userId: z.string().min(1, { message: "User ID is required" }),
 });
 
 export const GetUserInputSchema = z.object({
-  userId: z.string().min(1, { message: "Id is required" }),
+  userId: z.string().min(1, { message: "User ID is required" }),
 });
 
 export const GetUsersInputSchema = z.object({
@@ -35,5 +37,5 @@ export const GetUsersInputSchema = z.object({
 });
 
 export const DeleteUserInputSchema = z.object({
-  userId: z.string().min(1, { message: "Id is required" }),
+  userId: z.string().min(1, { message: "User ID is required" }),
 });

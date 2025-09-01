@@ -1,16 +1,33 @@
 import { InferSelectModel } from "drizzle-orm";
-
 import { inferRouterOutputs } from "@trpc/server";
-import { licenseTable, profileTable, userChartDataTable, user } from "@/db/schema";
 
 import { AppRouter } from "@/trpc/routers/_app";
+import { licenseTable, profileTable, userChartDataTable, user } from "@/db/schema";
 
-export type UserGetOne = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
+// =============================================================================
+// TRPC ROUTER OUTPUT TYPES
+// =============================================================================
 
-export type WeeklySeriesResults =
-  inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
+export type IRacingUserData = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
+export type IRacingWeeklySeriesResults = inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
+export type IRacingChartData = inferRouterOutputs<AppRouter>["iracing"]["userChartData"];
 
-// Init
+// =============================================================================
+// DATABASE SCHEMA TYPES
+// =============================================================================
+
+export type IRacingChartDataRecord = typeof userChartDataTable.$inferSelect;
+
+export type IRacingTransformLicensesInput = {
+  user: InferSelectModel<typeof user>;
+  profile: InferSelectModel<typeof profileTable> | null;
+  licenses: InferSelectModel<typeof licenseTable> | null;
+};
+
+// =============================================================================
+// IRACING API RESPONSE TYPES
+// =============================================================================
+
 export type IRacingLicense = {
   category_id: number;
   category: string;
@@ -28,7 +45,8 @@ export type IRacingLicense = {
   seq: number;
   mpr_num_tts: number;
 };
-export type IRacingFetchResult = {
+
+export type IRacingMemberData = {
   success: boolean;
   cust_ids: number[];
   members: {
@@ -53,70 +71,7 @@ export type IRacingFetchResult = {
   member_since: string;
 };
 
-export type LicenseClass = "A" | "B" | "C" | "D" | "R";
-export type TransformLicenseData = {
-  ovalIRating: number;
-  ovalSafetyRating: string;
-  ovalLicenseClass: LicenseClass;
-
-  sportsCarIRating: number;
-  sportsCarSafetyRating: string;
-  sportsCarLicenseClass: LicenseClass;
-
-  formulaCarIRating: number;
-  formulaCarSafetyRating: string;
-  formulaCarLicenseClass: LicenseClass;
-
-  dirtOvalIRating: number;
-  dirtOvalSafetyRating: string;
-  dirtOvalLicenseClass: LicenseClass;
-
-  dirtRoadIRating: number;
-  dirtRoadSafetyRating: string;
-  dirtRoadLicenseClass: LicenseClass;
-};
-
-// -------------------------------
-type user = {
-  id: string;
-  name: string;
-  email: string;
-};
-type Profile = {
-  id: string;
-  iracingId: string | null;
-  discord: string | null;
-  team: string | null;
-  bio: string | null;
-  isActive: boolean;
-};
-
-// Input
-export type TransformLicensesInput = {
-  user: InferSelectModel<typeof user>;
-  profile: InferSelectModel<typeof profileTable> | null;
-  licenses: InferSelectModel<typeof licenseTable> | null;
-};
-
-// Output
-export type LicenseDiscipline = {
-  category: "Oval" | "Sports" | "Formula" | "Dirt Oval" | "Dirt Road";
-  iRating: number | null;
-  safetyRating: string | null;
-  licenseClass: string;
-};
-
-// export type TransformLicensesOutput = {
-//   user: user;
-//   profile: Profile;
-//   licenses: {
-//     id: string;
-
-//     disciplines: LicenseDiscipline[];
-//   } | null;
-// };
-
-export type IracingSeriesResultsResponse = {
+export type IRacingSeriesResultsResponse = {
   session_id: number;
   subsession_id: number;
   start_time: string;
@@ -152,7 +107,7 @@ export type IracingSeriesResultsResponse = {
   event_strength_of_field: number;
 };
 
-export type IracingGetAllSeriesResponse = {
+export type IRacingGetAllSeriesResponse = {
   allowed_licenses: {
     group_name: string;
     license_group: number;
@@ -176,25 +131,7 @@ export type IracingGetAllSeriesResponse = {
   series_short_name: string;
 };
 
-export type CacheWeeklyResultsInput = {
-  authCode: string;
-  params: {
-    series_id: string;
-    season_year: string;
-    season_quarter: string;
-    event_types: string;
-    official_only: boolean;
-    race_week_num: string;
-    start_range_begin: string;
-    start_range_end: string;
-    cust_id: string;
-    team_id: string;
-    category_id: string;
-    include_series: string;
-  };
-};
-
-export type ResultsList = {
+export type IRacingSessionResult = {
   session_id: number;
   subsession_id: number;
   race_week_num: number;
@@ -239,20 +176,16 @@ export type ResultsList = {
   winner_license_level: number;
   winner_name: string;
 };
-export type SeasonResultsResponse = {
+
+export type IRacingSeasonResultsResponse = {
   success: boolean;
   season_id: number;
   race_week_num: number;
   event_type: number;
-  results_list: ResultsList[];
+  results_list: IRacingSessionResult[];
 };
 
-// Chart Data
-
-export type ChartData =
-  inferRouterOutputs<AppRouter>["iracing"]["userChartData"];
-export type ChartDataRecord = typeof userChartDataTable.$inferSelect;
-export type UserChartDataResponse = {
+export type IRacingUserChartDataResponse = {
   blackout: boolean;
   category_id: number;
   chart_type: number;
@@ -262,4 +195,57 @@ export type UserChartDataResponse = {
   }[];
   success: boolean;
   cust_id: number;
+};
+
+// =============================================================================
+// INPUT/PARAMETER TYPES
+// =============================================================================
+
+export type IRacingCacheWeeklyResultsInput = {
+  authCode: string;
+  params: {
+    series_id: string;
+    season_year: string;
+    season_quarter: string;
+    event_types: string;
+    official_only: boolean;
+    race_week_num: string;
+    start_range_begin: string;
+    start_range_end: string;
+    cust_id: string;
+    team_id: string;
+    category_id: string;
+    include_series: string;
+  };
+};
+
+// =============================================================================
+// LICENSE & DISCIPLINE TYPES
+// =============================================================================
+
+export type LicenseClass = "A" | "B" | "C" | "D" | "R";
+
+export type LicenseDiscipline = {
+  category: "Oval" | "Sports" | "Formula" | "Dirt Oval" | "Dirt Road";
+  iRating: number | null;
+  safetyRating: string | null;
+  licenseClass: string;
+};
+
+export type TransformLicenseData = {
+  ovalIRating: number;
+  ovalSafetyRating: string;
+  ovalLicenseClass: LicenseClass;
+  sportsCarIRating: number;
+  sportsCarSafetyRating: string;
+  sportsCarLicenseClass: LicenseClass;
+  formulaCarIRating: number;
+  formulaCarSafetyRating: string;
+  formulaCarLicenseClass: LicenseClass;
+  dirtOvalIRating: number;
+  dirtOvalSafetyRating: string;
+  dirtOvalLicenseClass: LicenseClass;
+  dirtRoadIRating: number;
+  dirtRoadSafetyRating: string;
+  dirtRoadLicenseClass: LicenseClass;
 };

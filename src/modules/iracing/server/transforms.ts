@@ -1,9 +1,9 @@
 import { DateTime } from "luxon";
 
 import {
-  TransformLicensesInput,
+  IRacingTransformLicensesInput,
   LicenseDiscipline,
-  ChartDataRecord,
+  IRacingChartDataRecord,
   IRacingLicense,
   TransformLicenseData,
 } from "@/modules/iracing/types";
@@ -38,7 +38,7 @@ import {
  * // { category: "Oval", iRating: 2500, safetyRating: "3.45", licenseClass: "A" }
  * ```
  */
-export const buildUserProfile = (member: TransformLicensesInput) => {
+export const buildUserProfile = (member: IRacingTransformLicensesInput) => {
   if (!member?.licenses) {
     return {
       ...member,
@@ -131,7 +131,7 @@ export const buildUserProfile = (member: TransformLicensesInput) => {
  * shouldRefreshChartData(lastRecord) // returns true
  */
 export const shouldRefreshChartData = (
-  latestRecord: ChartDataRecord | undefined | null,
+  latestRecord: IRacingChartDataRecord | undefined | null,
 ): boolean => {
   if (!latestRecord) return true;
 
