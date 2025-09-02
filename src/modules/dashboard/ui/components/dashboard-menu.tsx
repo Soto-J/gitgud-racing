@@ -53,8 +53,10 @@ export const DashboardMenu = () => {
     session?.user.role === "admin" || session?.user.role === "staff";
   const pathname = usePathname();
 
-  // const trpc = useTRPC();
-  // const { data } = useSuspenseQuery(trpc.iracing.getSeasons.queryOptions({}));
+  const trpc = useTRPC();
+  const { data } = useSuspenseQuery(
+    trpc.iracing.getUserSummary.queryOptions(),
+  );
   return (
     <Sidebar className="border-red-800/30 shadow-2xl">
       <SidebarHeader className="relative">
@@ -172,7 +174,7 @@ export const DashboardMenu = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <QuickStatsCard />
+        <QuickStatsCard summaryData={data} />
       </SidebarContent>
 
       <SidebarFooter className="text-white">
