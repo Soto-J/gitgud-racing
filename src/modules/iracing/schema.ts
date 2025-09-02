@@ -21,8 +21,8 @@ export const IRacingGetUserRecentRacesInputSchema = z.object({
   custId: z.string().min(1, { message: "Id is required" }),
 });
 
-export const IRacingGetUserSummaryInputSchema = IRacingGetUserRecentRacesInputSchema;
 
+  
 // =============================================================================
 // SERIES DATA SCHEMAS
 // =============================================================================

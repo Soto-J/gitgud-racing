@@ -23,7 +23,6 @@ import {
 import {
   IRacingGetUserInputSchema,
   IRacingGetUserRecentRacesInputSchema,
-  IRacingGetUserSummaryInputSchema,
   IRacingUserChartDataInputSchema,
   IRacingWeeklySeriesResultsInputSchema,
 } from "@/modules/iracing/schema";
@@ -115,7 +114,7 @@ const getUserSummaryProcedure = iracingProcedure.query(async ({ ctx }) => {
   if (!userProfile?.custId) {
     return null;
   }
-  
+
   const userSummary = (await helper.fetchData({
     query: `/data/stats/member_summary?cust_id=${userProfile.custId}`,
     authCode: ctx.iracingAuthCode,

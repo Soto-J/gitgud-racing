@@ -54,7 +54,9 @@ export const DashboardMenu = () => {
   const pathname = usePathname();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
+  const { data } = useSuspenseQuery(
+    trpc.iracing.getUserSummary.queryOptions(),
+  );
   return (
     <Sidebar className="border-red-800/30 shadow-2xl">
       <SidebarHeader className="relative">
