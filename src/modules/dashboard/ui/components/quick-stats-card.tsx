@@ -28,7 +28,6 @@ export const QuickStatsCard = ({ summaryData }: QuickStatsCardProps) => {
       <p className="mb-3 text-xs text-gray-400">ID: {summaryData.cust_id}</p>
 
       <div className="space-y-2 text-xs">
-
         <div className="flex justify-between text-gray-300">
           <span>Official Sessions</span>
           <span className="font-semibold text-blue-300">
