@@ -16,7 +16,10 @@ import {
   IRACING_CHART_TYPE_IRATING,
 } from "./procedure-helpers";
 
-import { IRacingUserChartDataResponse } from "@/modules/iracing/types";
+import {
+  IRacingUserChartDataResponse,
+  IRacingUserSummaryResponse,
+} from "@/modules/iracing/types";
 import {
   IRacingGetUserInputSchema,
   IRacingGetUserRecentRacesInputSchema,
@@ -102,25 +105,24 @@ const getUserRecentRacesProcedure = iracingProcedure
 /**
  * Fetches user summary statistics from iRacing
  */
-const getUserSummaryProcedure = iracingProcedure
-  .input(IRacingGetUserSummaryInputSchema)
-  .query(async ({ ctx, input }) => {
-    if (!input.custId) {
-      return null;
-    }
+const getUserSummaryProcedure = iracingProcedure.query(async ({ ctx }) => {
+  const userProfile = await db
+    .select({ custId: profileTable.iracingId })
+    .from(profileTable)
+    .where(eq(profileTable.userId, ctx.auth.user.id))
+    .then((row) => row[0]);
 
-    try {
-      const userSummary = await helper.fetchData({
-        query: `/data/stats/member_summary?cust_id=${input.custId}`,
-        authCode: ctx.iracingAuthCode,
-      });
+  if (!userProfile?.custId) {
+    return null;
+  }
+  
+  const userSummary = (await helper.fetchData({
+    query: `/data/stats/member_summary?cust_id=${userProfile.custId}`,
+    authCode: ctx.iracingAuthCode,
+  })) as IRacingUserSummaryResponse;
 
-      return userSummary || null;
-    } catch (error) {
-      console.error("Failed to fetch user summary:", error);
-      return null;
-    }
-  });
+  return userSummary || null;
+});
 
 // =============================================================================
 // CHART DATA PROCEDURES
@@ -137,7 +139,7 @@ const userChartDataProcedure = iracingProcedure
       .select({ iracingId: profileTable.iracingId })
       .from(profileTable)
       .where(eq(profileTable.userId, input.userId))
-      .then((val) => val[0]);
+      .then((row) => row[0]);
 
     if (!userProfile?.iracingId) {
       return null;

@@ -32,18 +32,20 @@ export type AuthorizedUser = {
 
 /**
  * Fetches a single user with their profile information
- * 
+ *
  * @param userId - The user ID to fetch
  * @returns Promise resolving to user with profile data
  * @throws TRPCError if user is not found
- * 
+ *
  * @example
  * ```typescript
  * const user = await getUserWithProfile("user_123");
  * console.log(user.name, user.team, user.isActive);
  * ```
  */
-export async function getUserWithProfile(userId: string): Promise<UserWithProfile> {
+export async function getUserWithProfile(
+  userId: string,
+): Promise<UserWithProfile> {
   const [member] = await db
     .select({
       id: user.id,
@@ -61,9 +63,9 @@ export async function getUserWithProfile(userId: string): Promise<UserWithProfil
     .where(eq(profileTable.userId, userId));
 
   if (!member) {
-    throw new TRPCError({ 
-      code: "NOT_FOUND", 
-      message: "User not found" 
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "User not found",
     });
   }
 
@@ -72,10 +74,10 @@ export async function getUserWithProfile(userId: string): Promise<UserWithProfil
 
 /**
  * Fetches multiple users with their profile information using pagination and filtering
- * 
+ *
  * @param filters - Object containing search and pagination parameters
  * @returns Promise resolving to paginated user list with metadata
- * 
+ *
  * @example
  * ```typescript
  * const result = await getUsersWithProfiles({
@@ -94,7 +96,7 @@ export async function getUsersWithProfiles(filters: {
   pageSize: number;
 }) {
   const { memberId, search, page, pageSize } = filters;
-  
+
   const searchClause = buildUserSearchClause(memberId, search);
 
   const members = await db
@@ -117,9 +119,9 @@ export async function getUsersWithProfiles(filters: {
     .offset((page - 1) * pageSize);
 
   if (!members?.length) {
-    throw new TRPCError({ 
-      code: "NOT_FOUND", 
-      message: "No users found" 
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "No users found",
     });
   }
 
@@ -154,15 +156,15 @@ function buildUserSearchClause(memberId?: string, search?: string) {
 
 /**
  * Validates if the current user has permission to modify the target user
- * 
+ *
  * Staff users cannot modify admin or other staff users
  * Users cannot modify themselves in delete operations
- * 
+ *
  * @param currentUser - The authenticated user making the request
  * @param targetUserId - The user being modified
  * @param operation - The type of operation being performed
  * @throws TRPCError if operation is not authorized
- * 
+ *
  * @example
  * ```typescript
  * await validateUserModificationPermissions(
@@ -175,13 +177,13 @@ function buildUserSearchClause(memberId?: string, search?: string) {
 export async function validateUserModificationPermissions(
   currentUser: AuthorizedUser,
   targetUserId: string,
-  operation: 'edit' | 'delete'
+  operation: "edit" | "delete",
 ): Promise<void> {
   const targetUser = await db
     .select({ role: user.role })
     .from(user)
     .where(eq(user.id, targetUserId))
-    .then((val) => val[0]);
+    .then((row) => row[0]);
 
   if (!targetUser) {
     throw new TRPCError({
@@ -203,7 +205,7 @@ export async function validateUserModificationPermissions(
   }
 
   // Users cannot delete themselves
-  if (operation === 'delete' && currentUser.id === targetUserId) {
+  if (operation === "delete" && currentUser.id === targetUserId) {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Cannot delete your own account",
@@ -211,7 +213,7 @@ export async function validateUserModificationPermissions(
   }
 
   // Admins cannot be deleted by anyone
-  if (operation === 'delete' && targetUser.role === "admin") {
+  if (operation === "delete" && targetUser.role === "admin") {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Admin accounts cannot be deleted",
@@ -225,14 +227,14 @@ export async function validateUserModificationPermissions(
 
 /**
  * Updates user profile information (team and active status)
- * 
+ *
  * @param userId - The user ID to update
  * @param updates - The profile updates to apply
  * @throws TRPCError if update fails
  */
 export async function updateUserProfile(
   userId: string,
-  updates: { team?: string | null; isActive?: boolean }
+  updates: { team?: string | null; isActive?: boolean },
 ): Promise<void> {
   const [result] = await db
     .update(profileTable)
@@ -249,14 +251,14 @@ export async function updateUserProfile(
 
 /**
  * Updates user role information
- * 
+ *
  * @param userId - The user ID to update
  * @param role - The new role to assign
  * @throws TRPCError if update fails
  */
 export async function updateUserRole(
   userId: string,
-  role: "admin" | "staff" | "member"
+  role: "admin" | "staff" | "member",
 ): Promise<void> {
   const [result] = await db
     .update(user)
@@ -273,7 +275,7 @@ export async function updateUserRole(
 
 /**
  * Deletes a user from the system
- * 
+ *
  * @param userId - The user ID to delete
  * @returns The deletion result
  * @throws TRPCError if user cannot be found or deleted
@@ -292,9 +294,7 @@ export async function deleteUser(userId: string) {
     });
   }
 
-  const [result] = await db
-    .delete(user)
-    .where(eq(user.id, userId));
+  const [result] = await db.delete(user).where(eq(user.id, userId));
 
   return result;
 }

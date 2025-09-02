@@ -52,18 +52,20 @@ export type ProfileUpdateData = {
 
 /**
  * Fetches a complete profile with user information and license data
- * 
+ *
  * @param userId - The user ID to fetch profile for
  * @returns Promise resolving to complete profile data
  * @throws TRPCError if profile is not found
- * 
+ *
  * @example
  * ```typescript
  * const profile = await getCompleteProfile("user_123");
  * console.log(profile.memberName, profile.team, profile.ovalIRating);
  * ```
  */
-export async function getCompleteProfile(userId: string): Promise<ProfileWithUserAndLicenses> {
+export async function getCompleteProfile(
+  userId: string,
+): Promise<ProfileWithUserAndLicenses> {
   const profileWithUser = await db
     .select({
       ...getTableColumns(profileTable),
@@ -74,7 +76,7 @@ export async function getCompleteProfile(userId: string): Promise<ProfileWithUse
     .innerJoin(user, eq(user.id, profileTable.userId))
     .leftJoin(licenseTable, eq(licenseTable.userId, profileTable.userId))
     .where(eq(profileTable.userId, userId))
-    .then((results) => results[0]);
+    .then((row) => row[0]);
 
   if (!profileWithUser) {
     throw new TRPCError({
@@ -88,7 +90,7 @@ export async function getCompleteProfile(userId: string): Promise<ProfileWithUse
 
 /**
  * Fetches all profiles from the database
- * 
+ *
  * @returns Promise resolving to array of all profiles
  */
 export async function getAllProfiles() {
@@ -97,13 +99,16 @@ export async function getAllProfiles() {
 
 /**
  * Fetches profile with user information for join queries
- * 
- * @param userId - The user ID to fetch profile for  
+ *
+ * @param userId - The user ID to fetch profile for
  * @param currentUserId - The ID of the user making the request (for authorization)
  * @returns Promise resolving to profile with user data
  * @throws TRPCError if profile is not found or unauthorized
  */
-export async function getProfileWithUser(userId: string, currentUserId: string) {
+export async function getProfileWithUser(
+  userId: string,
+  currentUserId: string,
+) {
   const [profile] = await db
     .select()
     .from(profileTable)
@@ -111,8 +116,8 @@ export async function getProfileWithUser(userId: string, currentUserId: string) 
     .where(
       and(
         eq(profileTable.userId, userId),
-        eq(profileTable.userId, currentUserId) // Authorization check
-      )
+        eq(profileTable.userId, currentUserId), // Authorization check
+      ),
     );
 
   if (!profile) {
@@ -131,7 +136,7 @@ export async function getProfileWithUser(userId: string, currentUserId: string) 
 
 /**
  * Creates a new profile for a user
- * 
+ *
  * @param userId - The user ID to create profile for
  * @param currentUserId - The ID of the user making the request (for authorization)
  * @returns Promise resolving to the created profile with user data
@@ -155,7 +160,7 @@ export async function createUserProfile(userId: string, currentUserId: string) {
 
 /**
  * Updates profile and user information
- * 
+ *
  * @param userId - The user ID whose profile to update
  * @param currentUserId - The ID of the user making the request (for authorization)
  * @param updates - The profile updates to apply
@@ -165,7 +170,7 @@ export async function createUserProfile(userId: string, currentUserId: string) {
 export async function updateUserProfile(
   userId: string,
   currentUserId: string,
-  updates: ProfileUpdateData
+  updates: ProfileUpdateData,
 ) {
   // Validate authorization
   const isAuthorized = userId === currentUserId;
@@ -185,7 +190,7 @@ export async function updateUserProfile(
       bio: updates.bio.trim(),
     })
     .where(eq(profileTable.userId, userId))
-    .then((result) => result[0]);
+    .then((row) => row[0]);
 
   if (!result || result.affectedRows === 0) {
     throw new TRPCError({
@@ -212,7 +217,7 @@ export async function updateUserProfile(
 
 /**
  * Validates profile data before processing
- * 
+ *
  * @param data - The profile data to validate
  * @throws TRPCError if validation fails
  */

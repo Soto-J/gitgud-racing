@@ -2,15 +2,25 @@ import { InferSelectModel } from "drizzle-orm";
 import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
-import { licenseTable, profileTable, userChartDataTable, user } from "@/db/schema";
+import {
+  licenseTable,
+  profileTable,
+  userChartDataTable,
+  user,
+} from "@/db/schema";
 
 // =============================================================================
 // TRPC ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type IRacingUserData = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
-export type IRacingWeeklySeriesResults = inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
-export type IRacingChartData = inferRouterOutputs<AppRouter>["iracing"]["userChartData"];
+export type IRacingUserData =
+  inferRouterOutputs<AppRouter>["iracing"]["getUser"];
+export type IRacingWeeklySeriesResults =
+  inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
+export type IRacingChartData =
+  inferRouterOutputs<AppRouter>["iracing"]["userChartData"];
+export type IRacingUserSummary =
+  inferRouterOutputs<AppRouter>["iracing"]["getUserSummary"];
 
 // =============================================================================
 // DATABASE SCHEMA TYPES
@@ -69,6 +79,16 @@ export type IRacingMemberData = {
     licenses: IRacingLicense[];
   }[];
   member_since: string;
+};
+
+export type IRacingUserSummaryResponse = {
+  this_year: {
+    num_official_sessions: number;
+    num_league_sessions: number;
+    num_official_wins: number;
+    num_league_wins: number;
+  };
+  cust_id: number;
 };
 
 export type IRacingSeriesResultsResponse = {
