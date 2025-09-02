@@ -1,7 +1,9 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, createAuthMiddleware } from "better-auth/plugins";
+
 import { eq } from "drizzle-orm";
+
 import env from "@/env";
 
 import { db } from "@/db";
@@ -21,8 +23,8 @@ export const auth = betterAuth({
 
   socialProviders: {
     google: {
-      clientId: env.GOOGLE_CLIENT_ID as string,
-      clientSecret: env.GOOGLE_CLIENT_SECRET as string,
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
 
