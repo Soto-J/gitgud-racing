@@ -1,7 +1,7 @@
 import { SidebarToggle } from "@/modules/dashboard/ui/components/sidebar-toggle";
 import { DashboardSidebar } from "@/modules/dashboard/ui/components/dashboard-sidebar";
 
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,10 +12,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <SidebarProvider>
       <DashboardSidebar />
 
-      <main className="bg-muted flex w-screen flex-col">
+      <SidebarInset className="bg-muted">
         <SidebarToggle />
         {children}
-      </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "87d31b5e-dec1-482f-ad86-b0ef40922bd8",
+  "id": "7ea83850-9bd5-44eb-aee1-6b40c6e3a6fb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -150,6 +150,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -166,13 +173,6 @@
           "autoincrement": false,
           "onUpdate": true,
           "default": "(now())"
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
         }
       },
       "indexes": {},
@@ -230,14 +230,14 @@
           "name": "oval_i_rating",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "oval_safety_rating": {
           "name": "oval_safety_rating",
           "type": "decimal(4,2)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "oval_license_class": {
@@ -252,14 +252,14 @@
           "name": "sports_car_i_rating",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "sports_car_safety_rating": {
           "name": "sports_car_safety_rating",
           "type": "decimal(4,2)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "sports_license_class": {
@@ -274,14 +274,14 @@
           "name": "formula_car_i_rating",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "formula_car_safety_rating": {
           "name": "formula_car_safety_rating",
           "type": "decimal(4,2)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "formula_license_class": {
@@ -296,14 +296,15 @@
           "name": "dirt_oval_i_rating",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "dirt_oval_safety_rating": {
           "name": "dirt_oval_safety_rating",
           "type": "decimal(4,2)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "dirt_oval_license_class": {
@@ -318,14 +319,15 @@
           "name": "dirt_road_i_rating",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
         },
         "dirt_road_safety_rating": {
           "name": "dirt_road_safety_rating",
           "type": "decimal(4,2)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "dirt_road_license_class": {
@@ -458,6 +460,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
+          "onUpdate": true,
           "default": "(now())"
         }
       },
@@ -577,7 +580,7 @@
           "name": "season_id",
           "type": "int",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "session_id": {
@@ -619,7 +622,7 @@
           "name": "track_name",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "start_time": {
@@ -857,11 +860,11 @@
         },
         "role": {
           "name": "role",
-          "type": "enum('admin','staff','member')",
+          "type": "enum('admin','staff','user','guest')",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'member'"
+          "default": "'user'"
         },
         "banned": {
           "name": "banned",
@@ -889,14 +892,17 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(now())"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "onUpdate": true,
+          "default": "(now())"
         }
       },
       "indexes": {},

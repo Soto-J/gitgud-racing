@@ -107,12 +107,6 @@ export async function getMembersWithProfiles(filters: MemberSearchFilters): Prom
     .limit(pageSize)
     .offset((page - 1) * pageSize);
 
-  if (!members?.length) {
-    throw new TRPCError({ 
-      code: "NOT_FOUND", 
-      message: "No members found" 
-    });
-  }
 
   // Get total count
   const [total] = await db

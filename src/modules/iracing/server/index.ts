@@ -23,11 +23,9 @@ export * from "./authentication";
 // API utilities
 export * from "./api";
 
-// Caching utilities
-export * from "./cache";
 
 // Data transformation utilities
 export * from "./transforms";
 
 // Procedure helper utilities
-export * from "./procedure-helpers";
+export * from "./procedures/procedure-helpers";

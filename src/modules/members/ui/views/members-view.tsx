@@ -1,7 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
@@ -11,16 +9,14 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { DataPagination } from "@/components/data-pagination";
 
-import { DataTable } from "@/modules/members/ui/components/data-table";
-import { columns } from "@/modules/members/ui/components/columns";
+import { MembersTable } from "../components/members-table";
 
 interface MembersViewProps {
-  userId: string;
+  loggedInUserId: string;
 }
 
-export const MembersView = ({ userId }: MembersViewProps) => {
+export const MembersView = ({ loggedInUserId }: MembersViewProps) => {
   const [filters, setFilters] = useMembersFilters();
-  const router = useRouter();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
@@ -29,18 +25,7 @@ export const MembersView = ({ userId }: MembersViewProps) => {
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl bg-white shadow-sm">
-        <DataTable
-          columns={columns}
-          data={data.members}
-          onRowClick={(original) =>
-            userId === original.id
-              ? router.push("/profile")
-              : router.push(`/members/${original.id}`)
-          }
-        />
-      </div>
-
+      <MembersTable members={data.members} loggedInUserId={loggedInUserId} />
       <DataPagination
         page={filters.page}
         totalPages={data.totalPages}

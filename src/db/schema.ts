@@ -13,7 +13,7 @@ import {
   unique,
 } from "drizzle-orm/mysql-core";
 
-export const roles = ["admin", "staff", "member"] as const;
+export const roles = ["admin", "staff", "user", "guest"] as const;
 
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 }).primaryKey(),
@@ -25,7 +25,7 @@ export const user = mysqlTable("user", {
   image: text("image"),
 
   // admin plugin attributes
-  role: mysqlEnum("role", roles).notNull().default("member"),
+  role: mysqlEnum("role", roles).notNull().default("user"),
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
@@ -103,11 +103,8 @@ export const profileTable = mysqlTable("profile", {
   team: varchar("team", { length: 20 }).default(""),
   bio: text("bio").default(""),
 
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .onUpdateNow()
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const iracingAuthTable = mysqlTable("iracing_auth", {
@@ -121,12 +118,9 @@ export const iracingAuthTable = mysqlTable("iracing_auth", {
 
   authCode: text("auth_code").notNull(),
 
-  expiresAt: timestamp("expires_at", { mode: "string" }).notNull(), // createdAt + 1 hour
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .onUpdateNow()
-    .notNull(),
+  expiresAt: timestamp("expires_at").notNull(), // createdAt + 1 hour
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
@@ -186,11 +180,8 @@ export const licenseTable = mysqlTable("license", {
     .default("R")
     .notNull(),
 
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .onUpdateNow()
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const seriesTable = mysqlTable("series", {
@@ -199,11 +190,8 @@ export const seriesTable = mysqlTable("series", {
   category: varchar("category", { length: 25 }).notNull(),
   seriesName: varchar("series_name", { length: 100 }).notNull(),
 
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .onUpdateNow()
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 export const userChartDataTable = mysqlTable(
@@ -222,16 +210,11 @@ export const userChartDataTable = mysqlTable(
     chartTypeId: int("chart_type_id").notNull(),
     chartType: varchar("chart_type", { length: 30 }).notNull(),
 
-    when: date("when", { mode: "string" }).notNull(),
+    when: date("when").notNull(),
     value: int("value").notNull(),
 
-    createdAt: timestamp("created_at", { mode: "string" })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { mode: "string" })
-      .defaultNow()
-      .onUpdateNow()
-      .notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
   (table) => ({
     // Prevent duplicate entries for same user, category, chart type, and date
@@ -273,9 +256,6 @@ export const seriesWeeklyStatsTable = mysqlTable("series_weekly_stats", {
     scale: 2,
   }).notNull(),
 
-  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { mode: "string" })
-    .defaultNow()
-    .onUpdateNow()
-    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });

@@ -55,3 +55,5 @@ export const seedData = [
     licenseClass: "R",
   },
 ];
+
+export const IRACING_CHART_TYPE_IRATING = 1;

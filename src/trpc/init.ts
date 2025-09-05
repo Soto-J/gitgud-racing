@@ -65,7 +65,7 @@ export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
 });
 
 export const manageProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  if (ctx.auth.user?.role === "member") {
+  if (ctx.auth.user?.role === "user" || ctx.auth.user?.role === "guest") {
     throw new TRPCError({
       code: "FORBIDDEN",
       message: "Admin access required",

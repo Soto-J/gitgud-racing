@@ -44,7 +44,7 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={<LoadingMembersView />}>
           <ErrorBoundary fallback={<ErrorMembersView />}>
-            <MembersView userId={session.user.id} />
+            <MembersView loggedInUserId={session.user.id} />
           </ErrorBoundary>
         </Suspense>
       </HydrationBoundary>

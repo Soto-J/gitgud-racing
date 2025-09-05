@@ -1,20 +1,86 @@
-import fs from "fs";
-import path from "path";
-
 import { desc, gt } from "drizzle-orm";
+import { DateTime } from "luxon";
 
 import { db } from "@/db";
 import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
-
-import { CACHE_DURATION_MS, IRACING_URL } from "./config";
-import { fetchData } from "./api";
-import { getOrRefreshAuthCode } from "./authentication";
 
 import {
   IRacingGetAllSeriesResponse,
   IRacingSeriesResultsResponse,
 } from "@/modules/iracing/types";
-import { DateTime } from "luxon";
+
+import { fetchData } from "@/modules/iracing/server";
+
+export const getCurrentSeasonInfo = () => {
+  const year = DateTime.now().year;
+
+  // iRacing seasons typically start on these dates (adjust based on actual schedule)
+  const seasonStarts = [
+    DateTime.local(year, 3, 12), // Season 1: ~March 12 (Week 0)
+    DateTime.local(year, 5, 11), // Season 2: ~June 11 (Week 0)
+    DateTime.local(year, 8, 10), // Season 3: ~September 10 (Week 0)
+    DateTime.local(year, 11, 10), // Season 4: ~December 10 (Week 0)
+  ];
+
+  // Find current season
+  let currentSeasonIndex = 0;
+  let seasonStartDate = seasonStarts[0];
+
+  if (DateTime.now() < seasonStarts[0]) {
+    // Before Season 1 of the current year: treat as last year's Season 4
+    currentSeasonIndex = 3;
+    seasonStartDate = DateTime.local(year - 1, 11, 10);
+  } else {
+    for (let i = seasonStarts.length - 1; i >= 0; i--) {
+      if (DateTime.now() >= seasonStarts[i]) {
+        currentSeasonIndex = i;
+        seasonStartDate = seasonStarts[i];
+        break;
+      }
+    }
+  }
+
+  // Calculate weeks since season start
+  const weeksSinceStart = Math.floor(
+    DateTime.now().diff(seasonStartDate).weeks,
+  );
+
+  const currentRaceWeek = (
+    Math.max(0, Math.min(weeksSinceStart, 12)) - 1
+  ).toString();
+
+  const currentQuarter = Math.ceil((DateTime.now().month + 1) / 3).toString();
+  const currentSeasonYear = DateTime.now().year.toString();
+
+  return {
+    currentRaceWeek,
+    currentQuarter,
+    currentYear: currentSeasonYear,
+  };
+};
+
+export const createSearchParams = (params: {
+  season_year: string;
+  season_quarter: string;
+  event_types?: string;
+  official_only?: string;
+  race_week_num?: string;
+  start_range_begin?: string;
+  start_range_end?: string;
+  cust_id?: string;
+  team_id?: string;
+  category_id?: string;
+}) => {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      searchParams.append(key, value);
+    }
+  });
+
+  return searchParams.toString() ? `?${searchParams.toString()}` : "";
+};
 
 /**
  * Caches all iRacing series data to the database
@@ -51,7 +117,7 @@ export const cacheSeries = async ({
       .where(
         gt(
           seriesTable.updatedAt,
-          DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
+          DateTime.now().minus({ weeks: 1 }).toJSDate(),
         ),
       );
 
@@ -125,8 +191,7 @@ export const cacheWeeklyResults = async ({
       .where(
         gt(
           seriesWeeklyStatsTable.updatedAt,
-          DateTime.now().minus({ millisecond: CACHE_DURATION_MS }).toISO(),
-          // (Date.now() - CACHE_DURATION_MS).toISOString(),
+          DateTime.now().minus({ weeks: 1 }).toJSDate(),
         ),
       );
 
@@ -214,85 +279,5 @@ export const cacheWeeklyResults = async ({
       return { success: false, error: error.message };
     }
     return { success: false, error: "Unknown error occurred" };
-  }
-};
-
-/**
- * Downloads and caches series logo images to local filesystem
- *
- * This function fetches series logos from iRacing and stores them in the
- * public/series-logos directory for local serving. This reduces load times
- * and dependency on iRacing's image servers.
- *
- * @returns {Promise<void>} Completes when all images are processed
- *
- * @throws Will log errors but not throw to allow partial success
- *
- * @example
- * ```typescript
- * await cacheSeriesImages();
- * // Check public/series-logos directory for downloaded images
- * ```
- */
-export const cacheSeriesImages = async (): Promise<void> => {
-  const allSeries = await db.select().from(seriesTable);
-
-  if (!allSeries || allSeries.length === 0) {
-    console.error("No series found.");
-    return;
-  }
-
-  // Create directory if it doesn't exist
-  const logoDir = path.join(process.cwd(), "public", "series-logos");
-  if (!fs.existsSync(logoDir)) {
-    fs.mkdirSync(logoDir, { recursive: true });
-  }
-
-  const authCode = await getOrRefreshAuthCode();
-
-  try {
-    const promiseArr = allSeries.map(async (series) => {
-      const imageUrl = `${IRACING_URL}/data/series/${series.seriesId}/logo`;
-
-      const response = await fetch(imageUrl, {
-        headers: {
-          Cookie: `authtoken_members=${authCode}`,
-        },
-      });
-
-      if (!response.ok) {
-        console.log("Response", response);
-        throw new Error(
-          `Failed to fetch image for series ${series.seriesName}, seriesId: ${series.seriesId}`,
-        );
-      }
-
-      return {
-        seriesId: series.seriesId,
-        seriesName: series.seriesName,
-        buffer: await response.arrayBuffer(),
-      };
-    });
-
-    const results = await Promise.allSettled(promiseArr);
-
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        const { seriesId, seriesName, buffer } = result.value;
-
-        const filename = `${seriesName}.png`;
-        const filepath = path.join(logoDir, filename);
-
-        try {
-          fs.writeFileSync(filepath, Buffer.from(buffer));
-        } catch (writeError) {
-          console.error(`Failed to write ${filename}:`, writeError);
-        }
-      }
-    });
-
-    console.log(`Finished caching series images. Check ${logoDir}`);
-  } catch (error) {
-    console.error(error);
   }
 };

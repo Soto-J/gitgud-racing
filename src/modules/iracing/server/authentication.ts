@@ -61,30 +61,15 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
   const iracingAuthInfo = await db
     .select()
     .from(iracingAuthTable)
-    .where(
-      and(
-        gt(
-          iracingAuthTable.updatedAt, // updatedAt > now - 1h
-          DateTime.utc().minus({ hour: 1 }).toFormat("yyyy-MM-dd HH:mm:ss"), // Resets hourly
-        ),
-        gt(
-          iracingAuthTable.expiresAt,
-          DateTime.utc().toFormat("yyyy-MM-dd HH:mm:ss"),
-        ), // expiresAt > now
-      ),
-    )
+    .where(gt(iracingAuthTable.expiresAt, DateTime.utc().toJSDate()))
     .then((value) => value[0]);
 
-  if (iracingAuthInfo?.expiresAt) {
-    const timeLeft = DateTime.fromFormat(
-      iracingAuthInfo.expiresAt,
-      "yyyy-MM-dd HH:mm:ss",
-      { zone: "utc" },
-    ).diffNow();
+  const timeLeft = DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow();
 
+  if (timeLeft.minutes > 0) {
     console.log(
       `Using cached iRacing auth (expires in ${Math.round(
-        timeLeft.as("minutes"),
+        timeLeft.minutes,
       )} minutes)`,
     );
 
@@ -182,17 +167,12 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
         .values({
           userId: env.MY_USER_ID,
           authCode,
-          expiresAt: DateTime.utc()
-            .plus({ hours: 1 })
-            .toFormat("yyyy-MM-dd HH:mm:ss"),
+          expiresAt: DateTime.utc().plus({ hours: 1 }).toJSDate(),
         })
         .onDuplicateKeyUpdate({
           set: {
             authCode: authCode,
-            expiresAt: DateTime.utc()
-              .plus({ hours: 1 })
-              .toFormat("yyyy-MM-dd HH:mm:ss"),
-            updatedAt: DateTime.utc().toFormat("yyyy-MM-dd HH:mm:ss"),
+            expiresAt: DateTime.utc().plus({ hours: 1 }).toJSDate(),
           },
         });
 
