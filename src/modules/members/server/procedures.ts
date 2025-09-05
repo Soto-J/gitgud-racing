@@ -19,7 +19,7 @@ import {
 /**
  * Fetches a single member with their profile information
  */
-const getMemberProcedure = protectedProcedure
+const getOneProcedure = protectedProcedure
   .input(GetMemberInputSchema)
   .query(async ({ input }) => {
     return await getMemberWithProfile(input.id);
@@ -29,44 +29,20 @@ const getMemberProcedure = protectedProcedure
  * Fetches multiple members with pagination and search functionality
  * Includes statistics for total members and active members
  */
-const getMembersProcedure = protectedProcedure
+const getManyProcedure = protectedProcedure
   .input(GetMembersInputSchema)
   .query(async ({ input }) => {
     const { memberId, page, pageSize, search } = input;
 
-    // Validate search parameters
-    validateMemberSearchFilters({
+    return await getMembersWithProfiles({
       memberId: memberId || undefined,
       search: search || undefined,
       page,
       pageSize,
     });
-
-    try {
-      return await getMembersWithProfiles({
-        memberId: memberId || undefined,
-        search: search || undefined,
-        page,
-        pageSize,
-      });
-    } catch (error) {
-      if (error instanceof TRPCError) {
-        throw error;
-      }
-
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch members",
-      });
-    }
   });
 
-// =============================================================================
-// ROUTER EXPORT
-// =============================================================================
-
 export const membersRouter = createTRPCRouter({
-  // Member query procedures
-  getOne: getMemberProcedure,
-  getMany: getMembersProcedure,
+  getOne: getOneProcedure,
+  getMany: getManyProcedure,
 });

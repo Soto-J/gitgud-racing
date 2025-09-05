@@ -58,7 +58,7 @@ const updateUserProcedure = manageProcedure
   .mutation(async ({ ctx, input }) => {
     const currentUser = {
       id: ctx.auth.user.id,
-      role: ctx.auth.user.role as "admin" | "staff" | "member",
+      role: ctx.auth.user.role as "admin" | "staff" | "user" | "guest",
     };
 
     // Validate permissions before making any changes
@@ -100,7 +100,7 @@ const deleteUserProcedure = manageProcedure
   .mutation(async ({ ctx, input }) => {
     const currentUser = {
       id: ctx.auth.user.id,
-      role: ctx.auth.user.role as "admin" | "staff" | "member",
+      role: ctx.auth.user.role as "admin" | "staff" | "user" | "guest",
     };
 
     // Validate permissions and business rules

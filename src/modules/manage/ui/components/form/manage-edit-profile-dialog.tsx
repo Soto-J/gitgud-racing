@@ -55,7 +55,7 @@ export const ManageEditProfileDialog = ({
     defaultValues: {
       team: initialValues.team || "",
       isActive: initialValues.isActive,
-      role: initialValues.role as "admin" | "staff" | "member",
+      role: initialValues.role as "admin" | "staff" | "user" | "guest",
     },
   });
   const trpc = useTRPC();
@@ -266,12 +266,24 @@ export const ManageEditProfileDialog = ({
                               </SelectItem>
 
                               <SelectItem
-                                value="member"
+                                value="user"
                                 className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                               >
                                 <div className="flex w-full items-center justify-between gap-x-2">
-                                  <span className="font-medium">Member</span>
+                                  <span className="font-medium">User</span>
                                   <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                    Standard Access
+                                  </span>
+                                </div>
+                              </SelectItem>
+
+                              <SelectItem
+                                value="guest"
+                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                              >
+                                <div className="flex w-full items-center justify-between gap-x-2">
+                                  <span className="font-medium">Guest</span>
+                                  <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-600 dark:bg-green-900/30 dark:text-green-400">
                                     Minimum Access
                                   </span>
                                 </div>

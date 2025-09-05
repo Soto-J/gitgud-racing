@@ -23,7 +23,7 @@ export type UserWithProfile = {
 
 export type AuthorizedUser = {
   id: string;
-  role: "admin" | "staff" | "member";
+  role: "admin" | "staff" | "user" | "guest";
 };
 
 // =============================================================================
@@ -258,7 +258,7 @@ export async function updateUserProfile(
  */
 export async function updateUserRole(
   userId: string,
-  role: "admin" | "staff" | "member",
+  role: "admin" | "staff" | "user" | "guest",
 ): Promise<void> {
   const [result] = await db
     .update(user)

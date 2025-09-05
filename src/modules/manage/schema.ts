@@ -14,7 +14,7 @@ import {
 export const UpdateUserProfileInputSchema = z.object({
   team: z.string(),
   isActive: z.boolean(),
-  role: z.enum(["admin", "staff", "member"]),
+  role: z.enum(["admin", "staff", "user", "guest"]),
 });
 
 export const UpdateUserInputSchema = UpdateUserProfileInputSchema.extend({
