@@ -17,8 +17,8 @@ export type ProfileWithUserAndLicenses = {
   team: string | null;
   bio: string | null;
   isActive: boolean;
-  createdAt: string | null;
-  updatedAt: string | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
   memberName: string;
   // License fields (nullable if no licenses exist)
   ovalIRating?: number | null;
