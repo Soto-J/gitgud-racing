@@ -1,24 +1,12 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 
-import { DateTime } from "luxon";
-
 import { initTRPC, TRPCError } from "@trpc/server";
-
-import { eq } from "drizzle-orm";
+import superjson from "superjson";
 
 import * as helper from "@/modules/iracing/server";
 
-import { db } from "@/db";
-import { licenseTable, profileTable } from "@/db/schema";
-
 import { auth } from "@/lib/auth";
-
-import {
-  IRacingMemberData,
-  IRacingLicense,
-  TransformLicenseData,
-} from "@/modules/iracing/types";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -35,7 +23,7 @@ const t = initTRPC.create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
-  // transformer: superjson,
+  transformer: superjson,
 });
 
 // Base router and procedure helpers
