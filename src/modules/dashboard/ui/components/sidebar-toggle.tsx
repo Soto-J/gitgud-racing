@@ -1,62 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { PanelLeftCloseIcon, PanelLeftIcon, SearchIcon } from "lucide-react";
-
-import { DashboardCommand } from "@/modules/dashboard/ui/components/dashboard-command";
-
-import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
 export const SidebarToggle = () => {
-  const [commandOpen, setCommandOpen] = useState(false);
-
-  const { toggleSidebar, state, isMobile } = useSidebar();
-
-  // useEffect(() => {
-  //   const down = (e: KeyboardEvent) => {
-  //     if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-  //       e.preventDefault();
-
-  //       setCommandOpen((open) => !open);
-  //     }
-  //   };
-
-  //   document.addEventListener("keydown", down);
-
-  //   return () => document.removeEventListener("keydown", down);
-  // }, []);
-
-  const PanelIcon =
-    state === "collapsed" || isMobile ? PanelLeftIcon : PanelLeftCloseIcon;
+  const { state } = useSidebar();
 
   return (
-    <>
-      <DashboardCommand open={commandOpen} setOpen={setCommandOpen} />
+    <header className="from-background via-background/95 to-background/90 border-border/50 relative flex items-center gap-x-4 border-b bg-gradient-to-r px-4 py-3 shadow-sm shadow-black/5 backdrop-blur-md dark:shadow-white/5">
+      {/* Subtle racing accent line */}
+      <div className="via-sidebar-primary/30 absolute right-0 bottom-0 left-0 h-px bg-gradient-to-r from-transparent to-transparent" />
 
-      <nav className="bg-background flex items-center gap-x-2 border-b px-4 py-3">
-        <Button
-          variant="outline"
-          onClick={() => toggleSidebar()}
-          className="size-9"
-        >
-          <PanelIcon className="size-4" />
-        </Button>
-
-        {/* <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCommandOpen((open) => !open)}
-          className="text-muted-foreground hover:text-muted-foreground flex h-9 w-[240px] justify-start font-normal"
-        >
-          <SearchIcon />
-          <p>Search</p>
-
-          <kbd className="bg-muted text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[12px] font-medium select-none">
-            <span className="text-[8px]">&#8984;</span>K
-          </kbd>
-        </Button> */}
-      </nav>
-    </>
+      <SidebarTrigger
+        variant="outline"
+        className="border-sidebar-border/70 hover:border-sidebar-primary/50 hover:bg-sidebar-accent/10 hover:shadow-sidebar-primary/10 focus-visible:border-sidebar-primary focus-visible:ring-sidebar-primary/20 size-9 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+        aria-expanded={state === "expanded"}
+        aria-controls="main-sidebar"
+        aria-label={`${state === "collapsed" ? "Expand" : "Collapse"} sidebar navigation`}
+      />
+    </header>
   );
 };

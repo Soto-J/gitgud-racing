@@ -9,7 +9,7 @@ import {
   IRacingSeriesResultsResponse,
 } from "@/modules/iracing/types";
 
-import { fetchData } from "@/modules/iracing/server";
+import { fetchData } from "@/modules/iracing/server/api";
 
 export const getCurrentSeasonInfo = () => {
   const year = DateTime.now().year;
