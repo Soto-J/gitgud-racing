@@ -3,11 +3,12 @@ import { getUserProcedure } from "./get-user";
 import { getUserRecentRacesProcedure } from "./get-user-recent-races";
 import { getUserSummaryProcedure } from "./get-user-summary";
 import { userChartDataProcedure } from "./user-chart-data";
-import { getAllSeriesProcedure } from "./get-all-series";
-import { weeklySeriesResultsProcedure } from "./weekly-series-results";
-import { getTotalSeriesCountProcedure } from "./get-total-series-count";
+import {
+  getAllSeriesProcedure,
+  getTotalSeriesCountProcedure,
+} from "./get-all-series";
+import { weeklySeriesResultsProcedure } from "./weekly-series-results/weekly-series-results";
 import { getDocumentationProcedure } from "./get-documentation";
-
 
 // =============================================================================
 // ROUTER EXPORT

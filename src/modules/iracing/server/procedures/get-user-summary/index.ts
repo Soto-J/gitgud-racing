@@ -5,8 +5,8 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { profileTable } from "@/db/schema";
 
-import { fetchData } from "@/modules/iracing/server";
 import { IRacingUserSummaryResponse } from "@/modules/iracing/types";
+import { fetchData } from "@/modules/iracing/server/api";
 
 /**
  * Fetches user summary statistics from iRacing

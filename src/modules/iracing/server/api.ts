@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
-import { IRACING_URL, API_TIMEOUT_MS } from "./config";
+import { IRACING_URL } from "@/constants";
+import { API_TIMEOUT_MS } from "@/modules/iracing/constants";
 
 /**
  * Error mapping configuration for iRacing API responses

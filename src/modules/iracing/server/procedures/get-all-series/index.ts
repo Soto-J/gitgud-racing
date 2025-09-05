@@ -1,15 +1,28 @@
-import { count, or, like } from "drizzle-orm";
+import { count, desc, like, or } from "drizzle-orm";
 
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { seriesWeeklyStatsTable } from "@/db/schema";
+import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
 
-import { IRacingWeeklySeriesResultsInputSchema } from "@/modules/iracing/schema";
+import { IRacingWeeklySeriesResultsInputSchema } from "./schema";
 
 /**
- * Gets total page count for series results pagination
+ * Fetches all available racing series
  */
+export const getAllSeriesProcedure = iracingProcedure.query(async () => {
+  const allSeries = await db
+    .select()
+    .from(seriesTable)
+    .orderBy(desc(seriesTable.seriesName));
+
+  if (!allSeries?.length) {
+    return [];
+  }
+
+  return allSeries;
+});
+
 export const getTotalSeriesCountProcedure = iracingProcedure
   .input(
     IRacingWeeklySeriesResultsInputSchema.pick({

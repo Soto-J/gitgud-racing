@@ -1,18 +1,17 @@
 import CryptoJS from "crypto-js";
-
 import { DateTime } from "luxon";
 
 import { TRPCError } from "@trpc/server";
 
-import { gt, and, lt } from "drizzle-orm";
+import { gt } from "drizzle-orm";
 
 import { db } from "@/db";
-
 import { iracingAuthTable } from "@/db/schema";
 
-import { IRACING_URL, API_TIMEOUT_MS } from "./config";
-
 import env from "@/env";
+
+import { IRACING_URL } from "@/constants";
+import { API_TIMEOUT_MS } from "@/modules/iracing/constants";
 
 /**
  * Rate limiting for iRacing authentication requests
@@ -52,7 +51,6 @@ const sleep = (ms: number): Promise<void> =>
  * ```
  */
 export const getOrRefreshAuthCode = async (): Promise<string> => {
-  // If there's already an auth request in progress, wait for it
   if (authPromise) {
     console.log("Auth request already in progress, waiting...");
     return authPromise;

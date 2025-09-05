@@ -1,8 +1,7 @@
 import { iracingProcedure } from "@/trpc/init";
 
 import { IRacingGetUserRecentRacesInputSchema } from "@/modules/iracing/schema";
-
-import { fetchData } from "@/modules/iracing/server";
+import { fetchData } from "@/modules/iracing/server/api";
 
 /**
  * Fetches recent race data for a user from iRacing

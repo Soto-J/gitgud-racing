@@ -1,3 +1,6 @@
+/** Timeout duration for API requests in milliseconds */
+export const API_TIMEOUT_MS = 10000; // 10 seconds
+
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PAGE_SIZE = 5;
 export const MIN_PAGE_SIZE = 1;

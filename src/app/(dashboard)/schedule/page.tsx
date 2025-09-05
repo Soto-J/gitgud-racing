@@ -5,7 +5,6 @@ import { DateTime } from "luxon";
 
 import { ScheduleView } from "@/modules/schedule/ui/views/schedule-view";
 import { auth } from "@/lib/auth";
-import { CACHE_DURATION_MS } from "@/modules/iracing/server/config";
 
 const SchedulePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });

@@ -4,9 +4,8 @@ import { headers } from "next/headers";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
-import * as helper from "@/modules/iracing/server";
-
 import { auth } from "@/lib/auth";
+import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -32,7 +31,7 @@ export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 
 export const cronJobProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const iracingAuthCode = await helper.getOrRefreshAuthCode();
+  const iracingAuthCode = await getOrRefreshAuthCode();
 
   return next({
     ctx: {
@@ -65,7 +64,7 @@ export const manageProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
-    const iracingAuthCode = await helper.getOrRefreshAuthCode();
+    const iracingAuthCode = await getOrRefreshAuthCode();
 
     return next({
       ctx: {

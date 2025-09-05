@@ -1,6 +1,5 @@
 import { iracingProcedure } from "@/trpc/init";
-
-import { fetchData } from "@/modules/iracing/server";
+import { fetchData } from "../../api";
 
 /**
  * Utility procedure for fetching iRacing API documentation
