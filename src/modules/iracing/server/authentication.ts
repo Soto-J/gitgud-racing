@@ -64,13 +64,13 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     .where(gt(iracingAuthTable.expiresAt, DateTime.utc().toJSDate()))
     .then((value) => value[0]);
 
-  const timeLeft = DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow();
+  const timeLeft = iracingAuthInfo
+    ? DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow().minutes
+    : 0;
 
-  if (timeLeft.minutes > 0) {
+  if (timeLeft > 0) {
     console.log(
-      `Using cached iRacing auth (expires in ${Math.round(
-        timeLeft.minutes,
-      )} minutes)`,
+      `Using cached iRacing auth (expires in ${Math.round(timeLeft)} minutes)`,
     );
 
     return iracingAuthInfo.authCode;

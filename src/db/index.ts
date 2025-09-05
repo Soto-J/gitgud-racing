@@ -18,7 +18,7 @@ if (!globalThis.__pool) {
   globalThis.__pool = mysql.createPool({
     uri: DATABASE_URL,
     waitForConnections: true,
-    connectionLimit: 10,
+    connectionLimit: 50,
     maxIdle: 10,
     idleTimeout: 60000,
     queueLimit: 0,
