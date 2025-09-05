@@ -38,7 +38,6 @@ export const MembersListHeader = () => {
         title="Git Gud Fam"
         subTitle1={`${data.total} Members`}
         subTitle2={`${data.totalActive} Active`}
-        iconColor="text-ferrari-yellow"
         icon={Car}
       />
 
