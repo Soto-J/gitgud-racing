@@ -7,8 +7,7 @@ import { useConfirm } from "@/hooks/use-confirm";
 
 import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
 
-import { DataTable } from "@/modules/manage/ui/components/table/data-table";
-import { columns } from "@/modules/manage/ui/components/table/columns";
+import { ManageMembersTable } from "@/modules/manage/ui/components/manage-members-table";
 
 import { DataPagination } from "@/components/data-pagination";
 
@@ -34,9 +33,8 @@ export const ManagePageView = () => {
       <ConfirmationDialog />
 
       <div className="flex h-svh flex-col items-center justify-center">
-        <DataTable
-          data={data.members}
-          columns={columns}
+        <ManageMembersTable
+          members={data.members}
           filters={filters}
           confirmDelete={confirmDelete}
         />
