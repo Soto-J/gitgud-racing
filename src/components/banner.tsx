@@ -100,7 +100,6 @@ export const Banner = ({
             <div
               className={cn(
                 "hidden items-center justify-center rounded-full bg-yellow-400 shadow-xl ring-4 ring-yellow-300/40 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-yellow-300 hover:shadow-2xl sm:flex",
-                sizeStyles.iconContainer,
               )}
             >
               <DisplayIcon
