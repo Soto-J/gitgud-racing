@@ -5,6 +5,7 @@ interface DataPaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
 }
+
 export const DataPagination = ({
   page,
   totalPages,

@@ -6,7 +6,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
-import { ProfileCard } from "@/components/profile-card/profile-card";
+import { DriverProfile } from "@/components/profile-card/driver-profile";
 import { Banner } from "@/components/banner";
 
 interface MemberIdViewProps {
@@ -22,7 +22,6 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
     ],
   });
 
- 
   return (
     <>
       <Banner
@@ -31,7 +30,7 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
         subTitle1="Professional Driver"
         subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
       />
-      <ProfileCard member={userPayload.data} chartData={chartPayload.data} />
+      <DriverProfile member={userPayload.data} chartData={chartPayload.data} />
     </>
   );
 };

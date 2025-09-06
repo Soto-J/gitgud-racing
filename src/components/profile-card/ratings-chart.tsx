@@ -17,7 +17,7 @@ import {
 const chartConfig = {
   value: {
     label: "value",
-    color: "var(--chart-1)",
+    color: "#DC143C", // Ferrari red
   },
 } satisfies ChartConfig;
 
@@ -38,7 +38,7 @@ const parseDateTime = (dateValue: string | Date): DateTime => {
   }
 };
 
-export const ProfileChart = ({ data, title }: ProfileChartProps) => {
+export const RatingsChart = ({ data, title }: ProfileChartProps) => {
   if (data.length === 0) {
     return <div>No chart data available</div>;
   }
@@ -53,40 +53,38 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
     "MMM dd, yyyy",
   );
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
-      {/* Decorative background elements */}
-      <div className="absolute top-0 right-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 opacity-30" />
-      <div className="absolute bottom-0 left-0 h-24 w-24 -translate-x-6 translate-y-6 rounded-full bg-gradient-to-br from-green-100 to-blue-100 opacity-20" />
+    <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 shadow-2xl">
+      {/* Subtle racing-themed decorative elements */}
+      <div className="absolute top-0 right-0 h-24 w-24 translate-x-6 -translate-y-6 rounded-full bg-gradient-to-br from-red-600/10 to-red-400/5 opacity-60" />
+      <div className="absolute bottom-0 left-0 h-16 w-16 -translate-x-4 translate-y-4 rounded-full bg-gradient-to-br from-red-500/5 to-red-600/10 opacity-40" />
 
       <div className="relative">
-        {/* Header with gradient accent */}
-        <div className="border-b border-gray-100 bg-gradient-to-r from-white to-gray-50 p-6">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
-              <TrendingUp className="h-6 w-6 text-white" />
+        {/* Compact header with Ferrari accent */}
+        <div className="border-b border-gray-700/50 bg-gradient-to-r from-slate-900/90 to-slate-800/90 p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-red-700 shadow-lg">
+              <TrendingUp className="h-5 w-5 text-white" />
             </div>
 
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-
-              <div className="mt-1 space-y-1 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex h-2 w-2 rounded-full bg-green-400"></span>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-white">{title}</h3>
+              <div className="flex items-center gap-4 text-xs text-gray-400">
+                <div className="flex items-center gap-1.5">
+                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-400"></span>
                   {latestEntry.chartType}
                 </div>
                 <div>
-                  Last Entry: {formattedDate} • {sortedByDate.length} data
-                  points
+                  {formattedDate} • {sortedByDate.length} points
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-4">
+        <div className="p-3">
           <ChartContainer
             config={chartConfig}
-            className="h-64 w-full rounded-xl"
+            className="h-56 w-full rounded-lg [&_.recharts-cartesian-axis-tick_text]:!fill-gray-300"
           >
             <AreaChart
               accessibilityLayer
@@ -96,28 +94,19 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
             >
               <defs>
                 <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="var(--color-value)"
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="var(--color-value)"
-                    stopOpacity={0.05}
-                  />
+                  <stop offset="5%" stopColor="#DC143C" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#DC143C" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
 
               <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#f0f0f0"
+                strokeDasharray="2 4"
+                stroke="#4B5563"
                 vertical={false}
               />
               <XAxis
                 dataKey="when"
                 tickMargin={16}
-                className="text-xs"
                 interval="preserveStartEnd"
                 minTickGap={60}
                 tickFormatter={(value) => {
@@ -145,29 +134,28 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                   }
                 }}
                 tick={{
-                  fill: "#6b7280",
-                  fontSize: 11,
-                  fontWeight: 500,
+                  fill: "#FFFFFF",
+                  fontSize: 12,
+                  fontWeight: 600,
                   dy: 4,
                 }}
                 tickLine={{
-                  stroke: "#e5e7eb",
+                  stroke: "#4B5563",
                   strokeWidth: 1,
                 }}
                 axisLine={{
-                  stroke: "#f3f4f6",
+                  stroke: "#374151",
                   strokeWidth: 1,
                 }}
               />
               <YAxis
                 tickLine={false}
                 axisLine={false}
-                tickMargin={12}
-                className="text-xs"
-                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tickMargin={8}
+                tick={{ fill: "#FFFFFF", fontSize: 12, fontWeight: 600 }}
               />
               <ChartTooltip
-                cursor={{ stroke: "var(--color-value)", strokeWidth: 2 }}
+                cursor={{ stroke: "#DC143C", strokeWidth: 2 }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     const date = parseDateTime(label);
@@ -177,14 +165,13 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
                       : String(label);
 
                     return (
-                      <div className="rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
-                        <p className="text-sm font-medium text-gray-900">
+                      <div className="rounded-lg border border-gray-600 bg-slate-800 p-2.5 shadow-xl backdrop-blur">
+                        <p className="text-xs font-medium text-white">
                           {tooltipFormattedDate}
                         </p>
-
-                        <p className="text-sm text-gray-600">
+                        <p className="text-xs text-gray-300">
                           iRating:{" "}
-                          <span className="font-semibold">
+                          <span className="font-semibold text-red-400">
                             {payload[0].value}
                           </span>
                         </p>
@@ -198,35 +185,35 @@ export const ProfileChart = ({ data, title }: ProfileChartProps) => {
               <Area
                 dataKey="value"
                 type="monotone"
-                stroke="var(--color-value)"
-                strokeWidth={3}
+                stroke="#DC143C"
+                strokeWidth={2}
                 fill="url(#colorGradient)"
                 dot={{
-                  r: 4,
-                  stroke: "var(--color-value)",
+                  r: 3,
+                  stroke: "#DC143C",
                   strokeWidth: 2,
-                  fill: "white",
+                  fill: "#1e293b",
                 }}
                 activeDot={{
-                  r: 6,
-                  stroke: "var(--color-value)",
-                  strokeWidth: 3,
+                  r: 5,
+                  stroke: "#DC143C",
+                  strokeWidth: 2,
+                  fill: "#1e293b",
                 }}
               />
             </AreaChart>
           </ChartContainer>
         </div>
 
-        {/* Footer with stats */}
-        <div className="border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white px-6 py-4">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="h-2 w-2 rounded-full bg-gradient-to-r from-green-400 to-green-500"></div>
+        <div className="border-t border-gray-700/50 bg-gradient-to-r from-slate-800/90 to-slate-900/90 px-4 py-3">
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2 text-gray-400">
+              <div className="h-1.5 w-1.5 rounded-full bg-red-400" />
+
               <span>Latest: {formattedDate}</span>
             </div>
-            <div className="text-gray-500">
-              {sortedByDate.length} total entries
-            </div>
+
+            <div className="text-gray-500">{sortedByDate.length} entries</div>
           </div>
         </div>
       </div>
