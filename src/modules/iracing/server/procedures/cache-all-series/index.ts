@@ -43,8 +43,10 @@ export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
   }));
 
   try {
-    await db.delete(seriesTable);
-    await db.insert(seriesTable).values(insertValues);
+    await db.transaction(async () => {
+      await db.delete(seriesTable);
+      await db.insert(seriesTable).values(insertValues);
+    });
     return { success: true, message: "Successfully cached series..." };
   } catch (error) {
     if (error instanceof Error) {
