@@ -16,7 +16,7 @@ interface ProfileCardProps {
 
 export const DriverProfile = ({ member, chartData }: ProfileCardProps) => {
   const disciplines =
-    member?.licenses?.disciplines.length > 0
+    member?.licenses?.disciplines?.length > 0
       ? member.licenses.disciplines
       : seedData;
 
