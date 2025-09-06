@@ -9,8 +9,9 @@ import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
-import { ProfileCard } from "@/components/profile-card/profile-card";
 import { Banner } from "@/components/banner";
+
+import { DriverProfile } from "@/components/profile-card/driver-profile";
 
 interface ProfileViewProps {
   userId: string;
@@ -42,7 +43,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
         onEdit={() => setOpenDialog(true)}
       />
 
-      <ProfileCard member={userPayload.data} chartData={chartPayload.data} />
+      <DriverProfile member={userPayload.data} chartData={chartPayload.data} />
     </>
   );
 };

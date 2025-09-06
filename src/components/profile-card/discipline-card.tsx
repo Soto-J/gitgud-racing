@@ -41,35 +41,30 @@ export const DisciplineCard = ({
   const logoSrc = getCategoryLogo(title);
 
   return (
-    <div className="group relative cursor-pointer overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-5 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:from-slate-700 hover:via-slate-800 hover:to-slate-900 hover:shadow-2xl">
-      {/* Subtle glow effect */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <div className="group relative cursor-pointer overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-4 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:from-slate-700 hover:via-slate-800 hover:to-slate-900 hover:shadow-2xl">
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-red-600/5 to-red-400/2 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-      {/* Content */}
       <div className="relative z-10">
-        {/* Header */}
-        <div className="mb-5 flex items-center space-x-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-sm">
+        <div className="mb-4 flex items-center space-x-2.5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-red-600/20 bg-gradient-to-br from-red-600/15 to-red-400/10 backdrop-blur-sm">
             <Image
               src={logoSrc}
               alt={`${title} racing category logo`}
-              width={26}
-              height={26}
-              className="h-9 w-9 object-contain"
+              width={22}
+              height={22}
+              className="h-7 w-7 object-contain"
             />
           </div>
 
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-start text-base font-bold text-white">
+            <h3 className="truncate text-start text-sm font-bold text-white">
               {title}
             </h3>
-            <div className="mt-1 h-0.5 w-8 rounded-full bg-gradient-to-r from-blue-400 to-purple-500" />
+            <div className="mt-0.5 h-0.5 w-6 rounded-full bg-gradient-to-r from-red-500 to-red-600" />
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-3">
-          {/* iRating */}
           <div className="text-center">
             <div className="mb-1 text-lg font-bold text-white">
               {iRating ? iRating.toLocaleString() : "—"}
@@ -89,7 +84,6 @@ export const DisciplineCard = ({
             </div>
           </div>
 
-          {/* License Class */}
           <div className="flex flex-col items-center">
             <div
               className={cn(
@@ -100,6 +94,7 @@ export const DisciplineCard = ({
             >
               {licenseClass}
             </div>
+
             <div className="mt-1.5 text-[10px] font-medium tracking-wider text-slate-400 uppercase">
               License
             </div>

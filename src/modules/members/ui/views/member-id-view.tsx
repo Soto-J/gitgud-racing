@@ -6,7 +6,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
-import { ProfileCard } from "@/components/profile-card/profile-card";
+import { ProfileCard } from "@/components/profile-card/driver-profile";
 import { Banner } from "@/components/banner";
 
 interface MemberIdViewProps {
@@ -22,7 +22,6 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
     ],
   });
 
- 
   return (
     <>
       <Banner
