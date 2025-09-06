@@ -5,8 +5,9 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { profileTable } from "@/db/schema";
 
-import { IRacingUserSummaryResponse } from "@/modules/iracing/types";
 import { fetchData } from "@/modules/iracing/server/api";
+
+import { IRacingUserSummaryResponseSchema } from "@/modules/iracing/server/procedures/get-user-summary/schema";
 
 /**
  * Fetches user summary statistics from iRacing
@@ -23,10 +24,12 @@ export const getUserSummaryProcedure = iracingProcedure.query(
       return null;
     }
 
-    const userSummary = (await fetchData({
+    const res = await fetchData({
       query: `/data/stats/member_summary?cust_id=${userProfile.custId}`,
       authCode: ctx.iracingAuthCode,
-    })) as IRacingUserSummaryResponse;
+    });
+
+    const userSummary = IRacingUserSummaryResponseSchema.parse(res);
 
     return userSummary || null;
   },

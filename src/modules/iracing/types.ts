@@ -13,8 +13,6 @@ import {
 // TRPC ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type IRacingUserData =
-  inferRouterOutputs<AppRouter>["iracing"]["getUser"];
 export type IRacingWeeklySeriesResults =
   inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];
 export type IRacingChartData =
@@ -81,16 +79,6 @@ export type IRacingMemberData = {
   member_since: string;
 };
 
-export type IRacingUserSummaryResponse = {
-  this_year: {
-    num_official_sessions: number;
-    num_league_sessions: number;
-    num_official_wins: number;
-    num_league_wins: number;
-  };
-  cust_id: number;
-};
-
 export type IRacingSeriesResultsResponse = {
   session_id: number;
   subsession_id: number;
@@ -125,30 +113,6 @@ export type IRacingSeriesResultsResponse = {
   series_short_name: string;
   race_week_num: number;
   event_strength_of_field: number;
-};
-
-export type IRacingGetAllSeriesResponse = {
-  allowed_licenses: {
-    group_name: string;
-    license_group: number;
-    max_license_level: number;
-    min_license_level: number;
-  }[];
-  category: string;
-  category_id: number;
-  eligible: boolean;
-  first_season: {
-    season_year: number;
-    season_quarter: number;
-  };
-  forum_url: string;
-  max_starters: number;
-  min_starters: number;
-  oval_caution_type: number;
-  road_caution_type: number;
-  series_id: number;
-  series_name: string;
-  series_short_name: string;
 };
 
 export type IRacingSessionResult = {
@@ -197,75 +161,30 @@ export type IRacingSessionResult = {
   winner_name: string;
 };
 
-export type IRacingSeasonResultsResponse = {
-  success: boolean;
-  season_id: number;
-  race_week_num: number;
-  event_type: number;
-  results_list: IRacingSessionResult[];
-};
-
-export type IRacingUserChartDataResponse = {
-  blackout: boolean;
-  category_id: number;
-  chart_type: number;
-  data: {
-    when: Date;
-    value: number;
-  }[];
-  success: boolean;
-  cust_id: number;
-};
-
 // =============================================================================
 // INPUT/PARAMETER TYPES
 // =============================================================================
-
-export type IRacingCacheWeeklyResultsInput = {
-  authCode: string;
-  params: {
-    series_id: string;
-    season_year: string;
-    season_quarter: string;
-    event_types: string;
-    official_only: boolean;
-    race_week_num: string;
-    start_range_begin: string;
-    start_range_end: string;
-    cust_id: string;
-    team_id: string;
-    category_id: string;
-    include_series: string;
-  };
-};
 
 // =============================================================================
 // LICENSE & DISCIPLINE TYPES
 // =============================================================================
 
-export type LicenseClass = "A" | "B" | "C" | "D" | "R";
+// export type LicenseClass = "A" | "B" | "C" | "D" | "R";
 
-export type LicenseDiscipline = {
-  category: "Oval" | "Sports" | "Formula" | "Dirt Oval" | "Dirt Road";
-  iRating: number | null;
-  safetyRating: string | null;
-  licenseClass: string;
-};
-
-export type TransformLicenseData = {
-  ovalIRating: number;
-  ovalSafetyRating: string;
-  ovalLicenseClass: LicenseClass;
-  sportsCarIRating: number;
-  sportsCarSafetyRating: string;
-  sportsCarLicenseClass: LicenseClass;
-  formulaCarIRating: number;
-  formulaCarSafetyRating: string;
-  formulaCarLicenseClass: LicenseClass;
-  dirtOvalIRating: number;
-  dirtOvalSafetyRating: string;
-  dirtOvalLicenseClass: LicenseClass;
-  dirtRoadIRating: number;
-  dirtRoadSafetyRating: string;
-  dirtRoadLicenseClass: LicenseClass;
-};
+// export type TransformLicenseData = {
+//   ovalIRating: number;
+//   ovalSafetyRating: string;
+//   ovalLicenseClass: LicenseClass;
+//   sportsCarIRating: number;
+//   sportsCarSafetyRating: string;
+//   sportsCarLicenseClass: LicenseClass;
+//   formulaCarIRating: number;
+//   formulaCarSafetyRating: string;
+//   formulaCarLicenseClass: LicenseClass;
+//   dirtOvalIRating: number;
+//   dirtOvalSafetyRating: string;
+//   dirtOvalLicenseClass: LicenseClass;
+//   dirtRoadIRating: number;
+//   dirtRoadSafetyRating: string;
+//   dirtRoadLicenseClass: LicenseClass;
+// };

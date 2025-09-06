@@ -5,7 +5,7 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
 
-import { IRacingWeeklySeriesResultsInputSchema } from "./schema";
+import { IRacingWeeklySeriesResultsInputSchema } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 /**
  * Fetches all available racing series
