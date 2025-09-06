@@ -13,7 +13,7 @@ import { ChartSearchFilter } from "./chart-search-filter";
 import { Button } from "@/components/ui/button";
 import { ChartPagination } from "./chart-pagination";
 
-export const HomeHeader = () => {
+export const SeriesStatsHeader = () => {
   const [filters, setFilters] = useChartFilter();
 
   const trpc = useTRPC();

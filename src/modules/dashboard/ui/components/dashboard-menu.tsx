@@ -36,6 +36,7 @@ import {
 
 const firstSection = [
   { icon: IoHomeOutline, label: "Home", href: "/" },
+  { icon: IoHomeOutline, label: "Series Stats", href: "/series-stats" },
   { icon: SlCalender, label: "Schedule", href: "/schedule" },
 ];
 

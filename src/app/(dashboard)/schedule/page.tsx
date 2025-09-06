@@ -3,8 +3,9 @@ import { headers } from "next/headers";
 
 import { DateTime } from "luxon";
 
-import { ScheduleView } from "@/modules/schedule/ui/views/schedule-view";
+import { SchedulePageView } from "@/modules/schedule/ui/views/schedule-page-view";
 import { auth } from "@/lib/auth";
+import { getQueryClient, trpc } from "@/trpc/server";
 
 const SchedulePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -32,7 +33,7 @@ const SchedulePage = async () => {
 
   console.log("new Date:", new Date());
   console.log("DateTime.now():", DateTime.now().toJSDate());
-  return <ScheduleView />;
+  return <SchedulePageView />;
 };
 
 export default SchedulePage;

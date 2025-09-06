@@ -17,6 +17,8 @@ import {
   mapIRacingLicensesToDb,
   syncUserLicenseData,
 } from "./helper";
+import { IRacingMemberDataResponseSchema } from "./schema";
+import z from "zod";
 
 /**
  * Fetches user data with license information, syncing from iRacing if needed
@@ -70,12 +72,14 @@ export const getUserProcedure = iracingProcedure
         ctx.iracingAuthCode,
       );
 
-      const iRacingUserData = (await fetchData({
+      const res = await fetchData({
         query: `/data/member/get?cust_ids=${userData.profile.iracingId}&include_licenses=true`,
         authCode: ctx.iracingAuthCode,
-      })) as IRacingMemberData;
+      });
 
-      const apiLicenses = iRacingUserData.members[0].licenses;
+      const data = IRacingMemberDataResponseSchema.parse(res);
+
+      const apiLicenses = data.members[0].licenses;
       const transformedData = mapIRacingLicensesToDb(apiLicenses);
 
       await db
