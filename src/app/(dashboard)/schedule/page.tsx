@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 
 import { DateTime } from "luxon";
 
-import { ScheduleView } from "@/modules/schedule/ui/views/schedule-view";
+import { SchedulePageView } from "@/modules/schedule/ui/views/schedule-page-view";
 import { auth } from "@/lib/auth";
 import { getQueryClient, trpc } from "@/trpc/server";
 
@@ -12,9 +12,6 @@ const SchedulePage = async () => {
 
   if (!session) redirect("/sign-in");
 
-  const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.iracing.getAllSeries.queryOptions());
-  
   const dt = DateTime.now();
   const resetDay = dt
     .set({
@@ -36,7 +33,7 @@ const SchedulePage = async () => {
 
   console.log("new Date:", new Date());
   console.log("DateTime.now():", DateTime.now().toJSDate());
-  return <ScheduleView />;
+  return <SchedulePageView />;
 };
 
 export default SchedulePage;

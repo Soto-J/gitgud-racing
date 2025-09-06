@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: "/Users/johnsoto/Documents/Projects/gitgud-racing",
+    root: "C:\\Users\\sotoj\\Documents\\Portfolio\\projects\\gitgud",
   },
 };
 

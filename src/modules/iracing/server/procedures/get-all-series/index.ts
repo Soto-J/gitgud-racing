@@ -6,13 +6,11 @@ import { db } from "@/db";
 import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
 
 import { IRacingWeeklySeriesResultsInputSchema } from "./schema";
-import { TRPCError } from "@trpc/server";
+
 /**
  * Fetches all available racing series
  */
 export const getAllSeriesProcedure = iracingProcedure.query(async () => {
-  throw new TRPCError({ code: "NOT_FOUND", message: "TESTINg" });
-
   const allSeries = await db
     .select()
     .from(seriesTable)

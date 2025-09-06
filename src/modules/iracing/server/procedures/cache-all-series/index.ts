@@ -1,3 +1,4 @@
+import z from "zod";
 import { DateTime } from "luxon";
 
 import { gt } from "drizzle-orm";
@@ -6,14 +7,13 @@ import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
 import { seriesTable } from "@/db/schema";
-import { fetchData } from "../../api";
-import { IRacingGetAllSeriesResponse } from "@/modules/iracing/types";
-import { TRPCError } from "@trpc/server";
+
+import { fetchData } from "@/modules/iracing/server/api";
+
+import { IRacingGetAllSeriesResponseSchema } from "./schema";
 
 export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
-  throw new TRPCError({code: "NOT_FOUND", message: "TESTINg"})
-  
-    const cachedSeries = await db
+  const cachedSeries = await db
     .select()
     .from(seriesTable)
     .where(
@@ -21,18 +21,20 @@ export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
     );
 
   if (cachedSeries.length > 0) {
-    return { success: true };
+    return { success: true, message: "Using cached series..." };
   }
 
-  console.log("Refreshing All Series");
-  const data = (await fetchData({
+  console.log("Refreshing All Series...");
+  const res = await fetchData({
     query: `/data/series/get`,
     authCode: ctx.iracingAuthCode,
-  })) as IRacingGetAllSeriesResponse[];
+  });
 
-  if (!data) {
-    throw new Error("Failed to get series");
+  if (!res) {
+    return { success: false, message: "Failed to fetch series..." };
   }
+
+  const data = z.array(IRacingGetAllSeriesResponseSchema).parse(res);
 
   const insertValues = data.map((item) => ({
     seriesId: item.series_id,
@@ -43,7 +45,15 @@ export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
   try {
     await db.delete(seriesTable);
     await db.insert(seriesTable).values(insertValues);
+    return { success: true, message: "Successfully cached series..." };
   } catch (error) {
-    console.error("Failed to update database with new series")
+    if (error instanceof Error) {
+      return { success: false, message: `Error: ${error.message}...` };
+    }
+
+    return {
+      success: false,
+      message: "Failed to update database with new series...",
+    };
   }
 });

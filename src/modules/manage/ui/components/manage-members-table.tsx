@@ -49,8 +49,8 @@ const StatusBadge = ({
       className={cn(
         "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
         isActive
-          ? "bg-green-500/10 text-green-400 border-green-400/20 border"
-          : "bg-red-500/10 text-red-400 border-red-400/20 border",
+          ? "border border-green-400/20 bg-green-500/10 text-green-400"
+          : "border border-red-400/20 bg-red-500/10 text-red-400",
       )}
     >
       {isActive ? "Active" : "Inactive"}
@@ -78,22 +78,22 @@ export const ManageMembersTable = ({
       <Card className="border-0 bg-black">
         <CardContent className="p-0">
           <Table className="bg-black text-white">
-            <TableCaption className="text-zinc-400 py-4">
+            <TableCaption className="py-4 text-zinc-400">
               Administrative management of GitGud Racing community members.
             </TableCaption>
 
             <TableHeader>
               <TableRow className="border-b border-zinc-800 hover:bg-zinc-900/50">
-                <TableHead className="text-yellow-100 font-semibold pl-6">
+                <TableHead className="pl-6 font-semibold text-yellow-100">
                   Member
                 </TableHead>
-                <TableHead className="text-yellow-100 font-semibold text-center">
+                <TableHead className="text-center font-semibold text-yellow-100">
                   Status
                 </TableHead>
-                <TableHead className="text-yellow-100 font-semibold text-center">
+                <TableHead className="text-center font-semibold text-yellow-100">
                   Role
                 </TableHead>
-                <TableHead className="text-yellow-100 font-semibold text-center pr-6">
+                <TableHead className="pr-6 text-center font-semibold text-yellow-100">
                   Actions
                 </TableHead>
               </TableRow>
@@ -114,21 +114,25 @@ export const ManageMembersTable = ({
                     >
                       <TableCell className="border-r border-zinc-800 p-4">
                         <div className="flex items-center gap-3">
-                          <Avatar className="border-zinc-700 h-8 w-8 border">
-                            <AvatarFallback className="bg-zinc-800 text-yellow-100 text-xs font-semibold">
+                          <Avatar className="h-8 w-8 border border-zinc-700">
+                            <AvatarFallback className="bg-zinc-800 text-xs font-semibold text-yellow-100">
                               {getInitials(member.name)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex items-center gap-2">
                             <div>
-                              <p className="text-yellow-100 font-medium">{member.name}</p>
-                              <p className="text-zinc-400 text-xs">
-                                {member.team ? `Team: ${member.team}` : "No team"}
+                              <p className="font-medium text-yellow-100">
+                                {member.name}
+                              </p>
+                              <p className="text-xs text-zinc-400">
+                                {member.team
+                                  ? `Team: ${member.team}`
+                                  : "No team"}
                               </p>
                             </div>
 
                             {isAdmin && (
-                              <Crown className="text-yellow-400 h-4 w-4" />
+                              <Crown className="h-4 w-4 text-yellow-400" />
                             )}
                           </div>
                         </div>
@@ -146,7 +150,7 @@ export const ManageMembersTable = ({
                           className={cn(
                             "text-sm font-medium capitalize",
                             isAdmin
-                              ? "text-yellow-400 font-semibold"
+                              ? "font-semibold text-yellow-400"
                               : "text-zinc-300",
                           )}
                         >
