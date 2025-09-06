@@ -5,12 +5,16 @@ import { DateTime } from "luxon";
 
 import { ScheduleView } from "@/modules/schedule/ui/views/schedule-view";
 import { auth } from "@/lib/auth";
+import { getQueryClient, trpc } from "@/trpc/server";
 
 const SchedulePage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) redirect("/sign-in");
 
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(trpc.iracing.getAllSeries.queryOptions());
+  
   const dt = DateTime.now();
   const resetDay = dt
     .set({
