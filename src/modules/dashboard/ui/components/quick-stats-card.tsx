@@ -1,4 +1,4 @@
-import { IRacingUserSummary } from "@/modules/iracing/types";
+import { IRacingUserSummary } from "@/modules/iracing/server/procedures/get-user-summary/schema";
 
 interface QuickStatsCardProps {
   summaryData: IRacingUserSummary;

@@ -1,5 +1,9 @@
 import z from "zod";
 
+// =============================================================================
+// INPUT SCHEMAS
+// =============================================================================
+
 /**
  * Schema for fetching all series data with optional season filtering
  * Defaults to current year and quarter if not provided

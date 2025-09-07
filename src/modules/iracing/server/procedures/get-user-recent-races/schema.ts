@@ -1,8 +1,16 @@
 import z from "zod";
 
+// =============================================================================
+// INPUT SCHEMAS
+// =============================================================================
+
 export const IRacingGetUserRecentRacesInputSchema = z.object({
   custId: z.string().min(1, { message: "Id is required" }),
 });
+
+// =============================================================================
+// API RESPONSE SCHEMAS
+// =============================================================================
 
 export const IRacingGetUserRecentRacesResponseSchema = z.object({
   races: z.array(

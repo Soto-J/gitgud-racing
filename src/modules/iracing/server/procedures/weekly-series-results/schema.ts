@@ -1,11 +1,17 @@
-import { z } from "zod";
+import z from "zod";
+import { inferRouterOutputs } from "@trpc/server";
 
+import { AppRouter } from "@/trpc/routers/_app";
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
 } from "@/modules/iracing/constants";
+
+// =============================================================================
+// INPUT SCHEMAS
+// =============================================================================
 
 export const IRacingWeeklySeriesResultsInputSchema = z.object({
   search: z.string().nullish(),
@@ -16,9 +22,14 @@ export const IRacingWeeklySeriesResultsInputSchema = z.object({
     .default(DEFAULT_PAGE_SIZE),
   page: z.number().default(DEFAULT_PAGE),
 });
+
 export type IRacingWeeklySeriesResultsInput = z.infer<
   typeof IRacingWeeklySeriesResultsInputSchema
 >;
+
+// =============================================================================
+// API RESPONSE SCHEMAS
+// =============================================================================
 
 export const IRacingSeriesResultsSchema = z.object({
   session_id: z.number(),
@@ -56,21 +67,27 @@ export const IRacingSeriesResultsSchema = z.object({
   event_strength_of_field: z.number(),
 });
 
-// Single result
 export type IRacingSeriesResults = z.infer<typeof IRacingSeriesResultsSchema>;
 
-// Array of results (one series)
 export const IRacingSeriesResultsResponseSchema = z.array(
   IRacingSeriesResultsSchema,
 );
+
 export type IRacingSeriesResultsResponse = z.infer<
   typeof IRacingSeriesResultsResponseSchema
 >;
 
-// Array of arrays (multiple series results from Promise.allSettled)
 export const IRacingSeriesResultsPromiseResponseSchema = z.array(
   IRacingSeriesResultsResponseSchema,
 );
+
 export type SeriesResultsPromiseResponse = z.infer<
   typeof IRacingSeriesResultsPromiseResponseSchema
 >;
+
+// =============================================================================
+// ROUTER OUTPUT TYPES
+// =============================================================================
+
+export type IRacingWeeklySeriesResults =
+  inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];

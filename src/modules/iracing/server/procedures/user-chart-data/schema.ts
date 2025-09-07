@@ -1,12 +1,21 @@
-import { z } from "zod";
+import z from "zod";
+import { InferSelectModel } from "drizzle-orm";
+import { inferRouterOutputs } from "@trpc/server";
 
-import { userChartDataTable } from "@/db/schema";
+import { AppRouter } from "@/trpc/routers/_app";
+import { licenseTable, profileTable, user, userChartDataTable } from "@/db/schema";
 
-export type UserChartData = typeof userChartDataTable.$inferSelect;
+// =============================================================================
+// INPUT SCHEMAS
+// =============================================================================
 
 export const IRacingUserChartDataInputSchema = z.object({
   userId: z.string().min(1, { message: "User ID required." }),
 });
+
+// =============================================================================
+// API RESPONSE SCHEMAS
+// =============================================================================
 
 export const IRacingUserChartDataResponseSchema = z.array(
   z.object({
@@ -27,3 +36,22 @@ export const IRacingUserChartDataResponseSchema = z.array(
 export type IRacingUserChartDataResponse = z.infer<
   typeof IRacingUserChartDataResponseSchema
 >;
+
+// =============================================================================
+// INTERNAL TYPE DEFINITIONS
+// =============================================================================
+
+export type IRacingChartData = typeof userChartDataTable.$inferSelect;
+
+export type IRacingTransformLicensesInput = {
+  user: InferSelectModel<typeof user>;
+  profile: InferSelectModel<typeof profileTable> | null;
+  licenses: InferSelectModel<typeof licenseTable> | null;
+};
+
+// =============================================================================
+// ROUTER OUTPUT TYPES
+// =============================================================================
+
+export type GetChartData =
+  inferRouterOutputs<AppRouter>["iracing"]["userChartData"];

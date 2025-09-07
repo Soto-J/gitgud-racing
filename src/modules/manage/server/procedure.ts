@@ -37,7 +37,7 @@ const getUsersProcedure = manageProcedure
   .input(GetUsersInputSchema)
   .query(async ({ input }) => {
     const { memberId, search, pageSize, page } = input;
-    
+
     return await getUsersWithProfiles({
       memberId: memberId || undefined,
       search: search || undefined,
@@ -65,7 +65,7 @@ const updateUserProcedure = manageProcedure
     await validateUserModificationPermissions(
       currentUser,
       input.userId,
-      'edit'
+      "edit",
     );
 
     try {
@@ -84,7 +84,7 @@ const updateUserProcedure = manageProcedure
       if (error instanceof TRPCError) {
         throw error;
       }
-      
+
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to update user",
@@ -107,7 +107,7 @@ const deleteUserProcedure = manageProcedure
     await validateUserModificationPermissions(
       currentUser,
       input.userId,
-      'delete'
+      "delete",
     );
 
     try {
@@ -116,7 +116,7 @@ const deleteUserProcedure = manageProcedure
       if (error instanceof TRPCError) {
         throw error;
       }
-      
+
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to delete user",
@@ -133,7 +133,7 @@ export const manageRouter = createTRPCRouter({
   getUser: getUserProcedure,
   getUsers: getUsersProcedure,
 
-  // User management procedures  
+  // User management procedures
   editUser: updateUserProcedure,
   deleteUser: deleteUserProcedure,
 });

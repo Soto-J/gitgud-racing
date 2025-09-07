@@ -7,8 +7,10 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { user, profileTable, licenseTable } from "@/db/schema";
 
-import { IRacingGetUserInputSchema } from "@/modules/iracing/schema";
-import { IRacingMemberDataResponseSchema } from "./schema";
+import {
+  IRacingGetUserInputSchema,
+  IRacingMemberDataResponseSchema,
+} from "@/modules/iracing/server/procedures/get-user/schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
 

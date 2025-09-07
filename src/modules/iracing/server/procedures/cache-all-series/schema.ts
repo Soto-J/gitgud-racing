@@ -1,5 +1,9 @@
 import z from "zod";
 
+// =============================================================================
+// API RESPONSE SCHEMAS
+// =============================================================================
+
 export const IRacingGetAllSeriesResponseSchema = z.array(
   z.object({
     allowed_licenses: z.array(

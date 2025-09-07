@@ -1,7 +1,6 @@
 import { db } from "@/db";
 import { licenseTable } from "@/db/schema";
 
-import { IRacingTransformLicensesInput } from "@/modules/iracing/types";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
@@ -10,6 +9,7 @@ import {
   LicenseDiscipline,
   IRacingLicense,
   TransformLicenseData,
+  IRacingTransformLicensesInput,
 } from "@/modules/iracing/server/procedures/get-user/schema";
 
 /**
@@ -210,7 +210,7 @@ export const mapIRacingLicensesToDb = (
     dirtRoadLicenseClass: "R" as const,
   };
 
-  return licenses.reduce((acc, license) => {
+  const result = licenses.reduce((acc, license) => {
     const category = categoryMap[license.category as keyof typeof categoryMap];
 
     if (!category) return acc;
@@ -225,4 +225,6 @@ export const mapIRacingLicensesToDb = (
       [`${category}LicenseClass`]: normalizeClass(normalizedClass),
     };
   }, defaultLicenseData as TransformLicenseData);
+
+  return result;
 };

@@ -11,7 +11,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { ProfileUpdateDataSchema } from "@/modules/profile/schema";
 
-import { IRacingUserData } from "@/modules/iracing/types";
+import { IRacingUserData } from "@/modules/iracing/server/procedures/get-user/schema";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,12 @@ export const EditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) => {
-  const [firstName, lastName] = initialValues?.user?.name.split(" ") || "";
+  if (!initialValues?.user?.id) {
+    console.warn('EditProfileDialog: Missing user data');
+    return null;
+  }
+
+  const [firstName, lastName] = initialValues.user.name?.split(" ") || ["", ""];
 
   const form = useForm<z.infer<typeof ProfileUpdateDataSchema>>({
     resolver: zodResolver(ProfileUpdateDataSchema),
@@ -59,7 +64,7 @@ export const EditProfileDialog = ({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.profile.getOne.queryOptions({
-            userId: initialValues.user.id,
+            userId: initialValues.user!.id,
           }),
         );
 
@@ -76,7 +81,7 @@ export const EditProfileDialog = ({
 
   const onSubmit = (values: z.infer<typeof ProfileUpdateDataSchema>) => {
     editProfile.mutate({
-      userId: initialValues.user.id,
+      userId: initialValues.user!.id,
       ...values,
     });
   };

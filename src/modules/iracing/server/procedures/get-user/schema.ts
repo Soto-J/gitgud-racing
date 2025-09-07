@@ -1,5 +1,22 @@
-import { LicenseTable, ProfileTable, UserTable } from "@/db/type";
 import z from "zod";
+import { InferSelectModel } from "drizzle-orm";
+import { inferRouterOutputs } from "@trpc/server";
+
+import { AppRouter } from "@/trpc/routers/_app";
+import { licenseTable } from "@/db/schema";
+import { ProfileTable, UserTable } from "@/db/type";
+
+// =============================================================================
+// INPUT SCHEMAS
+// =============================================================================
+
+export const IRacingGetUserInputSchema = z.object({
+  userId: z.string().min(1, { message: "Id is required" }),
+});
+
+// =============================================================================
+// API RESPONSE SCHEMAS
+// =============================================================================
 
 export const IRacingMemberDataResponseSchema = z.object({
   success: z.boolean(),
@@ -50,14 +67,6 @@ export type IRacingMemberDataResponse = z.infer<
   typeof IRacingMemberDataResponseSchema
 >;
 
-export const LicenseDisciplineSchema = z.object({
-  category: z.enum(["Oval", "Sports", "Formula", "Dirt Oval", "Dirt Road"]),
-  iRating: z.number().nullable(),
-  safetyRating: z.string().nullable(),
-  licenseClass: z.string(),
-});
-export type LicenseDiscipline = z.infer<typeof LicenseDisciplineSchema>;
-
 export const IRacingLicenseSchema = z.object({
   category_id: z.number(),
   category: z.string(),
@@ -75,12 +84,18 @@ export const IRacingLicenseSchema = z.object({
   seq: z.number(),
   mpr_num_tts: z.number(),
 });
+
 export type IRacingLicense = z.infer<typeof IRacingLicenseSchema>;
 
+// =============================================================================
+// DATA TRANSFORMATION SCHEMAS
+// =============================================================================
+
 export const LicenseClassSchema = z.enum(["A", "B", "C", "D", "R"]);
+
 export type LicenseClass = z.infer<typeof LicenseClassSchema>;
 
-export const TransformLicenseDataSchema = {
+export const TransformLicenseDataSchema = z.object({
   ovalIRating: z.number(),
   ovalSafetyRating: z.string(),
   ovalLicenseClass: LicenseClassSchema,
@@ -96,11 +111,57 @@ export const TransformLicenseDataSchema = {
   dirtRoadIRating: z.number(),
   dirtRoadSafetyRating: z.string(),
   dirtRoadLicenseClass: LicenseClassSchema,
-};
+});
+
 export type TransformLicenseData = z.infer<typeof TransformLicenseDataSchema>;
+
+export const LicenseDisciplineSchema = z.object({
+  category: z.enum(["Oval", "Sports", "Formula", "Dirt Oval", "Dirt Road"]),
+  iRating: z.number().nullable(),
+  safetyRating: z.string().nullable(),
+  licenseClass: z.string(),
+});
+
+export type LicenseDiscipline = z.infer<typeof LicenseDisciplineSchema>;
+
+// =============================================================================
+// INTERNAL TYPE DEFINITIONS
+// =============================================================================
 
 export type IRacingTransformLicensesInput = {
   user: UserTable | null;
   profile: ProfileTable | null;
-  licenses: LicenseTable | null;
+  licenses: InferSelectModel<typeof licenseTable> | null;
 };
+
+export type IRacingMemberData = {
+  success: boolean;
+  cust_ids: number[];
+  members: {
+    cust_id: number;
+    display_name: string;
+    helmet: {
+      pattern: number;
+      color1: string;
+      color2: string;
+      color3: string;
+      face_type: number;
+      helmet_type: number;
+    };
+    last_login: string;
+    member_since: string;
+    flair_id: number;
+    flair_name: string;
+    flair_shortname: string;
+    ai: boolean;
+    licenses: IRacingLicense[];
+  }[];
+  member_since: string;
+};
+
+// =============================================================================
+// ROUTER OUTPUT TYPES
+// =============================================================================
+
+export type IRacingUserData =
+  inferRouterOutputs<AppRouter>["iracing"]["getUser"];

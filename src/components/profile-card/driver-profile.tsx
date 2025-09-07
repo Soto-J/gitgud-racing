@@ -1,4 +1,5 @@
-import { IRacingChartData, IRacingUserData } from "@/modules/iracing/types";
+import { IRacingUserData } from "@/modules/iracing/server/procedures/get-user/schema";
+import { IRacingChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 
 import { DisciplineCard } from "./discipline-card";

@@ -6,13 +6,13 @@ import { DateTime } from "luxon";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import { IRacingChartDataRecord } from "@/modules/iracing/types";
 
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart";
+import { IRacingChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 
 const chartConfig = {
   value: {
@@ -22,7 +22,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface ProfileChartProps {
-  data: IRacingChartDataRecord[];
+  data: IRacingChartData[];
   title: string;
 }
 

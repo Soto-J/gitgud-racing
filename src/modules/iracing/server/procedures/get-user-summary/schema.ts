@@ -1,4 +1,11 @@
 import z from "zod";
+import { inferRouterOutputs } from "@trpc/server";
+
+import { AppRouter } from "@/trpc/routers/_app";
+
+// =============================================================================
+// API RESPONSE SCHEMAS
+// =============================================================================
 
 export const IRacingUserSummaryResponseSchema = z.object({
   this_year: z.object({
@@ -9,3 +16,10 @@ export const IRacingUserSummaryResponseSchema = z.object({
   }),
   cust_id: z.number(),
 });
+
+// =============================================================================
+// ROUTER OUTPUT TYPES
+// =============================================================================
+
+export type IRacingUserSummary =
+  inferRouterOutputs<AppRouter>["iracing"]["getUserSummary"];
