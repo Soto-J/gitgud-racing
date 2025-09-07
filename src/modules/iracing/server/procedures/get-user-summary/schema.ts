@@ -7,7 +7,7 @@ import { AppRouter } from "@/trpc/routers/_app";
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-export const IRacingUserSummaryResponseSchema = z.object({
+export const GetUserSummaryResponse = z.object({
   this_year: z.object({
     num_official_sessions: z.number(),
     num_league_sessions: z.number(),
@@ -21,5 +21,5 @@ export const IRacingUserSummaryResponseSchema = z.object({
 // ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type IRacingUserSummary =
+export type UserSummary =
   inferRouterOutputs<AppRouter>["iracing"]["getUserSummary"];

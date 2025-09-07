@@ -5,11 +5,11 @@ import { licenseTable } from "@/db/schema";
 import { fetchData } from "@/modules/iracing/server/api";
 
 import {
-  IRacingMemberDataResponseSchema,
+  GetUserResponse,
   LicenseDiscipline,
-  IRacingLicense,
+  LicenseType,
   TransformLicenseData,
-  IRacingTransformLicensesInput,
+  TransformLicensesInput,
 } from "@/modules/iracing/server/procedures/get-user/schema";
 
 /**
@@ -42,7 +42,7 @@ import {
  * // { category: "Oval", iRating: 2500, safetyRating: "3.45", licenseClass: "A" }
  * ```
  */
-export const buildUserProfile = (member: IRacingTransformLicensesInput) => {
+export const buildUserProfile = (member: TransformLicensesInput) => {
   if (!member?.licenses) {
     return {
       ...member,
@@ -115,14 +115,14 @@ export async function syncUserLicenseData(
     authCode,
   });
 
-  const iRacingUserData = IRacingMemberDataResponseSchema.parse(res);
+  const iRacingUserData = GetUserResponse.parse(res);
 
   if (!iRacingUserData?.members?.[0]?.licenses) {
     return;
   }
 
   const apiLicenses = iRacingUserData.members[0].licenses;
-  const transformedData = mapIRacingLicensesToDb(apiLicenses);
+  const transformedData = mapLicenseTypesToDb(apiLicenses);
 
   await db
     .insert(licenseTable)
@@ -159,7 +159,7 @@ export async function syncUserLicenseData(
  *   // ... other licenses
  * ];
  *
- * const dbData = mapIRacingLicensesToDb(iracingLicenses);
+ * const dbData = mapLicenseTypesToDb(iracingLicenses);
  * console.log(dbData);
  * // {
  * //   ovalIRating: 2500,
@@ -169,8 +169,8 @@ export async function syncUserLicenseData(
  * // }
  * ```
  */
-export const mapIRacingLicensesToDb = (
-  licenses: IRacingLicense[],
+export const mapLicenseTypesToDb = (
+  licenses: LicenseType[],
 ): TransformLicenseData => {
   const categoryMap = {
     oval: "oval",

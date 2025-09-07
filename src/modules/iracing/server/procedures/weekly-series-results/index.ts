@@ -6,13 +6,13 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schema";
 
-import { IRacingWeeklySeriesResultsInputSchema } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+import { WeeklySeriesResultsInput } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 /**
  * Fetches paginated weekly series results with search functionality
  */
 export const weeklySeriesResultsProcedure = iracingProcedure
-  .input(IRacingWeeklySeriesResultsInputSchema)
+  .input(WeeklySeriesResultsInput)
   .query(async ({ input }) => {
     const { search, page, pageSize } = input;
 

@@ -4,7 +4,7 @@ import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 
 import { cn } from "@/lib/utils";
 
-import { IRacingWeeklySeriesResults } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+import { WeeklySeriesResults } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 import {
   ChartContainer,
@@ -27,7 +27,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface SeriesChartProps {
-  data: IRacingWeeklySeriesResults;
+  data: WeeklySeriesResults;
 }
 
 export const SeriesChart = ({ data }: SeriesChartProps) => {
@@ -164,7 +164,7 @@ const ImageTick = ({
     index: number;
     offset: number;
   };
-  data?: IRacingWeeklySeriesResults;
+  data?: WeeklySeriesResults;
 }) => {
   const router = useRouter();
 

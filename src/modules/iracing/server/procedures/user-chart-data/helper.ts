@@ -3,13 +3,13 @@ import { DateTime } from "luxon";
 import { categoryMap, chartTypeMap } from "@/modules/iracing/constants";
 
 import {
-  IRacingChartData,
-  IRacingUserChartDataResponse,
+  ChartData,
+  GetUserChartDataResponseType,
 } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { UserChartDataTable } from "@/db/type";
 
 export const chartDataIsFresh = (
-  latestRecord: IRacingChartData | undefined | null,
+  latestRecord: ChartData | undefined | null,
 ): boolean => {
   // This week's Monday 8 PM
   let reset = DateTime.now().startOf("week").plus({ hours: 20 });
@@ -95,7 +95,7 @@ export function transformCharts(charts: UserChartDataTable[]) {
  * ```
  */
 export function processChartDataForInsert(
-  data: IRacingUserChartDataResponse,
+  data: GetUserChartDataResponseType,
   userId: string,
 ) {
   return data.flatMap((res) =>

@@ -11,7 +11,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { ProfileUpdateDataSchema } from "@/modules/profile/schema";
 
-import { IRacingUserData } from "@/modules/iracing/server/procedures/get-user/schema";
+import { UserData } from "@/modules/iracing/server/procedures/get-user/schema";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import {
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: IRacingUserData;
+  initialValues: UserData;
 }
 
 export const EditProfileDialog = ({

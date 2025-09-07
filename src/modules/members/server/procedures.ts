@@ -1,10 +1,8 @@
-import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 import {
   getMemberWithProfile,
   getMembersWithProfiles,
-  validateMemberSearchFilters,
 } from "./procedure-helpers";
 
 import {

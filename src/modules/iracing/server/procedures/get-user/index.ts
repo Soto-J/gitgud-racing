@@ -8,15 +8,15 @@ import { db } from "@/db";
 import { user, profileTable, licenseTable } from "@/db/schema";
 
 import {
-  IRacingGetUserInputSchema,
-  IRacingMemberDataResponseSchema,
+  GetUserInput,
+  GetUserResponse,
 } from "@/modules/iracing/server/procedures/get-user/schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
 import {
   buildUserProfile,
-  mapIRacingLicensesToDb,
+  mapLicenseTypesToDb,
   syncUserLicenseData,
 } from "./helper";
 
@@ -24,7 +24,7 @@ import {
  * Fetches user data with license information, syncing from iRacing if needed
  */
 export const getUserProcedure = iracingProcedure
-  .input(IRacingGetUserInputSchema)
+  .input(GetUserInput)
   .query(async ({ ctx, input }) => {
     if (!input?.userId) {
       throw new TRPCError({
@@ -77,10 +77,10 @@ export const getUserProcedure = iracingProcedure
         authCode: ctx.iracingAuthCode,
       });
 
-      const data = IRacingMemberDataResponseSchema.parse(res);
+      const data = GetUserResponse.parse(res);
 
       const apiLicenses = data.members[0].licenses;
-      const transformedData = mapIRacingLicensesToDb(apiLicenses);
+      const transformedData = mapLicenseTypesToDb(apiLicenses);
 
       await db
         .insert(licenseTable)

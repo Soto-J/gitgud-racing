@@ -1,8 +1,10 @@
 import z from "zod";
+
 import { InferSelectModel } from "drizzle-orm";
 import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
+
 import { licenseTable } from "@/db/schema";
 import { ProfileTable, UserTable } from "@/db/type";
 
@@ -10,7 +12,7 @@ import { ProfileTable, UserTable } from "@/db/type";
 // INPUT SCHEMAS
 // =============================================================================
 
-export const IRacingGetUserInputSchema = z.object({
+export const GetUserInput = z.object({
   userId: z.string().min(1, { message: "Id is required" }),
 });
 
@@ -18,7 +20,7 @@ export const IRacingGetUserInputSchema = z.object({
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-export const IRacingMemberDataResponseSchema = z.object({
+export const GetUserResponse = z.object({
   success: z.boolean(),
   cust_ids: z.number(),
   members: z.array(
@@ -63,11 +65,11 @@ export const IRacingMemberDataResponseSchema = z.object({
   member_since: z.string(),
 });
 
-export type IRacingMemberDataResponse = z.infer<
-  typeof IRacingMemberDataResponseSchema
+export type GetUserResponseType = z.infer<
+  typeof GetUserResponse
 >;
 
-export const IRacingLicenseSchema = z.object({
+export const LicenseSchema = z.object({
   category_id: z.number(),
   category: z.string(),
   category_name: z.string(),
@@ -85,7 +87,7 @@ export const IRacingLicenseSchema = z.object({
   mpr_num_tts: z.number(),
 });
 
-export type IRacingLicense = z.infer<typeof IRacingLicenseSchema>;
+export type LicenseType = z.infer<typeof LicenseSchema>;
 
 // =============================================================================
 // DATA TRANSFORMATION SCHEMAS
@@ -128,13 +130,13 @@ export type LicenseDiscipline = z.infer<typeof LicenseDisciplineSchema>;
 // INTERNAL TYPE DEFINITIONS
 // =============================================================================
 
-export type IRacingTransformLicensesInput = {
+export type TransformLicensesInput = {
   user: UserTable | null;
   profile: ProfileTable | null;
   licenses: InferSelectModel<typeof licenseTable> | null;
 };
 
-export type IRacingMemberData = {
+export type MemberData = {
   success: boolean;
   cust_ids: number[];
   members: {
@@ -154,7 +156,7 @@ export type IRacingMemberData = {
     flair_name: string;
     flair_shortname: string;
     ai: boolean;
-    licenses: IRacingLicense[];
+    licenses: LicenseType[];
   }[];
   member_since: string;
 };
@@ -163,5 +165,5 @@ export type IRacingMemberData = {
 // ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type IRacingUserData =
+export type UserData =
   inferRouterOutputs<AppRouter>["iracing"]["getUser"];
