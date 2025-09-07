@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -63,5 +63,5 @@ export const IRacingGetUserRecentRacesResponseSchema = z.object({
       race_week_num: z.number(),
     }),
   ),
-  cus_id: z.number(),
+  cust_id: z.number(),
 });

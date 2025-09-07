@@ -38,12 +38,7 @@ export const EditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) => {
-  if (!initialValues?.user?.id) {
-    console.warn('EditProfileDialog: Missing user data');
-    return null;
-  }
-
-  const [firstName, lastName] = initialValues.user.name?.split(" ") || ["", ""];
+  const [firstName, lastName] = initialValues?.user?.name?.split(" ") || ["", ""];
 
   const form = useForm<z.infer<typeof ProfileUpdateDataSchema>>({
     resolver: zodResolver(ProfileUpdateDataSchema),
@@ -62,11 +57,13 @@ export const EditProfileDialog = ({
   const editProfile = useMutation(
     trpc.profile.edit.mutationOptions({
       onSuccess: async () => {
-        await queryClient.invalidateQueries(
-          trpc.profile.getOne.queryOptions({
-            userId: initialValues.user!.id,
-          }),
-        );
+        if (initialValues?.user?.id) {
+          await queryClient.invalidateQueries(
+            trpc.profile.getOne.queryOptions({
+              userId: initialValues.user.id,
+            }),
+          );
+        }
 
         toast.success("Profile Updated!");
         onCloseDialog();
@@ -80,11 +77,22 @@ export const EditProfileDialog = ({
   );
 
   const onSubmit = (values: z.infer<typeof ProfileUpdateDataSchema>) => {
+    if (!initialValues?.user?.id) {
+      console.warn('EditProfileDialog: Cannot submit without user ID');
+      return;
+    }
+    
     editProfile.mutate({
-      userId: initialValues.user!.id,
+      userId: initialValues.user.id,
       ...values,
     });
   };
+
+  // Defensive guard: Don't render if user data is missing
+  if (!initialValues?.user?.id) {
+    console.warn('EditProfileDialog: Missing user data');
+    return null;
+  }
 
   return (
     <ResponsiveDialog

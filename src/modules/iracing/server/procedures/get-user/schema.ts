@@ -119,7 +119,7 @@ export const LicenseDisciplineSchema = z.object({
   category: z.enum(["Oval", "Sports", "Formula", "Dirt Oval", "Dirt Road"]),
   iRating: z.number().nullable(),
   safetyRating: z.string().nullable(),
-  licenseClass: z.string(),
+  licenseClass: LicenseClassSchema,
 });
 
 export type LicenseDiscipline = z.infer<typeof LicenseDisciplineSchema>;

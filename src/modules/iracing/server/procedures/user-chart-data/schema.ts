@@ -3,7 +3,12 @@ import { InferSelectModel } from "drizzle-orm";
 import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
-import { licenseTable, profileTable, user, userChartDataTable } from "@/db/schema";
+import {
+  licenseTable,
+  profileTable,
+  user,
+  userChartDataTable,
+} from "@/db/schema";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -24,7 +29,7 @@ export const IRacingUserChartDataResponseSchema = z.array(
     chart_type: z.number(),
     data: z.array(
       z.object({
-        when: z.date(),
+        when: z.coerce.date(),
         value: z.number(),
       }),
     ),
