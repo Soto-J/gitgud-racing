@@ -1,14 +1,13 @@
 import { IRacingUserData } from "@/modules/iracing/server/procedures/get-user/schema";
-import { GetChartData, IRacingChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
+import { GetChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 
-import { DisciplineCard } from "./discipline-card";
-
-import { RatingsChart } from "./ratings-chart";
+import { DisciplineCard } from "@/components/profile-card/discipline-card";
+import { RatingsChart } from "@/components/profile-card/ratings-chart";
+import { DriverInfo } from "@/components/profile-card/driver-info";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { DriverInfo } from "./driver-info";
 
 interface ProfileCardProps {
   member: IRacingUserData;

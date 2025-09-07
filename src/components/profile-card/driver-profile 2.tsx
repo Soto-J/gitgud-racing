@@ -10,18 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { DriverInfo } from "./driver-info";
 
-interface ProfileCardProps {
+interface DriverProfileProps {
   member: IRacingUserData;
-  chartData: GetChartData | null;
+  chartData: GetChartData;
 }
 
-export const DriverProfile = ({ member, chartData }: ProfileCardProps) => {
+export const DriverProfile = ({ member, chartData }: DriverProfileProps) => {
   const disciplines =
     member?.licenses?.disciplines?.length > 0
       ? member.licenses.disciplines
       : seedData;
-
-  console.log({ chartData });
 
   return (
     <div className="space-y-12">
