@@ -9,6 +9,7 @@ import {
 } from "./get-all-series";
 import { weeklySeriesResultsProcedure } from "./weekly-series-results";
 import { getDocumentationProcedure } from "./get-documentation";
+import { seasonScheduleProcedure } from "./seasion-schedule";
 
 export const iracingRouter = createTRPCRouter({
   // User procedures
@@ -24,6 +25,10 @@ export const iracingRouter = createTRPCRouter({
   weeklySeriesResults: weeklySeriesResultsProcedure,
   getTotalSeriesCount: getTotalSeriesCountProcedure,
 
+  // Season schedule
+  seasonSchedule: seasonScheduleProcedure,
+  
   // Utility procedures
   getDocumentation: getDocumentationProcedure,
+
 });
