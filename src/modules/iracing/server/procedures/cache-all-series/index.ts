@@ -34,7 +34,7 @@ export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
     return { success: false, message: "Failed to fetch series..." };
   }
 
-  const data = z.array(IRacingGetAllSeriesResponseSchema).parse(res);
+  const data = IRacingGetAllSeriesResponseSchema.parse(res);
 
   const insertValues = data.map((item) => ({
     seriesId: item.series_id,

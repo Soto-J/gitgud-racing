@@ -7,18 +7,18 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { user, profileTable, licenseTable } from "@/db/schema";
 
-import { fetchData } from "@/modules/iracing/server/api";
+import {
+  IRacingGetUserInputSchema,
+  IRacingMemberDataResponseSchema,
+} from "@/modules/iracing/server/procedures/get-user/schema";
 
-import { IRacingGetUserInputSchema } from "@/modules/iracing/schema";
-import { IRacingMemberData } from "@/modules/iracing/types";
+import { fetchData } from "@/modules/iracing/server/api";
 
 import {
   buildUserProfile,
   mapIRacingLicensesToDb,
   syncUserLicenseData,
 } from "./helper";
-import { IRacingMemberDataResponseSchema } from "./schema";
-import z from "zod";
 
 /**
  * Fetches user data with license information, syncing from iRacing if needed

@@ -7,12 +7,8 @@ import {
   getAllSeriesProcedure,
   getTotalSeriesCountProcedure,
 } from "./get-all-series";
-import { weeklySeriesResultsProcedure } from "./weekly-series-results/weekly-series-results";
+import { weeklySeriesResultsProcedure } from "./weekly-series-results";
 import { getDocumentationProcedure } from "./get-documentation";
-
-// =============================================================================
-// ROUTER EXPORT
-// =============================================================================
 
 export const iracingRouter = createTRPCRouter({
   // User procedures

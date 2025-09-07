@@ -6,7 +6,7 @@ import { iracingProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schema";
 
-import { IRacingWeeklySeriesResultsInputSchema } from "@/modules/iracing/server/procedures/get-all-series/schema";
+import { IRacingWeeklySeriesResultsInputSchema } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 /**
  * Fetches paginated weekly series results with search functionality

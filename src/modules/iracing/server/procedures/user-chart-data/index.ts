@@ -7,8 +7,6 @@ import { profileTable, userChartDataTable } from "@/db/schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
-import { IRacingUserChartDataInputSchema } from "@/modules/iracing/schema";
-import { IRacingUserChartDataResponse } from "@/modules/iracing/types";
 import {
   categoryMap,
   IRACING_CHART_TYPE_IRATING,
@@ -16,9 +14,13 @@ import {
 
 import {
   chartDataIsFresh,
-  processChartDataForInsert,
   transformCharts,
-} from "../get-user-summary/helper";
+  processChartDataForInsert,
+} from "@/modules/iracing/server/procedures/user-chart-data/helper";
+import {
+  IRacingUserChartDataInputSchema,
+  IRacingUserChartDataResponseSchema,
+} from "./schema";
 
 /**
  * Fetches and caches user chart data (iRating history) from iRacing
@@ -58,17 +60,20 @@ export const userChartDataProcedure = iracingProcedure
     const results = await Promise.allSettled(promiseArr);
 
     const failedResults = results.filter((res) => res.status === "rejected");
+    
     if (failedResults.length > 0) {
       console.warn("Some chart data requests failed:", failedResults);
     }
 
-    const data = results
+    const res = results
       .filter((res) => res.status === "fulfilled")
-      .map((res) => res.value) as IRacingUserChartDataResponse[];
+      .map((res) => res.value);
 
-    if (data.length === 0) {
+    if (res.length === 0) {
       return [];
     }
+
+    const data = IRacingUserChartDataResponseSchema.parse(res);
 
     // Process and insert data
     const dataToInsert = processChartDataForInsert(data, input.userId);

@@ -4,7 +4,7 @@ import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 
 import { cn } from "@/lib/utils";
 
-import { IRacingWeeklySeriesResults } from "@/modules/iracing/types";
+import { IRacingWeeklySeriesResults } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 import {
   ChartContainer,

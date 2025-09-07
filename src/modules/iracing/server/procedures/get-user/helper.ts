@@ -1,15 +1,16 @@
 import { db } from "@/db";
 import { licenseTable } from "@/db/schema";
 
-import {
-  IRacingLicense,
-  IRacingMemberData,
-  IRacingTransformLicensesInput,
-  LicenseDiscipline,
-  TransformLicenseData,
-} from "@/modules/iracing/types";
 
 import { fetchData } from "@/modules/iracing/server/api";
+
+import {
+  IRacingMemberDataResponseSchema,
+  LicenseDiscipline,
+  IRacingLicense,
+  TransformLicenseData,
+  IRacingTransformLicensesInput,
+} from "@/modules/iracing/server/procedures/get-user/schema";
 
 /**
  * Builds a complete user profile from database components
@@ -109,10 +110,12 @@ export async function syncUserLicenseData(
   userId: string,
   authCode: string,
 ): Promise<void> {
-  const iRacingUserData = (await fetchData({
+  const res = await fetchData({
     query: `/data/member/get?cust_ids=${custId}&include_licenses=true`,
     authCode,
-  })) as IRacingMemberData;
+  });
+
+  const iRacingUserData = IRacingMemberDataResponseSchema.parse(res);
 
   if (!iRacingUserData?.members?.[0]?.licenses) {
     return;
@@ -207,7 +210,7 @@ export const mapIRacingLicensesToDb = (
     dirtRoadLicenseClass: "R" as const,
   };
 
-  return licenses.reduce((acc, license) => {
+  const result = licenses.reduce((acc, license) => {
     const category = categoryMap[license.category as keyof typeof categoryMap];
 
     if (!category) return acc;
@@ -222,4 +225,6 @@ export const mapIRacingLicensesToDb = (
       [`${category}LicenseClass`]: normalizeClass(normalizedClass),
     };
   }, defaultLicenseData as TransformLicenseData);
+
+  return result;
 };

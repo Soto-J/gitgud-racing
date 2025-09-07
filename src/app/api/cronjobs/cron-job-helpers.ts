@@ -4,12 +4,14 @@ import { DateTime } from "luxon";
 import { db } from "@/db";
 import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
 
-import {
-  IRacingGetAllSeriesResponse,
-  IRacingSeriesResultsResponse,
-} from "@/modules/iracing/types";
-
 import { fetchData } from "@/modules/iracing/server/api";
+
+import { IRacingGetAllSeriesResponseSchema } from "@/modules/iracing/server/procedures/cache-all-series/schema";
+
+import {
+  IRacingSeriesResults,
+  IRacingSeriesResultsPromiseResponseSchema,
+} from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 export const getCurrentSeasonInfo = () => {
   const year = DateTime.now().year;
@@ -122,19 +124,21 @@ export const cacheSeries = async ({
       );
 
     if (cachedSeries.length > 0) {
-      console.log("Using cached series");
+      console.log("Using cached series...");
       return { success: true };
     }
 
-    console.log("Refreshing All Series");
-    const data = (await fetchData({
+    console.log("Refreshing All Series...");
+    const res = await fetchData({
       query: `/data/series/get`,
       authCode: authCode,
-    })) as IRacingGetAllSeriesResponse[];
+    });
 
-    if (!data) {
-      throw new Error("Failed to get series");
+    if (!res) {
+      throw new Error("Failed to get series.");
     }
+
+    const data = IRacingGetAllSeriesResponseSchema.parse(res);
 
     const insertValues = data.map((item) => ({
       seriesId: item.series_id,
@@ -151,7 +155,7 @@ export const cacheSeries = async ({
       console.error("Error in cacheSeries:", error);
       return { success: false, error: error.message };
     }
-    return { success: false, error: "Unknown error occurred" };
+    return { success: false, error: "Unknown error occurred." };
   }
 };
 
@@ -221,9 +225,11 @@ export const cacheWeeklyResults = async ({
 
     const seriesResultsSettled = await Promise.allSettled(promiseArr);
 
-    const seriesResults = seriesResultsSettled
+    const res = seriesResultsSettled
       .filter((result) => result.status === "fulfilled")
-      .map((result) => result.value as IRacingSeriesResultsResponse[]);
+      .map((result) => result.value);
+
+    const seriesResults = IRacingSeriesResultsPromiseResponseSchema.parse(res);
 
     const perRaceStats = seriesResults
       .filter((series) => series.length > 0)
@@ -237,7 +243,7 @@ export const cacheWeeklyResults = async ({
             obj[session.start_time].push(session);
             return obj;
           },
-          {} as Record<string, IRacingSeriesResultsResponse[]>,
+          {} as Record<string, IRacingSeriesResults[]>,
         );
 
         const totalRaces = Object.values(uniqueRaces).length;
