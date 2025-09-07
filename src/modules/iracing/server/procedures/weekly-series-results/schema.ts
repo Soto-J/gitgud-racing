@@ -13,7 +13,7 @@ import {
 // INPUT SCHEMAS
 // =============================================================================
 
-export const IRacingWeeklySeriesResultsInputSchema = z.object({
+export const WeeklySeriesResultsInput = z.object({
   search: z.string().nullish(),
   pageSize: z
     .number()
@@ -23,15 +23,15 @@ export const IRacingWeeklySeriesResultsInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
 });
 
-export type IRacingWeeklySeriesResultsInput = z.infer<
-  typeof IRacingWeeklySeriesResultsInputSchema
+export type WeeklySeriesResultsInputType = z.infer<
+  typeof WeeklySeriesResultsInput
 >;
 
 // =============================================================================
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-export const IRacingSeriesResultsSchema = z.object({
+export const WeeklySeriesResultsItem = z.object({
   session_id: z.number(),
   subsession_id: z.number(),
   start_time: z.string(),
@@ -67,27 +67,27 @@ export const IRacingSeriesResultsSchema = z.object({
   event_strength_of_field: z.number(),
 });
 
-export type IRacingSeriesResults = z.infer<typeof IRacingSeriesResultsSchema>;
+export type WeeklySeriesResultsItemType = z.infer<typeof WeeklySeriesResultsItem>;
 
-export const IRacingSeriesResultsResponseSchema = z.array(
-  IRacingSeriesResultsSchema,
+export const WeeklySeriesResultsResponse = z.array(
+  WeeklySeriesResultsItem,
 );
 
-export type IRacingSeriesResultsResponse = z.infer<
-  typeof IRacingSeriesResultsResponseSchema
+export type WeeklySeriesResultsResponseType = z.infer<
+  typeof WeeklySeriesResultsResponse
 >;
 
-export const IRacingSeriesResultsPromiseResponseSchema = z.array(
-  IRacingSeriesResultsResponseSchema,
+export const WeeklySeriesResultsPromiseResponse = z.array(
+  WeeklySeriesResultsResponse,
 );
 
-export type SeriesResultsPromiseResponse = z.infer<
-  typeof IRacingSeriesResultsPromiseResponseSchema
+export type WeeklySeriesResultsPromiseResponseType = z.infer<
+  typeof WeeklySeriesResultsPromiseResponse
 >;
 
 // =============================================================================
 // ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type IRacingWeeklySeriesResults =
+export type WeeklySeriesResults =
   inferRouterOutputs<AppRouter>["iracing"]["weeklySeriesResults"];

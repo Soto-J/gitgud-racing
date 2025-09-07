@@ -3,15 +3,15 @@ import { iracingProcedure } from "@/trpc/init";
 import { fetchData } from "@/modules/iracing/server/api";
 
 import {
-  IRacingGetUserRecentRacesInputSchema,
-  IRacingGetUserRecentRacesResponseSchema,
+  GetUserRecentRacesInput,
+  GetUserRecentRacesResponse,
 } from "@/modules/iracing/server/procedures/get-user-recent-races/schema";
 
 /**
  * Fetches recent race data for a user from iRacing
  */
 export const getUserRecentRacesProcedure = iracingProcedure
-  .input(IRacingGetUserRecentRacesInputSchema)
+  .input(GetUserRecentRacesInput)
   .query(async ({ ctx, input }) => {
     if (!input.custId) {
       return null;
@@ -22,7 +22,7 @@ export const getUserRecentRacesProcedure = iracingProcedure
       authCode: ctx.iracingAuthCode,
     });
 
-    const recentRaces = IRacingGetUserRecentRacesResponseSchema.parse(res);
+    const recentRaces = GetUserRecentRacesResponse.parse(res);
 
     return recentRaces || null;
   });

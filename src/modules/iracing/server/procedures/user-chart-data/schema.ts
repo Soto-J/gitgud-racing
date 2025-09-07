@@ -14,7 +14,7 @@ import {
 // INPUT SCHEMAS
 // =============================================================================
 
-export const IRacingUserChartDataInputSchema = z.object({
+export const GetUserChartDataInput = z.object({
   userId: z.string().min(1, { message: "User ID required." }),
 });
 
@@ -22,7 +22,7 @@ export const IRacingUserChartDataInputSchema = z.object({
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-export const IRacingUserChartDataResponseSchema = z.array(
+export const GetUserChartDataResponse = z.array(
   z.object({
     blackout: z.boolean(),
     category_id: z.number(),
@@ -38,17 +38,17 @@ export const IRacingUserChartDataResponseSchema = z.array(
   }),
 );
 
-export type IRacingUserChartDataResponse = z.infer<
-  typeof IRacingUserChartDataResponseSchema
+export type GetUserChartDataResponseType = z.infer<
+  typeof GetUserChartDataResponse
 >;
 
 // =============================================================================
 // INTERNAL TYPE DEFINITIONS
 // =============================================================================
 
-export type IRacingChartData = typeof userChartDataTable.$inferSelect;
+export type ChartData = typeof userChartDataTable.$inferSelect;
 
-export type IRacingTransformLicensesInput = {
+export type TransformLicensesInput = {
   user: InferSelectModel<typeof user>;
   profile: InferSelectModel<typeof profileTable> | null;
   licenses: InferSelectModel<typeof licenseTable> | null;
@@ -58,5 +58,5 @@ export type IRacingTransformLicensesInput = {
 // ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type GetChartData =
+export type UserChartData =
   inferRouterOutputs<AppRouter>["iracing"]["userChartData"];

@@ -1,7 +1,7 @@
-import { IRacingUserSummary } from "@/modules/iracing/server/procedures/get-user-summary/schema";
+import { UserSummary } from "@/modules/iracing/server/procedures/get-user-summary/schema";
 
 interface QuickStatsCardProps {
-  summaryData: IRacingUserSummary;
+  summaryData: UserSummary;
 }
 
 export const QuickStatsCard = ({ summaryData }: QuickStatsCardProps) => {

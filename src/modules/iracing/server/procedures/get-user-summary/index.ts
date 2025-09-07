@@ -7,7 +7,7 @@ import { profileTable } from "@/db/schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
-import { IRacingUserSummaryResponseSchema } from "@/modules/iracing/server/procedures/get-user-summary/schema";
+import { GetUserSummaryResponse } from "@/modules/iracing/server/procedures/get-user-summary/schema";
 
 /**
  * Fetches user summary statistics from iRacing
@@ -29,7 +29,7 @@ export const getUserSummaryProcedure = iracingProcedure.query(
       authCode: ctx.iracingAuthCode,
     });
 
-    const userSummary = IRacingUserSummaryResponseSchema.parse(res);
+    const userSummary = GetUserSummaryResponse.parse(res);
 
     return userSummary || null;
   },

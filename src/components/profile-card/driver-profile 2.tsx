@@ -1,5 +1,5 @@
-import { IRacingUserData } from "@/modules/iracing/server/procedures/get-user/schema";
-import { GetChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
+import { UserData } from "@/modules/iracing/server/procedures/get-user/schema";
+import { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 
 import { DisciplineCard } from "./discipline-card";
@@ -11,8 +11,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DriverInfo } from "./driver-info";
 
 interface DriverProfileProps {
-  member: IRacingUserData;
-  chartData: GetChartData;
+  member: UserData;
+  chartData: UserChartData;
 }
 
 export const DriverProfile = ({ member, chartData }: DriverProfileProps) => {

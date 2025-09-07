@@ -18,15 +18,15 @@ import {
   processChartDataForInsert,
 } from "@/modules/iracing/server/procedures/user-chart-data/helper";
 import {
-  IRacingUserChartDataInputSchema,
-  IRacingUserChartDataResponseSchema,
+  GetUserChartDataInput,
+  GetUserChartDataResponse,
 } from "./schema";
 
 /**
  * Fetches and caches user chart data (iRating history) from iRacing
  */
 export const userChartDataProcedure = iracingProcedure
-  .input(IRacingUserChartDataInputSchema)
+  .input(GetUserChartDataInput)
   .query(async ({ ctx, input }) => {
     const userProfile = await db
       .select({ iracingId: profileTable.iracingId })
@@ -73,7 +73,7 @@ export const userChartDataProcedure = iracingProcedure
       return [];
     }
 
-    const data = IRacingUserChartDataResponseSchema.parse(res);
+    const data = GetUserChartDataResponse.parse(res);
 
     // Process and insert data
     const dataToInsert = processChartDataForInsert(data, input.userId);

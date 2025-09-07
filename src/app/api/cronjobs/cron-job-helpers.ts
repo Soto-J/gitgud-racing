@@ -6,11 +6,11 @@ import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
-import { IRacingGetAllSeriesResponseSchema } from "@/modules/iracing/server/procedures/cache-all-series/schema";
+import { GetAllSeriesResponse } from "@/modules/iracing/server/procedures/get-all-series/schema";
 
 import {
-  IRacingSeriesResults,
-  IRacingSeriesResultsPromiseResponseSchema,
+  WeeklySeriesResultsItemType,
+  WeeklySeriesResultsPromiseResponse,
 } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
 export const getCurrentSeasonInfo = () => {
@@ -138,7 +138,7 @@ export const cacheSeries = async ({
       throw new Error("Failed to get series.");
     }
 
-    const data = IRacingGetAllSeriesResponseSchema.parse(res);
+    const data = GetAllSeriesResponse.parse(res);
 
     const insertValues = data.map((item) => ({
       seriesId: item.series_id,
@@ -229,7 +229,7 @@ export const cacheWeeklyResults = async ({
       .filter((result) => result.status === "fulfilled")
       .map((result) => result.value);
 
-    const seriesResults = IRacingSeriesResultsPromiseResponseSchema.parse(res);
+    const seriesResults = WeeklySeriesResultsPromiseResponse.parse(res);
 
     const perRaceStats = seriesResults
       .filter((series) => series.length > 0)
@@ -243,7 +243,7 @@ export const cacheWeeklyResults = async ({
             obj[session.start_time].push(session);
             return obj;
           },
-          {} as Record<string, IRacingSeriesResults[]>,
+          {} as Record<string, WeeklySeriesResultsItemType[]>,
         );
 
         const totalRaces = Object.values(uniqueRaces).length;
