@@ -44,16 +44,16 @@ export const getManyProcedure = protectedProcedure
         .where(and(searchFilter, eq(profileTable.isActive, true))),
     ]);
 
-    const totalPages = Math.ceil(total.count / pageSize);
-
     if (users.length === 0) {
       return {
         users: [],
         totalActive: 0,
         total: 0,
-        totalPages,
+        totalPages: 0,
       };
     }
+
+    const totalPages = Math.ceil(total.count / pageSize);
 
     return {
       users,
