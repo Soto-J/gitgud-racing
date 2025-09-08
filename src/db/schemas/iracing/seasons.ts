@@ -41,8 +41,8 @@ export const seasonTable = mysqlTable(
     raceWeekToMakeDivisions: int("race_week_to_make_divisions").notNull(),
 
     // Car & setup rules
-    fixedSetup: boolean("fixed_setup").default(false),
-    multiclass: boolean("multiclass").default(false),
+    fixedSetup: boolean("fixed_setup").default(false).notNull(),
+    multiclass: boolean("multiclass").default(false).notNull(),
 
     // Racing rules
     incidentLimit: int("incident_limit").notNull(),
@@ -121,8 +121,11 @@ export const raceScheduleTable = mysqlTable(
     timeofDay: int("time_of_day").notNull(),
     trackWater: int("track_water").notNull(),
     allow_fog: boolean("allow_fog").default(false),
+
     // Dates
-    startDate: varchar("start_date", { length: 30 }).notNull(),
+    startDate: varchar("start_date", { length: 10 }).notNull(),
+    firstSessionTime: varchar("first_sessoin_time", { length: 8 }).notNull(),
+    repeatMinutes: int("repeat_minutes").notNull(),
     weekEndTime: varchar("week_end_time", { length: 30 }).notNull(),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
