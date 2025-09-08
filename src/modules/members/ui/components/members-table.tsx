@@ -1,20 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Crown, Users } from "lucide-react";
+import { Crown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { MembersGetMany } from "@/modules/members/types";
+import { GetMany } from "@/modules/members/server/procedures/get-many/schema";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -59,7 +58,7 @@ const StatusBadge = ({
 };
 
 interface MembersTableProps {
-  members: MembersGetMany["members"];
+  members: GetMany["users"];
   loggedInUserId: string;
 }
 
@@ -68,7 +67,6 @@ export const MembersTable = ({
   loggedInUserId,
 }: MembersTableProps) => {
   const router = useRouter();
-  const totalMembers = members.length;
 
   return (
     <Card className="border-border from-primary bg-gradient-to-br to-black">
