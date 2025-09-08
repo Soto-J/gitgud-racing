@@ -7,8 +7,5 @@ export * from "./series";
 // Season and schedule tables
 export * from "./seasons";
 
-// Track tables
-export * from "./weather";
-
 // User data tables
 export * from "./user-data";
