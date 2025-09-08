@@ -26,13 +26,6 @@ import {
 export const getUserProcedure = iracingProcedure
   .input(GetUserInput)
   .query(async ({ ctx, input }) => {
-    if (!input?.userId) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "userId is required",
-      });
-    }
-
     const userData = await db
       .select({
         user: { ...getTableColumns(user) },
