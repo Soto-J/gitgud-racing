@@ -9,7 +9,7 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 import { DataPagination } from "@/components/data-pagination";
 
-import { MembersTable } from "../components/members-table";
+import { MembersTable } from "@/modules/members/ui/components/members-table";
 
 interface MembersViewProps {
   loggedInUserId: string;
@@ -25,7 +25,7 @@ export const MembersView = ({ loggedInUserId }: MembersViewProps) => {
 
   return (
     <>
-      <MembersTable members={data.members} loggedInUserId={loggedInUserId} />
+      <MembersTable members={data.users} loggedInUserId={loggedInUserId} />
       <DataPagination
         page={filters.page}
         totalPages={data.totalPages}
