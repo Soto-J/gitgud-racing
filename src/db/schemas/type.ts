@@ -12,7 +12,6 @@ import {
   licenseTable,
   seasonTable,
   raceScheduleTable,
-  trackTable,
 } from ".";
 
 export type UserTable = InferSelectModel<typeof user>;
@@ -28,4 +27,3 @@ export type SeriesWeeklyStatsTable = InferSelectModel<
 >;
 export type SeasonTable = InferSelectModel<typeof seasonTable>;
 export type RaceScheduleTable = InferSelectModel<typeof raceScheduleTable>;
-export type TrackTable = InferSelectModel<typeof trackTable>;
