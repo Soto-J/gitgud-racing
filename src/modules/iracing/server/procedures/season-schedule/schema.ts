@@ -185,3 +185,5 @@ export const GetSeasonsResponse = z.object({
   track_types: z.array(z.number()),
   unsport_conduct_rule_mode: z.number(),
 });
+
+export type GetSeasonsResponseType = z.infer<typeof GetSeasonsResponse>;

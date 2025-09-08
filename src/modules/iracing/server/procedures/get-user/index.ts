@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { user, profileTable, licenseTable } from "@/db/schema";
+import { user, profileTable, licenseTable } from "@/db/schemas";
 
 import {
   GetUserInput,

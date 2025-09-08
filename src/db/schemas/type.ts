@@ -9,16 +9,23 @@ import {
   session,
   user,
   userChartDataTable,
-} from "./schema";
+  licenseTable,
+  seasonTable,
+  raceScheduleTable,
+  trackTable,
+} from ".";
 
 export type UserTable = InferSelectModel<typeof user>;
 export type SessionTable = InferSelectModel<typeof session>;
 export type AccountTable = InferSelectModel<typeof account>;
 export type ProfileTable = InferSelectModel<typeof profileTable>;
-export type iRacingAuthTable = InferSelectModel<typeof iracingAuthTable>;
-export type LicenseTable = InferSelectModel<typeof iracingAuthTable>;
-export type SeriessTable = InferSelectModel<typeof seriesTable>;
+export type IRacingAuthTable = InferSelectModel<typeof iracingAuthTable>;
+export type LicenseTable = InferSelectModel<typeof licenseTable>;
+export type SeriesTable = InferSelectModel<typeof seriesTable>;
 export type UserChartDataTable = InferSelectModel<typeof userChartDataTable>;
 export type SeriesWeeklyStatsTable = InferSelectModel<
   typeof seriesWeeklyStatsTable
 >;
+export type SeasonTable = InferSelectModel<typeof seasonTable>;
+export type RaceScheduleTable = InferSelectModel<typeof raceScheduleTable>;
+export type TrackTable = InferSelectModel<typeof trackTable>;

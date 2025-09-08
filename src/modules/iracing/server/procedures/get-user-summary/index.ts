@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { profileTable } from "@/db/schema";
+import { profileTable } from "@/db/schemas";
 
 import { fetchData } from "@/modules/iracing/server/api";
 

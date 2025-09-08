@@ -6,7 +6,7 @@ import {
   ChartData,
   GetUserChartDataResponseType,
 } from "@/modules/iracing/server/procedures/user-chart-data/schema";
-import { UserChartDataTable } from "@/db/type";
+import { UserChartDataTable } from "@/db/schemas/type";
 
 export const chartDataIsFresh = (
   latestRecord: ChartData | undefined | null,

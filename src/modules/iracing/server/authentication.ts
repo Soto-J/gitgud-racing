@@ -6,7 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { gt } from "drizzle-orm";
 
 import { db } from "@/db";
-import { iracingAuthTable } from "@/db/schema";
+import { iracingAuthTable } from "@/db/schemas";
 
 import env from "@/env";
 

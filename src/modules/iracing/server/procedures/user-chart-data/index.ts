@@ -3,7 +3,7 @@ import { desc, eq, sql } from "drizzle-orm";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { profileTable, userChartDataTable } from "@/db/schema";
+import { profileTable, userChartDataTable } from "@/db/schemas";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
@@ -17,10 +17,7 @@ import {
   transformCharts,
   processChartDataForInsert,
 } from "@/modules/iracing/server/procedures/user-chart-data/helper";
-import {
-  GetUserChartDataInput,
-  GetUserChartDataResponse,
-} from "./schema";
+import { GetUserChartDataInput, GetUserChartDataResponse } from "./schema";
 
 /**
  * Fetches and caches user chart data (iRating history) from iRacing
@@ -60,7 +57,7 @@ export const userChartDataProcedure = iracingProcedure
     const results = await Promise.allSettled(promiseArr);
 
     const failedResults = results.filter((res) => res.status === "rejected");
-    
+
     if (failedResults.length > 0) {
       console.warn("Some chart data requests failed:", failedResults);
     }

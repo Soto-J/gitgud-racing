@@ -4,7 +4,7 @@ import { count, desc, like, or, gt } from "drizzle-orm";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
+import { seriesTable, seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
@@ -89,6 +89,7 @@ export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
       await tx.delete(seriesTable);
       await tx.insert(seriesTable).values(insertValues);
     });
+
     return { success: true, message: "Successfully cached series..." };
   } catch (error) {
     if (error instanceof Error) {

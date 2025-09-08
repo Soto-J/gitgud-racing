@@ -1,6 +1,5 @@
 import { db } from "@/db";
-import { licenseTable } from "@/db/schema";
-
+import { licenseTable } from "@/db/schemas";
 
 import { fetchData } from "@/modules/iracing/server/api";
 

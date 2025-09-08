@@ -8,7 +8,7 @@ import {
   profileTable,
   user,
   userChartDataTable,
-} from "@/db/schema";
+} from "@/db/schemas";
 
 // =============================================================================
 // INPUT SCHEMAS

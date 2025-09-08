@@ -3,7 +3,7 @@ import { eq, like, and, count, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
-import { profileTable, user } from "@/db/schema";
+import { profileTable, user } from "@/db/schemas";
 
 // =============================================================================
 // TYPES
