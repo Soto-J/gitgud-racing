@@ -3,7 +3,7 @@ import { count, desc, eq, like, and, getTableColumns } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
-import { profileTable, user } from "@/db/schema";
+import { profileTable, user } from "@/db/schemas";
 
 // =============================================================================
 // TYPES
@@ -42,18 +42,20 @@ export type MemberListResult = {
 
 /**
  * Fetches a single member with their profile information
- * 
+ *
  * @param memberId - The member ID to fetch
  * @returns Promise resolving to member with profile data
  * @throws TRPCError if member is not found
- * 
+ *
  * @example
  * ```typescript
  * const member = await getMemberWithProfile("user_123");
  * console.log(member.name, member.isActive);
  * ```
  */
-export async function getMemberWithProfile(memberId: string): Promise<MemberWithProfile> {
+export async function getMemberWithProfile(
+  memberId: string,
+): Promise<MemberWithProfile> {
   const [member] = await db
     .select({
       ...getTableColumns(user),
@@ -75,10 +77,10 @@ export async function getMemberWithProfile(memberId: string): Promise<MemberWith
 
 /**
  * Fetches multiple members with pagination and search functionality
- * 
+ *
  * @param filters - Search and pagination parameters
  * @returns Promise resolving to paginated member list with statistics
- * 
+ *
  * @example
  * ```typescript
  * const result = await getMembersWithProfiles({
@@ -89,9 +91,11 @@ export async function getMemberWithProfile(memberId: string): Promise<MemberWith
  * console.log(result.members, result.total, result.totalActive);
  * ```
  */
-export async function getMembersWithProfiles(filters: MemberSearchFilters): Promise<MemberListResult> {
+export async function getMembersWithProfiles(
+  filters: MemberSearchFilters,
+): Promise<MemberListResult> {
   const { memberId, page, pageSize, search } = filters;
-  
+
   const searchClause = buildMemberSearchClause(memberId, search);
 
   // Fetch members with pagination
@@ -107,7 +111,6 @@ export async function getMembersWithProfiles(filters: MemberSearchFilters): Prom
     .limit(pageSize)
     .offset((page - 1) * pageSize);
 
-
   // Get total count
   const [total] = await db
     .select({ count: count() })
@@ -120,12 +123,7 @@ export async function getMembersWithProfiles(filters: MemberSearchFilters): Prom
     .select({ count: count() })
     .from(user)
     .innerJoin(profileTable, eq(profileTable.userId, user.id))
-    .where(
-      and(
-        searchClause,
-        eq(profileTable.isActive, true)
-      )
-    );
+    .where(and(searchClause, eq(profileTable.isActive, true)));
 
   const totalPages = Math.ceil(total.count / pageSize);
 
@@ -143,7 +141,7 @@ export async function getMembersWithProfiles(filters: MemberSearchFilters): Prom
 
 /**
  * Builds search clause for member filtering by ID and name
- * 
+ *
  * @param memberId - Optional member ID filter
  * @param search - Optional name search term
  * @returns Drizzle ORM where clause or undefined for no filtering
@@ -157,11 +155,13 @@ function buildMemberSearchClause(memberId?: string, search?: string) {
 
 /**
  * Validates member search parameters
- * 
+ *
  * @param filters - Search filters to validate
  * @throws TRPCError if validation fails
  */
-export function validateMemberSearchFilters(filters: MemberSearchFilters): void {
+export function validateMemberSearchFilters(
+  filters: MemberSearchFilters,
+): void {
   if (filters.page < 1) {
     throw new TRPCError({
       code: "BAD_REQUEST",

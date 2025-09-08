@@ -5,8 +5,8 @@ import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
 
-import { licenseTable } from "@/db/schema";
-import { ProfileTable, UserTable } from "@/db/type";
+import { licenseTable } from "@/db/schemas";
+import { ProfileTable, UserTable } from "@/db/schemas/type";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -65,9 +65,7 @@ export const GetUserResponse = z.object({
   member_since: z.string(),
 });
 
-export type GetUserResponseType = z.infer<
-  typeof GetUserResponse
->;
+export type GetUserResponseType = z.infer<typeof GetUserResponse>;
 
 export const LicenseSchema = z.object({
   category_id: z.number(),
@@ -165,5 +163,4 @@ export type MemberData = {
 // ROUTER OUTPUT TYPES
 // =============================================================================
 
-export type UserData =
-  inferRouterOutputs<AppRouter>["iracing"]["getUser"];
+export type UserData = inferRouterOutputs<AppRouter>["iracing"]["getUser"];

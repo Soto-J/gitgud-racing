@@ -2,7 +2,7 @@ import { desc, gt } from "drizzle-orm";
 import { DateTime } from "luxon";
 
 import { db } from "@/db";
-import { seriesTable, seriesWeeklyStatsTable } from "@/db/schema";
+import { seriesTable, seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { fetchData } from "@/modules/iracing/server/api";
 

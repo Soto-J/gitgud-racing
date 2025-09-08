@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { seriesWeeklyStatsTable } from "@/db/schema";
+import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { WeeklySeriesResultsInput } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 

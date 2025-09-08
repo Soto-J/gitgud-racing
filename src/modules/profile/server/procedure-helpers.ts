@@ -3,7 +3,7 @@ import { and, eq, getTableColumns } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
-import { licenseTable, profileTable, user } from "@/db/schema";
+import { licenseTable, profileTable, user } from "@/db/schemas";
 
 // =============================================================================
 // TYPES
