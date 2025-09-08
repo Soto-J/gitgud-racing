@@ -6,9 +6,9 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
 
-import { MembersGetOne } from "@/modules/members/types";
+import { User } from "@/modules/members/server/procedures/get-one/schema";
 
-export const columns: ColumnDef<MembersGetOne>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "isActive",
     header: "Status",

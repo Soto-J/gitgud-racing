@@ -12,8 +12,4 @@ export const useMembersFilters = () =>
     page: parseAsInteger
       .withDefault(DEFAULT_PAGE)
       .withOptions({ clearOnDefault: true }),
-
-    memberId: parseAsString
-      .withDefault("")
-      .withOptions({ clearOnDefault: true }),
   });

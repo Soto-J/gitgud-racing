@@ -4,7 +4,7 @@ import { Crown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { AdminGetUser } from "@/modules/manage/types";
+import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
 
 import { TableActions } from "@/modules/manage/ui/components/table/table-actions";
 
@@ -59,7 +59,7 @@ const StatusBadge = ({
 };
 
 interface ManageMembersTableProps {
-  members: AdminGetUser[];
+  members: ManageUser[];
   filters: {
     search: string;
     page: number;
