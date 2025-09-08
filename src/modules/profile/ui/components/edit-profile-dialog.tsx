@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { ProfileUpdateDataSchema } from "@/modules/profile/schema";
+import { ProfileUpdateDataSchema } from "@/modules/profile/server/procedures/edit/schema";
 
 import { UserData } from "@/modules/iracing/server/procedures/get-user/schema";
 

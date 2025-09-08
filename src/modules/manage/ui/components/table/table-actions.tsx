@@ -12,7 +12,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { authClient } from "@/lib/auth-client";
 
-import { AdminGetUser } from "@/modules/manage/types";
+import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
 
 import { ManageEditProfileDialog } from "@/modules/manage/ui/components/form/manage-edit-profile-dialog";
 
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface TableActionsProps {
-  user: AdminGetUser;
+  user: ManageUser;
   filters: {
     search: string;
     page: number;

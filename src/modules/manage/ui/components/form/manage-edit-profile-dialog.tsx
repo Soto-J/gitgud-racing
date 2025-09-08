@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { AdminGetUser } from "@/modules/manage/types";
-import { UpdateUserProfileInputSchema } from "@/modules/manage/schema";
+import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
+import { UpdateUserProfileInputSchema } from "@/modules/manage/server/procedures/edit-user/schema";
 
 import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
 
@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
 interface ManageEditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: AdminGetUser;
+  initialValues: ManageUser;
 }
 
 export const ManageEditProfileDialog = ({
