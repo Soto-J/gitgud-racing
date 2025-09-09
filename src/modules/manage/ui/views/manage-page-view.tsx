@@ -5,7 +5,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
-import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
+import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
 import { ManageMembersTable } from "@/modules/manage/ui/components/manage-members-table";
 
@@ -15,7 +15,7 @@ import { ErrorState } from "@/components/error-state";
 import { LoadingState } from "@/components/loading-state";
 
 export const ManagePageView = () => {
-  const [filters, setFilters] = useMembersFilters();
+  const [filters, setFilters] = useManageFilters();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(

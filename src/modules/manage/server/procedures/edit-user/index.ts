@@ -1,46 +1,44 @@
+import { eq } from "drizzle-orm";
+
 import { TRPCError } from "@trpc/server";
 import { manageProcedure } from "@/trpc/init";
 
+import { db } from "@/db";
+import { profileTable, user } from "@/db/schemas";
+
 import { UpdateUserInputSchema } from "./schema";
-import {
-  validateUserModificationPermissions,
-  updateUserProfile,
-  updateUserRole,
-  getUserWithProfile,
-} from "./helper";
 
 /**
  * Updates user profile and role information (admin/staff only)
  */
 export const updateUserProcedure = manageProcedure
   .input(UpdateUserInputSchema)
-  .mutation(async ({ ctx, input }) => {
-    const currentUser = {
-      id: ctx.auth.user.id,
-      role: ctx.auth.user.role as "admin" | "staff" | "user" | "guest",
-    };
+  .mutation(async ({ input }) => {
+    const { userId, role, team, isActive } = input;
 
-    // Validate permissions before making any changes
-    await validateUserModificationPermissions(
-      currentUser,
-      input.userId,
-      "edit",
-    );
+    const userToUpdate = await db
+      .select()
+      .from(profileTable)
+      .where(eq(profileTable.userId, userId));
+
+    if (!userToUpdate) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "User to update not found",
+      });
+    }
 
     try {
-      // Update profile information
-      await updateUserProfile(input.userId, {
-        team: input.team,
-        isActive: input.isActive,
+      await db.transaction(async (tx) => {
+        await tx.update(profileTable)
+          .set({ team, isActive })
+          .where(eq(profileTable.userId, input.userId));
+
+        await tx.update(user).set({ role }).where(eq(user.id, userId));
       });
-
-      // Update role information
-      await updateUserRole(input.userId, input.role);
-
-      // Return updated user data
-      return await getUserWithProfile(input.userId);
     } catch (error) {
       if (error instanceof TRPCError) {
+        console.error(error);
         throw error;
       }
 

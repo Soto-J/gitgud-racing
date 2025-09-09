@@ -1,16 +1,14 @@
 "use client";
 
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { useTRPC } from "@/trpc/client";
-
-import { DEFAULT_PAGE } from "@/modules/home/constants";
+import { DEFAULT_PAGE } from "../params";
 
 // if input is empty clears URL to default ""
 // E.g. http://localhost:3000/agents?search=test
 //  =>  http://localhost:3000/agents
-export const useChartFilter = () => {
+export const useSeriesChartFilter = () => {
   const trpc = useTRPC();
 
   return useQueryStates({

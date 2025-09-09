@@ -8,7 +8,7 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
-} from "@/modules/iracing/constants";
+} from "./params";
 
 export const GetMembersInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
@@ -17,7 +17,7 @@ export const GetMembersInputSchema = z.object({
     .min(MIN_PAGE_SIZE)
     .max(MAX_PAGE_SIZE)
     .default(DEFAULT_PAGE_SIZE),
-    
+
   search: z.string().nullish(),
 });
 

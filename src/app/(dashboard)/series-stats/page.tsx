@@ -9,7 +9,7 @@ import { SearchParams } from "nuqs";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { loadSearchParams } from "@/modules/home/params";
+import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
 import { auth } from "@/lib/auth";
 

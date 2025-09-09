@@ -5,7 +5,7 @@ import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 // if input is empty clears URL to default ""
 // E.g. http://localhost:3000/agents?search=test
 //  =>  http://localhost:3000/agents
-export const useMembersFilters = () =>
+export const useManageFilters = () =>
   useQueryStates({
     search: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
 

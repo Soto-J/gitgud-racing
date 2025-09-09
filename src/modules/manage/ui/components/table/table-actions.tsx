@@ -63,7 +63,7 @@ export const TableActions = ({
   const onDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    
+
     const Ok = await confirmDelete();
 
     if (!Ok) {
