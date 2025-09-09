@@ -15,16 +15,10 @@ import { GetAllSeriesResponse } from "@/modules/iracing/server/procedures/get-al
  * Fetches all available racing series
  */
 export const getAllSeriesProcedure = iracingProcedure.query(async () => {
-  const allSeries = await db
+  return await db
     .select()
     .from(seriesTable)
     .orderBy(desc(seriesTable.seriesName));
-
-  if (!allSeries?.length) {
-    return [];
-  }
-
-  return allSeries;
 });
 
 export const getTotalSeriesCountProcedure = iracingProcedure

@@ -1,18 +1,22 @@
+"use client";
+
 import { SearchIcon } from "lucide-react";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
+import { useDebounceSearch } from "@/hooks/use-debounce-search";
 
 import { Input } from "@/components/ui/input";
 
 export const MembersSearchFilter = () => {
   const [filters, setFilters] = useMembersFilters();
+  const { searchValue, setSearchValue } = useDebounceSearch(filters, setFilters);
 
   return (
     <div className="relative">
       <Input
         placeholder="Filter by name"
-        value={filters.search}
-        onChange={(e) => setFilters({ search: e.target.value })}
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
         className="h-9 w-[200px] bg-white pl-7"
       />
 

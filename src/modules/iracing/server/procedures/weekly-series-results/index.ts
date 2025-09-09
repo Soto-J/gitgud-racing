@@ -1,6 +1,5 @@
 import { desc, count, or, like } from "drizzle-orm";
 
-import { TRPCError } from "@trpc/server";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
@@ -33,13 +32,6 @@ export const weeklySeriesResultsProcedure = iracingProcedure
       )
       .limit(pageSize)
       .offset((page - 1) * pageSize);
-
-    if (!weeklyResults?.length) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "No weekly results found",
-      });
-    }
 
     const [total] = await db
       .select({ count: count() })

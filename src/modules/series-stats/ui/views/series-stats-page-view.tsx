@@ -23,11 +23,12 @@ export const SeriesStatsPageView = () => {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
-          <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-blue-100 opacity-20"></div>
+          <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-blue-100 opacity-20" />
 
           <div className="relative">
             <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1">
-              <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+              <div className="h-2 w-2 rounded-full bg-blue-500" />
+
               <span className="text-xs font-medium text-blue-700">TOTAL</span>
             </div>
 
@@ -43,10 +44,12 @@ export const SeriesStatsPageView = () => {
         </div>
 
         <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
-          <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-green-100 opacity-20"></div>
+          <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-green-100 opacity-20" />
+
           <div className="relative">
             <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1">
-              <div className="h-2 w-2 rounded-full bg-green-500"></div>
+              <div className="h-2 w-2 rounded-full bg-green-500" />
+
               <span className="text-xs font-medium text-green-700">
                 ENTRANTS
               </span>
@@ -69,10 +72,12 @@ export const SeriesStatsPageView = () => {
         </div>
 
         <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-purple-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
-          <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-purple-100 opacity-20"></div>
+          <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-purple-100 opacity-20" />
+
           <div className="relative">
             <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1">
-              <div className="h-2 w-2 rounded-full bg-purple-500"></div>
+              <div className="h-2 w-2 rounded-full bg-purple-500" />
+
               <span className="text-xs font-medium text-purple-700">
                 SPLITS
               </span>

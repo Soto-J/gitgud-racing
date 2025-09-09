@@ -8,13 +8,12 @@ import { profileTable, user } from "@/db/schemas";
 
 import { CreateProfileInputSchema } from "./schema";
 
-
 /**
  * Creates a new profile for the authenticated user
  */
 export const createProfileProcedure = protectedProcedure
   .input(CreateProfileInputSchema)
-  .mutation(async ({ ctx, input }) => {
+  .mutation(async ({ input }) => {
     const response = await db
       .insert(profileTable)
       .values({
