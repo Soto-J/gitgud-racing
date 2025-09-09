@@ -5,7 +5,7 @@ import { XCircleIcon } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { useChartFilter } from "@/modules/home/hooks/use-chart-data-filter";
+import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 import { DEFAULT_PAGE } from "@/modules/home/constants";
 
 import { ChartSearchFilter } from "./chart-search-filter";

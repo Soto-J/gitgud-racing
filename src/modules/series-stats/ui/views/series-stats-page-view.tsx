@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { useChartFilter } from "@/modules/home/hooks/use-chart-data-filter";
+import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 
 import { SeriesChart } from "@/modules/home/ui/components/series-chart";
 
@@ -21,11 +21,10 @@ export const SeriesStatsPageView = () => {
     <div className="space-y-8 p-6">
       <SeriesChart data={data} />
 
-      {/* Summary Stats */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-blue-100 opacity-20"></div>
-          
+
           <div className="relative">
             <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1">
               <div className="h-2 w-2 rounded-full bg-blue-500"></div>

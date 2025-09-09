@@ -1,6 +1,6 @@
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
-import { DEFAULT_PAGE } from "@/modules/members/constants";
+import { DEFAULT_PAGE } from "@/modules/members/server/procedures/get-many/params";
 
 // if input is empty clears URL to default ""
 // E.g. http://localhost:3000/agents?search=test

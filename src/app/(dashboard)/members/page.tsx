@@ -11,7 +11,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 
 import { auth } from "@/lib/auth";
 
-import { loadSearchParams } from "@/modules/members/params";
+import { loadSearchParams } from "@/modules/members/server/procedures/get-many/params";
 
 import { MembersListHeader } from "@/modules/members/ui/components/members-list-header";
 

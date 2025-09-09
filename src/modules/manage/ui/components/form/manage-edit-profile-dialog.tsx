@@ -6,13 +6,15 @@ import { useForm } from "react-hook-form";
 
 import { toast } from "sonner";
 
+import { cn } from "@/lib/utils";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
 import { UpdateUserProfileInputSchema } from "@/modules/manage/server/procedures/edit-user/schema";
 
-import { useMembersFilters } from "@/modules/manage/hooks/use-members-filter";
+import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
 import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
@@ -33,7 +35,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 
 interface ManageEditProfileDialogProps {
   onOpenDialog: boolean;
@@ -46,18 +47,19 @@ export const ManageEditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: ManageEditProfileDialogProps) => {
-  const [filters, _] = useMembersFilters();
+  const [filters, _] = useManageFilters();
 
   type FormData = z.infer<typeof UpdateUserProfileInputSchema>;
-  
+
   const form = useForm<FormData>({
     resolver: zodResolver(UpdateUserProfileInputSchema),
     defaultValues: {
       team: initialValues.team || "",
       isActive: initialValues.isActive,
-      role: initialValues.role as "admin" | "staff" | "user" | "guest",
+      role: initialValues.role,
     },
   });
+
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
@@ -83,8 +85,8 @@ export const ManageEditProfileDialog = ({
 
   const onSubmit = (values: FormData) => {
     editProfile.mutate({
-      userId: initialValues.id,
       ...values,
+      userId: initialValues.id,
     });
   };
 
@@ -114,7 +116,7 @@ export const ManageEditProfileDialog = ({
                       >
                         Member Status
                       </FormLabel>
-                      
+
                       <p className="text-xs text-gray-600 dark:text-gray-400">
                         Toggle member&apos;s active status
                       </p>

@@ -1,4 +1,5 @@
 import z from "zod";
+
 import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
@@ -8,7 +9,7 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
-} from "@/modules/manage/constants";
+} from "./params";
 
 export const GetUsersInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
@@ -18,9 +19,8 @@ export const GetUsersInputSchema = z.object({
     .max(MAX_PAGE_SIZE)
     .default(DEFAULT_PAGE_SIZE),
   search: z.string().nullish(),
-  memberId: z.string().nullish(),
 });
 
 export type GetUsersInput = z.infer<typeof GetUsersInputSchema>;
 
-export type ManageUsers = inferRouterOutputs<AppRouter>["manage"]["getUsers"];
+export type ManageGetUser = inferRouterOutputs<AppRouter>["manage"]["getUser"];

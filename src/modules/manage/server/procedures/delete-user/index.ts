@@ -1,8 +1,12 @@
+import { eq } from "drizzle-orm";
+
 import { TRPCError } from "@trpc/server";
 import { manageProcedure } from "@/trpc/init";
 
+import { db } from "@/db";
+import { user } from "@/db/schemas";
+
 import { DeleteUserInputSchema } from "./schema";
-import { validateUserModificationPermissions, deleteUser } from "./helper";
 
 /**
  * Permanently deletes a user from the system (admin/staff only)
@@ -10,20 +14,29 @@ import { validateUserModificationPermissions, deleteUser } from "./helper";
 export const deleteUserProcedure = manageProcedure
   .input(DeleteUserInputSchema)
   .mutation(async ({ ctx, input }) => {
-    const currentUser = {
-      id: ctx.auth.user.id,
-      role: ctx.auth.user.role as "admin" | "staff" | "user" | "guest",
-    };
+    if (ctx.auth.user.id === input.userId) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Cannot delete your own account.",
+      });
+    }
 
-    // Validate permissions and business rules
-    await validateUserModificationPermissions(
-      currentUser,
-      input.userId,
-      "delete",
-    );
+    const userToDelete = await db
+      .select({ role: user.role })
+      .from(user)
+      .where(eq(user.id, input.userId))
+      .then((row) => row[0]);
+
+    if (!userToDelete) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "User to delete not found.",
+      });
+    }
 
     try {
-      return await deleteUser(input.userId);
+      await db.delete(user).where(eq(user.id, input.userId));
+      console.log(`User ${input.userId} deleted by ${ctx.auth.user.id}`);
     } catch (error) {
       if (error instanceof TRPCError) {
         throw error;

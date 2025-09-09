@@ -7,20 +7,21 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
-} from "@/modules/iracing/constants";
+} from "./params";
 
 // =============================================================================
 // INPUT SCHEMAS
 // =============================================================================
 
 export const WeeklySeriesResultsInput = z.object({
-  search: z.string().nullish(),
+  page: z.number().default(DEFAULT_PAGE),
   pageSize: z
     .number()
     .min(MIN_PAGE_SIZE)
     .max(MAX_PAGE_SIZE)
     .default(DEFAULT_PAGE_SIZE),
-  page: z.number().default(DEFAULT_PAGE),
+
+  search: z.string().nullish(),
 });
 
 export type WeeklySeriesResultsInputType = z.infer<
@@ -67,11 +68,11 @@ export const WeeklySeriesResultsItem = z.object({
   event_strength_of_field: z.number(),
 });
 
-export type WeeklySeriesResultsItemType = z.infer<typeof WeeklySeriesResultsItem>;
+export type WeeklySeriesResultsItemType = z.infer<
+  typeof WeeklySeriesResultsItem
+>;
 
-export const WeeklySeriesResultsResponse = z.array(
-  WeeklySeriesResultsItem,
-);
+export const WeeklySeriesResultsResponse = z.array(WeeklySeriesResultsItem);
 
 export type WeeklySeriesResultsResponseType = z.infer<
   typeof WeeklySeriesResultsResponse
