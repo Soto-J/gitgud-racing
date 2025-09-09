@@ -5,7 +5,7 @@ import { Car, XCircleIcon } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { DEFAULT_PAGE } from "@/modules/members/server/procedures/constants";
+import { DEFAULT_PAGE } from "@/modules/members/server/procedures/get-many/params";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 

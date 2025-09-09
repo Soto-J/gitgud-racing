@@ -5,7 +5,7 @@ import {
   MIN_PAGE_SIZE,
   MAX_PAGE_SIZE,
   DEFAULT_PAGE_SIZE,
-} from "@/modules/members/constants";
+} from "@/modules/members/server/procedures/get-many/params";
 
 // =============================================================================
 // MEMBER QUERY SCHEMAS

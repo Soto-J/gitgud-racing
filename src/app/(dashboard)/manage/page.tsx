@@ -8,7 +8,7 @@ import { SearchParams } from "nuqs";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { loadSearchParams } from "@/modules/manage/params";
+import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/params";
 
 import { auth } from "@/lib/auth";
 
