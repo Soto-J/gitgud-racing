@@ -124,7 +124,7 @@ export const raceScheduleTable = mysqlTable(
 
     // Dates
     startDate: varchar("start_date", { length: 10 }).notNull(),
-    firstSessionTime: varchar("first_sessoin_time", { length: 8 }).notNull(),
+    firstSessionTime: varchar("first_session_time", { length: 8 }).notNull(),
     repeatMinutes: int("repeat_minutes").notNull(),
     weekEndTime: varchar("week_end_time", { length: 30 }).notNull(),
 
