@@ -3,12 +3,12 @@
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 
 import { useTRPC } from "@/trpc/client";
-import { DEFAULT_PAGE } from "../params";
+import { DEFAULT_PAGE } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
 // if input is empty clears URL to default ""
 // E.g. http://localhost:3000/agents?search=test
 //  =>  http://localhost:3000/agents
-export const useSeriesChartFilter = () => {
+export const useChartFilter = () => {
   const trpc = useTRPC();
 
   return useQueryStates({

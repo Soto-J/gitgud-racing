@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE } from "@/modules/manage/constants";
+import { DEFAULT_PAGE } from "@/modules/manage/server/procedures/get-users/params";
 
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 

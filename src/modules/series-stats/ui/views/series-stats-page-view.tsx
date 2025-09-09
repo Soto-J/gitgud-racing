@@ -3,7 +3,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { useChartFilter } from "@/modules/iracing/server/procedures/weekly-series-results/hooks/use-chart-data-filter";
+import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 
 import { SeriesChart } from "@/modules/home/ui/components/series-chart";
 

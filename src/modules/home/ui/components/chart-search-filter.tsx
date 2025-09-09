@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { SearchIcon } from "lucide-react";
 
-import { useChartFilter } from "@/modules/iracing/server/procedures/weekly-series-results/hooks/use-chart-data-filter";
+import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 
 import { Input } from "@/components/ui/input";
 
