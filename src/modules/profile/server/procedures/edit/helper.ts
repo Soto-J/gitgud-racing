@@ -7,32 +7,6 @@ import { profileTable, user } from "@/db/schemas";
 
 import { ProfileUpdateData } from "./schema";
 
-/**
- * Validates profile data before processing
- */
-export function validateProfileData(data: ProfileUpdateData): void {
-  if (!data.firstName?.trim()) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "First name is required",
-    });
-  }
-
-  if (!data.lastName?.trim()) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Last name is required",
-    });
-  }
-
-  // Validate iRacing ID format if provided
-  if (data.iRacingId && !/^\d+$/.test(data.iRacingId.trim())) {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "iRacing ID must be numeric",
-    });
-  }
-}
 
 /**
  * Updates profile and user information
@@ -42,16 +16,6 @@ export async function updateUserProfile(
   currentUserId: string,
   updates: ProfileUpdateData,
 ) {
-  // Validate authorization
-  const isAuthorized = userId === currentUserId;
-  if (!isAuthorized) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Not authorized to update this profile",
-    });
-  }
-
-  // Update profile information
   const result = await db
     .update(profileTable)
     .set({

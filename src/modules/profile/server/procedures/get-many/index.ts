@@ -1,10 +1,11 @@
 import { protectedProcedure } from "@/trpc/init";
 
-import { getAllProfiles } from "./helper";
+import { db } from "@/db";
+import { profileTable } from "@/db/schemas";
 
 /**
  * Fetches all user profiles (admin/staff functionality)
  */
 export const getAllProfilesProcedure = protectedProcedure.query(async () => {
-  return await getAllProfiles();
+  return await db.select().from(profileTable);
 });
