@@ -16,8 +16,8 @@ export const getProfileProcedure = protectedProcedure
   .query(async ({ input }) => {
     const profileWithUser = await db
       .select({
-        ...getTableColumns(profileTable),
-        ...getTableColumns(licenseTable),
+        profile: getTableColumns(profileTable),
+        licenses: getTableColumns(licenseTable),
         memberName: user.name,
       })
       .from(profileTable)
