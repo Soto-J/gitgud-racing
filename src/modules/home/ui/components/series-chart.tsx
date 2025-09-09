@@ -35,6 +35,8 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
   const seasonQuarter = data.series[0]?.seasonQuarter || "0";
   const seasonWeek = data.series[0]?.raceWeek || "0";
 
+  const isEmpty = data.series.length === 0;
+
   return (
     <div className="group rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-gray-50/30 p-3 shadow-xl transition-all duration-300 hover:border-gray-200 hover:shadow-2xl sm:rounded-3xl sm:p-8">
       <div className="mb-4 flex flex-col items-center gap-2 sm:mb-6 sm:flex-row sm:justify-between sm:gap-3">
@@ -46,106 +48,126 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
           </h2>
         </div>
 
-        <div className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
-          {seasonYear} S{seasonQuarter} • Week {seasonWeek} / 13
-        </div>
+        {!isEmpty && (
+          <div className="rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 sm:px-4 sm:py-2 sm:text-sm">
+            {seasonYear} S{seasonQuarter} • Week {seasonWeek} / 13
+          </div>
+        )}
       </div>
 
-      <ChartContainer
-        config={chartConfig}
-        className="h-[300px] w-full transition-all duration-300 group-hover:scale-[1.02] sm:h-[400px] lg:h-[500px]"
-      >
-        <BarChart
-          accessibilityLayer
-          data={data.series}
-          margin={{ top: 25, right: 4, left: -40, bottom: 40 }}
+      {isEmpty ? (
+        <div className="flex h-[300px] w-full items-center justify-center sm:h-[400px] lg:h-[500px]">
+          <div className="text-center">
+            <div className="mb-3 text-6xl text-gray-300">📊</div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-600">
+              No series found
+            </h3>
+            <p className="text-sm text-gray-500">
+              Try adjusting your search filters or check back later
+            </p>
+          </div>
+        </div>
+      ) : (
+        <ChartContainer
+          config={chartConfig}
+          className="h-[300px] w-full transition-all duration-300 group-hover:scale-[1.02] sm:h-[400px] lg:h-[500px]"
         >
-          <CartesianGrid
-            vertical={false}
-            strokeDasharray="3 6"
-            stroke="hsl(220, 13%, 91%)"
-            opacity={0.8}
-          />
-          <XAxis
-            dataKey="name"
-            tickLine={false}
-            tickMargin={8}
-            axisLine={false}
-            angle={-45}
-            height={60}
-            interval={0}
-            tick={<ImageTick data={data} />}
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tick={{ fontSize: 11, fill: "hsl(220, 9%, 46%)", fontWeight: 500 }}
-            width={60}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                className="rounded-xl border border-gray-100 bg-white/98 shadow-xl backdrop-blur-md"
-                labelFormatter={(label, payload) => {
-                  const trackName = payload?.[0]?.payload?.trackName;
+          <BarChart
+            accessibilityLayer
+            data={data.series}
+            margin={{ top: 25, right: 4, left: -40, bottom: 40 }}
+          >
+            <CartesianGrid
+              vertical={false}
+              strokeDasharray="3 6"
+              stroke="hsl(220, 13%, 91%)"
+              opacity={0.8}
+            />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              tickMargin={8}
+              axisLine={false}
+              angle={-45}
+              height={60}
+              interval={0}
+              tick={<ImageTick data={data} />}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tick={{
+                fontSize: 11,
+                fill: "hsl(220, 9%, 46%)",
+                fontWeight: 500,
+              }}
+              width={60}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  className="rounded-xl border border-gray-100 bg-white/98 shadow-xl backdrop-blur-md"
+                  labelFormatter={(label, payload) => {
+                    const trackName = payload?.[0]?.payload?.trackName;
 
-                  return (
-                    <div>
-                      <div className="text-sm font-semibold text-gray-800">
-                        {label}
+                    return (
+                      <div>
+                        <div className="text-sm font-semibold text-gray-800">
+                          {label}
+                        </div>
+
+                        <div className="border-b border-gray-200 pb-1">
+                          {trackName}
+                        </div>
                       </div>
+                    );
+                  }}
+                  formatter={(value, name) => {
+                    const isAvgSplit = name === "averageEntrants";
+                    const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
 
-                      <div className="border-b border-gray-200 pb-1">
-                        {trackName}
+                    return (
+                      <div className="flex items-center gap-x-3">
+                        <span
+                          className={cn(
+                            "h-3 w-3 rounded-full",
+                            isAvgSplit
+                              ? "bg-[hsl(160,60%,45%)]"
+                              : "bg-[hsl(220,70%,50%)]",
+                          )}
+                        />
+
+                        <span className="font-medium text-gray-900">
+                          {label}:{" "}
+                          {typeof value === "number" ? value.toFixed(1) : value}
+                        </span>
                       </div>
-                    </div>
-                  );
-                }}
-                formatter={(value, name) => {
-                  const isAvgSplit = name === "averageEntrants";
-                  const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
+                    );
+                  }}
+                />
+              }
+            />
+            <ChartLegend
+              content={
+                <ChartLegendContent className="mt-6 text-sm font-medium" />
+              }
+            />
 
-                  return (
-                    <div className="flex items-center gap-x-3">
-                      <span
-                        className={cn(
-                          "h-3 w-3 rounded-full",
-                          isAvgSplit
-                            ? "bg-[hsl(160,60%,45%)]"
-                            : "bg-[hsl(220,70%,50%)]",
-                        )}
-                      />
-
-                      <span className="font-medium text-gray-900">
-                        {label}:{" "}
-                        {typeof value === "number" ? value.toFixed(1) : value}
-                      </span>
-                    </div>
-                  );
-                }}
-              />
-            }
-          />
-          <ChartLegend
-            content={
-              <ChartLegendContent className="mt-6 text-sm font-medium" />
-            }
-          />
-
-          <Bar
-            dataKey="averageEntrants"
-            fill="var(--color-averageEntrants)"
-            radius={[8, 8, 0, 0]}
-            maxBarSize={40}
-          />
-          <Bar
-            dataKey="averageSplits"
-            fill="var(--color-averageSplits)"
-            radius={[8, 8, 0, 0]}
-            maxBarSize={40}
-          />
-        </BarChart>
-      </ChartContainer>
+            <Bar
+              dataKey="averageEntrants"
+              fill="var(--color-averageEntrants)"
+              radius={[8, 8, 0, 0]}
+              maxBarSize={40}
+            />
+            <Bar
+              dataKey="averageSplits"
+              fill="var(--color-averageSplits)"
+              radius={[8, 8, 0, 0]}
+              maxBarSize={40}
+            />
+          </BarChart>
+        </ChartContainer>
+      )}
     </div>
   );
 };

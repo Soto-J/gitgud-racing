@@ -63,7 +63,7 @@ export const Banner = ({
   const DisplayIcon = CustomIcon || Trophy;
 
   return (
-    <div className="bg-card my-8 overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md">
+    <div className="bg-card mb-8 overflow-hidden rounded-xl border shadow-sm transition-all duration-300 hover:shadow-md">
       <div
         className={cn(
           "relative bg-gradient-to-r from-red-600 via-red-700 to-red-800",
