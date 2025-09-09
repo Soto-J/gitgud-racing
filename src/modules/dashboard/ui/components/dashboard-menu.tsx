@@ -142,7 +142,7 @@ export const DashboardMenu = () => {
                         </span>
                         {pathname === href && (
                           <ChevronRight
-                            className="text-secondary ml-auto"
+                            className="text-primary ml-auto"
                             size={16}
                           />
                         )}
