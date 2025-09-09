@@ -6,10 +6,10 @@ import { gt } from "drizzle-orm";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { seriesTable } from "@/db/schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
 
+import { seriesTable } from "@/db/schemas";
 import { IRacingGetAllSeriesResponseSchema } from "./schema";
 
 export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
