@@ -1,3 +1,5 @@
+"use client";
+
 import { SearchIcon } from "lucide-react";
 
 import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
