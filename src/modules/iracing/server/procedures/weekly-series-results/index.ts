@@ -33,10 +33,11 @@ export const weeklySeriesResultsProcedure = iracingProcedure
       .limit(pageSize)
       .offset((page - 1) * pageSize);
 
-    const [total] = await db
+    const total = await db
       .select({ count: count() })
       .from(seriesWeeklyStatsTable)
-      .where(orClause);
+      .where(orClause)
+      .then((row) => row[0]);
 
     const totalPages = Math.ceil(total.count / pageSize);
 
