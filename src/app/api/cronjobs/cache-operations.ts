@@ -1,88 +1,25 @@
-import { desc, gt } from "drizzle-orm";
+import { z } from "zod";
+import { desc, gt, sql } from "drizzle-orm";
 import { DateTime } from "luxon";
 
 import { db } from "@/db";
-import { seriesTable, seriesWeeklyStatsTable } from "@/db/schemas";
+import {
+  seasonTable,
+  seriesTable,
+  seriesWeeklyStatsTable,
+  raceScheduleTable,
+} from "@/db/schemas";
 
 import { fetchData } from "@/modules/iracing/server/api";
+import { buildScheduleData, buildSeasonsData } from "./utilities";
 
+import { GetSeasonsResponse } from "@/modules/iracing/server/procedures/season-schedule/schema";
 import { GetAllSeriesResponse } from "@/modules/iracing/server/procedures/get-all-series/schema";
 
 import {
   WeeklySeriesResultsItemType,
   WeeklySeriesResultsPromiseResponse,
 } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
-
-export const getCurrentSeasonInfo = () => {
-  const year = DateTime.now().year;
-
-  // iRacing seasons typically start on these dates (adjust based on actual schedule)
-  const seasonStarts = [
-    DateTime.local(year, 3, 12), // Season 1: ~March 12 (Week 0)
-    DateTime.local(year, 5, 11), // Season 2: ~June 11 (Week 0)
-    DateTime.local(year, 8, 10), // Season 3: ~September 10 (Week 0)
-    DateTime.local(year, 11, 10), // Season 4: ~December 10 (Week 0)
-  ];
-
-  // Find current season
-  let currentSeasonIndex = 0;
-  let seasonStartDate = seasonStarts[0];
-
-  if (DateTime.now() < seasonStarts[0]) {
-    // Before Season 1 of the current year: treat as last year's Season 4
-    currentSeasonIndex = 3;
-    seasonStartDate = DateTime.local(year - 1, 11, 10);
-  } else {
-    for (let i = seasonStarts.length - 1; i >= 0; i--) {
-      if (DateTime.now() >= seasonStarts[i]) {
-        currentSeasonIndex = i;
-        seasonStartDate = seasonStarts[i];
-        break;
-      }
-    }
-  }
-
-  // Calculate weeks since season start
-  const weeksSinceStart = Math.floor(
-    DateTime.now().diff(seasonStartDate).weeks,
-  );
-
-  const currentRaceWeek = (
-    Math.max(0, Math.min(weeksSinceStart, 12)) - 1
-  ).toString();
-
-  const currentQuarter = Math.ceil((DateTime.now().month + 1) / 3).toString();
-  const currentSeasonYear = DateTime.now().year.toString();
-
-  return {
-    currentRaceWeek,
-    currentQuarter,
-    currentYear: currentSeasonYear,
-  };
-};
-
-export const createSearchParams = (params: {
-  season_year: string;
-  season_quarter: string;
-  event_types?: string;
-  official_only?: string;
-  race_week_num?: string;
-  start_range_begin?: string;
-  start_range_end?: string;
-  cust_id?: string;
-  team_id?: string;
-  category_id?: string;
-}) => {
-  const searchParams = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value) {
-      searchParams.append(key, value);
-    }
-  });
-
-  return searchParams.toString() ? `?${searchParams.toString()}` : "";
-};
 
 /**
  * Caches all iRacing series data to the database
@@ -285,5 +222,105 @@ export const cacheWeeklyResults = async ({
       return { success: false, error: error.message };
     }
     return { success: false, error: "Unknown error occurred" };
+  }
+};
+
+export const cacheSeasonsSchedule = async ({
+  includeSeries,
+  seasonYear,
+  seasonQuarter,
+  authCode,
+}: {
+  includeSeries: string;
+  seasonYear: string;
+  seasonQuarter: string;
+  authCode: string;
+}) => {
+  const seasons = await db
+    .select()
+    .from(seasonTable)
+    .orderBy(desc(seasonTable.updatedAt));
+
+  const latestSeason = seasons[0];
+
+  const hasFreshData =
+    latestSeason &&
+    latestSeason.seasonYear === +seasonYear &&
+    latestSeason.seasonQuarter === +seasonQuarter;
+
+  if (hasFreshData) {
+    console.log("Seasons schedule still fresh.");
+    return;
+  }
+
+  const response = await fetchData({
+    query: `/series/seasons?include_series=${includeSeries}&season_year=${seasonYear}&season_quarter=${seasonQuarter}`,
+    authCode,
+  });
+
+  if (!response) {
+    console.warn("Failed to fetch season data...");
+    return { success: false, message: "Failed to fetch season data..." };
+  }
+
+  const seasonsResponse = z.array(GetSeasonsResponse).parse(response);
+  if (seasonsResponse.length === 0) {
+    console.warn("No seasons found in response..");
+    return { success: false, message: "No seasons found in response." };
+  }
+
+  const schedules = seasonsResponse.flatMap((season) => season.schedules);
+
+  const schedulesData = buildScheduleData(schedules);
+  const seasonsData = buildSeasonsData(seasonsResponse);
+
+  if (!seasonsData || !schedulesData) {
+    console.warn("Failed to build data...");
+    return {
+      success: false,
+      message: "Failed to fetch season data...",
+    };
+  }
+
+  try {
+    await db.transaction(async (tx) => {
+      await tx
+        .insert(seasonTable)
+        .values(seasonsData)
+        .onDuplicateKeyUpdate({
+          set: {
+            active: sql`VALUES(active)`,
+            complete: sql`VALUES(complete)`,
+            updatedAt: sql`NOW()`,
+          },
+        });
+
+      await tx
+        .insert(raceScheduleTable)
+        .values(schedulesData)
+        .onDuplicateKeyUpdate({
+          set: {
+            id: sql`id`,
+          },
+        });
+    });
+
+    return {
+      success: true,
+      message: `Successfully cached ${seasonsResponse.length} seasons with ${schedulesData.length} total race weeks`,
+      seasonsProcessed: seasonsResponse.length,
+      seasonIds: seasonsData.map((season) => season.id),
+      totalScheduleCount: schedulesData.length,
+    };
+  } catch (error) {
+    console.error("Error in cacheSeasonsSchedule", {
+      error,
+      seasonsData,
+      schedulesData,
+    });
+    if (error instanceof Error) {
+      return { success: false, message: `Error: ${error.message}` };
+    }
+    return { success: false, message: "Unknown error occurred" };
   }
 };
