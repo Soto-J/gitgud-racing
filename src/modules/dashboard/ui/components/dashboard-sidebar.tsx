@@ -1,16 +1,14 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
 
 import { DashboardMenu } from "./dashboard-menu";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export const DashboardSidebar = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
+  const session = await getSession();
   if (!session) redirect("/sign-in");
 
   const queryClient = getQueryClient();

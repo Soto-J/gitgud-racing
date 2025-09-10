@@ -1,15 +1,15 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 
 import { DateTime } from "luxon";
 
-import { SchedulePageView } from "@/modules/schedule/ui/views/schedule-page-view";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
+
 import { getQueryClient, trpc } from "@/trpc/server";
 
-const SchedulePage = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
+import { SchedulePageView } from "@/modules/schedule/ui/views/schedule-page-view";
 
+const SchedulePage = async () => {
+  const session = await getSession();
   if (!session) redirect("/sign-in");
 
   const dt = DateTime.now();
