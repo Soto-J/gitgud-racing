@@ -1,9 +1,8 @@
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -19,7 +18,7 @@ interface MemberIdPageProps {
 }
 
 const MemberIdPage = async ({ params }: MemberIdPageProps) => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) redirect("/sign-in");
 
   const { memberId } = await params;

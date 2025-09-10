@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { SearchParams } from "nuqs";
@@ -9,7 +8,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
 
 import { loadSearchParams } from "@/modules/members/server/procedures/get-many/params";
 
@@ -26,8 +25,7 @@ interface MembersPageProps {
 }
 
 const MembersPage = async ({ searchParams }: MembersPageProps) => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
+  const session = await getSession();
   if (!session) redirect("/sign-in");
 
   const filters = await loadSearchParams(searchParams);

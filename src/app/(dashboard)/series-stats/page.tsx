@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 
 import { SearchParams } from "nuqs";
 
@@ -11,7 +10,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 
 import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
 
 import { SeriesStatsHeader } from "@/modules/home/ui/components/home-header";
 import {
@@ -25,8 +24,7 @@ interface HomePageProps {
 }
 
 const SeriesStatsPage = async ({ searchParams }: HomePageProps) => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
+  const session = await getSession();
   if (!session) redirect("/sign-in");
 
   const filters = await loadSearchParams(searchParams);

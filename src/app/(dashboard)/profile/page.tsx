@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 
 import { ErrorBoundary } from "react-error-boundary";
 
-import { auth } from "@/lib/auth";
-
-import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getQueryClient, trpc } from "@/trpc/server";
+
+import { getSession } from "@/lib/get-session";
 
 import {
   ErrorProfileView,
@@ -16,8 +15,7 @@ import {
 } from "@/modules/profile/ui/views/profile-view";
 
 const ProfilePage = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
+  const session = await getSession();
   if (!session) redirect("/sign-in");
 
   const queryClient = getQueryClient();

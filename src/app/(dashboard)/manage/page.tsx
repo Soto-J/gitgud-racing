@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -10,7 +9,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 
 import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/params";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/get-session";
 
 import {
   ManageErrorPage,
@@ -23,11 +22,8 @@ interface ManagePageProps {
 }
 
 const ManagePage = async ({ searchParams }: ManagePageProps) => {
-  const session = await auth.api.getSession({ headers: await headers() });
-
-  if (!session) {
-    redirect("/sign-in");
-  }
+  const session = await getSession();
+  if (!session) redirect("/sign-in");
 
   if (session.user?.role !== "admin" && session.user?.role !== "staff") {
     redirect("/");
