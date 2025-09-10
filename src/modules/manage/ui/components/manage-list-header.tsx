@@ -5,9 +5,9 @@ import { Crown, XCircleIcon } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { DEFAULT_PAGE } from "@/modules/members/server/procedures/get-many/params";
+import { DEFAULT_PAGE } from "@/modules/manage/constants";
 
-import { MembersSearchFilter } from "@/modules/members/ui/components/members-search-filter";
+import { MembersSearchFilter } from "@/modules/manage/ui/components/manage-search-filter";
 
 import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
