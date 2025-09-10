@@ -226,12 +226,12 @@ export const cacheWeeklyResults = async ({
 };
 
 export const cacheSeasonsSchedule = async ({
-  includeSeries,
+  includeSeries = "true",
   seasonYear,
   seasonQuarter,
   authCode,
 }: {
-  includeSeries: string;
+  includeSeries?: string;
   seasonYear: string;
   seasonQuarter: string;
   authCode: string;
@@ -249,8 +249,7 @@ export const cacheSeasonsSchedule = async ({
     latestSeason.seasonQuarter === +seasonQuarter;
 
   if (hasFreshData) {
-    console.log("Seasons schedule still fresh.");
-    return;
+    return { success: true, message: "Seasons schedules are still fresh." };
   }
 
   const response = await fetchData({
@@ -264,6 +263,7 @@ export const cacheSeasonsSchedule = async ({
   }
 
   const seasonsResponse = z.array(GetSeasonsResponse).parse(response);
+
   if (seasonsResponse.length === 0) {
     console.warn("No seasons found in response..");
     return { success: false, message: "No seasons found in response." };

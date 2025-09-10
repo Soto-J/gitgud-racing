@@ -4,12 +4,12 @@ import { DateTime } from "luxon";
 export const getCurrentSeasonInfo = () => {
   const year = DateTime.now().year;
 
-  // iRacing seasons typically start on these dates (adjust based on actual schedule)
+  // iRacing seasons typically start on these dates 
   const seasonStarts = [
-    DateTime.local(year, 3, 12), // Season 1: ~March 12 (Week 0)
+    DateTime.local(year, 3, 12), // Season 1: ~March 18 (Week 0)
     DateTime.local(year, 5, 17), // Season 2: ~June 17 (Week 0)
-    DateTime.local(year, 8, 16), // Season 3: ~September 17 (Week 0)
-    DateTime.local(year, 11, 16), // Season 4: ~December 17 (Week 0)
+    DateTime.local(year, 8, 16), // Season 3: ~September 16 (Week 0)
+    DateTime.local(year, 11, 16), // Season 4: ~December 15 (Week 0)
   ];
 
   // Find current season
