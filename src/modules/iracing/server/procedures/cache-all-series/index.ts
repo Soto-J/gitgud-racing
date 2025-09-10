@@ -1,4 +1,3 @@
-import z from "zod";
 import { DateTime } from "luxon";
 
 import { gt } from "drizzle-orm";
@@ -6,11 +5,10 @@ import { gt } from "drizzle-orm";
 import { iracingProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-
-import { fetchData } from "@/modules/iracing/server/api";
-
 import { seriesTable } from "@/db/schemas";
 import { IRacingGetAllSeriesResponseSchema } from "./schema";
+
+import { fetchData } from "@/modules/iracing/server/api";
 
 export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
   const cachedSeries = await db
