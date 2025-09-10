@@ -75,77 +75,33 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
           <BarChart
             accessibilityLayer
             data={data.series}
-            margin={{ top: 25, right: 4, left: -40, bottom: 40 }}
+            layout="vertical"
+            margin={{
+              left: 20,
+              top: 15,
+              right: 100,
+            }}
           >
-            <CartesianGrid
-              vertical={false}
-              strokeDasharray="3 6"
-              stroke="hsl(220, 13%, 91%)"
-              opacity={0.8}
-            />
             <XAxis
-              dataKey="name"
-              tickLine={false}
-              tickMargin={8}
-              axisLine={false}
-              angle={-45}
-              height={60}
-              interval={0}
-              tick={<ImageTick data={data} />}
-            />
-            <YAxis
-              tickLine={false}
+              type="number"
               axisLine={false}
               tick={{
                 fontSize: 11,
                 fill: "hsl(220, 9%, 46%)",
                 fontWeight: 500,
               }}
-              width={60}
+            />
+            <YAxis
+              dataKey="name"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tick={<ImageTick data={data} />}
             />
             <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  className="rounded-xl border border-gray-100 bg-white/98 shadow-xl backdrop-blur-md"
-                  labelFormatter={(label, payload) => {
-                    const trackName = payload?.[0]?.payload?.trackName;
-
-                    return (
-                      <div>
-                        <div className="text-sm font-semibold text-gray-800">
-                          {label}
-                        </div>
-
-                        <div className="border-b border-gray-200 pb-1">
-                          {trackName}
-                        </div>
-                      </div>
-                    );
-                  }}
-                  formatter={(value, name) => {
-                    const isAvgSplit = name === "averageEntrants";
-                    const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
-
-                    return (
-                      <div className="flex items-center gap-x-3">
-                        <span
-                          className={cn(
-                            "h-3 w-3 rounded-full",
-                            isAvgSplit
-                              ? "bg-[hsl(160,60%,45%)]"
-                              : "bg-[hsl(220,70%,50%)]",
-                          )}
-                        />
-
-                        <span className="font-medium text-gray-900">
-                          {label}:{" "}
-                          {typeof value === "number" ? value.toFixed(1) : value}
-                        </span>
-                      </div>
-                    );
-                  }}
-                />
-              }
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
             />
             <ChartLegend
               content={
@@ -156,14 +112,12 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
             <Bar
               dataKey="averageEntrants"
               fill="var(--color-averageEntrants)"
-              radius={[8, 8, 0, 0]}
-              maxBarSize={40}
+              radius={5}
             />
             <Bar
               dataKey="averageSplits"
               fill="var(--color-averageSplits)"
-              radius={[8, 8, 0, 0]}
-              maxBarSize={40}
+              radius={5}
             />
           </BarChart>
         </ChartContainer>
@@ -209,8 +163,8 @@ const ImageTick = ({
   return (
     <g transform={`translate(${x},${y})`}>
       <image
-        x={-20}
-        y={0}
+        x={-50}
+        y={-24}
         href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
         className="h-8 w-8 cursor-pointer rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-lg md:h-12 md:w-12"
         onClick={handleImageClick}
