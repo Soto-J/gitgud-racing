@@ -1,10 +1,11 @@
 import type { NextRequest } from "next/server";
 
+import { DateTime } from "luxon";
 import env from "@/env";
 
-import * as helper from "@/app/api/cronjobs/cron-job-helpers";
+import * as utilities from "@/app/api/cronjobs/utilities";
+import * as cacheOps from "@/app/api/cronjobs/cache-operations";
 
-import { DateTime } from "luxon";
 import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
 
 export async function GET(request: NextRequest) {
@@ -22,14 +23,14 @@ export async function GET(request: NextRequest) {
 
   const authCode = await getOrRefreshAuthCode();
 
-  const seriesCached = await helper.cacheSeries({ authCode });
+  const seriesCached = await cacheOps.cacheSeries({ authCode });
 
   if (!seriesCached?.success) {
     console.error("Cron job error:", seriesCached?.error);
     return Response.json({ success: false }, { status: 500 });
   }
 
-  const seasonInfo = helper.getCurrentSeasonInfo();
+  const seasonInfo = utilities.getCurrentSeasonInfo();
 
   const params = {
     season_year: seasonInfo.currentYear,
@@ -45,9 +46,9 @@ export async function GET(request: NextRequest) {
     category_id: "",
   };
 
-  const searchParams = helper.createSearchParams(params);
+  const searchParams = utilities.createSearchParams(params);
 
-  const cachedWeeklyResults = await helper.cacheWeeklyResults({
+  const cachedWeeklyResults = await cacheOps.cacheWeeklyResults({
     authCode,
     searchParams,
   });
