@@ -48,8 +48,8 @@ const StatusBadge = ({
       className={cn(
         "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
         isActive
-          ? "bg-secondary/10 text-secondary border-secondary/20 border"
-          : "bg-muted text-muted-foreground",
+          ? "border border-green-400/20 bg-green-500/10 text-green-400"
+          : "border border-red-400/20 bg-red-500/10 text-red-400",
       )}
     >
       {isActive ? "Active" : "Inactive"}
@@ -69,84 +69,101 @@ export const MembersTable = ({
   const router = useRouter();
 
   return (
-    <Card className="border-border from-primary bg-gradient-to-br to-black">
-      <CardContent className="">
-        <Table>
-          <TableCaption className="text-muted-foreground">
+    <Card className="border-0 bg-black">
+      <CardContent className="px-0">
+        <Table className="bg-black text-white">
+          <TableCaption className="text-zinc-400">
             Complete roster of GitGud Racing community members.
           </TableCaption>
 
           <TableHeader>
-            <TableRow className="border-border hover:bg-muted/50">
-              <TableHead className="text-primary-foreground font-semibold">
+            <TableRow className="border-b border-zinc-800 hover:bg-zinc-900/50">
+              <TableHead className="pl-6 font-semibold text-yellow-100">
                 Member
               </TableHead>
-              <TableHead className="text-primary-foreground font-semibold">
+              <TableHead className="text-center font-semibold text-yellow-100">
                 Status
               </TableHead>
-              <TableHead className="text-primary-foreground font-semibold">
+              <TableHead className="text-center font-semibold text-yellow-100">
                 Role
               </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {members.map((member) => {
-              const isAdmin =
-                member.role === "admin" || member.role === "staff";
+            {members.length ? (
+              members.map((member, index) => {
+                const isAdmin =
+                  member.role === "admin" || member.role === "staff";
 
-              return (
-                <TableRow
-                  key={member.id}
-                  className="border-border hover:bg-muted/50 cursor-pointer transition-colors"
-                  onClick={() =>
-                    loggedInUserId === member.id
-                      ? router.push(`/profile`)
-                      : router.push(`/members/${member.id}`)
-                  }
-                >
-                  <TableCell className="">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="border-border h-8 w-8 border">
-                        <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
-                          {getInitials(member.name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex items-center gap-2">
-                        <div>
-                          <p className="text-accent">{member.name}</p>
-                          <p className="text-muted text-xs">{member.email}</p>
+                return (
+                  <TableRow
+                    key={member.id}
+                    className={`hover:bg-ferrari-dark-red/20 cursor-pointer border-b border-zinc-800 transition-colors duration-150 ${
+                      index % 2 === 0 ? "bg-zinc-900" : "bg-black"
+                    }`}
+                    onClick={() =>
+                      loggedInUserId === member.id
+                        ? router.push(`/profile`)
+                        : router.push(`/members/${member.id}`)
+                    }
+                  >
+                    <TableCell className="border-r border-zinc-800 p-4">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8 border border-zinc-700">
+                          <AvatarFallback className="bg-zinc-800 text-xs font-semibold text-yellow-100">
+                            {getInitials(member.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex items-center gap-2">
+                          <div>
+                            <p className="font-medium text-yellow-100">
+                              {member.name}
+                            </p>
+                            <p className="text-xs text-zinc-400">
+                              {member.email}
+                            </p>
+                          </div>
+
+                          {isAdmin && (
+                            <Crown className="h-4 w-4 text-yellow-400" />
+                          )}
                         </div>
-
-                        {isAdmin && (
-                          <Crown className="text-secondary h-4 w-4" />
-                        )}
                       </div>
-                    </div>
-                  </TableCell>
+                    </TableCell>
 
-                  <TableCell>
-                    <StatusBadge
-                      isActive={member.isActive}
-                      banned={member.banned}
-                    />
-                  </TableCell>
+                    <TableCell className="border-r border-zinc-800 p-4 text-center">
+                      <StatusBadge
+                        isActive={member.isActive}
+                        banned={member.banned}
+                      />
+                    </TableCell>
 
-                  <TableCell>
-                    <span
-                      className={cn(
-                        "text-sm font-medium capitalize",
-                        isAdmin
-                          ? "text-secondary font-semibold"
-                          : "text-muted-foreground",
-                      )}
-                    >
-                      {member.role}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                    <TableCell className="p-4 text-center">
+                      <span
+                        className={cn(
+                          "text-sm font-medium capitalize",
+                          isAdmin
+                            ? "font-semibold text-yellow-400"
+                            : "text-zinc-300",
+                        )}
+                      >
+                        {member.role}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  className="h-24 text-center font-medium text-zinc-500"
+                >
+                  No members found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

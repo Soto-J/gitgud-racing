@@ -16,6 +16,7 @@ import {
   ManageLoadingPage,
   ManagePageView,
 } from "@/modules/manage/ui/views/manage-page-view";
+import { ManageListHeader } from "@/modules/manage/ui/components/manage-list-header";
 
 interface ManagePageProps {
   searchParams: Promise<SearchParams>;
@@ -37,13 +38,17 @@ const ManagePage = async ({ searchParams }: ManagePageProps) => {
   );
 
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<ManageLoadingPage />}>
-        <ErrorBoundary fallback={<ManageErrorPage />}>
-          <ManagePageView />
-        </ErrorBoundary>
-      </Suspense>
-    </HydrationBoundary>
+    <>
+      <ManageListHeader />
+
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Suspense fallback={<ManageLoadingPage />}>
+          <ErrorBoundary fallback={<ManageErrorPage />}>
+            <ManagePageView />
+          </ErrorBoundary>
+        </Suspense>
+      </HydrationBoundary>
+    </>
   );
 };
 

@@ -9,7 +9,10 @@ import { Input } from "@/components/ui/input";
 
 export const ChartSearchFilter = () => {
   const [filters, setFilters] = useChartFilter();
-  const { searchValue, setSearchValue } = useDebounceSearch(filters, setFilters);
+  const { searchValue, setSearchValue } = useDebounceSearch(
+    filters,
+    setFilters,
+  );
 
   return (
     <div className="relative">

@@ -70,9 +70,7 @@ export const Banner = ({
           sizeStyles.container,
         )}
       >
-        {/* Ferrari Racing Background Pattern */}
         <div className="absolute inset-0">
-          {/* Iconic Ferrari prancing horse silhouette */}
           <div className="absolute top-4 right-6 rotate-12 transform opacity-10">
             <Trophy
               size={sizeStyles.backgroundIcons.trophy}
@@ -99,7 +97,7 @@ export const Banner = ({
             {/* Ferrari-themed Icon */}
             <div
               className={cn(
-                "hidden items-center justify-center rounded-full bg-yellow-400 shadow-xl ring-4 ring-yellow-300/40 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-yellow-300 hover:shadow-2xl sm:flex",
+                "hidden items-center justify-center rounded-full bg-yellow-400 p-2.5 shadow-xl ring-4 ring-yellow-300/40 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-yellow-300 hover:shadow-2xl sm:flex",
               )}
             >
               <DisplayIcon

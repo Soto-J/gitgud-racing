@@ -6,12 +6,12 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
-import { DEFAULT_PAGE } from "@/modules/home/constants";
+import { DEFAULT_PAGE } from "@/modules/manage/constants";
 
 import { ChartSearchFilter } from "./chart-search-filter";
+import { ChartPagination } from "./chart-pagination";
 
 import { Button } from "@/components/ui/button";
-import { ChartPagination } from "./chart-pagination";
 
 export const SeriesStatsHeader = () => {
   const [filters, setFilters] = useChartFilter();
