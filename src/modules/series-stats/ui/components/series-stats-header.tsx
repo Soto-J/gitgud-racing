@@ -9,9 +9,9 @@ import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 import { DEFAULT_PAGE } from "@/modules/home/constants";
 
 import { ChartSearchFilter } from "./chart-search-filter";
+import { ChartPagination } from "./chart-pagination";
 
 import { Button } from "@/components/ui/button";
-import { ChartPagination } from "./chart-pagination";
 
 export const SeriesStatsHeader = () => {
   const [filters, setFilters] = useChartFilter();

@@ -12,7 +12,7 @@ import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-ser
 
 import { getSession } from "@/lib/get-session";
 
-import { SeriesStatsHeader } from "@/modules/home/ui/components/home-header";
+import { SeriesStatsHeader } from "@/modules/series-stats/ui/components/series-stats-header";
 import {
   ErrorHomeView,
   LoadingHomeView,

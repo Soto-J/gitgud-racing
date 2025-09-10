@@ -5,7 +5,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 
-import { SeriesChart } from "@/modules/home/ui/components/series-chart";
+import { SeriesChart } from "@/modules/series-stats/ui/components/series-chart";
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";

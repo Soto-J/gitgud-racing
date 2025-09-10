@@ -32,19 +32,17 @@ export const ManagePageView = () => {
     <>
       <ConfirmationDialog />
 
-      <div className="flex h-svh flex-col items-center justify-center">
-        <ManageMembersTable
-          members={data.members}
-          filters={filters}
-          confirmDelete={confirmDelete}
-        />
+      <ManageMembersTable
+        members={data.members}
+        filters={filters}
+        confirmDelete={confirmDelete}
+      />
 
-        <DataPagination
-          page={filters.page}
-          totalPages={data.totalPages}
-          onPageChange={(page) => setFilters({ page })}
-        />
-      </div>
+      <DataPagination
+        page={filters.page}
+        totalPages={data.totalPages}
+        onPageChange={(page) => setFilters({ page })}
+      />
     </>
   );
 };

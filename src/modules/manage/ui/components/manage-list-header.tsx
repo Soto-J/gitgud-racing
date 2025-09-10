@@ -1,23 +1,22 @@
 "use client";
 
-import { IoPeopleOutline } from "react-icons/io5";
-import { XCircleIcon } from "lucide-react";
+import { Crown, XCircleIcon } from "lucide-react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { DEFAULT_PAGE } from "@/modules/members/server/procedures/get-many/params";
 
-import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
-
 import { MembersSearchFilter } from "@/modules/members/ui/components/members-search-filter";
+
+import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Banner } from "@/components/banner";
 
-export const MembersListHeader = () => {
-  const [filters, setFilters] = useMembersFilters();
+export const ManageListHeader = () => {
+  const [filters, setFilters] = useManageFilters();
 
   const isFilterActive = !!filters.search;
 
@@ -35,11 +34,11 @@ export const MembersListHeader = () => {
   return (
     <div className="space-y-4">
       <Banner
-        section="Racing League Members"
+        section="Manage Racing League Members"
         title="Git Gud Fam"
         subTitle1={`${data.total} Members`}
         subTitle2={`${data.totalActive} Active`}
-        icon={IoPeopleOutline}
+        icon={Crown}
       />
 
       <ScrollArea>
