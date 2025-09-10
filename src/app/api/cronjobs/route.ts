@@ -32,7 +32,19 @@ export async function GET(request: NextRequest) {
 
   const seasonInfo = utilities.getCurrentSeasonInfo();
 
-  const params = {
+  const cachedSeasonsSchedule = await cacheOps.cacheSeasonsSchedule({
+    seasonYear: seasonInfo.currentYear,
+    seasonQuarter: seasonInfo.currentQuarter,
+    authCode,
+  });
+
+  if (cachedSeasonsSchedule.success) {
+    console.log(`${cachedSeasonsSchedule.message}`);
+  } else {
+    console.warn(`${cachedSeasonsSchedule.message}`);
+  }
+
+  const searchParams = utilities.createSearchParams({
     season_year: seasonInfo.currentYear,
     season_quarter: seasonInfo.currentQuarter,
     event_types: "5",
@@ -44,9 +56,7 @@ export async function GET(request: NextRequest) {
     cust_id: "",
     team_id: "",
     category_id: "",
-  };
-
-  const searchParams = utilities.createSearchParams(params);
+  });
 
   const cachedWeeklyResults = await cacheOps.cacheWeeklyResults({
     authCode,
