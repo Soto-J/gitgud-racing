@@ -11,7 +11,7 @@ import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
 import { SlCalender } from "react-icons/sl";
 
-import { ChevronRight, Crown, Flag } from "lucide-react";
+import {  BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
@@ -36,7 +36,7 @@ import {
 
 const firstSection = [
   { icon: IoHomeOutline, label: "Home", href: "/" },
-  { icon: IoHomeOutline, label: "Series Stats", href: "/series-stats" },
+  { icon: BarChart3, label: "Series Stats", href: "/series-stats" },
   { icon: SlCalender, label: "Schedule", href: "/schedule" },
 ];
 
