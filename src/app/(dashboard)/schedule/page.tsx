@@ -35,8 +35,8 @@ const SchedulePage = async () => {
   // console.log("new Date:", new Date());
   // console.log("DateTime.now():", DateTime.now().toJSDate());
 
-  // const info = getCurrentSeasonInfo();
-  // console.log(info)
+  const info = getCurrentSeasonInfo();
+  console.log(info);
 
   //  const currentQuarter = Math.ceil((DateTime.now().month ) / 4)
   //  console.log(currentQuarter)

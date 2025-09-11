@@ -1,51 +1,46 @@
-import { GetSeasonsResponseType } from "@/modules/iracing/server/procedures/season-schedule/schema";
 import { DateTime } from "luxon";
 
+import { GetSeasonsResponseType } from "@/modules/iracing/server/procedures/season-schedule/schema";
+
+const IRacingSeasonStarts = [
+  { season: 1, start: DateTime.fromISO("2025-03-18") },
+  { season: 2, start: DateTime.fromISO("2025-05-17") },
+  { season: 3, start: DateTime.fromISO("2025-06-12") },
+  { season: 4, start: DateTime.fromISO("2025-12-16") },
+];
+
 export const getCurrentSeasonInfo = () => {
-  const year = DateTime.now().year;
+  const now = DateTime.now();
 
-  // iRacing seasons typically start on these dates 
-  const seasonStarts = [
-    DateTime.local(year, 3, 12), // Season 1: ~March 18 (Week 0)
-    DateTime.local(year, 5, 17), // Season 2: ~June 17 (Week 0)
-    DateTime.local(year, 8, 16), // Season 3: ~September 16 (Week 0)
-    DateTime.local(year, 11, 16), // Season 4: ~December 15 (Week 0)
-  ];
-
-  // Find current season
-  let currentSeasonIndex = 0;
-  let seasonStartDate = seasonStarts[0];
-
-  if (DateTime.now() < seasonStarts[0]) {
-    // Before Season 1 of the current year: treat as last year's Season 4
-    currentSeasonIndex = 3;
-    seasonStartDate = DateTime.local(year - 1, 11, 10);
+  // find which season we're in
+  let current = IRacingSeasonStarts[0];
+  
+  // default to last season of previous year if before first season
+  if (now < current.start) {
+    current = IRacingSeasonStarts[IRacingSeasonStarts.length - 1];
+    current = {
+      season: current.season,
+      start: current.start.minus({ years: 1 }),
+    };
   } else {
-    for (let i = seasonStarts.length - 1; i >= 0; i--) {
-      if (DateTime.now() >= seasonStarts[i]) {
-        currentSeasonIndex = i;
-        seasonStartDate = seasonStarts[i];
+    for (let i = IRacingSeasonStarts.length - 1; i >= 0; i--) {
+      if (now >= IRacingSeasonStarts[i].start) {
+        current = IRacingSeasonStarts[i];
         break;
       }
     }
   }
 
-  // Calculate weeks since season start
-  const weeksSinceStart = Math.floor(
-    DateTime.now().diff(seasonStartDate).weeks,
-  );
-
-  const currentRaceWeek = (
-    Math.max(0, Math.min(weeksSinceStart, 12)) - 1
-  ).toString();
-
-  const currentQuarter = Math.ceil((DateTime.now().month + 1) / 3).toString();
-  const currentSeasonYear = DateTime.now().year.toString();
+  const daysSinceStart = now.diff(current.start, "days").days;
+  const weeksSinceStart = Math.floor(daysSinceStart / 7);
 
   return {
-    currentRaceWeek,
-    currentQuarter,
-    currentYear: currentSeasonYear,
+    currentRaceWeek: Math.min(weeksSinceStart, 12).toString(),
+    currentQuarter: current.season.toString(),
+    currentYear: (now < IRacingSeasonStarts[0].start
+      ? now.year - 1
+      : now.year
+    ).toString(),
   };
 };
 
