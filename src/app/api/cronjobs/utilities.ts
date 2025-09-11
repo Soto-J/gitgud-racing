@@ -14,7 +14,7 @@ export const getCurrentSeasonInfo = () => {
 
   // find which season we're in
   let current = IRacingSeasonStarts[0];
-  
+
   // default to last season of previous year if before first season
   if (now < current.start) {
     current = IRacingSeasonStarts[IRacingSeasonStarts.length - 1];
@@ -35,7 +35,7 @@ export const getCurrentSeasonInfo = () => {
   const weeksSinceStart = Math.floor(daysSinceStart / 7);
 
   return {
-    currentRaceWeek: Math.min(weeksSinceStart, 12).toString(),
+    currentRaceWeek: Math.min(weeksSinceStart - 1, 11).toString(),
     currentQuarter: current.season.toString(),
     currentYear: (now < IRacingSeasonStarts[0].start
       ? now.year - 1
