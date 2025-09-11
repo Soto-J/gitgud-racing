@@ -19,15 +19,15 @@ export const weeklySeriesResultsProcedure = iracingProcedure
     const searchClause = and(
       eq(
         seriesWeeklyStatsTable.raceWeek,
-        Number(input.raceWeek) || +seasonInfo.currentRaceWeek,
+        Number(input.raceWeek) ?? +seasonInfo.currentRaceWeek,
       ),
       eq(
         seriesWeeklyStatsTable.seasonYear,
-        Number(input.year) || +seasonInfo.currentYear,
+        Number(input.year) ?? +seasonInfo.currentYear,
       ),
       eq(
         seriesWeeklyStatsTable.seasonQuarter,
-        Number(input.quarter) || +seasonInfo.currentQuarter,
+        Number(input.quarter) ?? +seasonInfo.currentQuarter,
       ),
       input?.search
         ? or(
