@@ -100,9 +100,50 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
               tick={<ImageTick data={data} />}
             />
             <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <ChartTooltipContent
+                  className="rounded-xl border border-gray-100 bg-white/98 shadow-xl backdrop-blur-md"
+                  labelFormatter={(label, payload) => {
+                    const trackName = payload?.[0]?.payload?.trackName;
+
+                    return (
+                      <>
+                        <div className="text-sm font-semibold text-gray-800">
+                          {label}
+                        </div>
+
+                        <div className="border-b border-gray-200 pb-1">
+                          {trackName}
+                        </div>
+                      </>
+                    );
+                  }}
+                  formatter={(value, name) => {
+                    const isAvgSplit = name === "averageEntrants";
+                    const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
+
+                    return (
+                      <div className="flex items-center gap-x-3">
+                        <span
+                          className={cn(
+                            "h-3 w-3 rounded-full",
+                            isAvgSplit
+                              ? "bg-[hsl(160,60%,45%)]"
+                              : "bg-[hsl(220,70%,50%)]",
+                          )}
+                        />
+
+                        <span className="font-medium text-gray-900">
+                          {label}:{" "}
+                          {typeof value === "number" ? value.toFixed(1) : value}
+                        </span>
+                      </div>
+                    );
+                  }}
+                />
+              }
             />
+
             <ChartLegend
               content={
                 <ChartLegendContent className="mt-6 text-sm font-medium" />

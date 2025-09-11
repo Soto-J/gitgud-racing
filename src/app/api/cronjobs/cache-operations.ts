@@ -83,8 +83,10 @@ export const cacheSeries = async ({
       seriesName: item.series_name,
     }));
 
-    await db.delete(seriesTable);
-    await db.insert(seriesTable).values(insertValues);
+    await db.transaction(async (tx) => {
+      await tx.delete(seriesTable);
+      await tx.insert(seriesTable).values(insertValues);
+    });
 
     return { success: true };
   } catch (error) {
