@@ -38,7 +38,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
       <Banner
         section="iRacing profile"
         title={userPayload.data?.user?.name || ""}
-        subTitle1="Professional driver"
+        subTitle1="Professional Driver"
         subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
         onEdit={() => setOpenDialog(true)}
       />

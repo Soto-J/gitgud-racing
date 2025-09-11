@@ -25,7 +25,7 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   return (
     <>
       <Banner
-        section="Profile"
+        section="IRacing Profile"
         title={userPayload.data.user?.name || ""}
         subTitle1="Professional Driver"
         subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
