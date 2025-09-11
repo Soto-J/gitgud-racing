@@ -1,7 +1,9 @@
 import z from "zod";
+
 import { inferRouterOutputs } from "@trpc/server";
 
 import { AppRouter } from "@/trpc/routers/_app";
+
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -20,8 +22,11 @@ export const WeeklySeriesResultsInput = z.object({
     .min(MIN_PAGE_SIZE)
     .max(MAX_PAGE_SIZE)
     .default(DEFAULT_PAGE_SIZE),
-
   search: z.string().nullish(),
+
+  raceWeek: z.string().nullish(),
+  year: z.string().optional(),
+  quarter: z.string().optional(),
 });
 
 export type WeeklySeriesResultsInputType = z.infer<

@@ -45,7 +45,6 @@ export const GetAllSeriesResponse = z.array(
       season_year: z.number(),
       season_quarter: z.number(),
     }),
-    forum_url: z.string(),
     max_starters: z.number(),
     min_starters: z.number(),
     oval_caution_type: z.number(),

@@ -1,4 +1,4 @@
-import { desc, count, or, like } from "drizzle-orm";
+import { desc, count, or, like, eq, and } from "drizzle-orm";
 
 import { iracingProcedure } from "@/trpc/init";
 
@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { WeeklySeriesResultsInput } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 
 /**
  * Fetches paginated weekly series results with search functionality
@@ -13,33 +14,47 @@ import { WeeklySeriesResultsInput } from "@/modules/iracing/server/procedures/we
 export const weeklySeriesResultsProcedure = iracingProcedure
   .input(WeeklySeriesResultsInput)
   .query(async ({ input }) => {
-    const { search, page, pageSize } = input;
+    const seasonInfo = getCurrentSeasonInfo();
 
-    const orClause = search
-      ? or(
-          like(seriesWeeklyStatsTable.name, `%${search}%`),
-          like(seriesWeeklyStatsTable.trackName, `%${search}%`),
-        )
-      : undefined;
-
+    const searchClause = and(
+      eq(
+        seriesWeeklyStatsTable.raceWeek,
+        Number(input.raceWeek) ?? +seasonInfo.currentRaceWeek,
+      ),
+      eq(
+        seriesWeeklyStatsTable.seasonYear,
+        Number(input.year) ?? +seasonInfo.currentYear,
+      ),
+      eq(
+        seriesWeeklyStatsTable.seasonQuarter,
+        Number(input.quarter) ?? +seasonInfo.currentQuarter,
+      ),
+      input?.search
+        ? or(
+            like(seriesWeeklyStatsTable.name, `%${input.search}%`),
+            like(seriesWeeklyStatsTable.trackName, `%${input.search}%`),
+          )
+        : undefined,
+    );
+    
     const weeklyResults = await db
       .select()
       .from(seriesWeeklyStatsTable)
-      .where(orClause)
+      .where(searchClause)
       .orderBy(
         desc(seriesWeeklyStatsTable.averageEntrants),
         desc(seriesWeeklyStatsTable.averageSplits),
       )
-      .limit(pageSize)
-      .offset((page - 1) * pageSize);
+      .limit(input.pageSize)
+      .offset((input.page - 1) * input.pageSize);
 
     const total = await db
       .select({ count: count() })
       .from(seriesWeeklyStatsTable)
-      .where(orClause)
+      .where(searchClause)
       .then((row) => row[0]);
 
-    const totalPages = Math.ceil(total.count / pageSize);
+    const totalPages = Math.ceil(total.count / input.pageSize);
 
     return {
       series: weeklyResults,

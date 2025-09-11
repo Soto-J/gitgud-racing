@@ -139,7 +139,10 @@ export const cacheWeeklyResults = async ({
       );
 
     if (weeklyResults.length > 0) {
-      console.log("Using cached weekly results.");
+      console.log(
+        `Using cached weekly results..\nYear ~ ${weeklyResults[0].seasonYear}, Quarter ~ ${weeklyResults[0].seasonQuarter}, Race Week ~ ${weeklyResults[0].raceWeek}`,
+      );
+
       return { success: true };
     }
 
@@ -163,6 +166,14 @@ export const cacheWeeklyResults = async ({
     );
 
     const seriesResultsSettled = await Promise.allSettled(promiseArr);
+
+    const rejectedFetches = seriesResultsSettled.filter(
+      (result) => result.status === "rejected",
+    );
+
+    if (rejectedFetches) {
+      console.warn(`Failed series results: ${rejectedFetches.length}`);
+    }
 
     const res = seriesResultsSettled
       .filter((result) => result.status === "fulfilled")
