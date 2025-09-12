@@ -55,6 +55,4 @@ export const GetAllSeriesResponse = z.array(
   }),
 );
 
-export type GetAllSeriesResponseType = z.infer<
-  typeof GetAllSeriesResponse
->;
+export type GetAllSeriesResponseType = z.infer<typeof GetAllSeriesResponse>;

@@ -44,6 +44,46 @@ export const getCurrentSeasonInfo = () => {
   };
 };
 
+/**
+ * Determines if we are currently in a 13th week period
+ * 13th week occurs during quarter transitions when regular seasons end
+ *
+ * @returns {boolean} True if currently in 13th week period
+ */
+export const isCurrently13thWeek = (): boolean => {
+  const seasonInfo = getCurrentSeasonInfo();
+  const currentWeek = parseInt(seasonInfo.currentRaceWeek);
+
+  // 13th week typically occurs when race week is 12 or higher
+  // (since race weeks are 0-indexed, week 12 is actually the 13th week)
+  return currentWeek >= 12;
+};
+
+/**
+ * Detects if a series is a 13th week or special event series
+ *
+ * @param seriesName - The name of the series
+ * @returns {object} Detection result with flags and event type
+ */
+export const detectSpecialEventSeries = (seriesName: string) => {
+  const lowerName = seriesName.toLowerCase();
+
+  // Check for 13th week series - these have "13th week" in the name
+  const is13thWeek = lowerName.includes("13th week");
+
+  // For now, focus only on 13th week detection
+  // Can expand later for other special events if needed
+  const isSpecialEvent = is13thWeek;
+
+  const specialEventType = is13thWeek ? "13th_week" : null;
+
+  return {
+    isSpecialEvent,
+    specialEventType,
+    is13thWeek,
+  };
+};
+
 export const createSearchParams = (params: {
   season_year: string;
   season_quarter: string;

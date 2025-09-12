@@ -9,6 +9,7 @@ import { seriesTable } from "@/db/schemas";
 import { IRacingGetAllSeriesResponseSchema } from "./schema";
 
 import { fetchData } from "@/modules/iracing/server/api";
+import { detectSpecialEventSeries } from "@/app/api/cronjobs/utilities";
 
 export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
   const cachedSeries = await db
@@ -34,11 +35,22 @@ export const cacheAllSeries = iracingProcedure.query(async ({ ctx }) => {
 
   const data = IRacingGetAllSeriesResponseSchema.parse(res);
 
-  const insertValues = data.map((item) => ({
-    seriesId: item.series_id,
-    category: item.category,
-    seriesName: item.series_name,
-  }));
+  const insertValues = data.map((item) => {
+    const specialEventInfo = detectSpecialEventSeries(item.series_name);
+
+    return {
+      seriesId: item.series_id,
+      category: item.category,
+      categoryId: item.category_id,
+      seriesName: item.series_name,
+      seriesShortName: item.series_short_name,
+      eligible: item.eligible,
+      maxStarters: item.max_starters,
+      minStarters: item.min_starters,
+      isSpecialEvent: specialEventInfo.isSpecialEvent,
+      specialEventType: specialEventInfo.specialEventType,
+    };
+  });
 
   try {
     await db.transaction(async () => {
