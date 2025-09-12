@@ -101,12 +101,16 @@ export const fetchData = async ({
     if (data?.type === "search_series_results") {
       const chunkInfo = data.data.chunk_info;
 
+      if (
+        !chunkInfo?.chunk_file_names ||
+        chunkInfo?.chunk_file_names.length === 0
+      ) {
+        console.log("No data available for requested parameters");
+        return [];
+      }
+
       const baseDownloadUrl = chunkInfo.base_download_url;
       const [chunkFileNames] = chunkInfo.chunk_file_names;
-
-      if (!chunkFileNames) {
-        throw new Error("No chunk file names found");
-      }
 
       link = `${baseDownloadUrl}${chunkFileNames}`;
       console.log("Download URL:", link);

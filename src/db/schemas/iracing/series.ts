@@ -6,13 +6,23 @@ import {
   timestamp,
   int,
   decimal,
+  boolean,
 } from "drizzle-orm/mysql-core";
 
 export const seriesTable = mysqlTable("series", {
   seriesId: int("series_id").primaryKey().notNull(),
 
   category: varchar("category", { length: 25 }).notNull(),
+  categoryId: int("category_id").notNull(),
   seriesName: varchar("series_name", { length: 100 }).notNull(),
+  seriesShortName: varchar("series_short_name", { length: 100 }).notNull(),
+
+  eligible: boolean("eligible").default(false).notNull(),
+  isSpecialEvent: boolean("is_special_event").default(false).notNull(),
+  specialEventType: varchar("special_event_type", { length: 50 }),
+
+  maxStarters: int("max_starters"),
+  minStarters: int("min_starters"),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
