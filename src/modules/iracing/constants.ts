@@ -1,5 +1,5 @@
 /** Timeout duration for API requests in milliseconds */
-export const API_TIMEOUT_MS = 20000; // 20 seconds
+export const API_TIMEOUT_MS = 60000; // 60 seconds
 
 export const chartTypeMap = {
   1: "iRating",
