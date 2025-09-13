@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
   const cachedWeeklyResults = await cacheCurrentWeekResults();
 
-  if (!cachedWeeklyResults) {
+  if (cachedWeeklyResults?.error) {
     console.error("Cron job error: Failed to cache weekly results.");
     return Response.json({ success: false }, { status: 500 });
   }
