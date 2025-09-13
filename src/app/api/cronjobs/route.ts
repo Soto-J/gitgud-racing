@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { DateTime } from "luxon";
-import { gt } from "drizzle-orm";
+import { eq, gt, and } from "drizzle-orm";
 
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 import { db } from "@/db";
@@ -46,13 +46,19 @@ const cacheCurrentWeekResults = async (): Promise<{
   success: boolean;
   error?: string;
 }> => {
+  const seasonInfo = utilities.getCurrentSeasonInfo();
+
   const weeklyResults = await db
     .select()
     .from(seriesWeeklyStatsTable)
     .where(
-      gt(
-        seriesWeeklyStatsTable.updatedAt,
-        DateTime.now().minus({ weeks: 1 }).toJSDate(),
+      and(
+        eq(seriesWeeklyStatsTable.seasonYear, +seasonInfo.currentYear),
+        eq(seriesWeeklyStatsTable.seasonQuarter, +seasonInfo.currentQuarter),
+        gt(
+          seriesWeeklyStatsTable.updatedAt,
+          DateTime.now().minus({ weeks: 1 }).toJSDate(),
+        ),
       ),
     );
 
@@ -65,8 +71,6 @@ const cacheCurrentWeekResults = async (): Promise<{
   }
   console.log("Refreshing weekly results.");
 
-  const seasonInfo = utilities.getCurrentSeasonInfo();
-  
   const searchParams = utilities.createSearchParams({
     season_year: seasonInfo.currentYear,
     season_quarter: seasonInfo.currentQuarter,
