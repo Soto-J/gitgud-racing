@@ -37,7 +37,7 @@ export type WeeklySeriesResultsInputType = z.infer<
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-export const WeeklySeriesResultsItem = z.object({
+export const SeriesResultSchema = z.object({
   session_id: z.number(),
   subsession_id: z.number(),
   start_time: z.string(),
@@ -73,23 +73,19 @@ export const WeeklySeriesResultsItem = z.object({
   event_strength_of_field: z.number(),
 });
 
-export type WeeklySeriesResultsItemType = z.infer<
-  typeof WeeklySeriesResultsItem
->;
+export type SeriesResults = z.infer<typeof SeriesResultSchema>;
 
-export const WeeklySeriesResultsResponse = z.array(WeeklySeriesResultsItem);
+export const SeriesResultsResponseSchema = z.array(SeriesResultSchema);
 
-export type WeeklySeriesResultsResponseType = z.infer<
-  typeof WeeklySeriesResultsResponse
->;
+export type SeriesResultsResponse = z.infer<typeof SeriesResultsResponseSchema>;
 
-export const WeeklySeriesResultsPromiseResponse = z.array(
-  WeeklySeriesResultsResponse,
-);
+// export const WeeklySeriesResultsPromiseResponse = z.array(
+//   SeriesResultsResponseSchema,
+// );
 
-export type WeeklySeriesResultsPromiseResponseType = z.infer<
-  typeof WeeklySeriesResultsPromiseResponse
->;
+// export type WeeklySeriesResultsPromiseResponseType = z.infer<
+//   typeof WeeklySeriesResultsPromiseResponse
+// >;
 
 // =============================================================================
 // ROUTER OUTPUT TYPES
