@@ -40,18 +40,6 @@ export async function GET(request: NextRequest) {
     return Response.json({ success: false }, { status: 500 });
   }
 
-  // const cachedSeasonsSchedule = await cacheOps.cacheSeasonsSchedule({
-  //   seasonYear: seasonInfo.currentYear,
-  //   seasonQuarter: seasonInfo.currentQuarter,
-  //   authCode,
-  // });
-
-  // if (cachedSeasonsSchedule.success) {
-  //   console.log(`${cachedSeasonsSchedule.message}`);
-  // } else {
-  //   console.warn(`YURR!!${cachedSeasonsSchedule.message}`);
-  // }
-
   const searchParams = utilities.createSearchParams({
     season_year: seasonInfo.currentYear,
     season_quarter: seasonInfo.currentQuarter,

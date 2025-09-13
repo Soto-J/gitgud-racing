@@ -63,7 +63,10 @@ export const getOrRefreshAuthCode = async (): Promise<string> => {
     .then((value) => value[0]);
 
   const timeLeft = iracingAuthInfo
-    ? DateTime.fromJSDate(iracingAuthInfo.expiresAt).diffNow().minutes
+    ? DateTime.fromJSDate(iracingAuthInfo.expiresAt).diff(
+        DateTime.utc(),
+        "minutes",
+      ).minutes
     : 0;
 
   if (timeLeft > 0) {

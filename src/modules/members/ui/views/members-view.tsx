@@ -26,6 +26,7 @@ export const MembersView = ({ loggedInUserId }: MembersViewProps) => {
   return (
     <>
       <MembersTable members={data.users} loggedInUserId={loggedInUserId} />
+      
       <DataPagination
         page={filters.page}
         totalPages={data.totalPages}
