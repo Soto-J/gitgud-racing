@@ -17,18 +17,18 @@ export const weeklySeriesResultsProcedure = iracingProcedure
     const seasonInfo = getCurrentSeasonInfo();
 
     const searchClause = and(
-      eq(
-        seriesWeeklyStatsTable.raceWeek,
-        Number(input.raceWeek) ?? +seasonInfo.currentRaceWeek,
-      ),
-      eq(
-        seriesWeeklyStatsTable.seasonYear,
-        Number(input.year) ?? +seasonInfo.currentYear,
-      ),
-      eq(
-        seriesWeeklyStatsTable.seasonQuarter,
-        Number(input.quarter) ?? +seasonInfo.currentQuarter,
-      ),
+      // eq(
+      //   seriesWeeklyStatsTable.raceWeek,
+      //   Number(input.raceWeek) ?? +seasonInfo.currentRaceWeek,
+      // ),
+      // eq(
+      //   seriesWeeklyStatsTable.seasonYear,
+      //   Number(input.year) ?? +seasonInfo.currentYear,
+      // ),
+      // eq(
+      //   seriesWeeklyStatsTable.seasonQuarter,
+      //   Number(input.quarter) ?? +seasonInfo.currentQuarter,
+      // ),
       input?.search
         ? or(
             like(seriesWeeklyStatsTable.name, `%${input.search}%`),
