@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 
-import { GetSeasonsResponseType } from "@/modules/iracing/server/procedures/season-schedule/schema";
+import { SeasonSchdeuleType } from "@/modules/iracing/server/procedures/season-schedule/schema";
 
 const IRacingSeasonStarts = [
   { season: 1, start: DateTime.fromISO("2025-03-18") },
@@ -107,7 +107,7 @@ export const createSearchParams = (params: {
   return searchParams.toString() ? `?${searchParams.toString()}` : "";
 };
 
-export const buildSeasonsData = (seasons: GetSeasonsResponseType[]) => {
+export const buildSeasonsData = (seasons: SeasonSchdeuleType[]) => {
   return seasons.map((season) => ({
     id: season.season_id,
     seriesId: season.series_id,
@@ -148,7 +148,7 @@ export const buildSeasonsData = (seasons: GetSeasonsResponseType[]) => {
 };
 
 export const buildScheduleData = (
-  schedules: GetSeasonsResponseType["schedules"],
+  schedules: SeasonSchdeuleType["schedules"],
 ) => {
   return schedules.map((schedule) => ({
     seasonId: schedule.season_id,
