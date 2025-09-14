@@ -1,20 +1,49 @@
+/**
+ * @fileoverview Utilities for processing and transforming iRacing user chart data
+ *
+ * This module provides utilities for:
+ * - Checking data freshness based on iRacing's weekly reset schedule
+ * - Transforming chart data for frontend consumption
+ * - Processing raw API data for database insertion
+ */
+
 import { DateTime } from "luxon";
 
 import { categoryMap, chartTypeMap } from "@/modules/iracing/constants";
 
-import {
-  ChartData,
-  GetUserChartDataResponseType,
-} from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { UserChartDataTable } from "@/db/schemas/type";
 
+import {
+  ChartData,
+  UserChartDataResponse,
+} from "@/modules/iracing/server/procedures/user-chart-data/schema";
+
+/**
+ * Determines if chart data is fresh based on iRacing's weekly reset schedule
+ *
+ * iRacing resets weekly data every Monday at 8 PM UTC. This function checks
+ * if the provided chart data was updated after the most recent reset time.
+ *
+ * @param latestRecord - The most recent chart data record to check
+ * @returns True if the data was updated after the last Monday 8 PM reset
+ *
+ * @example
+ * ```typescript
+ * const userChartData = await getUserLatestChartData(userId);
+ *
+ * if (!chartDataIsFresh(userChartData)) {
+ *   // Data is stale, fetch fresh data from iRacing API
+ *   await refreshUserChartData(userId);
+ * }
+ * ```
+ */
 export const chartDataIsFresh = (
   latestRecord: ChartData | undefined | null,
 ): boolean => {
-  // This week's Monday 8 PM
+  // This week's Monday 8 PM UTC
   let reset = DateTime.now().startOf("week").plus({ hours: 20 });
 
-  // If it's before Monday 8 PM, roll back to last week
+  // If it's before Monday 8 PM, roll back to last week's reset
   if (DateTime.now() < reset) {
     reset = reset.minus({ weeks: 1 });
   }
@@ -80,24 +109,33 @@ export function transformCharts(charts: UserChartDataTable[]) {
 /**
  * Processes and validates chart data from iRacing API for database insertion
  *
- * Filters out invalid date entries and transforms the data structure
- * for database compatibility while preserving all necessary metadata.
+ * Takes raw chart data from the iRacing API and transforms it into a format
+ * suitable for database insertion. Filters out invalid entries and enriches
+ * data with category and chart type mappings.
  *
- * @param data - Raw chart data response from iRacing API
- * @param userId - User ID to associate with the chart data
- * @returns Processed array ready for database insertion
+ * @param data - Raw chart data response from iRacing API containing multiple chart types
+ * @param userId - User ID to associate with all chart data records
+ * @returns Flattened array of chart data records ready for database insertion
  *
  * @example
  * ```typescript
- * const apiData = await fetchChartData(custId, authCode);
- * const processedData = processChartDataForInsert(apiData, userId);
+ * // Fetch raw data from iRacing API
+ * const apiResponse = await fetchChartData(custId, authCode);
+ *
+ * // Process for database insertion
+ * const processedData = buildChartData(apiResponse, userId);
+ *
+ * // Insert into database
  * await db.insert(userChartDataTable).values(processedData);
  * ```
+ *
+ * @remarks
+ * - Filters out records where `when` field is null or undefined
+ * - Maps category IDs to human-readable category names
+ * - Maps chart type IDs to descriptive chart type names
+ * - Spreads all original data fields while adding enriched metadata
  */
-export function processChartDataForInsert(
-  data: GetUserChartDataResponseType,
-  userId: string,
-) {
+export function buildChartData(data: UserChartDataResponse, userId: string) {
   return data.flatMap((res) =>
     res.data
       .filter((d) => d.when !== null && d.when !== undefined)

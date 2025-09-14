@@ -12,7 +12,7 @@ import { ProfileTable, UserTable } from "@/db/schemas/type";
 // INPUT SCHEMAS
 // =============================================================================
 
-export const GetUserInput = z.object({
+export const UserInputSchema = z.object({
   userId: z.string().min(1, { message: "Id is required" }),
 });
 
@@ -20,7 +20,22 @@ export const GetUserInput = z.object({
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-export const GetUserResponse = z.object({
+/**
+ * Schema for validating the complete response from iRacing's member API
+ *
+ * This schema validates the response from the `/data/member/get` endpoint
+ * which includes user profile information and license data for all racing
+ * disciplines. The response structure matches iRacing's official API format.
+ *
+ * @example
+ * ```typescript
+ * const response = await fetchData({
+ *   query: `/data/member/get?cust_ids=123456&include_licenses=true`
+ * });
+ * const validatedData = UserResponseSchema.parse(response);
+ * ```
+ */
+export const UserResponseSchema = z.object({
   success: z.boolean(),
   cust_ids: z.number(),
   members: z.array(
@@ -65,7 +80,7 @@ export const GetUserResponse = z.object({
   member_since: z.string(),
 });
 
-export type GetUserResponseType = z.infer<typeof GetUserResponse>;
+export type UserResponse = z.infer<typeof UserResponseSchema>;
 
 export const LicenseSchema = z.object({
   category_id: z.number(),
@@ -91,10 +106,39 @@ export type LicenseType = z.infer<typeof LicenseSchema>;
 // DATA TRANSFORMATION SCHEMAS
 // =============================================================================
 
+/**
+ * Schema for validating iRacing license classes
+ *
+ * iRacing uses a letter-based license classification system:
+ * - R: Rookie (starting level)
+ * - D: Class D
+ * - C: Class C
+ * - B: Class B
+ * - A: Class A (highest level)
+ */
 export const LicenseClassSchema = z.enum(["A", "B", "C", "D", "R"]);
 
 export type LicenseClass = z.infer<typeof LicenseClassSchema>;
 
+/**
+ * Schema for the flattened license data structure used in the database
+ *
+ * This schema represents license information for all racing disciplines
+ * in a flat structure optimized for database storage. Each discipline
+ * (Oval, Sports Car, Formula Car, Dirt Oval, Dirt Road) has separate
+ * fields for iRating, safety rating, and license class.
+ *
+ * @example
+ * ```typescript
+ * const dbLicenseData = {
+ *   ovalIRating: 2500,
+ *   ovalSafetyRating: "3.45",
+ *   ovalLicenseClass: "A",
+ *   // ... other disciplines
+ * };
+ * const validated = TransformLicenseDataSchema.parse(dbLicenseData);
+ * ```
+ */
 export const TransformLicenseDataSchema = z.object({
   ovalIRating: z.number(),
   ovalSafetyRating: z.string(),
@@ -115,6 +159,24 @@ export const TransformLicenseDataSchema = z.object({
 
 export type TransformLicenseData = z.infer<typeof TransformLicenseDataSchema>;
 
+/**
+ * Schema for individual racing discipline data in the client response format
+ *
+ * This represents how license data for a single discipline is structured
+ * in the API response sent to clients. It's used to build the disciplines
+ * array that provides a cleaner, more organized view of the license data.
+ *
+ * @example
+ * ```typescript
+ * const discipline = {
+ *   category: "Oval",
+ *   iRating: 2500,
+ *   safetyRating: "3.45",
+ *   licenseClass: "A"
+ * };
+ * const validated = LicenseDisciplineSchema.parse(discipline);
+ * ```
+ */
 export const LicenseDisciplineSchema = z.object({
   category: z.enum(["Oval", "Sports", "Formula", "Dirt Oval", "Dirt Road"]),
   iRating: z.number().nullable(),
@@ -132,31 +194,6 @@ export type TransformLicensesInput = {
   user: UserTable | null;
   profile: ProfileTable | null;
   licenses: InferSelectModel<typeof licenseTable> | null;
-};
-
-export type MemberData = {
-  success: boolean;
-  cust_ids: number[];
-  members: {
-    cust_id: number;
-    display_name: string;
-    helmet: {
-      pattern: number;
-      color1: string;
-      color2: string;
-      color3: string;
-      face_type: number;
-      helmet_type: number;
-    };
-    last_login: string;
-    member_since: string;
-    flair_id: number;
-    flair_name: string;
-    flair_shortname: string;
-    ai: boolean;
-    licenses: LicenseType[];
-  }[];
-  member_since: string;
 };
 
 // =============================================================================
