@@ -56,11 +56,11 @@ export const WeeklySeriesResultsInput = z.object({
   search: z.string().nullish(),
 
   /** Race week number to filter by */
-  raceWeek: z.string().nullish(),
+  raceWeek: z.coerce.number().int().min(0).max(11).nullish(),
   /** Season year to filter by */
-  year: z.string().nullish(),
+  year: z.coerce.number().int().positive().nullish(),
   /** Season quarter to filter by (1-4) */
-  quarter: z.string().nullish(),
+  quarter: z.coerce.number().int().min(1).max(4).nullish(),
 });
 
 export type WeeklySeriesResultsInputType = z.infer<

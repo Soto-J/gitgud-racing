@@ -92,29 +92,6 @@ export type UserChartDataResponse = z.infer<typeof UserChartDataResponseSchema>;
  */
 export type ChartData = typeof userChartDataTable.$inferSelect;
 
-/**
- * Input type for transforming user license data
- *
- * Used when combining user information with profile and license data
- * for comprehensive user chart data transformations.
- *
- * @example
- * ```typescript
- * const transformInput: TransformLicensesInput = {
- *   user: await getUserById(userId),
- *   profile: await getUserProfile(userId),
- *   licenses: await getUserLicenses(userId)
- * };
- * ```
- */
-export type TransformLicensesInput = {
-  /** Base user information */
-  user: InferSelectModel<typeof user>;
-  /** User's iRacing profile data (optional) */
-  profile: InferSelectModel<typeof profileTable> | null;
-  /** User's license information (optional) */
-  licenses: InferSelectModel<typeof licenseTable> | null;
-};
 
 // =============================================================================
 // ROUTER OUTPUT TYPES

@@ -6,7 +6,7 @@ import { inferRouterOutputs } from "@trpc/server";
 import { AppRouter } from "@/trpc/routers/_app";
 
 import { licenseTable } from "@/db/schemas";
-import { ProfileTable, UserTable } from "@/db/schemas/type";
+import { LicenseTable, ProfileTable, UserTable } from "@/db/schemas/type";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -193,7 +193,7 @@ export type LicenseDiscipline = z.infer<typeof LicenseDisciplineSchema>;
 export type TransformLicensesInput = {
   user: UserTable | null;
   profile: ProfileTable | null;
-  licenses: InferSelectModel<typeof licenseTable> | null;
+  licenses: LicenseTable | null;
 };
 
 // =============================================================================

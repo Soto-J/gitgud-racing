@@ -59,17 +59,11 @@ export const weeklySeriesResultsProcedure = iracingProcedure
     // Build search clause with season filters and optional text search
     const searchClause = and(
       // Filter by race week (use current if not specified)
-      eq(
-        seriesWeeklyStatsTable.raceWeek,
-        raceWeek ? Number(raceWeek) : +currentRaceWeek,
-      ),
+      eq(seriesWeeklyStatsTable.raceWeek, raceWeek ?? +currentRaceWeek),
       // Filter by season year (use current if not specified)
-      eq(seriesWeeklyStatsTable.seasonYear, year ? Number(year) : +currentYear),
+      eq(seriesWeeklyStatsTable.seasonYear, year ?? +currentYear),
       // Filter by season quarter (use current if not specified)
-      eq(
-        seriesWeeklyStatsTable.seasonQuarter,
-        quarter ? Number(quarter) : +currentQuarter,
-      ),
+      eq(seriesWeeklyStatsTable.seasonQuarter, quarter ?? +currentQuarter),
       // Add text search across series and track names if provided
       input?.search
         ? or(
@@ -86,7 +80,7 @@ export const weeklySeriesResultsProcedure = iracingProcedure
       .where(searchClause)
       .orderBy(
         desc(seriesWeeklyStatsTable.averageEntrants), // Most popular series first
-        desc(seriesWeeklyStatsTable.averageSplits),   // Then by split count
+        desc(seriesWeeklyStatsTable.averageSplits), // Then by split count
       )
       .limit(pageSize)
       .offset((page - 1) * pageSize);
