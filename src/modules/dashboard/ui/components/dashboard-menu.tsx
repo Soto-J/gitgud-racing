@@ -11,7 +11,7 @@ import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
 import { SlCalender } from "react-icons/sl";
 
-import {  BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
+import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
@@ -58,13 +58,13 @@ export const DashboardMenu = () => {
   const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
   return (
     <Sidebar>
-      <SidebarHeader className="relative">
-        <Link href="/" className="h-24 md:h-30">
+      <SidebarHeader>
+        <Link href="/" className="flex items-center justify-center">
           <Image
             src="/gitgud-logo.png"
             alt="Git Gud"
-            fill
-            className="object-contain"
+            height={90}
+            width={90}
           />
         </Link>
       </SidebarHeader>
