@@ -18,7 +18,7 @@ export const SeriesStatsHeader = () => {
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.iracing.getTotalSeriesCount.queryOptions({ ...filters }),
+    trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
   );
 
   const isFilterActive = !!filters.search;

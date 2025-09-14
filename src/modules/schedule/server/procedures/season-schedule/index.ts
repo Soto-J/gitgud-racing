@@ -6,7 +6,7 @@ import { fetchData } from "@/modules/iracing/server/api";
 import {
   SeasonScheduleInputSchema,
   SeasonScheduleResponse,
-} from "@/modules/iracing/server/procedures/season-schedule/schema";
+} from "@/modules/schedule/server/procedures/season-schedule/schema";
 
 export const seasonScheduleProcedure = iracingProcedure
   .input(SeasonScheduleInputSchema)
@@ -26,7 +26,7 @@ export const seasonScheduleProcedure = iracingProcedure
     try {
       const parsed = SeasonScheduleResponse.parse(response);
       return {
-        seasonSchedule: parsed.seasons,
+        seasonsSchedule: parsed.seasons,
       };
     } catch (error) {
       throw new TRPCError({

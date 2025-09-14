@@ -35,7 +35,7 @@ const SeriesStatsPage = async ({ searchParams }: HomePageProps) => {
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
   ));
   void (await queryClient.prefetchQuery(
-    trpc.iracing.getTotalSeriesCount.queryOptions({ ...filters }),
+    trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
   ));
   return (
     <>
