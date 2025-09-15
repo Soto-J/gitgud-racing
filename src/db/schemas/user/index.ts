@@ -34,9 +34,9 @@ export const user = mysqlTable("user", {
 
 export const profileTable = mysqlTable("profile", {
   id: varchar("id", { length: 21 })
-    .notNull()
     .primaryKey()
-    .$default(() => nanoid()),
+    .$default(() => nanoid())
+    .notNull(),
   userId: varchar("user_id", { length: 36 })
     .references(() => user.id, { onDelete: "cascade" })
     .unique()

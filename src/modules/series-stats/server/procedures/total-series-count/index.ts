@@ -7,7 +7,7 @@ import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { WeeklySeriesResultsInput } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
-export const getTotalSeriesCountProcedure = iracingProcedure
+export const totalSeriesCountProcedure = iracingProcedure
   .input(
     WeeklySeriesResultsInput.pick({
       search: true,
@@ -17,7 +17,7 @@ export const getTotalSeriesCountProcedure = iracingProcedure
   .query(async ({ input }) => {
     const { search, pageSize } = input;
 
-    const [total] = await db
+    const total = await db
       .select({ count: count() })
       .from(seriesWeeklyStatsTable)
       .where(
@@ -27,7 +27,8 @@ export const getTotalSeriesCountProcedure = iracingProcedure
               like(seriesWeeklyStatsTable.trackName, `%${search}%`),
             )
           : undefined,
-      );
+      )
+      .then((row) => row[0]);
 
     const totalPages = Math.ceil(total.count / pageSize);
 

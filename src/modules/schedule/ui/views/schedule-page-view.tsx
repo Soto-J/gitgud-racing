@@ -16,7 +16,7 @@ export const SchedulePageView = ({ seasonInfo }: SchedulePageViewProps) => {
   console.log({ seasonInfo });
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.iracing.seasonSchedule.queryOptions({
+    trpc.schedule.seasonSchedule.queryOptions({
       includeSeries: "true",
       seasonYear: seasonInfo.currentYear,
       seasonQuarter: seasonInfo.currentQuarter,

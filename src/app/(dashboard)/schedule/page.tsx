@@ -18,7 +18,7 @@ const SchedulePage = async () => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.iracing.seasonSchedule.queryOptions({
+    trpc.schedule.seasonSchedule.queryOptions({
       includeSeries: "true",
       seasonYear: seasonInfo.currentYear,
       seasonQuarter: seasonInfo.currentQuarter,
