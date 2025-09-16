@@ -1,10 +1,10 @@
 import { DateTime } from "luxon";
 
 const IRacingSeasonStarts = [
-  { season: 1, start: DateTime.fromISO("2025-03-18") },
-  { season: 2, start: DateTime.fromISO("2025-05-17") },
-  { season: 3, start: DateTime.fromISO("2025-06-12") },
-  { season: 4, start: DateTime.fromISO("2025-12-16") },
+  { season: 1, start: DateTime.fromISO("2025-03-18T20:00:00") },
+  { season: 2, start: DateTime.fromISO("2025-06-17T20:00:00") },
+  { season: 3, start: DateTime.fromISO("2025-09-09T20:00:00") },
+  { season: 4, start: DateTime.fromISO("2025-09-15T20:00:00") },
 ];
 
 export const getCurrentSeasonInfo = () => {
@@ -33,7 +33,7 @@ export const getCurrentSeasonInfo = () => {
   const weeksSinceStart = Math.floor(daysSinceStart / 7);
 
   return {
-    currentRaceWeek: Math.min(weeksSinceStart - 1, 11).toString(),
+    currentRaceWeek: Math.max(0, Math.min(weeksSinceStart, 11)).toString(),
     currentQuarter: current.season.toString(),
     currentYear: (now < IRacingSeasonStarts[0].start
       ? now.year - 1

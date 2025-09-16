@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { DateTime } from "luxon";
-import { eq, gt, and } from "drizzle-orm";
+import { eq, gt, and, sql } from "drizzle-orm";
 
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 import { db } from "@/db";
@@ -55,9 +55,10 @@ const cacheCurrentWeekResults = async (): Promise<{
       and(
         eq(seriesWeeklyStatsTable.seasonYear, +seasonInfo.currentYear),
         eq(seriesWeeklyStatsTable.seasonQuarter, +seasonInfo.currentQuarter),
+        eq(seriesWeeklyStatsTable.raceWeek, +seasonInfo.currentRaceWeek),
         gt(
           seriesWeeklyStatsTable.updatedAt,
-          DateTime.now().minus({ weeks: 1 }).toJSDate(),
+          DateTime.utc().minus({ weeks: 1 }).toJSDate(),
         ),
       ),
     );
@@ -153,7 +154,7 @@ const cacheCurrentWeekResults = async (): Promise<{
   });
 
   try {
-    await db.insert(seriesWeeklyStatsTable).values(statsRecords);
+    await db.insert(seriesWeeklyStatsTable).values(statsRecords).onDuplicateKeyUpdate({set:{id: sql`id`}});
     return { success: true };
   } catch (error) {
     console.error("Error in cacheCurrentWeekResults:", error);
