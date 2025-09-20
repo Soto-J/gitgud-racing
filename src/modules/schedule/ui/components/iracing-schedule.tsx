@@ -1,6 +1,10 @@
 import { TabsContent } from "@/components/ui/tabs";
-import React from "react";
 
-export const IRacingSchedule = () => {
+import { SeasonSchedule } from "@/modules/schedule/server/procedures/season-schedule/types";
+
+interface IRacingScheduleProps {
+  schedule: SeasonSchedule;
+}
+export const IRacingSchedule = ({ schedule }: IRacingScheduleProps) => {
   return <TabsContent value="iRacing">IRacingSchedule</TabsContent>;
 };

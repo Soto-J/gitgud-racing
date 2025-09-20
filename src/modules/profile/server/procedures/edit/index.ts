@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
 
 import { UpdateProfileInputSchema } from "./schema";
-import {  updateUserProfile } from "./helper";
+import { updateUserProfile } from "./helper";
 
 /**
  * Updates profile information for the authenticated user

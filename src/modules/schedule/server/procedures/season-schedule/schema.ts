@@ -117,4 +117,3 @@ export const SeasonScheduleResponse = z.object({
   ),
 });
 
-export type SeasonScheduleType = z.infer<typeof SeasonScheduleResponse>;

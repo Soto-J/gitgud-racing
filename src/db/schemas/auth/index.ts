@@ -1,6 +1,32 @@
-import { mysqlTable, varchar, text, timestamp } from "drizzle-orm/mysql-core";
+import {
+  mysqlTable,
+  varchar,
+  text,
+  timestamp,
+  mysqlEnum,
+  boolean,
+} from "drizzle-orm/mysql-core";
 
-import { user } from "@/db/schemas/user";
+export const roles = ["admin", "staff", "user", "guest"] as const;
+
+export const user = mysqlTable("user", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  name: text("name").notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  emailVerified: boolean("email_verified")
+    .$defaultFn(() => false)
+    .notNull(),
+  image: text("image"),
+
+  // admin plugin attributes
+  role: mysqlEnum("role", roles).notNull().default("user"),
+  banned: boolean("banned"),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
 
 export const session = mysqlTable("session", {
   id: varchar("id", { length: 36 }).primaryKey(),

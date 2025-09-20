@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
@@ -14,26 +14,23 @@ import { CreateProfileInputSchema } from "./schema";
 export const createProfileProcedure = protectedProcedure
   .input(CreateProfileInputSchema)
   .mutation(async ({ input }) => {
-    const response = await db
-      .insert(profileTable)
-      .values({
-        userId: input.userId,
-      })
-      .then((row) => row[0]);
+    try {
+      await db
+        .insert(profileTable)
+        .values({
+          userId: input.userId,
+        })
+        .onDuplicateKeyUpdate({ set: { id: sql`id` } });
 
-    if (!response) {
+      return await db
+        .select()
+        .from(profileTable)
+        .where(eq(profileTable.userId, input.userId))
+        .then((row) => row[0]);
+    } catch (error) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to create profile",
       });
     }
-
-    const profile = await db
-      .select()
-      .from(profileTable)
-      .innerJoin(user, eq(user.id, profileTable.userId))
-      .where(and(eq(profileTable.userId, input.userId)))
-      .then((row) => row[0]);
-
-    return profile;
   });
