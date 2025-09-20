@@ -1,7 +1,7 @@
 import z from "zod";
-import { inferRouterOutputs } from "@trpc/server";
 
-import { AppRouter } from "@/trpc/routers/_app";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/trpc/routers/_app";
 
 export const ProfileUpdateDataSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
@@ -18,4 +18,5 @@ export const UpdateProfileInputSchema = ProfileUpdateDataSchema.extend({
 export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
 export type ProfileUpdateData = z.infer<typeof ProfileUpdateDataSchema>;
 
-export type UpdateProfileResult = inferRouterOutputs<AppRouter>["profile"]["edit"];
+export type UpdateProfileResult =
+  inferRouterOutputs<AppRouter>["profile"]["edit"];

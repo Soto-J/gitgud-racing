@@ -17,12 +17,16 @@ const SchedulePage = async () => {
   const seasonInfo = getCurrentSeasonInfo();
 
   const queryClient = getQueryClient();
+  
   void queryClient.prefetchQuery(
     trpc.schedule.seasonSchedule.queryOptions({
       includeSeries: "true",
       seasonYear: seasonInfo.currentYear,
       seasonQuarter: seasonInfo.currentQuarter,
     }),
+  );
+  void queryClient.prefetchQuery(
+    trpc.schedule.getLeagueSchedules.queryOptions(),
   );
   return (
     <>

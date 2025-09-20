@@ -1,7 +1,9 @@
 import { z } from "zod";
+
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/trpc/routers/_app";
+
 import { SeasonScheduleResponse } from "./schema";
-import { inferRouterOutputs } from "@trpc/server";
-import { AppRouter } from "@/trpc/routers/_app";
 
 export type SeasonScheduleResponseType = z.infer<typeof SeasonScheduleResponse>;
 export type SeasonSchedule =

@@ -11,7 +11,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { ProfileUpdateDataSchema } from "@/modules/profile/server/procedures/edit/schema";
 
-import { UserData } from "@/modules/iracing/server/procedures/get-user/schema";
+import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,10 @@ export const EditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) => {
-  const [firstName, lastName] = initialValues?.user?.name?.split(" ") || ["", ""];
+  const [firstName, lastName] = initialValues?.user?.name?.split(" ") || [
+    "",
+    "",
+  ];
 
   const form = useForm<z.infer<typeof ProfileUpdateDataSchema>>({
     resolver: zodResolver(ProfileUpdateDataSchema),
@@ -78,10 +81,10 @@ export const EditProfileDialog = ({
 
   const onSubmit = (values: z.infer<typeof ProfileUpdateDataSchema>) => {
     if (!initialValues?.user?.id) {
-      console.warn('EditProfileDialog: Cannot submit without user ID');
+      console.warn("EditProfileDialog: Cannot submit without user ID");
       return;
     }
-    
+
     editProfile.mutate({
       userId: initialValues.user.id,
       ...values,
@@ -90,7 +93,7 @@ export const EditProfileDialog = ({
 
   // Defensive guard: Don't render if user data is missing
   if (!initialValues?.user?.id) {
-    console.warn('EditProfileDialog: Missing user data');
+    console.warn("EditProfileDialog: Missing user data");
     return null;
   }
 

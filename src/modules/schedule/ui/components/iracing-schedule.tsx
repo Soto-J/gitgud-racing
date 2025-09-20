@@ -1,6 +1,6 @@
 import { TabsContent } from "@/components/ui/tabs";
 
-import { SeasonSchedule } from "@/modules/schedule/server/procedures/season-schedule/types";
+import type { SeasonSchedule } from "@/modules/schedule/server/procedures/season-schedule/types";
 
 interface IRacingScheduleProps {
   schedule: SeasonSchedule;

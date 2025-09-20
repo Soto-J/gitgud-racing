@@ -1,17 +1,23 @@
 import z from "zod";
 
-import { InferSelectModel } from "drizzle-orm";
-import { inferRouterOutputs } from "@trpc/server";
-
-import { AppRouter } from "@/trpc/routers/_app";
-
-import { licenseTable } from "@/db/schemas";
 import { LicenseTable, ProfileTable, UserTable } from "@/db/schemas/type";
 
 // =============================================================================
 // INPUT SCHEMAS
 // =============================================================================
 
+/**
+ * Input validation schema for getUserProcedure
+ *
+ * Validates the input parameters required to fetch user data. The userId
+ * must be a non-empty string that corresponds to an existing user in the
+ * database.
+ *
+ * @example
+ * ```typescript
+ * const input = UserInputSchema.parse({ userId: "user_123" });
+ * ```
+ */
 export const UserInputSchema = z.object({
   userId: z.string().min(1, { message: "Id is required" }),
 });
@@ -80,8 +86,27 @@ export const UserResponseSchema = z.object({
   member_since: z.string(),
 });
 
-export type UserResponse = z.infer<typeof UserResponseSchema>;
-
+/**
+ * Schema for individual license data from iRacing API
+ *
+ * Validates the structure of license information for a single racing discipline
+ * as returned by iRacing's member API. Each license contains ratings, safety
+ * data, and classification information.
+ *
+ * @example
+ * ```typescript
+ * const license = LicenseSchema.parse({
+ *   category_id: 1,
+ *   category: "oval",
+ *   category_name: "Oval",
+ *   license_level: 16,
+ *   safety_rating: 3.45,
+ *   irating: 2500,
+ *   group_name: "Class A",
+ *   // ... other fields
+ * });
+ * ```
+ */
 export const LicenseSchema = z.object({
   category_id: z.number(),
   category: z.string(),
@@ -100,43 +125,41 @@ export const LicenseSchema = z.object({
   mpr_num_tts: z.number(),
 });
 
-export type LicenseType = z.infer<typeof LicenseSchema>;
-
-// =============================================================================
-// DATA TRANSFORMATION SCHEMAS
-// =============================================================================
-
 /**
- * Schema for validating iRacing license classes
+ * Schema for iRacing license class validation
  *
- * iRacing uses a letter-based license classification system:
- * - R: Rookie (starting level)
- * - D: Class D
- * - C: Class C
+ * Represents the possible license classes in iRacing:
+ * - A: Class A (highest)
  * - B: Class B
- * - A: Class A (highest level)
+ * - C: Class C  
+ * - D: Class D
+ * - R: Rookie (lowest)
  */
 export const LicenseClassSchema = z.enum(["A", "B", "C", "D", "R"]);
 
-export type LicenseClass = z.infer<typeof LicenseClassSchema>;
-
 /**
- * Schema for the flattened license data structure used in the database
+ * Schema for database-formatted license data
  *
- * This schema represents license information for all racing disciplines
- * in a flat structure optimized for database storage. Each discipline
- * (Oval, Sports Car, Formula Car, Dirt Oval, Dirt Road) has separate
- * fields for iRating, safety rating, and license class.
+ * Validates the transformed license data structure used for database storage.
+ * This flattened format stores each discipline's data separately with
+ * normalized field names for consistent database operations.
+ *
+ * Each discipline (Oval, Sports Car, Formula Car, Dirt Oval, Dirt Road) has:
+ * - iRating: Skill rating (typically 1350-5000+)
+ * - safetyRating: Safety rating as string (e.g., "3.45")
+ * - licenseClass: License class enum (A, B, C, D, R)
  *
  * @example
  * ```typescript
- * const dbLicenseData = {
+ * const transformedData = TransformLicenseDataSchema.parse({
  *   ovalIRating: 2500,
  *   ovalSafetyRating: "3.45",
  *   ovalLicenseClass: "A",
+ *   sportsCarIRating: 1800,
+ *   sportsCarSafetyRating: "2.85",
+ *   sportsCarLicenseClass: "B",
  *   // ... other disciplines
- * };
- * const validated = TransformLicenseDataSchema.parse(dbLicenseData);
+ * });
  * ```
  */
 export const TransformLicenseDataSchema = z.object({
@@ -157,24 +180,28 @@ export const TransformLicenseDataSchema = z.object({
   dirtRoadLicenseClass: LicenseClassSchema,
 });
 
-export type TransformLicenseData = z.infer<typeof TransformLicenseDataSchema>;
-
 /**
- * Schema for individual racing discipline data in the client response format
+ * Schema for structured license discipline data
  *
- * This represents how license data for a single discipline is structured
- * in the API response sent to clients. It's used to build the disciplines
- * array that provides a cleaner, more organized view of the license data.
+ * Validates the final format of license data as presented to the client.
+ * This structure organizes license information by racing discipline with
+ * user-friendly field names and nullable values for incomplete data.
+ *
+ * Categories represent the five main racing disciplines in iRacing:
+ * - Oval: Traditional oval track racing
+ * - Sports: Sports car racing on road courses
+ * - Formula: Open-wheel formula car racing
+ * - Dirt Oval: Dirt track oval racing
+ * - Dirt Road: Dirt track road course racing
  *
  * @example
  * ```typescript
- * const discipline = {
+ * const discipline = LicenseDisciplineSchema.parse({
  *   category: "Oval",
  *   iRating: 2500,
  *   safetyRating: "3.45",
  *   licenseClass: "A"
- * };
- * const validated = LicenseDisciplineSchema.parse(discipline);
+ * });
  * ```
  */
 export const LicenseDisciplineSchema = z.object({
@@ -184,20 +211,15 @@ export const LicenseDisciplineSchema = z.object({
   licenseClass: LicenseClassSchema,
 });
 
-export type LicenseDiscipline = z.infer<typeof LicenseDisciplineSchema>;
-
-// =============================================================================
-// INTERNAL TYPE DEFINITIONS
-// =============================================================================
-
+/**
+ * Type definition for database query result
+ *
+ * Represents the structure of data returned from the database query that
+ * joins user, profile, and license tables. Used as input for building
+ * the final user profile structure.
+ */
 export type TransformLicensesInput = {
   user: UserTable | null;
   profile: ProfileTable | null;
   licenses: LicenseTable | null;
 };
-
-// =============================================================================
-// ROUTER OUTPUT TYPES
-// =============================================================================
-
-export type UserData = inferRouterOutputs<AppRouter>["iracing"]["getUser"];

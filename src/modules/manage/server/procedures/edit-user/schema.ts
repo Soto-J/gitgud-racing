@@ -1,7 +1,7 @@
 import z from "zod";
-import { inferRouterOutputs } from "@trpc/server";
 
-import { AppRouter } from "@/trpc/routers/_app";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/trpc/routers/_app";
 
 export const UpdateUserProfileInputSchema = z.object({
   team: z.string(),
@@ -15,4 +15,5 @@ export const UpdateUserInputSchema = UpdateUserProfileInputSchema.extend({
 
 export type UpdateUserInput = z.infer<typeof UpdateUserInputSchema>;
 
-export type EditUserResult = inferRouterOutputs<AppRouter>["manage"]["editUser"];
+export type EditUserResult =
+  inferRouterOutputs<AppRouter>["manage"]["editUser"];

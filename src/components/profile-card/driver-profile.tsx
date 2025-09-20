@@ -1,4 +1,4 @@
-import { UserData } from "@/modules/iracing/server/procedures/get-user/schema";
+import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 import { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 

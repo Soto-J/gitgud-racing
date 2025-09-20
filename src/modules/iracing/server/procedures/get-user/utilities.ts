@@ -7,11 +7,14 @@ import { fetchData } from "@/modules/iracing/server/api";
 
 import {
   UserResponseSchema,
+  TransformLicensesInput,
+} from "@/modules/iracing/server/procedures/get-user/schema";
+
+import type {
   LicenseDiscipline,
   LicenseType,
   TransformLicenseData,
-  TransformLicensesInput,
-} from "@/modules/iracing/server/procedures/get-user/schema";
+} from "./types";
 
 /**
  * Builds a complete user profile from database components
@@ -106,6 +109,33 @@ export const buildUserProfile = (member: TransformLicensesInput) => {
   };
 };
 
+/**
+ * Synchronizes user license data from iRacing API to database
+ *
+ * This function fetches the latest license information for a specific user
+ * from iRacing's API and updates the database with the fresh data. It's
+ * designed to be called when license data is stale or missing.
+ *
+ * The function handles:
+ * - API data fetching and validation
+ * - Data transformation from API format to database format
+ * - Upsert operation to avoid duplicate entries
+ * - Graceful handling of missing or invalid license data
+ *
+ * @param custId - iRacing customer ID to fetch data for
+ * @param userId - Internal user ID for database storage
+ * @param authCode - iRacing authentication code for API access
+ *
+ * @returns Promise that resolves when sync is complete
+ *
+ * @example
+ * ```typescript
+ * await syncUserLicenseData("958942", "user_123", "auth_token_xyz");
+ * console.log("License data synchronized successfully");
+ * ```
+ *
+ * @throws Will throw if API request fails or data validation fails
+ */
 export async function syncUserLicenseData(
   custId: string,
   userId: string,
