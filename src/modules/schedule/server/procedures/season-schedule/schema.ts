@@ -26,35 +26,31 @@ export const SeasonScheduleResponse = z.object({
       consec_caution_within_nlaps: z.number(),
       consec_cautions_single_file: z.boolean(),
       cross_license: z.boolean(),
-      current_week_sched: z
-        .object({
-          race_week_num: z.number(),
-          track: z.object({
-            category: z.string(),
-            category_id: z.number(),
-            config_name: z.string().optional(),
-            track_id: z.number(),
-            track_name: z.string(),
-          }),
-          car_restrictions: z
-            .array(
-              z.object({
-                car_id: z.number(),
-                max_dry_tire_sets: z.number(),
-                max_pct_fuel_fill: z.number(),
-                power_adjust_pct: z.number(),
-                race_setup_id: z.number().optional(),
-                weight_penalty_kg: z.number(),
-              }),
-            )
-            .optional(),
-          race_lap_limit: z.number().nullable(),
-          race_time_limit: z.number().nullable(),
-          precip_chance: z.number(),
-          start_type: z.string(),
+      current_week_sched: z.object({
+        race_week_num: z.number(),
+        track: z.object({
+          category: z.string(),
           category_id: z.number(),
-        })
-        .nullable(),
+          config_name: z.string().optional(),
+          track_id: z.number(),
+          track_name: z.string(),
+        }),
+        car_restrictions: z.array(
+          z.object({
+            car_id: z.number(),
+            max_dry_tire_sets: z.number(),
+            max_pct_fuel_fill: z.number(),
+            power_adjust_pct: z.number(),
+            race_setup_id: z.number().nullish(),
+            weight_penalty_kg: z.number(),
+          }),
+        ),
+        race_lap_limit: z.number().nullish(),
+        race_time_limit: z.number().nullish(),
+        precip_chance: z.number().nullish(),
+        start_type: z.string(),
+        category_id: z.number(),
+      }),
       distributed_matchmaking: z.boolean(),
       driver_change_rule: z.number(),
       driver_changes: z.boolean(),
