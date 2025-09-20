@@ -1,14 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
 
-import { UpdateProfileInputSchema } from "./schema";
+import { ProfileUpdateSchema } from "./schema";
 import { updateUserProfile } from "./helper";
 
 /**
  * Updates profile information for the authenticated user
  */
 export const updateProfileProcedure = protectedProcedure
-  .input(UpdateProfileInputSchema)
+  .input(ProfileUpdateSchema)
   .mutation(async ({ ctx, input }) => {
     try {
       await updateUserProfile(input.userId, ctx.auth.user.id, {

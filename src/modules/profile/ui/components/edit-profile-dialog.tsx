@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { ProfileUpdateDataSchema } from "@/modules/profile/server/procedures/edit/schema";
+import { ProfileSchema } from "@/modules/profile/server/procedures/edit/schema";
 
 import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
@@ -43,8 +43,8 @@ export const EditProfileDialog = ({
     "",
   ];
 
-  const form = useForm<z.infer<typeof ProfileUpdateDataSchema>>({
-    resolver: zodResolver(ProfileUpdateDataSchema),
+  const form = useForm<z.infer<typeof ProfileSchema>>({
+    resolver: zodResolver(ProfileSchema),
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
@@ -79,7 +79,7 @@ export const EditProfileDialog = ({
     }),
   );
 
-  const onSubmit = (values: z.infer<typeof ProfileUpdateDataSchema>) => {
+  const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
     if (!initialValues?.user?.id) {
       console.warn("EditProfileDialog: Cannot submit without user ID");
       return;

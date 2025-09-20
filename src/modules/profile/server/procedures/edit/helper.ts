@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
 import { profileTable, user } from "@/db/schemas";
 
-import { ProfileUpdateData } from "./schema";
+import { ProfileUpdateData } from "./types";
 
 
 /**
