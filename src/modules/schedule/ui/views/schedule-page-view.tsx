@@ -16,7 +16,6 @@ interface SchedulePageViewProps {
   };
 }
 export const SchedulePageView = ({ seasonInfo }: SchedulePageViewProps) => {
-  console.log({ seasonInfo });
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
     trpc.schedule.seasonSchedule.queryOptions({

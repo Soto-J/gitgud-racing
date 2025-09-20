@@ -1,3 +1,5 @@
+import { ZodError } from "zod";
+
 import { TRPCError } from "@trpc/server";
 import { iracingProcedure } from "@/trpc/init";
 
@@ -24,15 +26,18 @@ export const seasonScheduleProcedure = iracingProcedure
     }
 
     try {
-      const parsed = SeasonScheduleResponse.parse(response);
       return {
-        seasonsSchedule: parsed.seasons,
+        seasonsSchedule: SeasonScheduleResponse.parse(response).seasons,
       };
     } catch (error) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Invalid response format from iRacing API",
-        cause: error,
-      });
+      if (error instanceof ZodError) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Invalid response format from iRacing API",
+          cause: error,
+        });
+      }
+
+      throw error;
     }
   });
