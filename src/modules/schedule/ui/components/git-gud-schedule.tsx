@@ -1,3 +1,6 @@
+import { LeagueSchedules } from "@/modules/schedule/server/procedures/league-schedule/get-many/types";
+
+import { TabsContent } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -5,9 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TabsContent } from "@/components/ui/tabs";
 
-export const GitGudSchedule = () => {
+interface GitGudScheduleProps {
+  schedule: LeagueSchedules;
+}
+
+export const GitGudSchedule = ({ schedule }: GitGudScheduleProps) => {
   const mockSchedule = [
     {
       date: "",

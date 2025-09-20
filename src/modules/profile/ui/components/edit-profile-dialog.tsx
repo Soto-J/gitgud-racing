@@ -11,7 +11,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { ProfileUpdateDataSchema } from "@/modules/profile/server/procedures/edit/schema";
 
-import { UserData } from "@/modules/iracing/server/procedures/get-user/schema";
+import { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";

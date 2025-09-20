@@ -1,12 +1,12 @@
 "use client";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { UnderConstruction } from "@/components/under-construction";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { IRacingSchedule } from "../components/iracing-schedule";
-import { GitGudSchedule } from "../components/git-gud-schedule";
+
+import { IRacingSchedule } from "@/modules/schedule/ui/components/iracing-schedule";
+import { GitGudSchedule } from "@/modules/schedule/ui/components/git-gud-schedule";
 
 interface SchedulePageViewProps {
   seasonInfo: {
@@ -17,13 +17,16 @@ interface SchedulePageViewProps {
 }
 export const SchedulePageView = ({ seasonInfo }: SchedulePageViewProps) => {
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
-    trpc.schedule.seasonSchedule.queryOptions({
-      includeSeries: "true",
-      seasonYear: seasonInfo.currentYear,
-      seasonQuarter: seasonInfo.currentQuarter,
-    }),
-  );
+  const [iRacingPayload, leaguePayload] = useSuspenseQueries({
+    queries: [
+      trpc.schedule.seasonSchedule.queryOptions({
+        includeSeries: "true",
+        seasonYear: seasonInfo.currentYear,
+        seasonQuarter: seasonInfo.currentQuarter,
+      }),
+      trpc.schedule.getLeagueSchedules.queryOptions(),
+    ],
+  });
   return (
     <>
       <Tabs defaultValue="gitGud" className="mx-auto">
@@ -32,14 +35,9 @@ export const SchedulePageView = ({ seasonInfo }: SchedulePageViewProps) => {
           <TabsTrigger value="iRacing">iRacing Schedule</TabsTrigger>
         </TabsList>
 
-        <GitGudSchedule />
-        <IRacingSchedule schedule={data} />
+        <GitGudSchedule schedule={leaguePayload.data} />
+        <IRacingSchedule schedule={iRacingPayload.data} />
       </Tabs>
-
-      <UnderConstruction
-        title="Race Schedule"
-        message="The racing schedule is being prepared. Check back soon for upcoming races!"
-      />
     </>
   );
 };

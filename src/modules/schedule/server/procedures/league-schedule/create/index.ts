@@ -6,10 +6,10 @@ import { protectedProcedure } from "@/trpc/init";
 import { db } from "@/db";
 import { leagueScheduleTable } from "@/db/schemas";
 
-import { EditLeagueScheduleInputSchema } from "./schema";
+import { CreateLeagueScheduleInputSchema } from "./schema";
 
-export const editLeagueScheduleProcedure = protectedProcedure
-  .input(EditLeagueScheduleInputSchema)
+export const createLeagueScheduleProcedure = protectedProcedure
+  .input(CreateLeagueScheduleInputSchema)
   .mutation(async ({ input }) => {
     const { scheduleId, track, temp, raceLength, date } = input;
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const EditLeagueScheduleInputSchema = z.object({
+export const CreateLeagueScheduleInputSchema = z.object({
   scheduleId: z.string().min(1, "Schedule ID required."),
   track: z.string(),
   temp: z.number(),

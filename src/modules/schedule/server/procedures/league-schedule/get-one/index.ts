@@ -1,18 +1,14 @@
-import { z } from "zod";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 import { protectedProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
 
 import { leagueScheduleTable } from "@/db/schemas";
+import { GetLeagueSchedulesInputSchema } from "./schema";
 
 export const getLeagueScheduleProcedure = protectedProcedure
-  .input(
-    z.object({
-      scheduleId: z.string().min(1, "Schedule ID required."),
-    }),
-  )
+  .input(GetLeagueSchedulesInputSchema)
   .query(async ({ input }) => {
     return db
       .select()
