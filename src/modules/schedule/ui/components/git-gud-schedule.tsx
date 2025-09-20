@@ -1,4 +1,4 @@
-import { LeagueSchedules } from "@/modules/schedule/server/procedures/league-schedule/get-many/types";
+import type { LeagueSchedules } from "@/modules/schedule/server/procedures/league-schedule/get-many/types";
 
 import { TabsContent } from "@/components/ui/tabs";
 import {

@@ -10,16 +10,10 @@
 
 import z from "zod";
 
-import { InferSelectModel } from "drizzle-orm";
-import { inferRouterOutputs } from "@trpc/server";
+import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/trpc/routers/_app";
 
-import { AppRouter } from "@/trpc/routers/_app";
-import {
-  licenseTable,
-  profileTable,
-  user,
-  userChartDataTable,
-} from "@/db/schemas";
+import { userChartDataTable } from "@/db/schemas";
 
 // =============================================================================
 // INPUT SCHEMAS
@@ -91,7 +85,6 @@ export type UserChartDataResponse = z.infer<typeof UserChartDataResponseSchema>;
  * necessary for chart rendering and data manipulation.
  */
 export type ChartData = typeof userChartDataTable.$inferSelect;
-
 
 // =============================================================================
 // ROUTER OUTPUT TYPES

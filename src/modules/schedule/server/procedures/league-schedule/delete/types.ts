@@ -1,5 +1,5 @@
-import { AppRouter } from "@/trpc/routers/_app";
-import { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@/trpc/routers/_app";
+import type { inferRouterOutputs } from "@trpc/server";
 
 export type DeleteLeagueSchedule =
   inferRouterOutputs<AppRouter>["schedule"]["deleteLeagueSchedule"];

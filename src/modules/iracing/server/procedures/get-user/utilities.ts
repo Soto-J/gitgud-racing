@@ -10,7 +10,11 @@ import {
   TransformLicensesInput,
 } from "@/modules/iracing/server/procedures/get-user/schema";
 
-import { LicenseDiscipline, LicenseType, TransformLicenseData } from "./types";
+import type {
+  LicenseDiscipline,
+  LicenseType,
+  TransformLicenseData,
+} from "./types";
 
 /**
  * Builds a complete user profile from database components
