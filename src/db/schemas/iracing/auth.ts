@@ -1,13 +1,8 @@
 import { nanoid } from "nanoid";
 
-import {
-  mysqlTable,
-  varchar,
-  text,
-  timestamp,
-} from "drizzle-orm/mysql-core";
+import { mysqlTable, varchar, text, timestamp } from "drizzle-orm/mysql-core";
 
-import { user } from "@/db/schemas/user";
+import { user } from "@/db/schemas/auth";
 
 export const iracingAuthTable = mysqlTable("iracing_auth", {
   id: varchar("id", { length: 21 })

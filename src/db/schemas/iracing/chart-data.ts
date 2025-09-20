@@ -9,7 +9,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/mysql-core";
 
-import { user } from "@/db/schemas/user";
+import { user } from "@/db/schemas/auth";
 
 export const userChartDataTable = mysqlTable(
   "user_chart_data",
@@ -35,7 +35,7 @@ export const userChartDataTable = mysqlTable(
   },
   (table) => [
     // Prevent duplicate entries for same user, category, chart type, and date
-    uniqueIndex('uniqueUserChartData').on(
+    uniqueIndex("uniqueUserChartData").on(
       table.userId,
       table.category,
       table.chartType,

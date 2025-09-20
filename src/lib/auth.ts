@@ -34,7 +34,7 @@ export const auth = betterAuth({
 
       if (!user) return;
 
-      const userProfile = await db
+      const [userProfile] = await db
         .select()
         .from(dbSchema.profileTable)
         .where(eq(dbSchema.profileTable.userId, user.id));

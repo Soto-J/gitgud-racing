@@ -24,17 +24,16 @@ export const SchedulePageView = ({ seasonInfo }: SchedulePageViewProps) => {
       seasonQuarter: seasonInfo.currentQuarter,
     }),
   );
-  // console.log({ data });
   return (
     <>
-      <Tabs>
-        <TabsList>
-          <TabsTrigger value="gitGud"></TabsTrigger>
-          <TabsTrigger value="iRacing"></TabsTrigger>
+      <Tabs defaultValue="gitGud" className="mx-auto">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="gitGud">GitGud Racing</TabsTrigger>
+          <TabsTrigger value="iRacing">iRacing Schedule</TabsTrigger>
         </TabsList>
 
         <GitGudSchedule />
-        <IRacingSchedule />
+        <IRacingSchedule schedule={data} />
       </Tabs>
 
       <UnderConstruction
