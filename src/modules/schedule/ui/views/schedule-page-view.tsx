@@ -29,6 +29,8 @@ export const SchedulePageView = ({ seasonInfo }: SchedulePageViewProps) => {
   });
   return (
     <>
+
+    
       <Tabs defaultValue="gitGud" className="mx-auto">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="gitGud">GitGud Racing</TabsTrigger>

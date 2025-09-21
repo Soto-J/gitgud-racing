@@ -8,12 +8,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { EditLeagueScheduleDialog } from "./form/edit-schedule-dialog";
+import { useState } from "react";
+import { LeagueSchedule } from "../../server/procedures/league-schedule/get-one/types";
 
 interface GitGudScheduleProps {
-  schedule: LeagueSchedules;
+  scheduleList: LeagueSchedules;
 }
 
-export const GitGudSchedule = ({ schedule }: GitGudScheduleProps) => {
+export const GitGudSchedule = ({ scheduleList }: GitGudScheduleProps) => {
+  const [selectedDate, setSelectedDate] = useState<LeagueSchedule | null>(null);
   const mockSchedule = [
     {
       date: "",
@@ -24,18 +28,30 @@ export const GitGudSchedule = ({ schedule }: GitGudScheduleProps) => {
     },
   ];
   return (
-    <TabsContent value="gitGud">
-      <Card>
-        <CardHeader>
-          <CardTitle>GitGud</CardTitle>
+    <>
+      <EditLeagueScheduleDialog
+        onOpenDialog={false}
+        onCloseDialog={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+        initialValues={selectedDate}
+      />
 
-          <CardDescription>
-            Make changes to your account here. Click save when you&apos;re done.
-          </CardDescription>
-        </CardHeader>
+      <TabsContent value="gitGud">
+        <Card>
+          <CardHeader>
+            <CardTitle>GitGud</CardTitle>
 
-        <CardContent></CardContent>
-      </Card>
-    </TabsContent>
+            <CardDescription>League Schedule</CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            {scheduleList.map((schedule) => (
+              <div></div>
+            ))}
+          </CardContent>
+        </Card>
+      </TabsContent>
+    </>
   );
 };

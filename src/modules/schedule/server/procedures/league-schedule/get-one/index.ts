@@ -5,13 +5,14 @@ import { protectedProcedure } from "@/trpc/init";
 import { db } from "@/db";
 
 import { leagueScheduleTable } from "@/db/schemas";
-import { GetLeagueSchedulesInputSchema } from "./schema";
+import { GetLeagueScheduleSchema } from "./schema";
 
 export const getLeagueScheduleProcedure = protectedProcedure
-  .input(GetLeagueSchedulesInputSchema)
+  .input(GetLeagueScheduleSchema)
   .query(async ({ input }) => {
     return db
       .select()
       .from(leagueScheduleTable)
-      .where(eq(leagueScheduleTable.id, input.scheduleId));
+      .where(eq(leagueScheduleTable.id, input.scheduleId))
+      .then((row) => row[0]);
   });
