@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 import { eq } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
@@ -13,6 +15,7 @@ export const editLeagueScheduleProcedure = protectedProcedure
   .mutation(async ({ input }) => {
     const { scheduleId, track, temp, raceLength, date } = input;
 
+    const formatDate = DateTime.now().toJSDate();
     try {
       await db
         .update(leagueScheduleTable)
@@ -20,7 +23,7 @@ export const editLeagueScheduleProcedure = protectedProcedure
           track,
           temp,
           raceLength,
-          date,
+          date: formatDate, // change later
         })
         .where(eq(leagueScheduleTable.id, scheduleId));
       return { success: true, error: null };

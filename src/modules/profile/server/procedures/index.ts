@@ -3,7 +3,7 @@ import { createTRPCRouter } from "@/trpc/init";
 import { getProfileProcedure } from "./get-one";
 import { getAllProfilesProcedure } from "./get-many";
 import { createProfileProcedure } from "./create";
-import { updateProfileProcedure } from "./edit";
+import { editProfileProcedure } from "./edit";
 
 export const profileRouter = createTRPCRouter({
   // Profile query procedures
@@ -12,5 +12,5 @@ export const profileRouter = createTRPCRouter({
 
   // Profile management procedures
   create: createProfileProcedure,
-  edit: updateProfileProcedure,
+  edit: editProfileProcedure,
 });

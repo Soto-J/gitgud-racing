@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 
 import { LicenseTable, ProfileTable, UserTable } from "@/db/schemas/type";
 
@@ -131,7 +131,7 @@ export const LicenseSchema = z.object({
  * Represents the possible license classes in iRacing:
  * - A: Class A (highest)
  * - B: Class B
- * - C: Class C  
+ * - C: Class C
  * - D: Class D
  * - R: Rookie (lowest)
  */

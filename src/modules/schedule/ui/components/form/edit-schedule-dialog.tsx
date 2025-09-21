@@ -1,24 +1,20 @@
 "use client";
 
-import z from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { toast } from "sonner";
 
-import { cn } from "@/lib/utils";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
-import { UpdateUserProfileInputSchema } from "@/modules/manage/server/procedures/edit-user/schema";
-
-import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
+import { LeagueScheduleSchema } from "@/modules/schedule/server/procedures/league-schedule/edit/schema";
+import { LeagueSchedule } from "@/modules/schedule/server/procedures/league-schedule/get-one/types";
 
 import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
-import { Switch } from "@/components/ui/switch";
+
 import {
   Form,
   FormControl,
@@ -27,50 +23,48 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 
-interface ManageEditProfileDialogProps {
+interface EditLeagueScheduleDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: ManageUser;
+  initialValues: LeagueSchedule | null;
 }
 
-export const ManageEditProfileDialog = ({
+export const EditLeagueScheduleDialog = ({
   onOpenDialog,
   onCloseDialog,
   initialValues,
-}: ManageEditProfileDialogProps) => {
-  const [filters, _] = useManageFilters();
+}: EditLeagueScheduleDialogProps) => {
+  if (!initialValues) {
+    return;
+  }
 
-  const form = useForm<z.infer<typeof UpdateUserProfileInputSchema>>({
-    resolver: zodResolver(UpdateUserProfileInputSchema),
+  const form = useForm<z.infer<typeof LeagueScheduleSchema>>({
+    resolver: zodResolver(LeagueScheduleSchema),
     defaultValues: {
-      team: initialValues.team || "",
-      isActive: initialValues.isActive,
-      role: initialValues.role,
+      track: initialValues.track || "",
+      temp: initialValues.temp || 0,
+      raceLength: initialValues.raceLength || 0,
+      date: initialValues.date
+        ? new Date(initialValues.date).toISOString().split("T")[0]
+        : "",
     },
   });
 
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const editProfile = useMutation(
-    trpc.manage.editUser.mutationOptions({
+  const editSchedule = useMutation(
+    trpc.schedule.editLeagueSchedule.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.manage.getUsers.queryOptions({
-            ...filters,
+          trpc.schedule.getLeagueSchedule.queryOptions({
+            scheduleId: initialValues.id,
           }),
         );
 
-        toast.success("Profile Updated!");
+        toast.success("Schedule updated successfully!");
         onCloseDialog();
       },
 
@@ -81,17 +75,17 @@ export const ManageEditProfileDialog = ({
     }),
   );
 
-  const onSubmit = (values: z.infer<typeof UpdateUserProfileInputSchema>) => {
-    editProfile.mutate({
+  const onSubmit = (values: z.infer<typeof LeagueScheduleSchema>) => {
+    editSchedule.mutate({
       ...values,
-      userId: initialValues.id,
+      scheduleId: initialValues.id,
     });
   };
 
   return (
     <ResponsiveDialog
-      title="Edit Member"
-      description={`${initialValues.name}'s profile`}
+      title="Edit Schedule"
+      description="Update race schedule details"
       isOpen={onOpenDialog}
       onOpenChange={onCloseDialog}
     >
@@ -102,205 +96,71 @@ export const ManageEditProfileDialog = ({
         >
           <div className="space-y-6 p-6">
             <FormField
-              name="isActive"
+              name="track"
               control={form.control}
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50/50 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800/30 dark:hover:bg-gray-800/50">
-                    <div className="space-y-1">
-                      <FormLabel
-                        htmlFor="isActive"
-                        className="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                      >
-                        Member Status
-                      </FormLabel>
-
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Toggle member&apos;s active status
-                      </p>
-                    </div>
-
-                    <FormControl>
-                      <div className="flex items-center space-x-3">
-                        <span
-                          className={cn(
-                            `text-sm font-medium transition-colors`,
-                            field.value
-                              ? "text-green-700 dark:text-green-300"
-                              : "text-gray-500 dark:text-gray-400",
-                          )}
-                        >
-                          {field.value ? "Active" : "Inactive"}
-                        </span>
-
-                        <Switch
-                          id="isActive"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-300 dark:data-[state=unchecked]:bg-gray-600"
-                        />
-                      </div>
-                    </FormControl>
-                  </div>
+                <FormItem>
+                  <FormLabel>Track</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter track name" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            {/* Team Field */}
             <FormField
-              name="team"
+              name="temp"
               control={form.control}
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <FormLabel className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Team Assignment
-                      </FormLabel>
-
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Select the team for this member
-                      </p>
-                    </div>
-                    <FormControl>
-                      <div className="w-full sm:w-48">
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="h-10 w-full border-gray-300 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600">
-                            <SelectValue placeholder="Choose team" />
-                          </SelectTrigger>
-
-                          <SelectContent className="z-50">
-                            <SelectGroup>
-                              <SelectItem
-                                value="team1"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-                                  Team Alpha
-                                </div>
-                              </SelectItem>
-                              <SelectItem
-                                value="team2"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                                  Team Beta
-                                </div>
-                              </SelectItem>
-                              <SelectItem
-                                value="team3"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className="h-2 w-2 rounded-full bg-purple-500"></div>
-                                  Team Gamma
-                                </div>
-                              </SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </FormControl>
-                  </div>
+                <FormItem>
+                  <FormLabel>Temperature (°F)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter temperature"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            {/* Role Field */}
             <FormField
-              name="role"
+              name="raceLength"
               control={form.control}
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <FormLabel className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Member Role
-                      </FormLabel>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        Define access level and permissions
-                      </p>
-                    </div>
-
-                    <FormControl>
-                      <div className="w-full sm:w-48">
-                        <Select
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="h-10 w-full border-gray-300 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600">
-                            <SelectValue placeholder="Select role" />
-                          </SelectTrigger>
-
-                          <SelectContent className="z-50">
-                            <SelectGroup className="">
-                              <SelectItem
-                                value="admin"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex w-full items-center justify-between gap-x-2">
-                                  <span className="font-medium">Admin</span>
-                                  <span className="rounded bg-orange-100 px-2 py-1 text-xs text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
-                                    Full Access
-                                  </span>
-                                </div>
-                              </SelectItem>
-
-                              <SelectItem
-                                value="staff"
-                                className="cursor-pointer px-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex items-center justify-between gap-x-2">
-                                  <span className="font-medium">Staff</span>
-                                  <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                                    Limited Access
-                                  </span>
-                                </div>
-                              </SelectItem>
-
-                              <SelectItem
-                                value="user"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex w-full items-center justify-between gap-x-2">
-                                  <span className="font-medium">User</span>
-                                  <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                                    Standard Access
-                                  </span>
-                                </div>
-                              </SelectItem>
-
-                              <SelectItem
-                                value="guest"
-                                className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                              >
-                                <div className="flex w-full items-center justify-between gap-x-2">
-                                  <span className="font-medium">Guest</span>
-                                  <span className="rounded bg-green-100 px-2 py-1 text-xs text-green-600 dark:bg-green-900/30 dark:text-green-400">
-                                    Minimum Access
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </FormControl>
-                  </div>
+                <FormItem>
+                  <FormLabel>Race Length (laps)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter race length"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="date"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Race Date</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
           </div>
 
           <FormActions
-            isPending={editProfile.isPending}
+            isPending={editSchedule.isPending}
             onCloseDialog={onCloseDialog}
           />
         </form>

@@ -7,7 +7,6 @@ import { profileTable, user } from "@/db/schemas";
 
 import { ProfileUpdateData } from "./types";
 
-
 /**
  * Updates profile and user information
  */
