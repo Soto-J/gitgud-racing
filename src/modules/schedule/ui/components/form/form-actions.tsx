@@ -29,7 +29,7 @@ export const FormActions = ({ isPending, onCloseDialog }: FormActions) => {
             Updating...
           </div>
         ) : (
-          "Update Member"
+          "Update"
         )}
       </Button>
     </div>

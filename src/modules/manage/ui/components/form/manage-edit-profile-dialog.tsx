@@ -144,6 +144,7 @@ export const ManageEditProfileDialog = ({
                       </div>
                     </FormControl>
                   </div>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -210,6 +211,7 @@ export const ManageEditProfileDialog = ({
                       </div>
                     </FormControl>
                   </div>
+                  
                   <FormMessage />
                 </FormItem>
               )}

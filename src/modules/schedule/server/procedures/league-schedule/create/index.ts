@@ -11,13 +11,15 @@ import { CreateLeagueScheduleInputSchema } from "./schema";
 export const createLeagueScheduleProcedure = protectedProcedure
   .input(CreateLeagueScheduleInputSchema)
   .mutation(async ({ input }) => {
-    const { scheduleId, track, temp, raceLength, date } = input;
+    const { scheduleId, seasonNumber, trackName, temp, raceLength, date } =
+      input;
 
     try {
       await db
         .update(leagueScheduleTable)
         .set({
-          track,
+          seasonNumber,
+          trackName,
           temp,
           raceLength,
           date,

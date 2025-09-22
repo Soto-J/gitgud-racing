@@ -14,10 +14,13 @@ const SchedulePage = async () => {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
+  const isAdmin =
+    session.user.role === "admin" || session.user.role === "staff";
+
   const seasonInfo = getCurrentSeasonInfo();
 
   const queryClient = getQueryClient();
-  
+
   void queryClient.prefetchQuery(
     trpc.schedule.seasonSchedule.queryOptions({
       includeSeries: "true",
@@ -33,7 +36,7 @@ const SchedulePage = async () => {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={<p>Loading..</p>}>
           <ErrorBoundary fallback={<p>Error..</p>}>
-            <SchedulePageView seasonInfo={seasonInfo} />;
+            <SchedulePageView seasonInfo={seasonInfo} isAdmin={isAdmin} />;
           </ErrorBoundary>
         </Suspense>
       </HydrationBoundary>

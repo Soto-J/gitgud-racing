@@ -131,6 +131,7 @@ export const EditProfileDialog = ({
                         <FormLabel className="text-sm font-medium text-gray-700">
                           First Name
                         </FormLabel>
+
                         <FormControl>
                           <Input
                             placeholder="John"
@@ -138,6 +139,7 @@ export const EditProfileDialog = ({
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           />
                         </FormControl>
+
                         <FormMessage />
                       </FormItem>
                     )}
@@ -151,6 +153,7 @@ export const EditProfileDialog = ({
                         <FormLabel className="text-sm font-medium text-gray-700">
                           Last Name
                         </FormLabel>
+
                         <FormControl>
                           <Input
                             placeholder="Smith"
@@ -158,6 +161,7 @@ export const EditProfileDialog = ({
                             className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                           />
                         </FormControl>
+
                         <FormMessage />
                       </FormItem>
                     )}
@@ -184,6 +188,7 @@ export const EditProfileDialog = ({
                       <FormLabel className="text-sm font-medium text-gray-700">
                         iRacing ID
                       </FormLabel>
+
                       <FormControl>
                         <Input
                           placeholder="Enter your iRacing ID"
@@ -191,6 +196,7 @@ export const EditProfileDialog = ({
                           className="border-gray-300 focus:border-red-500 focus:ring-red-500"
                         />
                       </FormControl>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -216,6 +222,7 @@ export const EditProfileDialog = ({
                       <FormLabel className="text-sm font-medium text-gray-700">
                         Discord Username
                       </FormLabel>
+
                       <FormControl>
                         <Input
                           placeholder="username#1234"
@@ -245,6 +252,7 @@ export const EditProfileDialog = ({
                       <FormLabel className="text-sm font-medium text-gray-700">
                         Driver Bio
                       </FormLabel>
+
                       <FormControl>
                         <Textarea
                           {...field}
