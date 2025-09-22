@@ -7,7 +7,8 @@ export const leagueScheduleTable = mysqlTable("league_schedule", {
     .primaryKey()
     .$default(() => nanoid()),
 
-  track: varchar("track", { length: 50 }).notNull(),
+  seasonNumber: int("season_number").notNull(),
+  trackName: varchar("track_name", { length: 50 }).notNull(),
   date: timestamp("date").notNull(),
   temp: int("temp").notNull(),
   raceLength: int("race_length").notNull(),

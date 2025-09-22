@@ -15,6 +15,8 @@ import { LeagueSchedule } from "@/modules/schedule/server/procedures/league-sche
 import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Form,
   FormControl,
@@ -23,7 +25,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 
 interface EditLeagueScheduleDialogProps {
   onOpenDialog: boolean;
@@ -36,17 +37,14 @@ export const EditLeagueScheduleDialog = ({
   onCloseDialog,
   initialValues,
 }: EditLeagueScheduleDialogProps) => {
-  if (!initialValues) {
-    return;
-  }
-
   const form = useForm<z.infer<typeof LeagueScheduleSchema>>({
     resolver: zodResolver(LeagueScheduleSchema),
-    defaultValues: {
-      track: initialValues.track || "",
-      temp: initialValues.temp || 0,
-      raceLength: initialValues.raceLength || 0,
-      date: initialValues.date
+    values: {
+      seasonNumber: initialValues?.seasonNumber ?? 0,
+      trackName: initialValues?.trackName || "",
+      temp: initialValues?.temp ?? 0,
+      raceLength: initialValues?.raceLength ?? 0,
+      date: initialValues?.date
         ? new Date(initialValues.date).toISOString().split("T")[0]
         : "",
     },
@@ -57,10 +55,10 @@ export const EditLeagueScheduleDialog = ({
 
   const editSchedule = useMutation(
     trpc.schedule.editLeagueSchedule.mutationOptions({
-      onSuccess: async () => {
+      onSuccess: async (_, data) => {
         await queryClient.invalidateQueries(
           trpc.schedule.getLeagueSchedule.queryOptions({
-            scheduleId: initialValues.id,
+            scheduleId: data.scheduleId,
           }),
         );
 
@@ -70,12 +68,16 @@ export const EditLeagueScheduleDialog = ({
 
       onError: (error) => {
         console.error(error);
-        toast.error(error.message);
+        toast.error("Failed to update schedule");
       },
     }),
   );
 
   const onSubmit = (values: z.infer<typeof LeagueScheduleSchema>) => {
+    if (!initialValues?.id) {
+      return;
+    }
+
     editSchedule.mutate({
       ...values,
       scheduleId: initialValues.id,
@@ -94,75 +96,113 @@ export const EditLeagueScheduleDialog = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="max-h-[50vh] overflow-hidden"
         >
-          <div className="space-y-6 p-6">
-            <FormField
-              name="track"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Track</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter track name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="temp"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Temperature (°F)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter temperature"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="raceLength"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Race Length (laps)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter race length"
-                      {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="date"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Race Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <ScrollArea className="h-[450px]">
+            <div className="space-y-6 p-6">
+              <FormField
+                name="trackName"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Track</FormLabel>
 
-          <FormActions
-            isPending={editSchedule.isPending}
-            onCloseDialog={onCloseDialog}
-          />
+                    <FormControl>
+                      <Input placeholder="Enter track name" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 items-center justify-center gap-8">
+                <FormField
+                  name="seasonNumber"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Season Number</FormLabel>
+
+                      <FormControl>
+                        <Input
+                          placeholder="Enter season number"
+                          type="number"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage className="h-4 text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  name="temp"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Temperature (°F)</FormLabel>
+
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter temperature"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                      </FormControl>
+
+                      <FormMessage className="h-4 text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  name="raceLength"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Race Length (Minutes)</FormLabel>
+
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter race length"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                      </FormControl>
+
+                      <FormMessage className="h-4 text-xs" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  name="date"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Race Date</FormLabel>
+
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+
+                      <FormMessage className="h-4 text-xs" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <FormActions
+              isPending={editSchedule.isPending}
+              onCloseDialog={onCloseDialog}
+            />
+          </ScrollArea>
         </form>
       </Form>
     </ResponsiveDialog>

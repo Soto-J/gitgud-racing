@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 export const LeagueScheduleSchema = z.object({
-  track: z.string(),
+  seasonNumber: z.int(),
+  trackName: z.string(),
   temp: z.number(),
   raceLength: z.number(),
   date: z.string(),
