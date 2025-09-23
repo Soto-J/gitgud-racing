@@ -17,6 +17,7 @@ export const SeriesStatsPageView = () => {
   const { data } = useSuspenseQuery(
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
   );
+  console.log({ data });
   return (
     <div className="space-y-8 p-6">
       <SeriesChart data={data} />
@@ -60,12 +61,14 @@ export const SeriesStatsPageView = () => {
             </h3>
 
             <p className="text-3xl font-bold text-gray-900">
-              {(
-                data.series.reduce(
-                  (acc, item) => acc + parseFloat(item.averageEntrants),
-                  0,
-                ) / data.series.length
-              ).toFixed(1)}
+              {data.series.length === 0
+                ? "0.0"
+                : (
+                    data.series.reduce(
+                      (acc, item) => acc + parseFloat(item.averageEntrants),
+                      0,
+                    ) / data.series.length
+                  ).toFixed(1)}
             </p>
             <div className="mt-2 text-xs text-gray-500">Per race session</div>
           </div>
@@ -88,13 +91,16 @@ export const SeriesStatsPageView = () => {
             </h3>
 
             <p className="text-3xl font-bold text-gray-900">
-              {(
-                data.series.reduce(
-                  (acc, item) => acc + parseFloat(item.averageSplits),
-                  0,
-                ) / data.series.length
-              ).toFixed(1)}
+              {data.series.length === 0
+                ? "0.0"
+                : (
+                    data.series.reduce(
+                      (acc, item) => acc + parseFloat(item.averageSplits),
+                      0,
+                    ) / data.series.length
+                  ).toFixed(1)}
             </p>
+
             <div className="mt-2 text-xs text-gray-500">Per time slot</div>
           </div>
         </div>

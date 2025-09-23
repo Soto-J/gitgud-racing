@@ -103,11 +103,11 @@ export const LeagueScheduleContent = ({
           <CardHeader className="relative overflow-hidden py-4 text-center">
             <div className="absolute -inset-10 bg-gradient-to-r from-blue-500/20 to-red-500/20" />
 
-            <CardTitle className="relative z-10 text-4xl font-bold text-red-500">
+            <CardTitle className="z-10 text-4xl font-bold text-red-500">
               SEASON 1
             </CardTitle>
 
-            <CardDescription className="relative z-10 text-2xl text-blue-400">
+            <CardDescription className="z-10 text-2xl text-blue-400">
               Schedule
             </CardDescription>
           </CardHeader>
@@ -136,7 +136,7 @@ export const LeagueScheduleContent = ({
                   >
                     <div
                       className={cn(
-                        "flex w-full items-center justify-center gap-x-2 py-2 font-bold text-white md:w-45 md:py-0",
+                        "flex items-center justify-center gap-x-2 py-2 font-bold text-white md:w-45 md:py-0",
                         index >= Math.floor(scheduleList.length / 2)
                           ? "bg-red-600"
                           : "bg-blue-600",

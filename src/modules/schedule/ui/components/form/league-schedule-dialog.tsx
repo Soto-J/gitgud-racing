@@ -73,7 +73,7 @@ export const LeagueScheduleDialog = ({
 
   const editSchedule = useMutation(
     trpc.schedule.editLeagueSchedule.mutationOptions({
-      onSuccess: async (_, data) => {
+      onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.schedule.getLeagueSchedules.queryOptions(),
         );
