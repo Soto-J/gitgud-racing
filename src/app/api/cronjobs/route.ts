@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { z } from "zod";
 import { DateTime } from "luxon";
 import { eq, gt, and, sql } from "drizzle-orm";
 
@@ -93,14 +94,18 @@ const cacheCurrentWeekResults = async (): Promise<{
     authCode,
   });
 
-  const seriesResults = SeriesResultsResponseSchema.parse(response);
+  const seriesResults = SeriesResultsResponseSchema.safeParse(response);
 
-  if (seriesResults.length === 0) {
-    console.log("No race data available for current week");
-    return { success: true };
+  if (!seriesResults.success) {
+    console.log(
+      "Schema validation failed:",
+      z.treeifyError(seriesResults.error),
+    );
+    console.log("Raw response:", JSON.stringify(response, null, 2));
+    return { success: false };
   }
 
-  const seriesByGroup = seriesResults.reduce(
+  const seriesByGroup = seriesResults.data.reduce(
     (acc, session) => {
       if (!acc[session.series_id]) {
         acc[session.series_id] = [];
@@ -154,7 +159,10 @@ const cacheCurrentWeekResults = async (): Promise<{
   });
 
   try {
-    await db.insert(seriesWeeklyStatsTable).values(statsRecords).onDuplicateKeyUpdate({set:{id: sql`id`}});
+    await db
+      .insert(seriesWeeklyStatsTable)
+      .values(statsRecords)
+      .onDuplicateKeyUpdate({ set: { id: sql`id` } });
     return { success: true };
   } catch (error) {
     console.error("Error in cacheCurrentWeekResults:", error);

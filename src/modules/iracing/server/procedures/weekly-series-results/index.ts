@@ -92,7 +92,7 @@ export const weeklySeriesResultsProcedure = iracingProcedure
       .where(searchClause)
       .then((row) => row[0]);
 
-    const totalPages = Math.ceil(total.count / pageSize);
+    const totalPages = Math.max(1, Math.ceil(total.count / pageSize));
 
     return {
       series: weeklyResults,
