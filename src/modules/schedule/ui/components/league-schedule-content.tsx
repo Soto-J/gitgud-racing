@@ -6,7 +6,7 @@ import { Edit3, Trash } from "lucide-react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
-import Image from "next/image";
+
 import { cn } from "@/lib/utils";
 
 import { useConfirm } from "@/hooks/use-confirm";
@@ -97,7 +97,6 @@ export const LeagueScheduleContent = ({
         mode={mode}
       />
       <ConfirmationDialog />
-
 
       <TabsContent value="gitGud">
         <Card className="overflow-hidden border-0 bg-gradient-to-br from-blue-900 via-gray-800 to-blue-900 pt-0 opacity-90">
