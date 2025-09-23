@@ -36,9 +36,19 @@ export const SchedulePageView = ({
   return (
     <>
       <Tabs defaultValue="gitGud" className="mx-auto">
-        <TabsList className="grid h-14 w-full grid-cols-2">
-          <TabsTrigger value="gitGud">League Schedule</TabsTrigger>
-          <TabsTrigger value="iRacing">iRacing Schedule</TabsTrigger>
+        <TabsList className="mb-6 grid h-16 w-full grid-cols-2 gap-x-2 rounded-lg border border-white/20 bg-black/80 p-2 backdrop-blur-sm">
+          <TabsTrigger
+            value="gitGud"
+            className="text-lg font-bold text-white transition-all duration-200 hover:bg-white/10 data-[state=active]:bg-red-600 data-[state=active]:text-white"
+          >
+            League Schedule
+          </TabsTrigger>
+          <TabsTrigger
+            value="iRacing"
+            className="text-lg font-bold text-white transition-all duration-200 hover:bg-white/10 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+          >
+            iRacing Schedule
+          </TabsTrigger>
         </TabsList>
 
         <LeagueScheduleContent
