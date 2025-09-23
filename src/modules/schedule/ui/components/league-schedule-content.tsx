@@ -6,7 +6,7 @@ import { Edit3, Trash } from "lucide-react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
-
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 import { useConfirm } from "@/hooks/use-confirm";
@@ -45,7 +45,7 @@ export const LeagueScheduleContent = ({
 
   const deleteSchedule = useMutation(
     trpc.schedule.deleteLeagueSchedule.mutationOptions({
-      onSuccess: async (data) => {
+      onSuccess: async () => {
         await queryClient.invalidateQueries(
           trpc.schedule.getLeagueSchedules.queryOptions(),
         );
@@ -98,10 +98,12 @@ export const LeagueScheduleContent = ({
       />
       <ConfirmationDialog />
 
+
       <TabsContent value="gitGud">
-        <Card className="relative bg-gradient-to-br from-blue-900 via-gray-800 to-blue-900">
-          <CardHeader className="relative overflow-hidden text-center">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-red-500/20" />
+        <Card className="overflow-hidden border-0 bg-gradient-to-br from-blue-900 via-gray-800 to-blue-900 pt-0 opacity-90">
+          <CardHeader className="relative overflow-hidden py-4 text-center">
+            <div className="absolute -inset-10 bg-gradient-to-r from-blue-500/20 to-red-500/20" />
+
             <CardTitle className="relative z-10 text-4xl font-bold text-red-500">
               SEASON 1
             </CardTitle>
@@ -112,7 +114,7 @@ export const LeagueScheduleContent = ({
           </CardHeader>
 
           <Button
-            className="absolute top-10 right-6 z-99"
+            className="mr-8 ml-auto max-w-40"
             onClick={() => onSubmit({ mode: "Create" })}
           >
             Add Schedule
@@ -146,13 +148,13 @@ export const LeagueScheduleContent = ({
                     </div>
 
                     <div className={cn("relative flex-1 bg-white shadow-lg")}>
-                      <div className="flex flex-col items-start justify-between gap-2 border-b border-gray-300 px-2 text-sm font-semibold tracking-wide uppercase sm:flex-row md:px-4 md:pt-6 md:text-lg">
-                        <div className={cn("flex-1 py-2 pb-6 text-center")}>
+                      <div className="flex flex-row items-start justify-between gap-2 border-b border-gray-300 px-2 text-sm font-semibold tracking-wide uppercase md:px-4 md:text-lg">
+                        <div className="flex-1 py-4 text-center">
                           {schedule.trackName}
                         </div>
 
                         {isAdmin && (
-                          <div className="absolute top-2 right-2 flex gap-2 sm:self-start">
+                          <div className="absolute top-2 right-2 flex gap-2">
                             <Button
                               variant="outline"
                               onClick={() =>
@@ -173,7 +175,7 @@ export const LeagueScheduleContent = ({
                         )}
                       </div>
 
-                      <div className="flex flex-col justify-around gap-1 px-2 py-2 font-medium sm:flex-row sm:gap-0 md:px-4 md:text-sm">
+                      <div className="flex justify-around gap-1 px-2 py-2 font-medium sm:gap-0 md:px-4 md:text-sm">
                         <div className="text-xs font-normal lg:text-base">
                           {schedule.raceLength} MINUTES
                         </div>
