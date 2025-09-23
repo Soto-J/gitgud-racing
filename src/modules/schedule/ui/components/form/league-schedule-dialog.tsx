@@ -12,7 +12,7 @@ import { useTRPC } from "@/trpc/client";
 import { LeagueScheduleSchema } from "@/modules/schedule/server/procedures/league-schedule/edit/schema";
 import { LeagueSchedule } from "@/modules/schedule/server/procedures/league-schedule/get-one/types";
 
-import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
+import { FormActions } from "@/modules/schedule/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 
 import { Input } from "@/components/ui/input";
@@ -30,20 +30,22 @@ interface EditLeagueScheduleDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
   initialValues: LeagueSchedule | null;
+  mode: "Create" | "Edit";
 }
 
-export const EditLeagueScheduleDialog = ({
+export const LeagueScheduleDialog = ({
   onOpenDialog,
   onCloseDialog,
   initialValues,
+  mode,
 }: EditLeagueScheduleDialogProps) => {
   const form = useForm<z.infer<typeof LeagueScheduleSchema>>({
     resolver: zodResolver(LeagueScheduleSchema),
     values: {
-      seasonNumber: initialValues?.seasonNumber ?? 0,
+      seasonNumber: initialValues?.seasonNumber || 1,
       trackName: initialValues?.trackName || "",
-      temp: initialValues?.temp ?? 0,
-      raceLength: initialValues?.raceLength ?? 0,
+      temp: initialValues?.temp ?? 70,
+      raceLength: initialValues?.raceLength ?? 30,
       date: initialValues?.date
         ? new Date(initialValues.date).toISOString().split("T")[0]
         : "",
@@ -53,13 +55,27 @@ export const EditLeagueScheduleDialog = ({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
+  const createSchedule = useMutation(
+    trpc.schedule.createLeagueSchedule.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.schedule.getLeagueSchedules.queryOptions(),
+        );
+
+        toast.success("Schedule created successfully!");
+        onCloseDialog();
+      },
+      onError: () => {
+        toast.error("Something went wrong creating schedule.");
+      },
+    }),
+  );
+
   const editSchedule = useMutation(
     trpc.schedule.editLeagueSchedule.mutationOptions({
       onSuccess: async (_, data) => {
         await queryClient.invalidateQueries(
-          trpc.schedule.getLeagueSchedule.queryOptions({
-            scheduleId: data.scheduleId,
-          }),
+          trpc.schedule.getLeagueSchedules.queryOptions(),
         );
 
         toast.success("Schedule updated successfully!");
@@ -74,20 +90,28 @@ export const EditLeagueScheduleDialog = ({
   );
 
   const onSubmit = (values: z.infer<typeof LeagueScheduleSchema>) => {
-    if (!initialValues?.id) {
-      return;
-    }
+    if (mode === "Create") {
+      createSchedule.mutate(values);
+    } else {
+      if (!initialValues?.id) {
+        return;
+      }
 
-    editSchedule.mutate({
-      ...values,
-      scheduleId: initialValues.id,
-    });
+      editSchedule.mutate({
+        ...values,
+        scheduleId: initialValues.id,
+      });
+    }
   };
 
   return (
     <ResponsiveDialog
-      title="Edit Schedule"
-      description="Update race schedule details"
+      title={`${mode === "Create" ? "Create" : "Edit"} Schedule`}
+      description={
+        mode === "Create"
+          ? "Create a new race schedule"
+          : "Update race schedule details"
+      }
       isOpen={onOpenDialog}
       onOpenChange={onCloseDialog}
     >
@@ -109,7 +133,7 @@ export const EditLeagueScheduleDialog = ({
                       <Input placeholder="Enter track name" {...field} />
                     </FormControl>
 
-                    <FormMessage />
+                    <FormMessage className="h-4 text-xs" />
                   </FormItem>
                 )}
               />
@@ -127,6 +151,13 @@ export const EditLeagueScheduleDialog = ({
                           placeholder="Enter season number"
                           type="number"
                           {...field}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value),
+                            )
+                          }
                         />
                       </FormControl>
 
@@ -148,7 +179,11 @@ export const EditLeagueScheduleDialog = ({
                           placeholder="Enter temperature"
                           {...field}
                           onChange={(e) =>
-                            field.onChange(Number(e.target.value))
+                            field.onChange(
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value),
+                            )
                           }
                         />
                       </FormControl>
@@ -171,7 +206,11 @@ export const EditLeagueScheduleDialog = ({
                           placeholder="Enter race length"
                           {...field}
                           onChange={(e) =>
-                            field.onChange(Number(e.target.value))
+                            field.onChange(
+                              e.target.value === ""
+                                ? ""
+                                : Number(e.target.value),
+                            )
                           }
                         />
                       </FormControl>
@@ -198,9 +237,15 @@ export const EditLeagueScheduleDialog = ({
                 />
               </div>
             </div>
+
             <FormActions
-              isPending={editSchedule.isPending}
+              isPending={
+                mode === "Create"
+                  ? createSchedule.isPending
+                  : editSchedule.isPending
+              }
               onCloseDialog={onCloseDialog}
+              mode={mode}
             />
           </ScrollArea>
         </form>

@@ -1,4 +1,3 @@
-import { DateTime } from "luxon";
 
 import { eq } from "drizzle-orm";
 
@@ -13,17 +12,17 @@ import { EditLeagueScheduleSchema } from "./schema";
 export const editLeagueScheduleProcedure = protectedProcedure
   .input(EditLeagueScheduleSchema)
   .mutation(async ({ input }) => {
-    const { scheduleId, track, temp, raceLength, date } = input;
+    const { scheduleId, seasonNumber, trackName, temp, raceLength, date } = input;
 
-    const formatDate = DateTime.now().toJSDate();
     try {
       await db
         .update(leagueScheduleTable)
         .set({
-          track,
+          seasonNumber,
+          trackName,
           temp,
           raceLength,
-          date: formatDate, // change later
+          date: new Date(date),
         })
         .where(eq(leagueScheduleTable.id, scheduleId));
       return { success: true, error: null };
