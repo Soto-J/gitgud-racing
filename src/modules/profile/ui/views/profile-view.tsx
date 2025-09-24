@@ -11,7 +11,10 @@ import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { Banner } from "@/components/banner";
 
-import { DriverProfile } from "@/components/profile-card/driver-profile";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IracingInfo } from "@/components/profile-card/iracing-info";
+import { ContactInfo } from "../components/contact-info";
+import { Profile } from "../components/profile";
 
 interface ProfileViewProps {
   userId: string;
@@ -43,7 +46,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
         onEdit={() => setOpenDialog(true)}
       />
 
-      <DriverProfile member={userPayload.data} chartData={chartPayload.data} />
+      <Profile iRacingInfo={chartPayload.data} contactInfo={userPayload.data} />
     </>
   );
 };
