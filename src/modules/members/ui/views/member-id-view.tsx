@@ -6,8 +6,8 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
-import { DriverProfile } from "@/components/profile-card/driver-profile";
 import { Banner } from "@/components/banner";
+import { Profile } from "@/components/profile";
 
 interface MemberIdViewProps {
   userId: string;
@@ -30,7 +30,8 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
         subTitle1="Professional Driver"
         subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
       />
-      <DriverProfile member={userPayload.data} chartData={chartPayload.data} />
+
+      <Profile iRacingInfo={chartPayload.data} contactInfo={userPayload.data} />
     </>
   );
 };
