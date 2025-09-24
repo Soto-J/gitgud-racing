@@ -11,10 +11,7 @@ import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { Banner } from "@/components/banner";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { IracingInfo } from "@/components/profile-card/iracing-info";
-import { ContactInfo } from "../components/contact-info";
-import { Profile } from "../components/profile";
+import { Profile } from "../../../../components/profile";
 
 interface ProfileViewProps {
   userId: string;

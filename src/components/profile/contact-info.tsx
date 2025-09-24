@@ -2,7 +2,7 @@ import { MessageCircle, User, Users } from "lucide-react";
 
 import { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
-import { InfoCard } from "@/components/profile-card/info-card";
+import { InfoCard } from "@/components/profile/info-card";
 import { TabsContent } from "@/components/ui/tabs";
 
 interface ContactInfoProps {

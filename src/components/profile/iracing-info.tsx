@@ -2,8 +2,8 @@ import type { UserData } from "@/modules/iracing/server/procedures/get-user/type
 import { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 
-import { DisciplineCard } from "@/components/profile-card/discipline-card";
-import { RatingsChart } from "@/components/profile-card/ratings-chart";
+import { DisciplineCard } from "@/components/profile/discipline-card";
+import { RatingsChart } from "@/components/profile/ratings-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
