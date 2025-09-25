@@ -118,6 +118,7 @@ export const userChartDataProcedure = iracingProcedure
       .onDuplicateKeyUpdate({
         set: {
           value: sql`VALUES(value)`,
+          when: sql`VALUES(\`when\`)`,
         },
       });
 

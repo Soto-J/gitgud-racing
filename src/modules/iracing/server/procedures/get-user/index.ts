@@ -68,7 +68,10 @@ export const getUserProcedure = iracingProcedure
     // Check if license data is fresh (updated within last 24 hours)
     // This prevents unnecessary API calls and reduces load on iRacing servers
     const hasFreshData = userData?.licenses
-      ? DateTime.fromJSDate(userData.licenses.updatedAt).diffNow().hours > -24
+      ? DateTime.now().diff(
+          DateTime.fromJSDate(userData.licenses.updatedAt),
+          "hours",
+        ).hours < 24
       : false;
 
     if (hasFreshData) {

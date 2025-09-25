@@ -42,11 +42,10 @@ import { GetUserSummaryResponse } from "@/modules/iracing/server/procedures/get-
 export const getUserSummaryProcedure = iracingProcedure.query(
   async ({ ctx }) => {
     // Get authenticated user's iRacing customer ID
-    const userProfile = await db
+    const [userProfile] = await db
       .select({ custId: profileTable.iracingId })
       .from(profileTable)
-      .where(eq(profileTable.userId, ctx.auth.user.id))
-      .then((row) => row[0]);
+      .where(eq(profileTable.userId, ctx.auth.user.id));
 
     if (!userProfile?.custId) {
       return null;
@@ -57,6 +56,8 @@ export const getUserSummaryProcedure = iracingProcedure.query(
       query: `/data/stats/member_summary?cust_id=${userProfile.custId}`,
       authCode: ctx.iracingAuthCode,
     });
+
+    console.log("Response", res);
 
     // Validate and parse the API response
     const userSummary = GetUserSummaryResponse.parse(res);
