@@ -20,10 +20,7 @@ const ProfilePage = async () => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.iracing.getUser.queryOptions(
-      { userId: session.user.id },
-      { retry: false },
-    ),
+    trpc.iracing.getUser.queryOptions({ userId: session.user.id }),
   );
   void queryClient.prefetchQuery(
     trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
