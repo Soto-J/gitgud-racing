@@ -1,6 +1,6 @@
 import { MessageCircle, User, Users } from "lucide-react";
 
-import { UserData } from "@/modules/iracing/server/procedures/get-user/types";
+import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
 import { InfoCard } from "@/components/profile/info-card";
 import { TabsContent } from "@/components/ui/tabs";

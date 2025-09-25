@@ -10,7 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { LeagueScheduleSchema } from "@/modules/schedule/server/procedures/league-schedule/edit/schema";
-import { LeagueSchedule } from "@/modules/schedule/server/procedures/league-schedule/get-one/types";
+import type { LeagueSchedule } from "@/modules/schedule/server/procedures/league-schedule/get-one/types";
 
 import { FormActions } from "@/modules/schedule/ui/components/form/form-actions";
 import { ResponsiveDialog } from "@/components/responsive-dialog";

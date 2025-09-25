@@ -31,16 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <NuqsAdapter>
-      <TRPCReactProvider>
-        <html lang="en">
-          <body className={`${montserrat.className} antialiased`}>
+    <html lang="en">
+      <body className={`${montserrat.className} antialiased`}>
+        <NuqsAdapter>
+          <TRPCReactProvider>
             {children}
 
             <Toaster />
-          </body>
-        </html>
-      </TRPCReactProvider>
-    </NuqsAdapter>
+          </TRPCReactProvider>
+        </NuqsAdapter>
+      </body>
+    </html>
   );
 }
