@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-interface FormActions {
+interface FormActionsProps {
   isPending: boolean;
   onCloseDialog: () => void;
   mode: "Create" | "Edit";
@@ -10,7 +10,7 @@ export const FormActions = ({
   isPending,
   onCloseDialog,
   mode,
-}: FormActions) => {
+}: FormActionsProps) => {
   const label = mode === "Create" ? "Create" : "Update";
 
   const submitLabel = isPending ? (

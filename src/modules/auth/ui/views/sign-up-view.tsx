@@ -138,7 +138,7 @@ export const SignUpView = () => {
                         />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs"/>
                     </FormItem>
                   )}
                 />
@@ -155,7 +155,7 @@ export const SignUpView = () => {
                           <Input type="text" placeholder="John" {...field} />
                         </FormControl>
 
-                        <FormMessage />
+                        <FormMessage className="h-4 text-xs"/>
                       </FormItem>
                     )}
                   />
@@ -172,7 +172,7 @@ export const SignUpView = () => {
                         <Input type="text" placeholder="Smith" {...field} />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs"/>
                     </FormItem>
                   )}
                 />
@@ -192,7 +192,7 @@ export const SignUpView = () => {
                         />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs"/>
                     </FormItem>
                   )}
                 />
@@ -212,7 +212,7 @@ export const SignUpView = () => {
                         />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs"/>
                     </FormItem>
                   )}
                 />

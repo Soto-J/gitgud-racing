@@ -145,7 +145,7 @@ export const ManageEditProfileDialog = ({
                     </FormControl>
                   </div>
 
-                  <FormMessage />
+                  <FormMessage className="h-4 text-xs"/>
                 </FormItem>
               )}
             />

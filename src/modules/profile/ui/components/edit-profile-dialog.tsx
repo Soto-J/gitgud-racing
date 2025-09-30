@@ -140,7 +140,7 @@ export const EditProfileDialog = ({
                           />
                         </FormControl>
 
-                        <FormMessage />
+                        <FormMessage className="h-4 text-xs"/>
                       </FormItem>
                     )}
                   />
@@ -162,7 +162,7 @@ export const EditProfileDialog = ({
                           />
                         </FormControl>
 
-                        <FormMessage />
+                        <FormMessage className="h-4 text-xs"/>
                       </FormItem>
                     )}
                   />
@@ -197,7 +197,7 @@ export const EditProfileDialog = ({
                         />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs"/>
                     </FormItem>
                   )}
                 />

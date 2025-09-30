@@ -43,7 +43,6 @@ export const SignInView = () => {
     },
   });
 
-
   const onGoogleSubmit = () => {
     setIsPending(true);
     setError(null);
@@ -116,7 +115,7 @@ export const SignInView = () => {
                         />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs" />
                     </FormItem>
                   )}
                 />
@@ -136,7 +135,7 @@ export const SignInView = () => {
                         />
                       </FormControl>
 
-                      <FormMessage />
+                      <FormMessage className="h-4 text-xs" />
                     </FormItem>
                   )}
                 />
