@@ -12,7 +12,7 @@ import { getSession } from "@/lib/get-session";
 
 import { loadSearchParams } from "@/modules/members/server/procedures/get-many/params";
 
-import { MembersListHeader } from "@/modules/members/ui/components/members-list-header";
+import MembersListHeader from "@/modules/members/ui/components/members-list-header";
 
 import {
   ErrorMembersView,
@@ -24,7 +24,7 @@ interface MembersPageProps {
   searchParams: Promise<SearchParams>;
 }
 
-const MembersPage = async ({ searchParams }: MembersPageProps) => {
+export default async function MembersPage({ searchParams }: MembersPageProps) {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -48,6 +48,4 @@ const MembersPage = async ({ searchParams }: MembersPageProps) => {
       </HydrationBoundary>
     </>
   );
-};
-
-export default MembersPage;
+}

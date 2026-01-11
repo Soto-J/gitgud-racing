@@ -16,10 +16,10 @@ interface SchedulePageViewProps {
   };
   isAdmin: boolean;
 }
-export const SchedulePageView = ({
+export default function SchedulePageView({
   seasonInfo,
   isAdmin,
-}: SchedulePageViewProps) => {
+}: SchedulePageViewProps) {
   const trpc = useTRPC();
 
   const [iRacingPayload, leaguePayload] = useSuspenseQueries({
@@ -36,7 +36,7 @@ export const SchedulePageView = ({
   return (
     <>
       <Tabs defaultValue="gitGud" className="mx-auto">
-        <TabsList className="mb-6 grid md:h-16 w-full grid-cols-2 gap-x-2 rounded-lg border border-white/20 bg-black/80 p-0 sm:p-2 backdrop-blur-sm">
+        <TabsList className="mb-6 grid w-full grid-cols-2 gap-x-2 rounded-lg border border-white/20 bg-black/80 p-0 backdrop-blur-sm sm:p-2 md:h-16">
           <TabsTrigger
             value="gitGud"
             className="text-accent text-lg transition-all duration-200 hover:bg-white/10 data-[state=active]:bg-red-600 data-[state=active]:text-white"
@@ -59,4 +59,4 @@ export const SchedulePageView = ({
       </Tabs>
     </>
   );
-};
+}

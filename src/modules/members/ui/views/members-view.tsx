@@ -5,9 +5,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
 
-import { ErrorState } from "@/components/error-state";
-import { LoadingState } from "@/components/loading-state";
-import { DataPagination } from "@/components/data-pagination";
+import ErrorState from "@/components/error-state";
+import LoadingState from "@/components/loading-state";
+import DataPagination from "@/components/data-pagination";
 
 import { MembersTable } from "@/modules/members/ui/components/members-table";
 

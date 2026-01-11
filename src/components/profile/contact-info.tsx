@@ -2,14 +2,14 @@ import { MessageCircle, User, Users } from "lucide-react";
 
 import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
-import { InfoCard } from "@/components/profile/info-card";
+import InfoCard from "@/components/profile/info-card";
 import { TabsContent } from "@/components/ui/tabs";
 
 interface ContactInfoProps {
   user: UserData;
 }
 
-export const ContactInfo = ({ user }: ContactInfoProps) => {
+export default function ContactInfo({ user }: ContactInfoProps) {
   return (
     <TabsContent value="contact">
       <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
@@ -78,4 +78,4 @@ export const ContactInfo = ({ user }: ContactInfoProps) => {
       </div>
     </TabsContent>
   );
-};
+}

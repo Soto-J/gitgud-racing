@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Banner } from "@/components/banner";
 
-export const ManageListHeader = () => {
+export default function ManageListHeader() {
   const [filters, setFilters] = useManageFilters();
 
   const isFilterActive = !!filters.search;
@@ -57,4 +57,4 @@ export const ManageListHeader = () => {
       </ScrollArea>
     </div>
   );
-};
+}

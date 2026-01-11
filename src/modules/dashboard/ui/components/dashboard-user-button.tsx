@@ -8,7 +8,7 @@ import { ChevronDownIcon, LogOutIcon } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 
-import { GeneratedAvatar } from "@/components/generated-avatar";
+import GeneratedAvatar from "@/components/generated-avatar";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";

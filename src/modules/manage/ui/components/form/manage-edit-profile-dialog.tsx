@@ -16,8 +16,9 @@ import { UpdateUserProfileInputSchema } from "@/modules/manage/server/procedures
 
 import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
+import ResponsiveDialog from "@/components/responsive-dialog";
+
 import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
-import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { Switch } from "@/components/ui/switch";
 import {
   Form,
@@ -42,11 +43,11 @@ interface ManageEditProfileDialogProps {
   initialValues: ManageUser;
 }
 
-export const ManageEditProfileDialog = ({
+export default function ManageEditProfileDialog({
   onOpenDialog,
   onCloseDialog,
   initialValues,
-}: ManageEditProfileDialogProps) => {
+}: ManageEditProfileDialogProps) {
   const [filters, _] = useManageFilters();
 
   type FormData = z.infer<typeof UpdateUserProfileInputSchema>;
@@ -145,7 +146,7 @@ export const ManageEditProfileDialog = ({
                     </FormControl>
                   </div>
 
-                  <FormMessage className="h-4 text-xs"/>
+                  <FormMessage className="h-4 text-xs" />
                 </FormItem>
               )}
             />
@@ -211,7 +212,7 @@ export const ManageEditProfileDialog = ({
                       </div>
                     </FormControl>
                   </div>
-                  
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -311,4 +312,4 @@ export const ManageEditProfileDialog = ({
       </Form>
     </ResponsiveDialog>
   );
-};
+}

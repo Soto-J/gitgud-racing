@@ -31,7 +31,7 @@ const formSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-export const SignInView = () => {
+export default function SignInView() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -200,4 +200,4 @@ export const SignInView = () => {
       </div>
     </div>
   );
-};
+}

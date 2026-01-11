@@ -13,7 +13,7 @@ interface ProfileCardProps {
   chartData: UserChartData | null;
 }
 
-export const IracingInfo = ({ user, chartData }: ProfileCardProps) => {
+export default function IracingInfo({ user, chartData }: ProfileCardProps) {
   const disciplines =
     user?.licenses?.disciplines?.length > 0
       ? user.licenses.disciplines
@@ -57,4 +57,4 @@ export const IracingInfo = ({ user, chartData }: ProfileCardProps) => {
       </div>
     </TabsContent>
   );
-};
+}

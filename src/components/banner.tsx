@@ -49,7 +49,7 @@ const sizeConfig = {
   },
 };
 
-export const Banner = ({
+export default function Banner({
   section,
   subTitle1,
   subTitle2,
@@ -58,7 +58,7 @@ export const Banner = ({
   onEdit,
   editText = "Edit Profile",
   size = "md",
-}: BannerHeaderProps) => {
+}: BannerHeaderProps) {
   const sizeStyles = sizeConfig[size];
   const DisplayIcon = CustomIcon || Trophy;
 
@@ -172,4 +172,4 @@ export const Banner = ({
       </div>
     </div>
   );
-};
+}

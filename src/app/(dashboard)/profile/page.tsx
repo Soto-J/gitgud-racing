@@ -14,7 +14,7 @@ import {
   ProfileView,
 } from "@/modules/profile/ui/views/profile-view";
 
-const ProfilePage = async () => {
+export default async function ProfilePage() {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -34,6 +34,4 @@ const ProfilePage = async () => {
       </Suspense>
     </HydrationBoundary>
   );
-};
-
-export default ProfilePage;
+}

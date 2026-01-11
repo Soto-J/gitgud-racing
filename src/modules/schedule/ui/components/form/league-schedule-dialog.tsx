@@ -13,7 +13,7 @@ import { LeagueScheduleSchema } from "@/modules/schedule/server/procedures/leagu
 import type { LeagueSchedule } from "@/modules/schedule/server/procedures/league-schedule/get-one/types";
 
 import { FormActions } from "@/modules/schedule/ui/components/form/form-actions";
-import { ResponsiveDialog } from "@/components/responsive-dialog";
+import ResponsiveDialog from "@/components/responsive-dialog";
 
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";

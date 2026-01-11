@@ -11,11 +11,11 @@ interface GeneratedAvatarProps {
   className?: string;
 }
 
-export const GeneratedAvatar = ({
+export default function GeneratedAvatar({
   seed,
   variant,
   className,
-}: GeneratedAvatarProps) => {
+}: GeneratedAvatarProps) {
   const avatar =
     variant === "botttsNeutral"
       ? createAvatar(botttsNeutral, { seed })
@@ -27,4 +27,4 @@ export const GeneratedAvatar = ({
       <AvatarFallback>{seed.charAt(0).toUpperCase()}</AvatarFallback>
     </Avatar>
   );
-};
+}

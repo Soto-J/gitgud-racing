@@ -5,7 +5,10 @@ interface LoadingStateProps {
   description: string;
 }
 
-export const LoadingState = ({ title, description }: LoadingStateProps) => {
+export default function LoadingState({
+  title,
+  description,
+}: LoadingStateProps) {
   return (
     <div className="flex flex-1 items-center justify-center px-8 py-4">
       <div className="bg-background flex flex-col items-center justify-center gap-y-6 rounded-lg p-10 shadow-sm">
@@ -18,4 +21,4 @@ export const LoadingState = ({ title, description }: LoadingStateProps) => {
       </div>
     </div>
   );
-};
+}

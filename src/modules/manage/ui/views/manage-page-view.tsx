@@ -7,12 +7,10 @@ import { useConfirm } from "@/hooks/use-confirm";
 
 import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
-import { ManageMembersTable } from "@/modules/manage/ui/components/manage-members-table";
-
-import { DataPagination } from "@/components/data-pagination";
-
-import { ErrorState } from "@/components/error-state";
-import { LoadingState } from "@/components/loading-state";
+import ManageMembersTable from "@/modules/manage/ui/components/manage-members-table";
+import DataPagination from "@/components/data-pagination";
+import ErrorState from "@/components/error-state";
+import LoadingState from "@/components/loading-state";
 
 export const ManagePageView = () => {
   const [filters, setFilters] = useManageFilters();

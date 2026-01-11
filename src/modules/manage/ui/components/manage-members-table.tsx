@@ -68,11 +68,11 @@ interface ManageMembersTableProps {
   confirmDelete: () => Promise<boolean>;
 }
 
-export const ManageMembersTable = ({
+export default function ManageMembersTable({
   members,
   filters,
   confirmDelete,
-}: ManageMembersTableProps) => {
+}: ManageMembersTableProps) {
   return (
     <Card className="border-0 bg-black">
       <CardContent className="px-0">
@@ -180,6 +180,6 @@ export const ManageMembersTable = ({
       </CardContent>
     </Card>
   );
-};
+}
 
 ManageMembersTable.displayName = "ManageMembersTable";

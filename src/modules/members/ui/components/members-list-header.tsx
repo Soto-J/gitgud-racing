@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Banner } from "@/components/banner";
 
-export const MembersListHeader = () => {
+export default function MembersListHeader() {
   const [filters, setFilters] = useMembersFilters();
 
   const isFilterActive = !!filters.search;
@@ -58,4 +58,4 @@ export const MembersListHeader = () => {
       </ScrollArea>
     </div>
   );
-};
+}

@@ -13,11 +13,11 @@ import { ProfileSchema } from "@/modules/profile/server/procedures/edit/schema";
 
 import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 
+import ResponsiveDialog from "@/components/responsive-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { ResponsiveDialog } from "@/components/responsive-dialog";
 import {
   Form,
   FormControl,
@@ -140,7 +140,7 @@ export const EditProfileDialog = ({
                           />
                         </FormControl>
 
-                        <FormMessage className="h-4 text-xs"/>
+                        <FormMessage className="h-4 text-xs" />
                       </FormItem>
                     )}
                   />
@@ -162,7 +162,7 @@ export const EditProfileDialog = ({
                           />
                         </FormControl>
 
-                        <FormMessage className="h-4 text-xs"/>
+                        <FormMessage className="h-4 text-xs" />
                       </FormItem>
                     )}
                   />
@@ -197,7 +197,7 @@ export const EditProfileDialog = ({
                         />
                       </FormControl>
 
-                      <FormMessage className="h-4 text-xs"/>
+                      <FormMessage className="h-4 text-xs" />
                     </FormItem>
                   )}
                 />

@@ -4,10 +4,10 @@ import { useTRPC } from "@/trpc/client";
 
 import { useSuspenseQueries } from "@tanstack/react-query";
 
-import { LoadingState } from "@/components/loading-state";
-import { ErrorState } from "@/components/error-state";
-import { Banner } from "@/components/banner";
-import { Profile } from "@/components/profile";
+import LoadingState from "@/components/loading-state";
+import ErrorState from "@/components/error-state";
+import Banner from "@/components/banner";
+import Profile from "@/components/profile";
 
 interface MemberIdViewProps {
   userId: string;

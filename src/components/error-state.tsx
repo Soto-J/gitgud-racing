@@ -5,7 +5,7 @@ interface ErrorStateProps {
   description: string;
 }
 
-export const ErrorState = ({ title, description }: ErrorStateProps) => {
+export default function ErrorState({ title, description }: ErrorStateProps) {
   return (
     <div className="flex min-h-svh flex-1 items-center justify-center px-8 py-4">
       <div className="bg-background flex flex-col items-center justify-center gap-y-6 rounded-lg p-10 text-red-500 shadow-sm">
@@ -18,4 +18,4 @@ export const ErrorState = ({ title, description }: ErrorStateProps) => {
       </div>
     </div>
   );
-};
+}

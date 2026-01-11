@@ -8,9 +8,9 @@ import { getQueryClient, trpc } from "@/trpc/server";
 import { getSession } from "@/lib/get-session";
 import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 
-import { SchedulePageView } from "@/modules/schedule/ui/views/schedule-page-view";
+import SchedulePageView from "@/modules/schedule/ui/views/schedule-page-view";
 
-const SchedulePage = async () => {
+export default async function SchedulePage() {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -42,6 +42,4 @@ const SchedulePage = async () => {
       </HydrationBoundary>
     </>
   );
-};
-
-export default SchedulePage;
+}

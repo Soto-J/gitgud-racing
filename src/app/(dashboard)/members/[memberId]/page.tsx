@@ -17,7 +17,7 @@ interface MemberIdPageProps {
   params: Promise<{ memberId: string }>;
 }
 
-const MemberIdPage = async ({ params }: MemberIdPageProps) => {
+export default async function MemberIdPage({ params }: MemberIdPageProps) {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -39,6 +39,4 @@ const MemberIdPage = async ({ params }: MemberIdPageProps) => {
       </Suspense>
     </HydrationBoundary>
   );
-};
-
-export default MemberIdPage;
+}

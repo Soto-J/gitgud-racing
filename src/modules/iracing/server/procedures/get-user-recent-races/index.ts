@@ -7,9 +7,6 @@ import {
   GetUserRecentRacesResponse,
 } from "@/modules/iracing/server/procedures/get-user-recent-races/schema";
 
-/**
- * Fetches recent race data for a user from iRacing
- */
 export const getUserRecentRacesProcedure = iracingProcedure
   .input(GetUserRecentRacesInput)
   .query(async ({ ctx, input }) => {

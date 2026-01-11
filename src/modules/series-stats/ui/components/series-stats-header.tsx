@@ -13,7 +13,7 @@ import { ChartPagination } from "./chart-pagination";
 
 import { Button } from "@/components/ui/button";
 
-export const SeriesStatsHeader = () => {
+export default function SeriesStatsHeader() {
   const [filters, setFilters] = useChartFilter();
 
   const trpc = useTRPC();
@@ -76,4 +76,4 @@ export const SeriesStatsHeader = () => {
       </div>
     </>
   );
-};
+}

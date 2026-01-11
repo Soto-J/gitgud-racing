@@ -11,18 +11,19 @@ import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/p
 
 import { getSession } from "@/lib/get-session";
 
+import ManageListHeader from "@/modules/manage/ui/components/manage-list-header";
+
 import {
   ManageErrorPage,
   ManageLoadingPage,
   ManagePageView,
 } from "@/modules/manage/ui/views/manage-page-view";
-import { ManageListHeader } from "@/modules/manage/ui/components/manage-list-header";
 
 interface ManagePageProps {
   searchParams: Promise<SearchParams>;
 }
 
-const ManagePage = async ({ searchParams }: ManagePageProps) => {
+export default async function ManagePage({ searchParams }: ManagePageProps) {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -50,6 +51,4 @@ const ManagePage = async ({ searchParams }: ManagePageProps) => {
       </HydrationBoundary>
     </>
   );
-};
-
-export default ManagePage;
+}

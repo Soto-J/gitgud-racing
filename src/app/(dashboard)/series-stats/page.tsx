@@ -12,7 +12,7 @@ import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-ser
 
 import { getSession } from "@/lib/get-session";
 
-import { SeriesStatsHeader } from "@/modules/series-stats/ui/components/series-stats-header";
+import SeriesStatsHeader from "@/modules/series-stats/ui/components/series-stats-header";
 import {
   ErrorHomeView,
   LoadingHomeView,
@@ -23,7 +23,7 @@ interface HomePageProps {
   searchParams: Promise<SearchParams>;
 }
 
-const SeriesStatsPage = async ({ searchParams }: HomePageProps) => {
+export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -50,6 +50,4 @@ const SeriesStatsPage = async ({ searchParams }: HomePageProps) => {
       </HydrationBoundary>
     </>
   );
-};
-
-export default SeriesStatsPage;
+}

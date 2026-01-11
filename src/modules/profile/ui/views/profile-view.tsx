@@ -7,11 +7,10 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 
-import { LoadingState } from "@/components/loading-state";
-import { ErrorState } from "@/components/error-state";
-import { Banner } from "@/components/banner";
-
-import { Profile } from "../../../../components/profile";
+import LoadingState from "@/components/loading-state";
+import ErrorState from "@/components/error-state";
+import Banner from "@/components/banner";
+import Profile from "@/components/profile";
 
 interface ProfileViewProps {
   userId: string;

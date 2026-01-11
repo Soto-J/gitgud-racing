@@ -7,7 +7,7 @@ interface UnderConstructionProps {
   className?: string;
 }
 
-export function UnderConstruction({
+export default function  UnderConstruction({
   title = "Under Construction",
   message = "This page is currently being built. Please check back later!",
   className,

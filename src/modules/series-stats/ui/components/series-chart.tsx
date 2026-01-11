@@ -30,7 +30,7 @@ interface SeriesChartProps {
   data: WeeklySeriesResults;
 }
 
-export const SeriesChart = ({ data }: SeriesChartProps) => {
+export default function SeriesChart({ data }: SeriesChartProps) {
   const seasonYear = data.series[0]?.seasonYear || "0";
   const seasonQuarter = data.series[0]?.seasonQuarter || "0";
   const seasonWeek = data.series[0]?.raceWeek || "0";
@@ -165,7 +165,7 @@ export const SeriesChart = ({ data }: SeriesChartProps) => {
       )}
     </div>
   );
-};
+}
 
 const ImageTick = ({
   x,
