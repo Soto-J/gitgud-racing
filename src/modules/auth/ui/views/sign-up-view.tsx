@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
@@ -15,18 +15,13 @@ import { FaGoogle } from "react-icons/fa";
 
 import { authClient } from "@/lib/auth-client";
 
+import FieldErrorMessage from "@/components/field-error-message";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
 const formSchema = z
   .object({
@@ -56,6 +51,13 @@ export default function SignUpView() {
       confirmPassword: "",
     },
   });
+
+  const onIracingSubmit = () => {
+    authClient.signIn.oauth2({
+      providerId: "iracing",
+      callbackURL: "/",
+    });
+  };
 
   const onGoogleSubmit = () => {
     setIsPending(true);
@@ -112,8 +114,8 @@ export default function SignUpView() {
     <div className="flex flex-col gap-6">
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
+            <FieldGroup>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-bold text-2xl">Let&apos;s get started</h1>
@@ -122,98 +124,103 @@ export default function SignUpView() {
                   </p>
                 </div>
 
-                <FormField
+                <Controller
                   control={form.control}
                   name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="johnsmith@example.com"
-                          data-lpignore="true"
-                          {...field}
-                        />
-                      </FormControl>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        type="email"
+                        placeholder="johnsmith@example.com"
+                        data-lpignore="true"
+                      />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
 
                 <div className="grid gap-3">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="firstName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>First Name</FormLabel>
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>First Name</FieldLabel>
 
-                        <FormControl>
-                          <Input type="text" placeholder="John" {...field} />
-                        </FormControl>
+                        <Input
+                          {...field}
+                          id={field.name}
+                          type="text"
+                          placeholder="John"
+                        />
 
-                        <FormMessage className="h-4 text-xs" />
-                      </FormItem>
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
                     )}
                   />
                 </div>
 
-                <FormField
+                <Controller
                   control={form.control}
                   name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>Last Name</FieldLabel>
 
-                      <FormControl>
-                        <Input type="text" placeholder="Smith" {...field} />
-                      </FormControl>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        type="text"
+                        placeholder="Smith"
+                      />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
 
-                <FormField
+                <Controller
                   control={form.control}
                   name="password"
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel>Password</FormLabel>
+                  render={({ field, fieldState }) => (
+                    <Field className="space-y-1">
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="********"
-                          {...field}
-                        />
-                      </FormControl>
+                      <Input
+                        id={field.name}
+                        type="password"
+                        placeholder="********"
+                        {...field}
+                      />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
 
-                <FormField
+                <Controller
                   control={form.control}
                   name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel>Confirm Password</FormLabel>
+                  render={({ field, fieldState }) => (
+                    <Field className="space-y-1">
+                      <FieldLabel htmlFor={field.name}>
+                        Confirm Password
+                      </FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="********"
-                          {...field}
-                        />
-                      </FormControl>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        type="password"
+                        placeholder="********"
+                      />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
 
@@ -236,15 +243,32 @@ export default function SignUpView() {
                   </span>
                 </div>
 
-                <Button
-                  onClick={() => onGoogleSubmit()}
-                  disabled={isPending}
-                  variant="outline"
-                  type="button"
-                  className="w-full"
-                >
-                  <FaGoogle />
-                </Button>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    onClick={() => onIracingSubmit()}
+                    disabled={isPending}
+                    variant="outline"
+                    type="button"
+                    className="relative"
+                  >
+                    <Image
+                      src="/iRacing-Brandmarks/iRacing-Stacked-Color-Blue.svg"
+                      alt="iracing"
+                      width={25}
+                      height={25}
+                      className=""
+                    />
+                  </Button>
+
+                  <Button
+                    onClick={() => onGoogleSubmit()}
+                    disabled={isPending}
+                    variant="outline"
+                    type="button"
+                  >
+                    <FaGoogle />
+                  </Button>
+                </div>
 
                 <div className="text-center text-sm">
                   Already have an account?{" "}
@@ -256,8 +280,8 @@ export default function SignUpView() {
                   </Link>
                 </div>
               </div>
-            </form>
-          </Form>
+            </FieldGroup>
+          </form>
 
           <div className="relative hidden bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] md:block">
             <Image

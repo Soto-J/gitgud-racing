@@ -19,9 +19,8 @@ const EnvSchema = z.object({
   IRACING_PASSWORD: z.string(),
   MY_USER_ID: z.string(),
   CRON_SECRET: z.string(),
-
-  // DB_MIGRATION: stringBoolean,
-  // DB_SEEDING: stringBoolean,
+  IRACING_AUTH_SECRET: z.string(),
+  IRACING_CLIENT_ID: z.string(),
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

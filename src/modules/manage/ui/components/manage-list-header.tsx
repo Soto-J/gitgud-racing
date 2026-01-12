@@ -13,7 +13,7 @@ import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Banner } from "@/components/banner";
+import Banner from "@/components/banner";
 
 export default function ManageListHeader() {
   const [filters, setFilters] = useManageFilters();

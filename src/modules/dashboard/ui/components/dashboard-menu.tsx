@@ -55,17 +55,12 @@ export const DashboardMenu = () => {
   const pathname = usePathname();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
+  // const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
   return (
     <Sidebar>
       <SidebarHeader>
         <Link href="/" className="flex items-center justify-center">
-          <Image
-            src="/gitgud-logo.png"
-            alt="Git Gud"
-            height={90}
-            width={90}
-          />
+          <Image src="/gitgud-logo.png" alt="Git Gud" height={90} width={90} />
         </Link>
       </SidebarHeader>
 
@@ -155,7 +150,7 @@ export const DashboardMenu = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <QuickStatsCard summaryData={data} />
+        <QuickStatsCard summaryData={null} />
       </SidebarContent>
 
       <SidebarFooter className="text-muted">

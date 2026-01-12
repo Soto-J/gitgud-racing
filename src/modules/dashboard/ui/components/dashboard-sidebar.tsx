@@ -12,7 +12,7 @@ export const DashboardSidebar = async () => {
   if (!session) redirect("/sign-in");
 
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.iracing.getUserSummary.queryOptions());
+  // void queryClient.prefetchQuery(trpc.iracing.getUserSummary.queryOptions());
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <DashboardMenu />

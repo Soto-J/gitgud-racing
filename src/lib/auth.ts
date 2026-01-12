@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, createAuthMiddleware } from "better-auth/plugins";
+import { genericOAuth } from "better-auth/plugins";
 
 import { eq } from "drizzle-orm";
 
@@ -12,15 +13,12 @@ import * as dbSchema from "@/db/schemas";
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "mysql",
-    schema: {
-      ...dbSchema,
-    },
+    schema: { ...dbSchema },
   }),
 
   emailAndPassword: {
     enabled: true,
   },
-
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
@@ -48,6 +46,28 @@ export const auth = betterAuth({
   plugins: [
     admin({
       defaultRole: "user",
+    }),
+    genericOAuth({
+      config: [
+        {
+          providerId: "iracing",
+          clientId: env.IRACING_CLIENT_ID,
+          clientSecret: env.IRACING_AUTH_SECRET,
+
+          redirectURI:
+            "https://gitgud-racing.vercel.app/api/auth/callback/iracing",
+
+          authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
+          tokenUrl: "https://oauth.iracing.com/oauth2/token",
+
+          scopes: ["iracing.auth", "iracing.profile"],
+          pkce: true,
+
+          // mapProfileToUser(profile) {
+
+          // },
+        },
+      ],
     }),
   ],
 });
