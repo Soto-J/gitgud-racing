@@ -31,12 +31,12 @@ export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
 
   const queryClient = getQueryClient();
 
-  void (await queryClient.prefetchQuery(
+  void queryClient.prefetchQuery(
     trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
-  ));
-  void (await queryClient.prefetchQuery(
-    trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
-  ));
+  );
+  // void queryClient.prefetchQuery(
+  //   trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
+  // );
   return (
     <>
       <HydrationBoundary state={dehydrate(queryClient)}>

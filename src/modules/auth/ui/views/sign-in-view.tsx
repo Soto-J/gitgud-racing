@@ -11,7 +11,7 @@ import { z } from "zod";
 import { OctagonAlertIcon } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 import FieldErrorMessage from "@/components/field-error-message";
 
@@ -19,7 +19,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import env from "@/env";
 
 const formSchema = z.object({
   email: z.email(),
@@ -39,10 +46,26 @@ export default function SignInView() {
   });
 
   const onIracingSubmit = () => {
-    authClient.signIn.oauth2({
-      providerId: "iracing",
-      callbackURL: "/",
-    });
+    setIsPending(true);
+    setError(null);
+
+    authClient.signIn.oauth2(
+      {
+        providerId: "iracing",
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setIsPending(false);
+          setError(null);
+        },
+        onError: ({ error }) => {
+          setIsPending(false);
+          setError(error.message);
+          console.error(error.message);
+        },
+      },
+    );
   };
 
   const onGoogleSubmit = () => {
@@ -93,109 +116,111 @@ export default function SignInView() {
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
             <FieldGroup>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col items-center text-center">
-                  <h1 className="text-bold text-2xl">Welcome back</h1>
-                  <p className="text-muted-foreground text-balance">
-                    Login to your account
-                  </p>
-                </div>
+              <FieldSet>
+                <div className="flex flex-col gap-6">
+                  <FieldLegend className="flex flex-col items-center text-center">
+                    <h1 className="text-bold text-2xl">Welcome back</h1>
+                    <p className="text-muted-foreground text-balance">
+                      Login to your account
+                    </p>
+                  </FieldLegend>
 
-                <Controller
-                  control={form.control}
-                  name="email"
-                  render={({ field, fieldState }) => (
-                    <Field>
-                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                  <Controller
+                    control={form.control}
+                    name="email"
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
 
-                      <Input
-                        {...field}
-                        id={field.name}
-                        type="email"
-                        placeholder="johnsmith@example.com"
-                        data-lpignore="true"
-                      />
+                        <Input
+                          {...field}
+                          id={field.name}
+                          type="email"
+                          placeholder="johnsmith@example.com"
+                          data-lpignore="true"
+                        />
 
-                      <FieldErrorMessage error={fieldState.error} />
-                    </Field>
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    control={form.control}
+                    name="password"
+                    render={({ field, fieldState }) => (
+                      <Field className="space-y-1">
+                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+
+                        <Input
+                          {...field}
+                          id={field.name}
+                          type="password"
+                          placeholder="********"
+                        />
+
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
+                    )}
+                  />
+
+                  {!!error && (
+                    <Alert className="bg-destructive/10 border-none">
+                      <OctagonAlertIcon className="!text-destructive h-4 w-4" />
+                      <AlertTitle className="text-red-600">
+                        Error: {error}
+                      </AlertTitle>
+                    </Alert>
                   )}
-                />
 
-                <Controller
-                  control={form.control}
-                  name="password"
-                  render={({ field, fieldState }) => (
-                    <Field className="space-y-1">
-                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                  <Button type="submit" className="bg-primary w-full">
+                    Sign in
+                  </Button>
 
-                      <Input
-                        {...field}
-                        id={field.name}
-                        type="password"
-                        placeholder="********"
+                  <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                    <span className="bg-card text-muted-foreground relative z-10 px-2">
+                      Or continue with
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      onClick={() => onIracingSubmit()}
+                      disabled={isPending}
+                      variant="outline"
+                      type="button"
+                      className="relative"
+                    >
+                      <Image
+                        src="/iRacing-Brandmarks/iRacing-Stacked-Color-Blue.svg"
+                        alt="iracing"
+                        width={25}
+                        height={25}
+                        className=""
                       />
+                    </Button>
+                    <Button
+                      onClick={() => onGoogleSubmit()}
+                      disabled={isPending}
+                      variant="outline"
+                      type="button"
+                      className="w-full"
+                    >
+                      <FaGoogle />
+                    </Button>
+                  </div>
 
-                      <FieldErrorMessage error={fieldState.error} />
-                    </Field>
-                  )}
-                />
-
-                {!!error && (
-                  <Alert className="bg-destructive/10 border-none">
-                    <OctagonAlertIcon className="!text-destructive h-4 w-4" />
-                    <AlertTitle className="text-red-600">
-                      Error: {error}
-                    </AlertTitle>
-                  </Alert>
-                )}
-
-                <Button type="submit" className="bg-primary w-full">
-                  Sign in
-                </Button>
-
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-card text-muted-foreground relative z-10 px-2">
-                    Or continue with
-                  </span>
+                  <div className="text-center text-sm">
+                    Don&apos;t have an account?{" "}
+                    <Link
+                      href="/sign-up"
+                      className="underline underline-offset-4 hover:text-[#16A34A]"
+                    >
+                      Sign up
+                    </Link>
+                  </div>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    onClick={() => onIracingSubmit()}
-                    disabled={isPending}
-                    variant="outline"
-                    type="button"
-                    className="relative"
-                  >
-                    <Image
-                      src="/iRacing-Brandmarks/iRacing-Stacked-Color-Blue.svg"
-                      alt="iracing"
-                      width={25}
-                      height={25}
-                      className=""
-                    />
-                  </Button>
-                  <Button
-                    onClick={() => onGoogleSubmit()}
-                    disabled={isPending}
-                    variant="outline"
-                    type="button"
-                    className="w-full"
-                  >
-                    <FaGoogle />
-                  </Button>
-                </div>
-
-                <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <Link
-                    href="/sign-up"
-                    className="underline underline-offset-4 hover:text-[#16A34A]"
-                  >
-                    Sign up
-                  </Link>
-                </div>
-              </div>
+              </FieldSet>
             </FieldGroup>
           </form>
 

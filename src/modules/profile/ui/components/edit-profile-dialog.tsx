@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { toast } from "sonner";
 
@@ -18,14 +18,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import FieldErrorMessage from "@/components/field-error-message";
 
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
@@ -104,11 +99,11 @@ export const EditProfileDialog = ({
       isOpen={onOpenDialog}
       onOpenChange={onCloseDialog}
     >
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-h-[80vh] overflow-hidden"
-        >
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-h-[80vh] overflow-hidden"
+      >
+        <FieldGroup>
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
               {/* Personal Information Section */}
@@ -123,47 +118,51 @@ export const EditProfileDialog = ({
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <FormField
+                  <Controller
                     name="firstName"
                     control={form.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel
+                          htmlFor={field.name}
+                          className="text-sm font-medium text-gray-700"
+                        >
                           First Name
-                        </FormLabel>
+                        </FieldLabel>
 
-                        <FormControl>
-                          <Input
-                            placeholder="John"
-                            {...field}
-                            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          />
-                        </FormControl>
+                        <Input
+                          {...field}
+                          id={field.name}
+                          placeholder="John"
+                          className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        />
 
-                        <FormMessage className="h-4 text-xs" />
-                      </FormItem>
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
                     )}
                   />
 
-                  <FormField
+                  <Controller
                     name="lastName"
                     control={form.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel
+                          htmlFor={field.name}
+                          className="text-sm font-medium text-gray-700"
+                        >
                           Last Name
-                        </FormLabel>
+                        </FieldLabel>
 
-                        <FormControl>
-                          <Input
-                            placeholder="Smith"
-                            {...field}
-                            className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          />
-                        </FormControl>
+                        <Input
+                          {...field}
+                          id={field.name}
+                          placeholder="Smith"
+                          className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        />
 
-                        <FormMessage className="h-4 text-xs" />
-                      </FormItem>
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
                     )}
                   />
                 </div>
@@ -180,25 +179,27 @@ export const EditProfileDialog = ({
                   </h3>
                 </div>
 
-                <FormField
+                <Controller
                   name="iRacingId"
                   control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel
+                        htmlFor={field.name}
+                        className="text-sm font-medium text-gray-700"
+                      >
                         iRacing ID
-                      </FormLabel>
+                      </FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your iRacing ID"
-                          {...field}
-                          className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-                        />
-                      </FormControl>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        placeholder="Enter your iRacing ID"
+                        className="border-gray-300 focus:border-red-500 focus:ring-red-500"
+                      />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
               </div>
@@ -214,23 +215,27 @@ export const EditProfileDialog = ({
                   </h3>
                 </div>
 
-                <FormField
+                <Controller
                   name="discord"
                   control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel
+                        htmlFor={field.name}
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Discord Username
-                      </FormLabel>
+                      </FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          placeholder="username#1234"
-                          {...field}
-                          className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
-                        />
-                      </FormControl>
-                    </FormItem>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        placeholder="username#1234"
+                        className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                      />
+
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
               </div>
@@ -244,23 +249,27 @@ export const EditProfileDialog = ({
                   <h3 className="font-semibold text-gray-900">About You</h3>
                 </div>
 
-                <FormField
+                <Controller
                   name="bio"
                   control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel
+                        htmlFor={field.name}
+                        className="text-sm font-medium text-gray-700"
+                      >
                         Driver Bio
-                      </FormLabel>
+                      </FieldLabel>
 
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          placeholder="Tell us about your racing journey, favorite series, achievements..."
-                          className="min-h-[100px] resize-none border-gray-300 focus:border-green-500 focus:ring-green-500"
-                        />
-                      </FormControl>
-                    </FormItem>
+                      <Textarea
+                        {...field}
+                        id={field.name}
+                        placeholder="Tell us about your racing journey, favorite series, achievements..."
+                        className="min-h-[100px] resize-none border-gray-300 focus:border-green-500 focus:ring-green-500"
+                      />
+
+                      <FieldErrorMessage error={fieldState.error} />
+                    </Field>
                   )}
                 />
               </div>
@@ -286,8 +295,8 @@ export const EditProfileDialog = ({
               {editProfile.isPending ? "Updating..." : "Update Profile"}
             </Button>
           </div>
-        </form>
-      </Form>
+        </FieldGroup>
+      </form>
     </ResponsiveDialog>
   );
 };

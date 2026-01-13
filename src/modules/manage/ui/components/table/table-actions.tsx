@@ -10,7 +10,7 @@ import { Ellipsis, Edit, Trash2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
 

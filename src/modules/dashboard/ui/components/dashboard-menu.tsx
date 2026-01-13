@@ -16,7 +16,7 @@ import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
 import { QuickStatsCard } from "@/modules/dashboard/ui/components/quick-stats-card";

@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
 
 export const createTRPCContext = cache(async () => {
@@ -64,12 +64,13 @@ export const manageProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
+    ctx.auth.user.email;
     const iracingAuthCode = await getOrRefreshAuthCode();
 
     return next({
       ctx: {
         ...ctx,
-        iracingAuthCode: iracingAuthCode,
+        iracingAccessToken: iracingAuthCode,
       },
     });
   },
