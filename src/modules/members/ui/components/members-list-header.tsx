@@ -14,7 +14,8 @@ import { MembersSearchFilter } from "@/modules/members/ui/components/members-sea
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Banner } from "@/components/banner";
+
+import Banner from "@/components/banner";
 
 export default function MembersListHeader() {
   const [filters, setFilters] = useMembersFilters();

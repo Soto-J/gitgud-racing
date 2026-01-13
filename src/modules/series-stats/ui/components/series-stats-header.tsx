@@ -17,9 +17,9 @@ export default function SeriesStatsHeader() {
   const [filters, setFilters] = useChartFilter();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
-    trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
-  );
+  // const { data } = useSuspenseQuery(
+  //   trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
+  // );
 
   const isFilterActive = !!filters.search;
 
@@ -70,7 +70,7 @@ export default function SeriesStatsHeader() {
         </div>
         <ChartPagination
           page={filters.page}
-          totalPages={data.totalPages}
+          totalPages={0}
           onPageChange={(page) => setFilters({ page })}
         />
       </div>

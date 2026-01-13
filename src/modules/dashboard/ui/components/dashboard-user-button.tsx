@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 import { ChevronDownIcon, LogOutIcon } from "lucide-react";
 

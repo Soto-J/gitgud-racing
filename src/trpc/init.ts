@@ -1,11 +1,10 @@
 import { cache } from "react";
-import { headers } from "next/headers";
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
-import { auth } from "@/lib/auth";
 import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
+import { getSession } from "@/lib/get-session";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -42,7 +41,7 @@ export const cronJobProcedure = baseProcedure.use(async ({ ctx, next }) => {
 });
 
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
 
   if (!session) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });
@@ -69,7 +68,7 @@ export const iracingProcedure = protectedProcedure.use(
     return next({
       ctx: {
         ...ctx,
-        iracingAuthCode: iracingAuthCode,
+        iracingAccessToken: iracingAuthCode,
       },
     });
   },

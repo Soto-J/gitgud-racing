@@ -16,7 +16,7 @@ import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 import { DashboardUserButton } from "@/modules/dashboard/ui/components/dashboard-user-button";
 import { QuickStatsCard } from "@/modules/dashboard/ui/components/quick-stats-card";
@@ -55,17 +55,12 @@ export const DashboardMenu = () => {
   const pathname = usePathname();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
+  // const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
   return (
     <Sidebar>
       <SidebarHeader>
         <Link href="/" className="flex items-center justify-center">
-          <Image
-            src="/gitgud-logo.png"
-            alt="Git Gud"
-            height={90}
-            width={90}
-          />
+          <Image src="/gitgud-logo.png" alt="Git Gud" height={90} width={90} />
         </Link>
       </SidebarHeader>
 
@@ -155,7 +150,7 @@ export const DashboardMenu = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <QuickStatsCard summaryData={data} />
+        <QuickStatsCard summaryData={null} />
       </SidebarContent>
 
       <SidebarFooter className="text-muted">

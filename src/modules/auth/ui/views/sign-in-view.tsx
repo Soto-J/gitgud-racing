@@ -4,27 +4,29 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import { OctagonAlertIcon } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
+
+import FieldErrorMessage from "@/components/field-error-message";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field";
+import env from "@/env";
 
 const formSchema = z.object({
   email: z.email(),
@@ -42,6 +44,29 @@ export default function SignInView() {
       password: "",
     },
   });
+
+  const onIracingSubmit = () => {
+    setIsPending(true);
+    setError(null);
+
+    authClient.signIn.oauth2(
+      {
+        providerId: "iracing",
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setIsPending(false);
+          setError(null);
+        },
+        onError: ({ error }) => {
+          setIsPending(false);
+          setError(error.message);
+          console.error(error.message);
+        },
+      },
+    );
+  };
 
   const onGoogleSubmit = () => {
     setIsPending(true);
@@ -89,98 +114,115 @@ export default function SignInView() {
     <div className="flex flex-col gap-6">
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col items-center text-center">
-                  <h1 className="text-bold text-2xl">Welcome back</h1>
-                  <p className="text-muted-foreground text-balance">
-                    Login to your account
-                  </p>
-                </div>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
+            <FieldGroup>
+              <FieldSet>
+                <div className="flex flex-col gap-6">
+                  <FieldLegend className="flex flex-col items-center text-center">
+                    <h1 className="text-bold text-2xl">Welcome back</h1>
+                    <p className="text-muted-foreground text-balance">
+                      Login to your account
+                    </p>
+                  </FieldLegend>
 
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
+                  <Controller
+                    control={form.control}
+                    name="email"
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
 
-                      <FormControl>
                         <Input
+                          {...field}
+                          id={field.name}
                           type="email"
                           placeholder="johnsmith@example.com"
                           data-lpignore="true"
-                          {...field}
                         />
-                      </FormControl>
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
-                  )}
-                />
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem className="space-y-1">
-                      <FormLabel>Password</FormLabel>
+                  <Controller
+                    control={form.control}
+                    name="password"
+                    render={({ field, fieldState }) => (
+                      <Field className="space-y-1">
+                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
 
-                      <FormControl>
                         <Input
+                          {...field}
+                          id={field.name}
                           type="password"
                           placeholder="********"
-                          {...field}
                         />
-                      </FormControl>
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
+                    )}
+                  />
+
+                  {!!error && (
+                    <Alert className="bg-destructive/10 border-none">
+                      <OctagonAlertIcon className="!text-destructive h-4 w-4" />
+                      <AlertTitle className="text-red-600">
+                        Error: {error}
+                      </AlertTitle>
+                    </Alert>
                   )}
-                />
 
-                {!!error && (
-                  <Alert className="bg-destructive/10 border-none">
-                    <OctagonAlertIcon className="!text-destructive h-4 w-4" />
-                    <AlertTitle className="text-red-600">
-                      Error: {error}
-                    </AlertTitle>
-                  </Alert>
-                )}
+                  <Button type="submit" className="bg-primary w-full">
+                    Sign in
+                  </Button>
 
-                <Button type="submit" className="bg-primary w-full">
-                  Sign in
-                </Button>
+                  <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                    <span className="bg-card text-muted-foreground relative z-10 px-2">
+                      Or continue with
+                    </span>
+                  </div>
 
-                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                  <span className="bg-card text-muted-foreground relative z-10 px-2">
-                    Or continue with
-                  </span>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      onClick={() => onIracingSubmit()}
+                      disabled={isPending}
+                      variant="outline"
+                      type="button"
+                      className="relative"
+                    >
+                      <Image
+                        src="/iRacing-Brandmarks/iRacing-Stacked-Color-Blue.svg"
+                        alt="iracing"
+                        width={25}
+                        height={25}
+                        className=""
+                      />
+                    </Button>
+                    <Button
+                      onClick={() => onGoogleSubmit()}
+                      disabled={isPending}
+                      variant="outline"
+                      type="button"
+                      className="w-full"
+                    >
+                      <FaGoogle />
+                    </Button>
+                  </div>
+
+                  <div className="text-center text-sm">
+                    Don&apos;t have an account?{" "}
+                    <Link
+                      href="/sign-up"
+                      className="underline underline-offset-4 hover:text-[#16A34A]"
+                    >
+                      Sign up
+                    </Link>
+                  </div>
                 </div>
-
-                <Button
-                  onClick={() => onGoogleSubmit()}
-                  disabled={isPending}
-                  variant="outline"
-                  type="button"
-                  className="w-full"
-                >
-                  <FaGoogle />
-                </Button>
-
-                <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
-                  <Link
-                    href="/sign-up"
-                    className="underline underline-offset-4 hover:text-[#16A34A]"
-                  >
-                    Sign up
-                  </Link>
-                </div>
-              </div>
-            </form>
-          </Form>
+              </FieldSet>
+            </FieldGroup>
+          </form>
 
           <div className="relative hidden bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] md:block">
             <Image
