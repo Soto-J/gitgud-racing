@@ -1,4 +1,4 @@
-import { betterAuth, OAuth2UserInfo } from "better-auth";
+import { betterAuth } from "better-auth";
 import { genericOAuth } from "better-auth/plugins";
 
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -10,6 +10,7 @@ import env from "@/env";
 
 import { db } from "@/db";
 import * as dbSchema from "@/db/schemas";
+
 import { maskIRacingSecret } from "../iracing-oauth-helpers";
 import { GetUserInfoSchema } from "./schemas";
 
@@ -54,14 +55,12 @@ export const auth = betterAuth({
         {
           providerId: "iracing",
           clientId: env.IRACING_CLIENT_ID,
-
           clientSecret: maskIRacingSecret(
             env.IRACING_AUTH_SECRET,
             env.IRACING_CLIENT_ID,
           ),
 
-          redirectURI: "http://127.0.0.1/api/auth/callback/iracing",
-
+          redirectURI: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback/iracing`,
           authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
           tokenUrl: "https://oauth.iracing.com/oauth2/token",
 
@@ -102,7 +101,7 @@ export const auth = betterAuth({
               id: String(memberInfo.cust_id),
               name: memberInfo.display_name,
               email: syntheticEmail,
-              emailVerified: false, // Mark as unverified since it's synthetic
+              emailVerified: false,
             };
           },
         },
