@@ -1,5 +1,5 @@
-import { SidebarToggle } from "@/modules/dashboard/ui/components/sidebar-toggle";
-import { DashboardSidebar } from "@/modules/dashboard/ui/components/dashboard-sidebar";
+import SidebarToggle from "@/modules/dashboard/ui/components/sidebar-toggle";
+import AppSidebar from "@/modules/dashboard/ui/components/app-sidebar";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
@@ -10,7 +10,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <SidebarProvider>
-      <DashboardSidebar />
+      <AppSidebar />
 
       <SidebarInset className="bg-muted">
         <SidebarToggle />

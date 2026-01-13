@@ -2,9 +2,11 @@ import { cache } from "react";
 
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { eq, and } from "drizzle-orm";
 
-import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
 import { getSession } from "@/lib/get-session";
+import { db } from "@/db";
+import { account as accountTable } from "@/db/schemas";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -29,17 +31,6 @@ export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 
-export const cronJobProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const iracingAuthCode = await getOrRefreshAuthCode();
-
-  return next({
-    ctx: {
-      ...ctx,
-      iracingAuthCode: iracingAuthCode,
-    },
-  });
-});
-
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
   const session = await getSession();
 
@@ -63,12 +54,54 @@ export const manageProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
 export const iracingProcedure = protectedProcedure.use(
   async ({ ctx, next }) => {
-    const iracingAuthCode = await getOrRefreshAuthCode();
+    const [userAccount] = await db
+      .select()
+      .from(accountTable)
+      .where(
+        and(
+          eq(accountTable.userId, ctx.auth.user.id),
+          eq(accountTable.providerId, "iracing"),
+        ),
+      );
+
+    if (!userAccount) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Please connect your iRacing account to access this feature.",
+      });
+    }
+
+    const isTokenExpired =
+      userAccount.accessTokenExpiresAt &&
+      userAccount.accessTokenExpiresAt < new Date();
+
+    if (isTokenExpired) {
+      if (!userAccount.refreshToken) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Your iRacing session has expired. Missing refresh token.",
+        });
+      }
+
+      return next({
+        ctx: {
+          ...ctx,
+          iracingAccessToken: userAccount.refreshToken,
+        },
+      });
+    }
+
+    if (!userAccount.accessToken) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Missing iRacing access token. Please reconnect your account.",
+      });
+    }
 
     return next({
       ctx: {
         ...ctx,
-        iracingAccessToken: iracingAuthCode,
+        iracingAccessToken: userAccount.accessToken,
       },
     });
   },

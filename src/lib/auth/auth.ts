@@ -66,14 +66,13 @@ export const auth = betterAuth({
 
           scopes: ["iracing.auth", "iracing.profile"],
           pkce: true,
+          authorizationUrlParams: { audience: "data-server" },
 
           async getUserInfo(tokens) {
             const initialResponse = await fetch(
               "https://members-ng.iracing.com/data/member/info",
               {
-                headers: {
-                  Authorization: `Bearer ${tokens.accessToken}`,
-                },
+                headers: { Authorization: `Bearer ${tokens.accessToken}` },
               },
             );
 
@@ -82,7 +81,6 @@ export const auth = betterAuth({
             }
 
             const { link } = await initialResponse.json();
-
             const linkResponse = await fetch(link);
 
             if (!linkResponse.ok) {
@@ -90,11 +88,9 @@ export const auth = betterAuth({
             }
 
             const data = await linkResponse.json();
-
             const memberInfo = GetUserInfoSchema.parse(data);
 
             // iRacing doesn't provide email, so we create a synthetic one
-            // Users can update this later if needed
             const syntheticEmail = `iracing-${memberInfo.cust_id}@gitgud-racing.app`;
 
             return {

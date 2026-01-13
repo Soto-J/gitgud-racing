@@ -2,7 +2,7 @@
 
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 
-export const SidebarToggle = () => {
+export default function SidebarToggle() {
   const { state } = useSidebar();
 
   return (
@@ -19,4 +19,4 @@ export const SidebarToggle = () => {
       />
     </header>
   );
-};
+}

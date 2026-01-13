@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { getSession } from "@/lib/get-session";
 
-import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
+// import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 import UnderConstruction from "@/components/under-construction";
 import { DateTime } from "luxon";
 

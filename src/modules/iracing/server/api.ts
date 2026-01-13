@@ -56,12 +56,12 @@ const ERROR_MAPPINGS = [
  */
 export const fetchData = async ({
   query,
-  authCode,
+  accessToken,
 }: {
   query: string;
-  authCode: string;
+  accessToken: string;
 }): Promise<unknown> => {
-  if (!authCode || authCode.trim() === "") {
+  if (!accessToken || accessToken.trim() === "") {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Invalid or missing iRacing authentication code",
@@ -79,7 +79,7 @@ export const fetchData = async ({
   try {
     const initialResponse = await fetch(`${IRACING_URL}${query}`, {
       headers: {
-        Cookie: `authtoken_members=${authCode}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       signal: AbortSignal.timeout(API_TIMEOUT_MS),
     });
