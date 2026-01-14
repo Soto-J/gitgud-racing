@@ -69,6 +69,8 @@ export const auth = betterAuth({
           authorizationUrlParams: { audience: "data-server" },
 
           async getUserInfo(tokens) {
+            console.log("TOKENS: ", tokens);
+            
             const initialResponse = await fetch(
               "https://members-ng.iracing.com/data/member/info",
               {

@@ -28,6 +28,7 @@ export const getUserSummaryProcedure = iracingProcedure.query(
         Authorization: `Bearer ${ctx.iracingAccessToken}`,
       },
     });
+    console.log("initial", initialResponse);
 
     if (!initialResponse.ok) {
       const errorText = await initialResponse.text();
@@ -38,7 +39,7 @@ export const getUserSummaryProcedure = iracingProcedure.query(
     }
 
     const dataLinks = await initialResponse.json();
-    console.log("Data Links:", dataLinks);
+    // console.log("Data Links:", dataLinks);
 
     const linkResponse = await fetch(dataLinks.all.link, {
       headers: {
@@ -48,7 +49,7 @@ export const getUserSummaryProcedure = iracingProcedure.query(
 
     const data = await linkResponse.json();
 
-    console.log("Link Data", data);
+    // console.log("Link Data", data);
     // Validate and parse the API response
     // const userSummary = GetUserSummaryResponse.parse(responseData);
 
