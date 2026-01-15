@@ -13,6 +13,7 @@ import * as dbSchema from "@/db/schemas";
 
 import { maskIRacingSecret } from "../iracing-oauth-helpers";
 import { GetUserInfoSchema } from "./schemas";
+import { IRACING_URL } from "@/constants";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -70,9 +71,13 @@ export const auth = betterAuth({
 
           async getUserInfo(tokens) {
             console.log("TOKENS: ", tokens);
-            
+            console.log(
+              "MASK: ",
+              maskIRacingSecret(env.IRACING_AUTH_SECRET, env.IRACING_CLIENT_ID),
+            );
+
             const initialResponse = await fetch(
-              "https://members-ng.iracing.com/data/member/info",
+              `${IRACING_URL}/data/member/info`,
               {
                 headers: { Authorization: `Bearer ${tokens.accessToken}` },
               },

@@ -1,33 +1,29 @@
-import { eq } from "drizzle-orm";
-
 import { iracingProcedure } from "@/trpc/init";
 
-import { db } from "@/db";
-import { account as accountTable, profileTable } from "@/db/schemas";
-
-import { fetchData } from "@/modules/iracing/server/api";
+import {
+  fetchIracingData,
+  throwIracingError,
+} from "@/modules/iracing/server/api";
 
 import { GetUserSummaryResponse } from "@/modules/iracing/server/procedures/get-user-summary/schema";
 import { IRACING_URL } from "@/constants";
 
 export const getUserSummaryProcedure = iracingProcedure.query(
   async ({ ctx }) => {
-    const [userProfile] = await db
-      .select({ custId: accountTable.accountId })
-      .from(accountTable)
-      .where(eq(accountTable.userId, ctx.auth.user.id));
+    const res = await fetchIracingData("/data", ctx.iracingAccessToken);
 
-    if (!userProfile?.custId) {
-      console.log(ctx.auth.user.id);
-      console.log(userProfile);
-      return null;
+    if (!res.ok) {
+      throwIracingError(res.error, res.message);
     }
+
+    return res.data;
 
     const initialResponse = await fetch(`${IRACING_URL}/data`, {
       headers: {
         Authorization: `Bearer ${ctx.iracingAccessToken}`,
       },
     });
+
     console.log("initial", initialResponse);
 
     if (!initialResponse.ok) {
