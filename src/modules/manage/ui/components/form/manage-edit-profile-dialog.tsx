@@ -209,7 +209,7 @@ export default function ManageEditProfileDialog({
           <Controller
             name="role"
             control={form.control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <Field className="space-y-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0 flex-1 space-y-1">
@@ -280,12 +280,13 @@ export default function ManageEditProfileDialog({
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <FieldErrorMessage error={fieldState.error} />
                 </div>
               </Field>
             )}
           />
         </div>
-
         <FormActions
           isPending={editProfile.isPending}
           onCloseDialog={onCloseDialog}

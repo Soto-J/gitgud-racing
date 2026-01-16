@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { toast } from "sonner";
 
@@ -17,14 +17,8 @@ import ResponsiveDialog from "@/components/responsive-dialog";
 
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldLabel } from "@/components/ui/field";
+import FieldErrorMessage from "@/components/field-error-message";
 
 interface EditLeagueScheduleDialogProps {
   onOpenDialog: boolean;
@@ -115,141 +109,123 @@ export const LeagueScheduleDialog = ({
       isOpen={onOpenDialog}
       onOpenChange={onCloseDialog}
     >
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="max-h-[50vh] overflow-hidden"
-        >
-          <ScrollArea className="h-[450px]">
-            <div className="space-y-6 p-6">
-              <FormField
-                name="trackName"
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="max-h-[50vh] overflow-hidden"
+      >
+        <ScrollArea className="h-[450px]">
+          <div className="space-y-6 p-6">
+            <Controller
+              name="trackName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel>Track</FieldLabel>
+
+                  <Input placeholder="Enter track name" {...field} />
+
+                  <FieldErrorMessage error={fieldState.error} />
+                </Field>
+              )}
+            />
+
+            <div className="grid grid-cols-2 items-center justify-center gap-8">
+              <Controller
+                name="seasonNumber"
                 control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Track</FormLabel>
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Season Number</FieldLabel>
 
-                    <FormControl>
-                      <Input placeholder="Enter track name" {...field} />
-                    </FormControl>
+                    <Input
+                      placeholder="Enter season number"
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? "" : Number(e.target.value),
+                        )
+                      }
+                    />
 
-                    <FormMessage className="h-4 text-xs" />
-                  </FormItem>
+                    <FieldErrorMessage error={fieldState.error} />
+                  </Field>
                 )}
               />
 
-              <div className="grid grid-cols-2 items-center justify-center gap-8">
-                <FormField
-                  name="seasonNumber"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Season Number</FormLabel>
+              <Controller
+                name="temp"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Temperature (°F)</FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          placeholder="Enter season number"
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value),
-                            )
-                          }
-                        />
-                      </FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter temperature"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? "" : Number(e.target.value),
+                        )
+                      }
+                    />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
-                  )}
-                />
+                    <FieldErrorMessage error={fieldState.error} />
+                  </Field>
+                )}
+              />
 
-                <FormField
-                  name="temp"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Temperature (°F)</FormLabel>
+              <Controller
+                name="raceLength"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Race Length (Minutes)</FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter temperature"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value),
-                            )
-                          }
-                        />
-                      </FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter race length"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(
+                          e.target.value === "" ? "" : Number(e.target.value),
+                        )
+                      }
+                    />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
-                  )}
-                />
+                    <FieldErrorMessage error={fieldState.error} />
+                  </Field>
+                )}
+              />
 
-                <FormField
-                  name="raceLength"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Race Length (Minutes)</FormLabel>
+              <Controller
+                name="date"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Race Date</FieldLabel>
 
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter race length"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value),
-                            )
-                          }
-                        />
-                      </FormControl>
+                    <Input type="date" {...field} />
 
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  name="date"
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Race Date</FormLabel>
-
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-
-                      <FormMessage className="h-4 text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                    <FieldErrorMessage error={fieldState.error} />
+                  </Field>
+                )}
+              />
             </div>
+          </div>
 
-            <FormActions
-              isPending={
-                mode === "Create"
-                  ? createSchedule.isPending
-                  : editSchedule.isPending
-              }
-              onCloseDialog={onCloseDialog}
-              mode={mode}
-            />
-          </ScrollArea>
-        </form>
-      </Form>
+          <FormActions
+            isPending={
+              mode === "Create"
+                ? createSchedule.isPending
+                : editSchedule.isPending
+            }
+            onCloseDialog={onCloseDialog}
+            mode={mode}
+          />
+        </ScrollArea>
+      </form>
     </ResponsiveDialog>
   );
 };
