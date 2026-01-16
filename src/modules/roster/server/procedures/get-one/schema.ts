@@ -7,4 +7,4 @@ export const GetMemberInputSchema = z.object({
   userId: z.string().min(1, { message: "User ID is required" }),
 });
 
-export type User = inferRouterOutputs<AppRouter>["members"]["getOne"];
+export type User = inferRouterOutputs<AppRouter>["roster"]["getOne"];

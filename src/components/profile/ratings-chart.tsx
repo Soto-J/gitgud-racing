@@ -158,7 +158,7 @@ export const RatingsChart = ({ data, title }: ProfileChartProps) => {
                 cursor={{ stroke: "#DC143C", strokeWidth: 2 }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
-                    const date = parseDateTime(label);
+                    const date = parseDateTime(String(label));
 
                     const tooltipFormattedDate = date.isValid
                       ? date.toFormat("MMM dd, yyyy")
