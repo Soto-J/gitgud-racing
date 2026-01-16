@@ -6,25 +6,25 @@ import { XCircleIcon } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { DEFAULT_PAGE } from "@/modules/members/server/procedures/get-many/params";
+import { DEFAULT_PAGE } from "@/modules/roster/server/procedures/get-many/params";
 
-import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/roster/hooks/use-members-filter";
 
-import { MembersSearchFilter } from "@/modules/members/ui/components/members-search-filter";
+import RosterSearchFilter from "@/modules/roster/ui/components/roster-search-filter";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import Banner from "@/components/banner";
 
-export default function MembersListHeader() {
+export default function RosterHeader() {
   const [filters, setFilters] = useMembersFilters();
 
   const isFilterActive = !!filters.search;
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.members.getMany.queryOptions({ ...filters }),
+    trpc.roster.getMany.queryOptions({ ...filters }),
   );
 
   const onClearFilters = () =>
@@ -45,7 +45,7 @@ export default function MembersListHeader() {
 
       <ScrollArea>
         <div className="flex items-center gap-x-2 py-6 pl-1">
-          <MembersSearchFilter />
+          <RosterSearchFilter />
 
           {isFilterActive && (
             <Button variant="outline" size="sm" onClick={onClearFilters}>

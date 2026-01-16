@@ -6,7 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
 
-import { User } from "@/modules/members/server/procedures/get-one/schema";
+import { User } from "@/modules/roster/server/procedures/get-one/schema";
 
 export const columns: ColumnDef<User>[] = [
   {

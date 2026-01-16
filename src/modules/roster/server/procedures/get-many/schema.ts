@@ -10,7 +10,7 @@ import {
   MIN_PAGE_SIZE,
 } from "./params";
 
-export const GetMembersInputSchema = z.object({
+export const RosterGetManyInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
   pageSize: z
     .number()
@@ -21,4 +21,4 @@ export const GetMembersInputSchema = z.object({
   search: z.string().nullish(),
 });
 
-export type GetMany = inferRouterOutputs<AppRouter>["members"]["getMany"];
+export type RosterGetMany = inferRouterOutputs<AppRouter>["roster"]["getMany"];

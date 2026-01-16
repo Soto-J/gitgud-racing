@@ -5,7 +5,7 @@ import { Crown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { GetMany } from "@/modules/members/server/procedures/get-many/schema";
+import { RosterGetMany } from "@/modules/roster/server/procedures/get-many/schema";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,15 +57,12 @@ const StatusBadge = ({
   );
 };
 
-interface MembersTableProps {
-  members: GetMany["users"];
+interface RosterTableProps {
+  members: RosterGetMany["users"];
   loggedInUserId: string;
 }
 
-export const MembersTable = ({
-  members,
-  loggedInUserId,
-}: MembersTableProps) => {
+export const RosterTable = ({ members, loggedInUserId }: RosterTableProps) => {
   const router = useRouter();
 
   return (
@@ -171,4 +168,4 @@ export const MembersTable = ({
   );
 };
 
-MembersTable.displayName = "MembersTable";
+RosterTable.displayName = "RosterTable";

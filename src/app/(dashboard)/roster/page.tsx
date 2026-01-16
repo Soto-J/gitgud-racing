@@ -10,21 +10,21 @@ import { getQueryClient, trpc } from "@/trpc/server";
 
 import { getSession } from "@/lib/get-session";
 
-import { loadSearchParams } from "@/modules/members/server/procedures/get-many/params";
+import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
 
-import MembersListHeader from "@/modules/members/ui/components/members-list-header";
+import RosterHeader from "@/modules/roster/ui/components/roster-header";
 
 import {
-  ErrorMembersView,
-  LoadingMembersView,
-  MembersView,
-} from "@/modules/members/ui/views/members-view";
+  ErrorRosterView,
+  LoadingRosterView,
+  RosterView,
+} from "@/modules/roster/ui/views/roster-view";
 
-interface MembersPageProps {
+interface RosterPageProps {
   searchParams: Promise<SearchParams>;
 }
 
-export default async function MembersPage({ searchParams }: MembersPageProps) {
+export default async function RosterPage({ searchParams }: RosterPageProps) {
   const session = await getSession();
   if (!session) redirect("/sign-in");
 
@@ -32,17 +32,17 @@ export default async function MembersPage({ searchParams }: MembersPageProps) {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.members.getMany.queryOptions({ ...filters }),
+    trpc.roster.getMany.queryOptions({ ...filters }),
   );
 
   return (
     <>
-      <MembersListHeader />
+      <RosterHeader />
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<LoadingMembersView />}>
-          <ErrorBoundary fallback={<ErrorMembersView />}>
-            <MembersView loggedInUserId={session.user.id} />
+        <Suspense fallback={<LoadingRosterView />}>
+          <ErrorBoundary fallback={<ErrorRosterView />}>
+            <RosterView loggedInUserId={session.user.id} />
           </ErrorBoundary>
         </Suspense>
       </HydrationBoundary>

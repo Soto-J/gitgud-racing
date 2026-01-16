@@ -11,7 +11,7 @@ import {
   ErrorMemberIdView,
   LoadingMemberIdView,
   MemberIdView,
-} from "@/modules/members/ui/views/member-id-view";
+} from "@/modules/roster/ui/views/member-id-view";
 
 interface MemberIdPageProps {
   params: Promise<{ memberId: string }>;
