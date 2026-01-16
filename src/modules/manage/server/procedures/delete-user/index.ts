@@ -1,12 +1,12 @@
 import { eq } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import { manageProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
 import { user } from "@/db/schemas";
 
 import { DeleteUserInputSchema } from "./schema";
+import { manageProcedure } from "@/trpc/init/manage-procedure";
 
 /**
  * Permanently deletes a user from the system (admin/staff only)

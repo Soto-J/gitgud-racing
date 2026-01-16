@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import { manageProcedure } from "@/trpc/init";
+import { manageProcedure } from "@/trpc/init/manage-procedure";
 
 import { db } from "@/db";
 import { profileTable, user } from "@/db/schemas";

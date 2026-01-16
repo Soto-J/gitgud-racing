@@ -3,7 +3,7 @@ import { and, count, desc, eq, like } from "drizzle-orm";
 import { db } from "@/db";
 import { profileTable, user } from "@/db/schemas";
 
-import { manageProcedure } from "@/trpc/init";
+import { manageProcedure } from "@/trpc/init/manage-procedure";
 
 import { GetUsersInputSchema } from "./schema";
 
