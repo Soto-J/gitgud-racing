@@ -5,14 +5,14 @@ import { protectedProcedure } from "@/trpc/init";
 
 import { profileTable, user } from "@/db/schemas";
 
-import { GetMembersInputSchema } from "./schema";
+import { RosterGetManyInputSchema } from "./schema";
 
 /**
  * Fetches multiple members with pagination and search functionality
  * Includes statistics for total members and active members
  */
 export const getManyProcedure = protectedProcedure
-  .input(GetMembersInputSchema)
+  .input(RosterGetManyInputSchema)
   .query(async ({ input }) => {
     const { page, pageSize, search } = input;
 

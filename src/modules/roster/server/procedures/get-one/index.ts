@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { user, profileTable } from "@/db/schemas";
+import { user as userTable, profileTable } from "@/db/schemas";
 
 import { GetMemberInputSchema } from "./schema";
 
@@ -16,21 +16,21 @@ export const getOneProcedure = protectedProcedure
   .query(async ({ input }) => {
     const results = await db
       .select({
-        ...getTableColumns(user),
+        ...getTableColumns(userTable),
         isActive: profileTable.isActive,
       })
-      .from(user)
-      .innerJoin(profileTable, eq(profileTable.userId, user.id))
-      .where(eq(user.id, input.userId));
+      .from(userTable)
+      .innerJoin(profileTable, eq(profileTable.userId, userTable.id))
+      .where(eq(userTable.id, input.userId));
 
-    const member = results[0];
+    const user = results[0];
 
-    if (!member) {
+    if (!user) {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: "Member not found",
       });
     }
 
-    return member;
+    return user;
   });

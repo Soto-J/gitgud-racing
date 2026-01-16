@@ -2,14 +2,17 @@
 
 import { SearchIcon } from "lucide-react";
 
-import { useMembersFilters } from "@/modules/members/hooks/use-members-filter";
+import { useMembersFilters } from "@/modules/roster/hooks/use-members-filter";
 import { useDebounceSearch } from "@/hooks/use-debounce-search";
 
 import { Input } from "@/components/ui/input";
 
-export const MembersSearchFilter = () => {
+export default async function RosterSearchFilter() {
   const [filters, setFilters] = useMembersFilters();
-  const { searchValue, setSearchValue } = useDebounceSearch(filters, setFilters);
+  const { searchValue, setSearchValue } = useDebounceSearch(
+    filters,
+    setFilters,
+  );
 
   return (
     <div className="relative">
@@ -23,4 +26,4 @@ export const MembersSearchFilter = () => {
       <SearchIcon className="text-muted-foreground absolute top-1/2 left-2 size-4 -translate-y-1/2" />
     </div>
   );
-};
+}
