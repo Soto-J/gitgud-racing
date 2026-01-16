@@ -1,6 +1,6 @@
 import { desc, eq, sql } from "drizzle-orm";
 
-import { iracingProcedure } from "@/trpc/init";
+import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { db } from "@/db";
 import { profileTable, userChartDataTable } from "@/db/schemas";

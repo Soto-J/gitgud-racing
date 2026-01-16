@@ -1,5 +1,5 @@
-import { iracingProcedure } from "@/trpc/init";
-import { fetchIracingData } from "../../api";
+import { iracingProcedure } from "@/trpc/init/iracing-procedure";
+import { fetchIracingData } from "@/modules/iracing/server/api";
 
 export const getDocumentationProcedure = iracingProcedure.query(
   async ({ ctx }) => {

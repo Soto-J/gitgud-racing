@@ -22,7 +22,7 @@ export default function ManageListHeader() {
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.members.getMany.queryOptions({ ...filters }),
+    trpc.roster.getMany.queryOptions({ ...filters }),
   );
 
   const onClearFilters = () =>

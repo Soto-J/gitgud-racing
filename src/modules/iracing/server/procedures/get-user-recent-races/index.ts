@@ -1,4 +1,4 @@
-import { iracingProcedure } from "@/trpc/init";
+import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { fetchIracingData } from "@/modules/iracing/server/api";
 
