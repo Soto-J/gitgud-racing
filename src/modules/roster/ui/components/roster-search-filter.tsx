@@ -7,7 +7,7 @@ import { useDebounceSearch } from "@/hooks/use-debounce-search";
 
 import { Input } from "@/components/ui/input";
 
-export default async function RosterSearchFilter() {
+export default function RosterSearchFilter() {
   const [filters, setFilters] = useMembersFilters();
   const { searchValue, setSearchValue } = useDebounceSearch(
     filters,
