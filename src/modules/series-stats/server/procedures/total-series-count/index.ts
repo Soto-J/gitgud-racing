@@ -1,6 +1,6 @@
 import { count, like, or, eq, and } from "drizzle-orm";
 
-import { iracingProcedure } from "@/trpc/init";
+import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schemas";

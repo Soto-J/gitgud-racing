@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { IoPersonOutline } from "react-icons/io5";
-
 import { Ellipsis, Edit, Trash2 } from "lucide-react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,7 +13,7 @@ import { authClient } from "@/lib/auth/auth-client";
 
 import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
 
-import { ManageEditProfileDialog } from "@/modules/manage/ui/components/form/manage-edit-profile-dialog";
+import ManageEditProfileDialog from "../form/manage-edit-profile-dialog";
 
 import { Button } from "@/components/ui/button";
 import {

@@ -1,7 +1,7 @@
 import { ZodError } from "zod";
 
 import { TRPCError } from "@trpc/server";
-import { iracingProcedure } from "@/trpc/init";
+import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { fetchIracingData } from "@/modules/iracing/server/api";
 

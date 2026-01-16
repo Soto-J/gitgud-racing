@@ -21,6 +21,7 @@ import FieldErrorMessage from "@/components/field-error-message";
 
 import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
 import { Switch } from "@/components/ui/switch";
+import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
@@ -29,7 +30,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Field, FieldLabel } from "@/components/ui/field";
 
 interface ManageEditProfileDialogProps {
   onOpenDialog: boolean;
@@ -105,7 +105,7 @@ export default function ManageEditProfileDialog({
                 <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50/50 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800/30 dark:hover:bg-gray-800/50">
                   <div className="space-y-1">
                     <FieldLabel
-                      htmlFor="isActive"
+                      htmlFor={field.name}
                       className="text-sm font-semibold text-gray-900 dark:text-gray-100"
                     >
                       Member Status
@@ -129,7 +129,7 @@ export default function ManageEditProfileDialog({
                     </span>
 
                     <Switch
-                      id="isActive"
+                      id={field.name}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                       className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-300 dark:data-[state=unchecked]:bg-gray-600"
@@ -150,7 +150,10 @@ export default function ManageEditProfileDialog({
               <Field className="space-y-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0 flex-1 space-y-1">
-                    <FieldLabel className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-sm font-semibold text-gray-900 dark:text-gray-100"
+                    >
                       Team Assignment
                     </FieldLabel>
 
@@ -161,7 +164,10 @@ export default function ManageEditProfileDialog({
 
                   <div className="w-full sm:w-48">
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="h-10 w-full border-gray-300 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600">
+                      <SelectTrigger
+                        id={field.name}
+                        className="h-10 w-full border-gray-300 transition-all focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600"
+                      >
                         <SelectValue placeholder="Choose team" />
                       </SelectTrigger>
 
