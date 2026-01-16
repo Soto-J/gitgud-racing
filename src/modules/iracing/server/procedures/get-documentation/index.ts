@@ -1,14 +1,8 @@
 import { iracingProcedure } from "@/trpc/init";
-import { fetchData } from "../../api";
+import { fetchIracingData } from "../../api";
 
-/**
- * Utility procedure for fetching iRacing API documentation
- */
 export const getDocumentationProcedure = iracingProcedure.query(
   async ({ ctx }) => {
-    return await fetchData({
-      query: `/data/doc`,
-      authCode: ctx.iracingAuthCode,
-    });
+    return await fetchIracingData(`/data/doc`, ctx.iracingAccessToken);
   },
 );

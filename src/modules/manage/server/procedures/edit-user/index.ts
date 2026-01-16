@@ -30,7 +30,8 @@ export const updateUserProcedure = manageProcedure
 
     try {
       await db.transaction(async (tx) => {
-        await tx.update(profileTable)
+        await tx
+          .update(profileTable)
           .set({ team, isActive })
           .where(eq(profileTable.userId, input.userId));
 

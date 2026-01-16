@@ -13,7 +13,7 @@ import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { WeeklySeriesResultsInput } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
-import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
+// import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 
 /**
  * Fetches paginated weekly series results with search and filtering functionality
@@ -53,17 +53,17 @@ export const weeklySeriesResultsProcedure = iracingProcedure
     const { raceWeek, year, quarter, pageSize, page } = input;
 
     // Get current season info for default values
-    const { currentRaceWeek, currentYear, currentQuarter } =
-      getCurrentSeasonInfo();
+    // const { currentRaceWeek, currentYear, currentQuarter } =
+    //   getCurrentSeasonInfo();
 
     // Build search clause with season filters and optional text search
     const searchClause = and(
       // Filter by race week (use current if not specified)
-      eq(seriesWeeklyStatsTable.raceWeek, raceWeek ?? +currentRaceWeek),
+      // eq(seriesWeeklyStatsTable.raceWeek, raceWeek ?? +currentRaceWeek),
       // Filter by season year (use current if not specified)
-      eq(seriesWeeklyStatsTable.seasonYear, year ?? +currentYear),
+      // eq(seriesWeeklyStatsTable.seasonYear, year ?? +currentYear),
       // Filter by season quarter (use current if not specified)
-      eq(seriesWeeklyStatsTable.seasonQuarter, quarter ?? +currentQuarter),
+      // eq(seriesWeeklyStatsTable.seasonQuarter, quarter ?? +currentQuarter),
       // Add text search across series and track names if provided
       input?.search
         ? or(

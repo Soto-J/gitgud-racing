@@ -3,7 +3,7 @@ import { ZodError } from "zod";
 import { TRPCError } from "@trpc/server";
 import { iracingProcedure } from "@/trpc/init";
 
-import { fetchData } from "@/modules/iracing/server/api";
+import { fetchIracingData } from "@/modules/iracing/server/api";
 
 import {
   SeasonScheduleInputSchema,
@@ -13,10 +13,10 @@ import {
 export const seasonScheduleProcedure = iracingProcedure
   .input(SeasonScheduleInputSchema)
   .query(async ({ ctx, input }) => {
-    const response = await fetchData({
-      query: `/data/series/season_list?include_series=${input.includeSeries}&season_year=${input.seasonYear}&season_quarter=${input.seasonQuarter}`,
-      authCode: ctx.iracingAuthCode,
-    });
+    const response = await fetchIracingData(
+      `/data/series/season_list?include_series=${input.includeSeries}&season_year=${input.seasonYear}&season_quarter=${input.seasonQuarter}`,
+      ctx.iracingAccessToken,
+    );
 
     if (!response) {
       throw new TRPCError({

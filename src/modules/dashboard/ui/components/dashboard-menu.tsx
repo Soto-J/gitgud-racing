@@ -42,7 +42,7 @@ const firstSection = [
 
 const secondSection = [
   { icon: IoPersonOutline, label: "My Profile", href: "/profile" },
-  { icon: IoPeopleOutline, label: "Members", href: "/members" },
+  { icon: IoPeopleOutline, label: "Roster", href: "/roster" },
   { icon: Flag, label: "Teams", href: "/teams" },
   { icon: Crown, label: "Manage", href: "/manage", manageTab: true },
 ];
@@ -55,7 +55,8 @@ export const DashboardMenu = () => {
   const pathname = usePathname();
 
   const trpc = useTRPC();
-  // const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
+  const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -150,7 +151,7 @@ export const DashboardMenu = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <QuickStatsCard summaryData={null} />
+        <QuickStatsCard summaryData={data} />
       </SidebarContent>
 
       <SidebarFooter className="text-muted">

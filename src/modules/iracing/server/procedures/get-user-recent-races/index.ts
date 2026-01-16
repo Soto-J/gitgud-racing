@@ -1,6 +1,6 @@
 import { iracingProcedure } from "@/trpc/init";
 
-import { fetchData } from "@/modules/iracing/server/api";
+import { fetchIracingData } from "@/modules/iracing/server/api";
 
 import {
   GetUserRecentRacesInput,
@@ -14,10 +14,10 @@ export const getUserRecentRacesProcedure = iracingProcedure
       return null;
     }
 
-    const res = await fetchData({
-      query: `/data/stats/member_recent_races?cust_id=${input.custId}`,
-      authCode: ctx.iracingAuthCode,
-    });
+    const res = await fetchIracingData(
+      `/data/stats/member_recent_races?cust_id=${input.custId}`,
+      ctx.iracingAccessToken,
+    );
 
     const recentRaces = GetUserRecentRacesResponse.parse(res);
 

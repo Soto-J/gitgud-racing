@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { TRPCError } from "@trpc/server";
-import { iracingProcedure } from "@/trpc/init";
+import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { db } from "@/db";
 import { licenseTable } from "@/db/schemas";
@@ -10,7 +10,7 @@ import {
   UserResponseSchema,
 } from "@/modules/iracing/server/procedures/get-user/schema";
 
-import { fetchData } from "@/modules/iracing/server/api";
+import { fetchIracingData } from "@/modules/iracing/server/api";
 
 import {
   buildUserProfile,
@@ -81,10 +81,10 @@ export const getUserProcedure = iracingProcedure
     // License data is stale - fetch fresh data from iRacing API
     try {
       // Fetch latest license data from iRacing API
-      const response = await fetchData({
-        query: `/data/member/get?cust_ids=${userData.profile.iracingId}&include_licenses=true`,
-        authCode: ctx.iracingAuthCode,
-      });
+      const response = await fetchIracingData(
+        `/data/member/get?cust_ids=${userData.profile.iracingId}&include_licenses=true`,
+        ctx.iracingAccessToken,
+      );
 
       const data = UserResponseSchema.parse(response);
       const apiLicenses = data.members[0].licenses;

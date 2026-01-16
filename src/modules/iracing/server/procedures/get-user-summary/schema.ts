@@ -26,11 +26,11 @@ import type { AppRouter } from "@/trpc/routers/_app";
  * @example
  * ```typescript
  * const apiData = await fetchMemberSummary(custId);
- * const summary = GetUserSummaryResponse.parse(apiData);
+ * const summary = MemberSummary.parse(apiData);
  * console.log(`User has ${summary.this_year.num_official_wins} wins this year`);
  * ```
  */
-export const GetUserSummaryResponse = z.object({
+export const MemberSummary = z.object({
   /** Statistics for the current calendar year */
   this_year: z.object({
     /** Number of official iRacing sessions participated in */
