@@ -1,47 +1,41 @@
-// import type { NextRequest } from "next/server";
-// import { z } from "zod";
-// import { DateTime } from "luxon";
-// import { eq, gt, and, sql } from "drizzle-orm";
+import type { NextRequest } from "next/server";
+import { z } from "zod";
+import { DateTime } from "luxon";
+import { eq, gt, and, sql } from "drizzle-orm";
 
-// import { seriesWeeklyStatsTable } from "@/db/schemas";
-// import { db } from "@/db";
+import { seriesWeeklyStatsTable } from "@/db/schemas";
+import { db } from "@/db";
 
-// import env from "@/env";
+import env from "@/env";
 
-// import * as utilities from "@/app/api/cronjobs/utilities";
+import * as utilities from "@/app/api/cronjobs/utilities";
 
-// import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
-
-// import { fetchIracingData } from "@/modules/iracing/server/api";
+import { fetchIracingData } from "@/modules/iracing/server/api";
 
 // import {
 //   SeriesResults,
 //   SeriesResultsResponseSchema,
 // } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 
-// export async function GET(request: NextRequest) {
-//   const authHeader = request.headers.get("authorization");
-
-//   if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
-//     return new Response("Unauthorized", {
-//       status: 401,
-//     });
-//   }
-//   console.log(
-//     "Cron job started at:",
-//     DateTime.now().toLocaleString(DateTime.DATETIME_MED),
-//   );
-
-//   const cachedWeeklyResults = await cacheCurrentWeekResults();
-
-//   if (cachedWeeklyResults?.error) {
-//     console.error("Cron job error: Failed to cache weekly results.");
-//     return Response.json({ success: false }, { status: 500 });
-//   }
-
-//   console.log("Cron job completed successfully");
-//   return Response.json({ success: true });
-// }
+export async function GET(request: NextRequest) {
+  //   const authHeader = request.headers.get("authorization");
+  //   if (authHeader !== `Bearer ${env.CRON_SECRET}`) {
+  //     return new Response("Unauthorized", {
+  //       status: 401,
+  //     });
+  //   }
+  //   console.log(
+  //     "Cron job started at:",
+  //     DateTime.now().toLocaleString(DateTime.DATETIME_MED),
+  //   );
+  //   const cachedWeeklyResults = await cacheCurrentWeekResults();
+  //   if (cachedWeeklyResults?.error) {
+  //     console.error("Cron job error: Failed to cache weekly results.");
+  //     return Response.json({ success: false }, { status: 500 });
+  //   }
+  //   console.log("Cron job completed successfully");
+  //   return Response.json({ success: true });
+}
 
 // const cacheCurrentWeekResults = async (): Promise<{
 //   success: boolean;
