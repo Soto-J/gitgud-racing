@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -48,6 +48,7 @@ const secondSection = [
 ];
 
 export const DashboardMenu = () => {
+  const router = useRouter();
   const { data: session } = authClient.useSession();
 
   const currentUserIsAdmin =
@@ -55,7 +56,13 @@ export const DashboardMenu = () => {
   const pathname = usePathname();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.iracing.getUserSummary.queryOptions());
+  const { error, data } = useSuspenseQuery(
+    trpc.iracing.getUserSummary.queryOptions(),
+  );
+
+  if (error) {
+    router.push("/sign-in");
+  }
 
   return (
     <Sidebar>
