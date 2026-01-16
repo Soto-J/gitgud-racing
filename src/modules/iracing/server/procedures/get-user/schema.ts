@@ -35,7 +35,7 @@ export const UserInputSchema = z.object({
  *
  * @example
  * ```typescript
- * const response = await fetchData({
+ * const response = await fetchIracingData({
  *   query: `/data/member/get?cust_ids=123456&include_licenses=true`
  * });
  * const validatedData = UserResponseSchema.parse(response);

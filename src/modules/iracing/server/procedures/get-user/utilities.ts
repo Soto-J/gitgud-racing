@@ -3,7 +3,7 @@ import { getTableColumns, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { licenseTable, user, profileTable } from "@/db/schemas";
 
-import { fetchData } from "@/modules/iracing/server/api";
+import { fetchIracingData } from "@/modules/iracing/server/api";
 
 import {
   UserResponseSchema,
@@ -141,10 +141,10 @@ export async function syncUserLicenseData(
   userId: string,
   authCode: string,
 ): Promise<void> {
-  const res = await fetchData({
-    query: `/data/member/get?cust_ids=${custId}&include_licenses=true`,
+  const res = await fetchIracingData(
+    `/data/member/get?cust_ids=${custId}&include_licenses=true`,
     authCode,
-  });
+  );
 
   const iRacingUserData = UserResponseSchema.parse(res);
 

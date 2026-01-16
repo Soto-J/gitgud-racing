@@ -87,3 +87,36 @@ export function throwIracingError(
       });
   }
 }
+
+export type IracingTokenResponse = {
+  access_token: string;
+  refresh_token?: string;
+  expires_in: number;
+};
+
+export async function refreshIracingAccessToken(
+  refreshToken: string,
+): Promise<IracingTokenResponse> {
+  const res = await fetch("https://oauth.iracing.com/oauth2/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " +
+        Buffer.from(
+          `${process.env.IRACING_CLIENT_ID}:${process.env.IRACING_CLIENT_SECRET}`,
+        ).toString("base64"),
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Failed to refresh iRacing token: ${text}`);
+  }
+
+  return res.json();
+}

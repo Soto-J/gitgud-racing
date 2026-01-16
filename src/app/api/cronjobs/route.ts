@@ -12,7 +12,7 @@
 
 // import { getOrRefreshAuthCode } from "@/modules/iracing/server/authentication";
 
-// import { fetchData } from "@/modules/iracing/server/api";
+// import { fetchIracingData } from "@/modules/iracing/server/api";
 
 // import {
 //   SeriesResults,
@@ -89,7 +89,7 @@
 
 //   const authCode = await getOrRefreshAuthCode();
 
-//   const response = await fetchData({
+//   const response = await fetchIracingData({
 //     query: `/data/results/search_series${searchParams}`,
 //     authCode,
 //   });

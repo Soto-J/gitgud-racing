@@ -26,33 +26,33 @@ import {
 export const userChartDataProcedure = iracingProcedure
   .input(UserChartDataInputSchema)
   .query(async ({ ctx, input }) => {
-    // Step 1: Get user's iRacing ID from their profile
-    const userProfile = await db
-      .select({ iracingId: profileTable.iracingId })
-      .from(profileTable)
-      .where(eq(profileTable.userId, input.userId))
-      .then((row) => row[0]);
+    // Get user's iRacing ID from their profile
+    // const userProfile = await db
+    //   .select({ iracingId: profileTable.iracingId })
+    //   .from(profileTable)
+    //   .where(eq(profileTable.userId, input.userId))
+    //   .then((row) => row[0]);
 
-    if (!userProfile?.iracingId) {
-      return null;
-    }
+    // if (!userProfile?.iracingId) {
+    //   return null;
+    // }
 
-    // Step 2: Check existing cached chart data
-    const chartData = await db
-      .select()
-      .from(userChartDataTable)
-      .where(eq(userChartDataTable.userId, input.userId))
-      .orderBy(desc(userChartDataTable.updatedAt));
+    // Check existing cached chart data
+    // const chartData = await db
+    //   .select()
+    //   .from(userChartDataTable)
+    //   .where(eq(userChartDataTable.userId, input.userId))
+    //   .orderBy(desc(userChartDataTable.updatedAt));
 
-    // Step 3: Return cached data if it's fresh (updated after last reset)
-    if (chartDataIsFresh(chartData[0])) {
-      return transformCharts(chartData);
-    }
+    // Return cached data if it's fresh (updated after last reset)
+    // if (chartDataIsFresh(chartData[0])) {
+    //   return transformCharts(chartData);
+    // }
 
-    // Step 4: Fetch fresh data from iRacing API for all racing categories
+    // Fetch fresh data from iRacing API for all racing categories
     const promiseArr = Object.keys(categoryMap).map((categoryId) =>
       fetchIracingData(
-        `/data/member/chart_data?chart_type=${IRACING_CHART_TYPE_IRATING}&cust_id=${userProfile.iracingId}&category_id=${categoryId}`,
+        `/data/member/chart_data?chart_type=${IRACING_CHART_TYPE_IRATING}&cust_id=${input.userId}&category_id=${categoryId}`,
         ctx.iracingAccessToken,
       ),
     );

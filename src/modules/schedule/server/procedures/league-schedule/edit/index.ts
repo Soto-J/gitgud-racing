@@ -1,4 +1,3 @@
-
 import { eq } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
@@ -12,7 +11,8 @@ import { EditLeagueScheduleSchema } from "./schema";
 export const editLeagueScheduleProcedure = protectedProcedure
   .input(EditLeagueScheduleSchema)
   .mutation(async ({ input }) => {
-    const { scheduleId, seasonNumber, trackName, temp, raceLength, date } = input;
+    const { scheduleId, seasonNumber, trackName, temp, raceLength, date } =
+      input;
 
     try {
       await db
