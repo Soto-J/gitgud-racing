@@ -18,7 +18,6 @@ export const hasIracingConnectionProcedure = protectedProcedure.query(
       )
       .limit(1);
 
-    console.log("Account: ", account);
     return { isConnected: !!account.length };
   },
 );

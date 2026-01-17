@@ -9,7 +9,6 @@ import { DashboardMenu } from "./dashboard-menu";
 
 export default async function AppSidebar() {
   const session = await getSession();
-  console.log("Session: ", session);
   if (!session) redirect("/sign-in");
 
   const queryClient = getQueryClient();
