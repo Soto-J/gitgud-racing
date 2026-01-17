@@ -70,12 +70,6 @@ export const auth = betterAuth({
           authorizationUrlParams: { audience: "data-server" },
 
           async getUserInfo(tokens) {
-            console.log("TOKENS: ", tokens);
-            console.log(
-              "MASK: ",
-              maskIRacingSecret(env.IRACING_AUTH_SECRET, env.IRACING_CLIENT_ID),
-            );
-
             const initialResponse = await fetch(
               `${IRACING_URL}/data/member/info`,
               {
