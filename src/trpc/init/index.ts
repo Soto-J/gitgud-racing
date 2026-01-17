@@ -3,7 +3,7 @@ import { cache } from "react";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
-import { getSession } from "@/lib/get-session";
+import { getSession } from "@/lib/auth/get-session";
 
 export const createTRPCContext = cache(async () => {
   /**

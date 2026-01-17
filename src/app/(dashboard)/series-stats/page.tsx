@@ -10,7 +10,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 
 import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
-import { getSession } from "@/lib/get-session";
+import { getSession } from "@/lib/auth/get-session";
 
 import SeriesStatsHeader from "@/modules/series-stats/ui/components/series-stats-header";
 import {

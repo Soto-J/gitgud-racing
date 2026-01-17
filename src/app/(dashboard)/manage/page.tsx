@@ -9,7 +9,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 
 import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/params";
 
-import { getSession } from "@/lib/get-session";
+import { getSession } from "@/lib/auth/get-session";
 
 import ManageListHeader from "@/modules/manage/ui/components/manage-list-header";
 

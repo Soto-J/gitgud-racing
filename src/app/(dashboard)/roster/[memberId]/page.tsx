@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { redirect } from "next/navigation";
 
-import { getSession } from "@/lib/get-session";
+import { getSession } from "@/lib/auth/get-session";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";

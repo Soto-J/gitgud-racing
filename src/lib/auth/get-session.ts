@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 
 import { and, eq } from "drizzle-orm";
 
-import { auth } from "./auth/auth";
+import { auth } from ".";
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
 
@@ -26,7 +26,7 @@ export const getSession = cache(async () => {
   const tokenIsExpired =
     !!iracingAccount?.accessTokenExpiresAt &&
     iracingAccount.accessTokenExpiresAt < new Date();
-    
+
   if (tokenIsExpired) return null;
 
   return session;
