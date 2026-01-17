@@ -23,11 +23,17 @@ export const getSession = cache(async () => {
     )
     .limit(1);
 
-  const tokenIsExpired =
-    !!iracingAccount?.accessTokenExpiresAt &&
-    iracingAccount.accessTokenExpiresAt < new Date();
+  // If user has an iRacing account, check if refresh token is expired
+  // (access token expiry is handled by iracingProcedure which refreshes silently)
+  // If no iRacing account, let them through - they may have signed up via email/Google
+  if (iracingAccount) {
+    const refreshTokenExpired =
+      !iracingAccount.refreshToken ||
+      (!!iracingAccount.refreshTokenExpiresAt &&
+        iracingAccount.refreshTokenExpiresAt < new Date());
 
-  if (tokenIsExpired) return null;
+    if (refreshTokenExpired) return null;
+  }
 
   return session;
 });

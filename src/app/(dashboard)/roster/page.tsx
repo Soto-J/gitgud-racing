@@ -4,9 +4,8 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { SearchParams } from "nuqs";
 
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-
 import { getQueryClient, trpc } from "@/trpc/server";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getSession } from "@/lib/auth/get-session";
 
