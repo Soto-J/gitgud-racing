@@ -13,17 +13,7 @@ export default async function AppSidebar() {
   if (!session) redirect("/sign-in");
 
   const queryClient = getQueryClient();
-
-  // const { isConnected } = await queryClient.fetchQuery(
-  //   trpc.authProviders.hasIracingConnection.queryOptions(),
-  // );
-
-  // if (!isConnected) {
-  //   return <div>Connect via Iracing</div>;
-  // }
-
   void queryClient.prefetchQuery(trpc.iracing.getUserSummary.queryOptions());
-
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <DashboardMenu />
