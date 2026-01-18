@@ -1,6 +1,5 @@
 import { createTRPCRouter } from "../init";
 
-import { authRouter } from "@/modules/auth/server/procedures";
 import { profileRouter } from "@/modules/profile/server/procedures";
 import { rosterRouter } from "@/modules/roster/server/procedures";
 import { iracingRouter } from "@/modules/iracing/server/procedures";
@@ -9,7 +8,6 @@ import { seriesStatsRouter } from "@/modules/series-stats/server/procedures";
 import { scheduleRouter } from "@/modules/schedule/server/procedures";
 
 export const appRouter = createTRPCRouter({
-  authProviders: authRouter,
   manage: manageRouter,
   roster: rosterRouter,
   profile: profileRouter,

@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+export const TokenRespnseSchema = z.object({
+  access_token: z.string(),
+  token_type: z.string(),
+  refresh_token: z.string(),
+  expires_in: z.number(),
+  refresh_token_expires_in: z.number(),
+  scope: z.literal("iracing.auth"),
+});
+
+export const TokenResponseErrorSchema = z.union([
+  z.literal("TOKEN_EXPIRED"),
+  z.literal("UNAUTHORIZED"),
+  z.literal("UPSTREAM_ERROR"),
+  z.literal("RATE_LIMITED"),
+]);
+
 const LicenseSchema = z.object({
   category_id: z.number(),
   category: z.string(),
@@ -25,7 +41,7 @@ const PackageSchema = z.array(
   }),
 );
 
-export const GetUserInfoSchema = z.object({
+export const IracingUserInfoSchema = z.object({
   cust_id: z.number(),
   display_name: z.string(),
   first_name: z.string(),

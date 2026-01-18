@@ -1,9 +1,6 @@
 import { betterAuth } from "better-auth";
-import { genericOAuth, organization } from "better-auth/plugins";
-
+import { genericOAuth, admin, createAuthMiddleware } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, createAuthMiddleware } from "better-auth/plugins";
-
 import { eq } from "drizzle-orm";
 
 import env from "@/env";
@@ -11,9 +8,9 @@ import env from "@/env";
 import { db } from "@/db";
 import * as dbSchema from "@/db/schemas";
 
-import { maskIRacingSecret } from "../iracing-oauth-helpers";
-import { GetUserInfoSchema } from "./schemas";
 import { IRACING_URL } from "@/constants";
+import { maskIRacingSecret } from "./iracing-oauth-helpers";
+import { IracingUserInfoSchema } from "./types/schemas";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -88,7 +85,7 @@ export const auth = betterAuth({
             }
 
             const data = await linkResponse.json();
-            const memberInfo = GetUserInfoSchema.parse(data);
+            const memberInfo = IracingUserInfoSchema.parse(data);
 
             // iRacing doesn't provide email, so we create a synthetic one
             const syntheticEmail = `iracing-${memberInfo.cust_id}@gitgud-racing.app`;

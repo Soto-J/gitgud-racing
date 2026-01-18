@@ -1,10 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { IRACING_URL } from "@/constants";
-import { z } from "zod";
+
+import type { TokenResponseError } from "@/lib/auth/types";
 
 export type IracingResult<T> =
   | { ok: true; data: T }
-  | { ok: false; error: IracingErrorCode; message?: string };
+  | { ok: false; error: TokenResponseError; message?: string };
 
 export async function fetchIracingData<T>(
   query: string,
@@ -49,14 +50,8 @@ export async function fetchIracingData<T>(
   return { ok: true, data: (await linkResponse.json()) as T };
 }
 
-export type IracingErrorCode =
-  | "TOKEN_EXPIRED"
-  | "UNAUTHORIZED"
-  | "UPSTREAM_ERROR"
-  | "RATE_LIMITED";
-
 export function throwIracingError(
-  code: IracingErrorCode,
+  code: TokenResponseError,
   message?: string,
 ): never {
   switch (code) {
@@ -87,49 +82,4 @@ export function throwIracingError(
         cause: { source: "iracing", code },
       });
   }
-}
-
-export const TokenRespnseSchema = z.object({
-  access_token: z.string(),
-  token_type: z.string(),
-  refresh_token: z.string(),
-  expires_in: z.number(),
-  refresh_token_expires_in: z.number(),
-  scope: z.literal("iracing.auth"),
-});
-
-export type TokenResponse = z.infer<typeof TokenRespnseSchema>;
-
-export async function refreshIracingAccessToken(
-  refreshToken: string | null,
-): Promise<TokenResponse> {
-  if (!refreshToken) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "iRacing session expired. Please re-authenticate.",
-    });
-  }
-
-  const res = await fetch("https://oauth.iracing.com/oauth2/token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization:
-        "Basic " +
-        Buffer.from(
-          `${process.env.IRACING_CLIENT_ID}:${process.env.IRACING_CLIENT_SECRET}`,
-        ).toString("base64"),
-    },
-    body: new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token: refreshToken,
-    }),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Failed to refresh iRacing token: ${text}`);
-  }
-
-  return TokenRespnseSchema.parse(res.json());
 }
