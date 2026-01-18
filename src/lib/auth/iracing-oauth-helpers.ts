@@ -54,5 +54,7 @@ export async function refreshIracingAccessToken(
     throw new Error(`Failed to refresh iRacing token: ${text}`);
   }
 
-  return TokenRespnseSchema.parse(res.json());
+  const payload = await res.json();
+  
+  return TokenRespnseSchema.parse(payload);
 }
