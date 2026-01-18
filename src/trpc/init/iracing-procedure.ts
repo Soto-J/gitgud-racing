@@ -1,17 +1,14 @@
 import { eq, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import { DateTime } from "luxon";
 
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
 
 import { protectedProcedure } from ".";
 
-import {
-  refreshIracingAccessToken,
-  TokenResponse,
-} from "@/modules/iracing/server/api";
+import { refreshIracingAccessToken } from "@/lib/auth/iracing-oauth-helpers";
+import { TokenResponse } from "@/lib/auth/types";
 
 const EXPIRY_SKEW_MS = 60_000;
 
