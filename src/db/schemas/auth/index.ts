@@ -55,10 +55,11 @@ export const account = mysqlTable("account", {
 
   scope: text("scope"),
   password: text("password"),
+
   idToken: text("id_token"),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
-
+  
   accessTokenExpiresAt: timestamp("access_token_expires_at"),
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
 

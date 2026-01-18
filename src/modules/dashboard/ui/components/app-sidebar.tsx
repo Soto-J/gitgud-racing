@@ -17,10 +17,11 @@ export default async function AppSidebar() {
   try {
     await queryClient.fetchQuery(trpc.iracing.getUserSummary.queryOptions());
   } catch (error) {
-    if (error instanceof TRPCError && error.code === "UNAUTHORIZED") {
-      redirect("/sign-in");
-    }
-    throw error;
+    return <div>hi</div>
+    // if (error instanceof TRPCError && error.code === "UNAUTHORIZED") {
+    //   redirect("/sign-in");
+    // }
+    // throw error;
   }
 
   return (

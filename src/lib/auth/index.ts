@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { genericOAuth } from "better-auth/plugins";
+import { genericOAuth, organization } from "better-auth/plugins";
 
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { admin, createAuthMiddleware } from "better-auth/plugins";
@@ -21,6 +21,7 @@ export const auth = betterAuth({
     schema: { ...dbSchema },
   }),
   logger: { level: "debug" },
+  trustedOrigins: ["http://localhost:3000", env.NEXT_PUBLIC_APP_URL],
 
   emailAndPassword: { enabled: true },
   socialProviders: {
@@ -48,9 +49,7 @@ export const auth = betterAuth({
   },
 
   plugins: [
-    admin({
-      defaultRole: "user",
-    }),
+    admin({ defaultRole: "user" }),
     genericOAuth({
       config: [
         {
@@ -66,8 +65,8 @@ export const auth = betterAuth({
           tokenUrl: "https://oauth.iracing.com/oauth2/token",
 
           scopes: ["iracing.auth", "iracing.profile"],
-          pkce: true,
           authorizationUrlParams: { audience: "data-server" },
+          pkce: true,
 
           async getUserInfo(tokens) {
             const initialResponse = await fetch(

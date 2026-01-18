@@ -21,9 +21,8 @@ export const iracingProcedure = protectedProcedure.use(
 
     const isExpired =
       !!account.accessTokenExpiresAt &&
-      DateTime.fromMillis(
-        account.accessTokenExpiresAt.getTime() - EXPIRY_SKEW_MS,
-      ) < DateTime.now();
+      new Date(account.accessTokenExpiresAt.getTime() - EXPIRY_SKEW_MS) <
+        new Date();
 
     if (isExpired) {
       if (!account.refreshToken) {
@@ -33,26 +32,23 @@ export const iracingProcedure = protectedProcedure.use(
         });
       }
 
-      let refreshed: IracingTokenResponse;
-
       try {
-        refreshed = await refreshIracingAccessToken(account.refreshToken);
+        const refreshed = await refreshIracingAccessToken(account.refreshToken);
+        await persistRefreshedTokens(account.id, refreshed);
+
+        return next({
+          ctx: {
+            ...ctx,
+            iracingAccessToken: refreshed.access_token,
+            custId: account.accountId,
+          },
+        });
       } catch (error) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Failed to refresh iRacing session. Please reconnect.",
         });
       }
-
-      await persistRefreshedTokens(account.id, refreshed);
-
-      return next({
-        ctx: {
-          ...ctx,
-          iracingAccessToken: refreshed.access_token,
-          custId: account.accountId,
-        },
-      });
     }
 
     return next({
@@ -97,13 +93,44 @@ async function persistRefreshedTokens(
   accountId: string,
   tokens: IracingTokenResponse,
 ) {
+  const now = new Date();
+
+  const accessTokenExpiresAt = new Date(
+    now.getTime() + tokens.expires_in * 1000,
+  );
+  const refreshTokenExpiresAt = new Date(
+    now.getTime() + tokens.refresh_token_expires_in * 1000,
+  );
   await db
     .update(accountTable)
     .set({
       accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token ?? undefined,
-      accessTokenExpiresAt: new Date(Date.now() + tokens.expires_in * 1000),
-      updatedAt: new Date(),
+      accessTokenExpiresAt,
+      refreshToken: tokens.refresh_token,
+      refreshTokenExpiresAt,
     })
     .where(eq(accountTable.id, accountId));
 }
+
+// TODO
+// const refreshLocks = new Map<string, Promise<IracingTokenResponse>>();
+
+// async function refreshSingleFlight(account) {
+//   if (refreshLocks.has(account.id)) {
+//     return refreshLocks.get(account.id)!;
+//   }
+
+//   const promise = (async () => {
+//     const refreshed = await refreshIracingAccessToken(account.refreshToken!);
+//     await persistRefreshedTokens(account.id, refreshed);
+//     return refreshed;
+//   })();
+
+//   refreshLocks.set(account.id, promise);
+
+//   try {
+//     return await promise;
+//   } finally {
+//     refreshLocks.delete(account.id);
+//   }
+// }
