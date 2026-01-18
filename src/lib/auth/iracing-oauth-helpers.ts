@@ -3,6 +3,7 @@ import crypto from "crypto";
 
 import { TokenResponse } from "./types";
 import { TokenRespnseSchema } from "./types/schemas";
+import env from "@/env";
 
 /**
  * Masks the iRacing client secret according to their OAuth specification.
@@ -40,7 +41,7 @@ export async function refreshIracingAccessToken(
       Authorization:
         "Basic " +
         Buffer.from(
-          `${process.env.IRACING_CLIENT_ID}:${process.env.IRACING_CLIENT_SECRET}`,
+          `${env.IRACING_CLIENT_ID}:${env.IRACING_AUTH_SECRET}`,
         ).toString("base64"),
     },
     body: new URLSearchParams({
