@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { IRACING_URL } from "@/constants";
+import { z } from "zod";
 
 export type IracingResult<T> =
   | { ok: true; data: T }
@@ -88,15 +89,27 @@ export function throwIracingError(
   }
 }
 
-export type IracingTokenResponse = {
-  access_token: string;
-  refresh_token?: string;
-  expires_in: number;
-};
+export const TokenRespnseSchema = z.object({
+  access_token: z.string(),
+  token_type: z.string(),
+  refresh_token: z.string(),
+  expires_in: z.number(),
+  refresh_token_expires_in: z.number(),
+  scope: z.literal("iracing.auth"),
+});
+
+export type TokenResponse = z.infer<typeof TokenRespnseSchema>;
 
 export async function refreshIracingAccessToken(
-  refreshToken: string,
-): Promise<IracingTokenResponse> {
+  refreshToken: string | null,
+): Promise<TokenResponse> {
+  if (!refreshToken) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "iRacing session expired. Please re-authenticate.",
+    });
+  }
+
   const res = await fetch("https://oauth.iracing.com/oauth2/token", {
     method: "POST",
     headers: {
@@ -118,5 +131,5 @@ export async function refreshIracingAccessToken(
     throw new Error(`Failed to refresh iRacing token: ${text}`);
   }
 
-  return res.json();
+  return TokenRespnseSchema.parse(res.json());
 }
