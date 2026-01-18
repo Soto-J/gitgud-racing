@@ -9,8 +9,8 @@ import { account as accountTable } from "@/db/schemas";
 import { protectedProcedure } from ".";
 
 import {
-  IracingTokenResponse,
   refreshIracingAccessToken,
+  TokenResponse,
 } from "@/modules/iracing/server/api";
 
 const EXPIRY_SKEW_MS = 60_000;
@@ -25,15 +25,10 @@ export const iracingProcedure = protectedProcedure.use(
         new Date();
 
     if (isExpired) {
-      if (!account.refreshToken) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "iRacing session expired. Please re-authenticate.",
-        });
-      }
-
       try {
-        const refreshed = await refreshIracingAccessToken(account.refreshToken);
+        const refreshed = await refreshIracingAccessToken(
+          account?.refreshToken,
+        );
         await persistRefreshedTokens(account.id, refreshed);
 
         return next({
@@ -86,12 +81,19 @@ async function getUserAccount(userId: string) {
     });
   }
 
+  if (!account.refreshToken) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "iRacing session expired. Please re-authenticate.",
+    });
+  }
+
   return account;
 }
 
 async function persistRefreshedTokens(
   accountId: string,
-  tokens: IracingTokenResponse,
+  tokens: TokenResponse,
 ) {
   const now = new Date();
 
