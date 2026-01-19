@@ -23,15 +23,16 @@ export const auth = betterAuth({
   logger: { level: "debug" },
 
   // tells better-auth to use secure cookies when on HTTPS
-  // advanced: {
-  //   cookiePrefix: "gitgud",
-  //   useSecureCookies: isProduction,
-  //   cookies: {
-  //     session: {
-  //       sameSite: "lax",
-  //     },
-  //   },
-  // },
+  advanced: {
+    cookies: {
+      session: {
+        attributes: {
+          sameSite: "lax",
+          secure: isProduction
+        },
+      },
+    },
+  },
 
   emailAndPassword: { enabled: true },
   socialProviders: {
