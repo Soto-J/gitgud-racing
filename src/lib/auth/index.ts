@@ -14,6 +14,12 @@ import { maskIRacingSecret } from "./iracing-oauth-helpers";
 
 const isProduction = process.env.NODE_ENV === "production";
 
+// Debug: compare these values between local and Vercel
+const maskedSecret = maskIRacingSecret(env.IRACING_AUTH_SECRET, env.IRACING_CLIENT_ID);
+console.log("[AUTH DEBUG] CLIENT_ID:", env.IRACING_CLIENT_ID);
+console.log("[AUTH DEBUG] SECRET length:", env.IRACING_AUTH_SECRET.length);
+console.log("[AUTH DEBUG] Masked secret:", maskedSecret);
+
 export const auth = betterAuth({
   // baseURL: env.NEXT_PUBLIC_APP_URL,
   database: drizzleAdapter(db, {
@@ -81,7 +87,6 @@ export const auth = betterAuth({
           redirectURI: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback/iracing`,
           authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
           tokenUrl: "https://oauth.iracing.com/oauth2/token",
-   
           scopes: ["iracing.auth", "iracing.profile"],
           authorizationUrlParams: { audience: "data-server", debug: "1" },
           pkce: true,
