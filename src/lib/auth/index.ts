@@ -71,7 +71,7 @@ export const auth = betterAuth({
           ),
           redirectURI: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback/iracing`,
           authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
-          tokenUrl: "https://oauth.iracing.com/oauth2/token",
+          // tokenUrl: "https://oauth.iracing.com/oauth2/token",
           scopes: ["iracing.auth", "iracing.profile"],
           authorizationUrlParams: { audience: "data-server" },
           pkce: true,
