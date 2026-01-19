@@ -9,45 +9,15 @@ import { db } from "@/db";
 import * as dbSchema from "@/db/schemas";
 
 import { IRACING_URL } from "@/constants";
-import { IracingUserInfoSchema, TokenRespnseSchema } from "./types/schemas";
+import { IracingUserInfoSchema } from "./types/schemas";
 import { maskIRacingSecret } from "./iracing-oauth-helpers";
 
-const isProduction = process.env.NODE_ENV === "production";
-
-// Debug: compare these values between local and Vercel
-const maskedSecret = maskIRacingSecret(env.IRACING_AUTH_SECRET, env.IRACING_CLIENT_ID);
-console.log("[AUTH DEBUG] CLIENT_ID:", env.IRACING_CLIENT_ID);
-console.log("[AUTH DEBUG] SECRET length:", env.IRACING_AUTH_SECRET.length);
-console.log("[AUTH DEBUG] Masked secret:", maskedSecret);
-
 export const auth = betterAuth({
-  // baseURL: env.NEXT_PUBLIC_APP_URL,
   database: drizzleAdapter(db, {
     provider: "mysql",
     schema: { ...dbSchema },
   }),
   logger: { level: "debug" },
-
-  // tells better-auth to use secure cookies when on HTTPS
-  advanced: {
-    cookiePrefix: "gitgud",
-    useSecureCookies: true,
-    cookies: {
-      state: {
-        attributes: {
-          sameSite: "lax",
-          secure: true,
-        },
-      },
-      session: {
-        attributes: {
-          sameSite: "lax",
-          secure: true,
-        },
-      },
-    },
-  },
-
   emailAndPassword: { enabled: true },
   socialProviders: {
     google: {
@@ -90,55 +60,6 @@ export const auth = betterAuth({
           scopes: ["iracing.auth", "iracing.profile"],
           authorizationUrlParams: { audience: "data-server", debug: "1" },
           pkce: true,
-
-          // async getToken({ code, redirectURI, codeVerifier }) {
-          //   console.log("Testing");
-          //   if (!codeVerifier) {
-          //     throw new Error("Code verifier missing");
-          //   }
-          //   const response = await fetch(
-          //     "https://oauth.iracing.com/oauth2/token",
-          //     {
-          //       method: "POST",
-          //       headers: {
-          //         "Content-Type": "application/x-www-form-urlencoded",
-          //       },
-          //       body: new URLSearchParams({
-          //         grant_type: "authorization_code",
-          //         code,
-          //         redirect_uri: redirectURI,
-          //         client_id: env.IRACING_CLIENT_ID,
-          //         client_secret: maskIRacingSecret(
-          //           env.IRACING_AUTH_SECRET,
-          //           env.IRACING_CLIENT_ID,
-          //         ),
-          //         code_verifier: codeVerifier,
-          //       }),
-          //     },
-          //   );
-
-          //   if (!response.ok) {
-          //     const text = await response.text();
-          //     throw new Error(`Failed to exchange code for token: ${text}`);
-          //   }
-
-          //   const payload = await response.json();
-
-          //   console.log(payload);
-          //   const data = TokenRespnseSchema.parse(payload);
-
-          //   return {
-          //     accessToken: data.access_token,
-          //     refreshToken: data.refresh_token,
-          //     accessTokenExpiresAt: new Date(
-          //       Date.now() + data.expires_in * 1000,
-          //     ),
-          //     refreshTokenExpiresAt: new Date(
-          //       Date.now() + data.refresh_token_expires_in * 1000,
-          //     ),
-          //     scope: data.scope,
-          //   };
-          // },
 
           async getUserInfo(tokens) {
             const initialResponse = await fetch(
