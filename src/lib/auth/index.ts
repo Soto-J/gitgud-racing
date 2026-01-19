@@ -15,7 +15,7 @@ import { maskIRacingSecret } from "./iracing-oauth-helpers";
 const isProduction = process.env.NODE_ENV === "production";
 
 export const auth = betterAuth({
-  baseURL: env.NEXT_PUBLIC_APP_URL,
+  // baseURL: env.NEXT_PUBLIC_APP_URL,
   database: drizzleAdapter(db, {
     provider: "mysql",
     schema: { ...dbSchema },
