@@ -89,7 +89,7 @@ export const auth = betterAuth({
             if (!codeVerifier) {
               throw new Error("Code verifier missing");
             }
-
+            console.log("Testing");
             const response = await fetch(
               "https://oauth.iracing.com/oauth2/token",
               {
