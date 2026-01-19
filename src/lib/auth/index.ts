@@ -96,6 +96,7 @@ export const auth = betterAuth({
 
             const payload = await response.json();
 
+            console.log(payload)
             const data = TokenRespnseSchema.parse(payload);
             
             return {
@@ -107,7 +108,7 @@ export const auth = betterAuth({
               refreshTokenExpiresAt: new Date(
                 Date.now() + data.refresh_token_expires_in * 1000,
               ),
-              scopes: [data.scope],
+              scope: data.scope,
             };
           },
 

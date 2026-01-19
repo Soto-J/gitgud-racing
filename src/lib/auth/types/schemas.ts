@@ -6,7 +6,7 @@ export const TokenRespnseSchema = z.object({
   refresh_token: z.string(),
   expires_in: z.number(),
   refresh_token_expires_in: z.number(),
-  scope: z.literal("iracing.auth"),
+  scope: z.literal("iracing.auth iracing.profile"),
 });
 
 export const TokenResponseErrorSchema = z.union([
