@@ -5,18 +5,6 @@ import type { TokenResponse } from "./types";
 import { TokenRespnseSchema } from "./types/schemas";
 import env from "@/env";
 
-/**
- * Masks the iRacing client secret according to their OAuth specification.
- * The masking algorithm:
- * 1. Normalizes the identifier (trim and lowercase)
- * 2. Concatenates secret + normalized_identifier
- * 3. Hashes with SHA-256
- * 4. Returns base64 encoded hash
- *
- * @param secret - The client secret
- * @param identifier - The client_id
- * @returns Base64 encoded SHA-256 hash
- */
 export function maskIRacingSecret(secret: string, identifier: string): string {
   return crypto
     .createHash("sha256")
