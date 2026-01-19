@@ -71,7 +71,7 @@ export const auth = betterAuth({
           ),
           redirectURI: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback/iracing`,
           authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
-          // tokenUrl: "https://oauth.iracing.com/oauth2/token",
+          tokenUrl: "https://oauth.iracing.com/oauth2/token",
           scopes: ["iracing.auth", "iracing.profile"],
           authorizationUrlParams: { audience: "data-server" },
           pkce: true,
@@ -94,6 +94,7 @@ export const auth = betterAuth({
                   redirect_uri: redirectURI,
                   client_id: env.IRACING_CLIENT_ID,
                   client_secret: env.IRACING_AUTH_SECRET,
+
                   code_verifier: codeVerifier,
                 }),
               },
