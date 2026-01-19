@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { redirect } from "next/navigation";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ interface MemberIdPageProps {
 }
 
 export default async function MemberIdPage({ params }: MemberIdPageProps) {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   const { memberId } = await params;

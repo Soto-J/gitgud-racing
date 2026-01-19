@@ -3,10 +3,10 @@ import { redirect } from "next/navigation";
 
 import { ErrorBoundary } from "react-error-boundary";
 
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
+import { HydrateClient } from "@/components/hydration-client";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 import {
   ErrorProfileView,
@@ -15,7 +15,7 @@ import {
 } from "@/modules/profile/ui/views/profile-view";
 
 export default async function ProfilePage() {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   const queryClient = getQueryClient();
@@ -26,12 +26,12 @@ export default async function ProfilePage() {
     trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
   );
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
+    <HydrateClient>
       <Suspense fallback={<LoadingProfileView />}>
         <ErrorBoundary fallback={<ErrorProfileView />}>
           <ProfileView userId={session.user.id} />
         </ErrorBoundary>
       </Suspense>
-    </HydrationBoundary>
+    </HydrateClient>
   );
 }

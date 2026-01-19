@@ -1,16 +1,21 @@
-import SidebarToggle from "@/modules/dashboard/ui/components/sidebar-toggle";
-import AppSidebar from "@/modules/dashboard/ui/components/app-sidebar";
+import SidebarToggle from "@/components/ui/sidebar/sidebar-toggle";
+import AppSidebar from "@/components/ui/sidebar/app-sidebar";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default async function DashboardLayout({
+  children,
+}: DashboardLayoutProps) {
+  const session = await getCurrentSession();
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar session={session} />
 
       <SidebarInset className="bg-muted">
         <SidebarToggle />

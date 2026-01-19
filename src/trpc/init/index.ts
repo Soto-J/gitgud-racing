@@ -3,7 +3,7 @@ import { cache } from "react";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -28,7 +28,7 @@ export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;
 
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const session = await getSession();
+  const session = await getCurrentSession();
 
   if (!session) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: "Unauthorized" });

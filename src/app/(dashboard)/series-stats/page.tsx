@@ -5,12 +5,12 @@ import { redirect } from "next/navigation";
 
 import { SearchParams } from "nuqs";
 
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
+import { HydrateClient } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 import SeriesStatsHeader from "@/modules/series-stats/ui/components/series-stats-header";
 import {
@@ -24,7 +24,7 @@ interface HomePageProps {
 }
 
 export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   const filters = await loadSearchParams(searchParams);
@@ -39,7 +39,7 @@ export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
   // );
   return (
     <>
-      <HydrationBoundary state={dehydrate(queryClient)}>
+      <HydrateClient>
         <SeriesStatsHeader />
 
         <Suspense fallback={<LoadingHomeView />}>
@@ -47,7 +47,7 @@ export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
             <SeriesStatsPageView />
           </ErrorBoundary>
         </Suspense>
-      </HydrationBoundary>
+      </HydrateClient>
     </>
   );
 }

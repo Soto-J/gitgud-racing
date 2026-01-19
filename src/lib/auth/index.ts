@@ -25,7 +25,13 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
-
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+      },
+    },
+  },
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
       const user = ctx.context.session?.user;

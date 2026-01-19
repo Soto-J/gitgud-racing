@@ -5,13 +5,13 @@ import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 // import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 
 import SchedulePageView from "@/modules/schedule/ui/views/schedule-page-view";
 
 export default async function SchedulePage() {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   const isAdmin =

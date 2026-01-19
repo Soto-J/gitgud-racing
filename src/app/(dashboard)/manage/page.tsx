@@ -4,12 +4,12 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { SearchParams } from "nuqs";
 
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
+import { HydrateClient } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/params";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 import ManageListHeader from "@/modules/manage/ui/components/manage-list-header";
 
@@ -24,7 +24,7 @@ interface ManagePageProps {
 }
 
 export default async function ManagePage({ searchParams }: ManagePageProps) {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   if (session.user?.role !== "admin" && session.user?.role !== "staff") {
@@ -42,13 +42,13 @@ export default async function ManagePage({ searchParams }: ManagePageProps) {
     <>
       <ManageListHeader />
 
-      <HydrationBoundary state={dehydrate(queryClient)}>
+      <HydrateClient>
         <Suspense fallback={<ManageLoadingPage />}>
           <ErrorBoundary fallback={<ManageErrorPage />}>
             <ManagePageView />
           </ErrorBoundary>
         </Suspense>
-      </HydrationBoundary>
+      </HydrateClient>
     </>
   );
 }

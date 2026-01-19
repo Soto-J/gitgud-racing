@@ -5,9 +5,10 @@ import { ErrorBoundary } from "react-error-boundary";
 import { SearchParams } from "nuqs";
 
 import { getQueryClient, trpc } from "@/trpc/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
+
+import { HydrateClient } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
 
@@ -24,7 +25,7 @@ interface RosterPageProps {
 }
 
 export default async function RosterPage({ searchParams }: RosterPageProps) {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   const filters = await loadSearchParams(searchParams);
@@ -38,13 +39,13 @@ export default async function RosterPage({ searchParams }: RosterPageProps) {
     <>
       <RosterHeader />
 
-      <HydrationBoundary state={dehydrate(queryClient)}>
+      <HydrateClient>
         <Suspense fallback={<LoadingRosterView />}>
           <ErrorBoundary fallback={<ErrorRosterView />}>
             <RosterView loggedInUserId={session.user.id} />
           </ErrorBoundary>
         </Suspense>
-      </HydrationBoundary>
+      </HydrateClient>
     </>
   );
 }

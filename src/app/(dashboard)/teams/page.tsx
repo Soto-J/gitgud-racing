@@ -1,13 +1,14 @@
 import { redirect } from "next/navigation";
 
-import { getSession } from "@/lib/auth/get-session";
+import { getCurrentSession } from "@/lib/auth/get-current-session";
 
 // import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 import UnderConstruction from "@/components/under-construction";
 import { DateTime } from "luxon";
+import { HydrateClient } from "@/components/hydration-client";
 
 export default async function TeamsPage() {
-  const session = await getSession();
+  const session = await getCurrentSession();
   if (!session) redirect("/sign-in");
 
   // const seasonInfo = getCurrentSeasonInfo();
@@ -19,9 +20,11 @@ export default async function TeamsPage() {
   // const test = DateTime.now().set({ weekday: 1 });
   // console.log({ test });
   return (
-    <UnderConstruction
-      title="Teams"
-      message="Team management features are coming soon. Stay tuned for collaboration tools!"
-    />
+    <HydrateClient>
+      <UnderConstruction
+        title="Teams"
+        message="Team management features are coming soon. Stay tuned for collaboration tools!"
+      />
+    </HydrateClient>
   );
 }
