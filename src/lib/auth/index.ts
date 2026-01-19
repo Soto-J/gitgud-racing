@@ -10,7 +10,7 @@ import * as dbSchema from "@/db/schemas";
 
 import { IRACING_URL } from "@/constants";
 import { maskIRacingSecret } from "./iracing-oauth-helpers";
-import { IracingUserInfoSchema } from "./types/schemas";
+import { IracingUserInfoSchema, TokenRespnseSchema } from "./types/schemas";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -94,8 +94,10 @@ export const auth = betterAuth({
               throw new Error(`Failed to exchange code for token: ${text}`);
             }
 
-            const data = await response.json();
+            const payload = await response.json();
 
+            const data = TokenRespnseSchema.parse(payload);
+            
             return {
               accessToken: data.access_token,
               refreshToken: data.refresh_token,
@@ -105,6 +107,7 @@ export const auth = betterAuth({
               refreshTokenExpiresAt: new Date(
                 Date.now() + data.refresh_token_expires_in * 1000,
               ),
+              scopes: [data.scope],
             };
           },
 
