@@ -21,13 +21,17 @@ export const auth = betterAuth({
     schema: { ...dbSchema },
   }),
   logger: { level: "debug" },
-  trustedOrigins: ["http://localhost:3000", env.NEXT_PUBLIC_APP_URL],
 
   // tells better-auth to use secure cookies when on HTTPS
-  advanced: {
-    cookiePrefix: "gitgud",
-    useSecureCookies: isProduction,
-  },
+  // advanced: {
+  //   cookiePrefix: "gitgud",
+  //   useSecureCookies: isProduction,
+  //   cookies: {
+  //     session: {
+  //       sameSite: "lax",
+  //     },
+  //   },
+  // },
 
   emailAndPassword: { enabled: true },
   socialProviders: {
