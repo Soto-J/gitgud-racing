@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 
-import { TokenResponse } from "./types";
+import type { TokenResponse } from "./types";
 import { TokenRespnseSchema } from "./types/schemas";
 import env from "@/env";
 
@@ -34,28 +34,26 @@ export async function refreshIracingAccessToken(
     });
   }
 
-  const res = await fetch("https://oauth.iracing.com/oauth2/token", {
+  const response = await fetch("https://oauth.iracing.com/oauth2/token", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization:
-        "Basic " +
-        Buffer.from(
-          `${env.IRACING_CLIENT_ID}:${env.IRACING_AUTH_SECRET}`,
-        ).toString("base64"),
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       grant_type: "refresh_token",
       refresh_token: refreshToken,
+      client_id: env.IRACING_CLIENT_ID,
+      client_secret: maskIRacingSecret(
+        env.IRACING_AUTH_SECRET,
+        env.IRACING_CLIENT_ID,
+      ),
     }),
   });
 
-  if (!res.ok) {
-    const text = await res.text();
+  if (!response.ok) {
+    const text = await response.text();
     throw new Error(`Failed to refresh iRacing token: ${text}`);
   }
 
-  const payload = await res.json();
-  
+  const payload = await response.json();
+
   return TokenRespnseSchema.parse(payload);
 }

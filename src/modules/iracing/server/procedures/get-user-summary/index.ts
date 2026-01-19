@@ -18,7 +18,6 @@ export const getUserSummaryProcedure = iracingProcedure.query(
       throwIracingError(res.error, res.message);
     }
 
-    const memberSummary = MemberSummary.parse(res.data);
-    return memberSummary;
+    return MemberSummary.parse(res.data);
   },
 );
