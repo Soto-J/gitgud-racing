@@ -76,7 +76,7 @@ export const auth = betterAuth({
           authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
           tokenUrl: "https://oauth.iracing.com/oauth2/token",
           scopes: ["iracing.auth", "iracing.profile"],
-          authorizationUrlParams: { audience: "data-server" },
+          authorizationUrlParams: { audience: "data-server", debug: "1" },
           pkce: true,
 
           async getToken({ code, redirectURI, codeVerifier }) {
