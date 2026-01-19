@@ -23,18 +23,18 @@ export const auth = betterAuth({
   logger: { level: "debug" },
 
   // tells better-auth to use secure cookies when on HTTPS
-  advanced: {
-    cookiePrefix: "gitgud",
-    useSecureCookies: isProduction,
-    cookies: {
-      session: {
-        attributes: {
-          sameSite: "lax",
-          secure: isProduction,
-        },
-      },
-    },
-  },
+  // advanced: {
+  //   cookiePrefix: "gitgud",
+  //   useSecureCookies: isProduction,
+  //   cookies: {
+  //     session: {
+  //       attributes: {
+  //         sameSite: "lax",
+  //         secure: isProduction,
+  //       },
+  //     },
+  //   },
+  // },
 
   emailAndPassword: { enabled: true },
   socialProviders: {
@@ -68,7 +68,10 @@ export const auth = betterAuth({
         {
           providerId: "iracing",
           clientId: env.IRACING_CLIENT_ID,
-          clientSecret: env.IRACING_AUTH_SECRET,
+          clientSecret: maskIRacingSecret(
+            env.IRACING_AUTH_SECRET,
+            env.IRACING_CLIENT_ID,
+          ),
           redirectURI: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback/iracing`,
           authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
           tokenUrl: "https://oauth.iracing.com/oauth2/token",
