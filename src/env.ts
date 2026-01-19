@@ -11,14 +11,10 @@ const stringBoolean = z.coerce
 const EnvSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.string(),
   DATABASE_URL: z.string(),
+  CRON_SECRET: z.string(),
   BETTER_AUTH_SECRET: z.string(),
-  NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
-  IRACING_EMAIL: z.string(),
-  IRACING_PASSWORD: z.string(),
-  MY_USER_ID: z.string(),
-  CRON_SECRET: z.string(),
   IRACING_AUTH_SECRET: z.string(),
   IRACING_CLIENT_ID: z.string(),
 });
