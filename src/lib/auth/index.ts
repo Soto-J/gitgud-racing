@@ -24,11 +24,13 @@ export const auth = betterAuth({
 
   // tells better-auth to use secure cookies when on HTTPS
   advanced: {
+    cookiePrefix: "gitgud",
+    useSecureCookies: isProduction,
     cookies: {
       session: {
         attributes: {
           sameSite: "lax",
-          secure: isProduction
+          secure: isProduction,
         },
       },
     },
