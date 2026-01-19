@@ -29,10 +29,7 @@ export async function refreshIracingAccessToken(
       grant_type: "refresh_token",
       refresh_token: refreshToken,
       client_id: env.IRACING_CLIENT_ID,
-      client_secret: maskIRacingSecret(
-        env.IRACING_AUTH_SECRET,
-        env.IRACING_CLIENT_ID,
-      ),
+      client_secret: env.IRACING_AUTH_SECRET,
     }),
   });
 

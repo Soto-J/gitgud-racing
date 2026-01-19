@@ -94,7 +94,6 @@ export const auth = betterAuth({
                   redirect_uri: redirectURI,
                   client_id: env.IRACING_CLIENT_ID,
                   client_secret: env.IRACING_AUTH_SECRET,
-
                   code_verifier: codeVerifier,
                 }),
               },
