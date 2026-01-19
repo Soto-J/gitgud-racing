@@ -20,7 +20,6 @@ export default async function AppSidebar() {
     if (error instanceof TRPCError && error.code === "UNAUTHORIZED") {
       redirect("/sign-in");
     }
-    throw error;
   }
 
   return (
