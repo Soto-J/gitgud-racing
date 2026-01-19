@@ -26,7 +26,6 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/components/ui/field";
-import env from "@/env";
 
 const formSchema = z.object({
   email: z.email(),
