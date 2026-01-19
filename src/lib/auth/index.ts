@@ -86,10 +86,10 @@ export const auth = betterAuth({
           pkce: true,
 
           async getToken({ code, redirectURI, codeVerifier }) {
+            console.log("Testing");
             if (!codeVerifier) {
               throw new Error("Code verifier missing");
             }
-            console.log("Testing");
             const response = await fetch(
               "https://oauth.iracing.com/oauth2/token",
               {
