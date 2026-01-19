@@ -12,6 +12,8 @@ import { IRACING_URL } from "@/constants";
 import { maskIRacingSecret } from "./iracing-oauth-helpers";
 import { IracingUserInfoSchema, TokenRespnseSchema } from "./types/schemas";
 
+const isProduction = env.NEXT_PUBLIC_APP_URL.startsWith("https://");
+
 export const auth = betterAuth({
   baseURL: env.NEXT_PUBLIC_APP_URL,
   database: drizzleAdapter(db, {
@@ -20,6 +22,12 @@ export const auth = betterAuth({
   }),
   logger: { level: "debug" },
   trustedOrigins: ["http://localhost:3000", env.NEXT_PUBLIC_APP_URL],
+
+  // tells better-auth to use secure cookies when on HTTPS
+  advanced: {
+    cookiePrefix: "gitgud",
+    useSecureCookies: isProduction,
+  },
 
   emailAndPassword: { enabled: true },
   socialProviders: {
@@ -97,9 +105,9 @@ export const auth = betterAuth({
 
             const payload = await response.json();
 
-            console.log(payload)
+            console.log(payload);
             const data = TokenRespnseSchema.parse(payload);
-            
+
             return {
               accessToken: data.access_token,
               refreshToken: data.refresh_token,
