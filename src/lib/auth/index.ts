@@ -93,10 +93,7 @@ export const auth = betterAuth({
                   code,
                   redirect_uri: redirectURI,
                   client_id: env.IRACING_CLIENT_ID,
-                  client_secret: maskIRacingSecret(
-                    env.IRACING_AUTH_SECRET,
-                    env.IRACING_CLIENT_ID,
-                  ),
+                  client_secret: env.IRACING_AUTH_SECRET,
                   code_verifier: codeVerifier,
                 }),
               },
