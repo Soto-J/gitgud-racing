@@ -10,9 +10,9 @@ import * as dbSchema from "@/db/schemas";
 
 import { IRACING_URL } from "@/constants";
 import { IracingUserInfoSchema, TokenRespnseSchema } from "./types/schemas";
+import { maskIRacingSecret } from "./iracing-oauth-helpers";
 
 const isProduction = process.env.NODE_ENV === "production";
-
 
 export const auth = betterAuth({
   baseURL: env.NEXT_PUBLIC_APP_URL,
@@ -93,7 +93,10 @@ export const auth = betterAuth({
                   code,
                   redirect_uri: redirectURI,
                   client_id: env.IRACING_CLIENT_ID,
-                  client_secret: env.IRACING_AUTH_SECRET,
+                  client_secret: maskIRacingSecret(
+                    env.IRACING_AUTH_SECRET,
+                    env.IRACING_CLIENT_ID,
+                  ),
                   code_verifier: codeVerifier,
                 }),
               },
