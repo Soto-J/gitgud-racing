@@ -16,7 +16,6 @@ import { Session } from "@/lib/auth";
 
 import SidebarUserButton from "@/components/ui/sidebar/sidebar-user-button";
 import { QuickStatsCard } from "@/components/ui/sidebar/quick-stats-card";
-import { useFilterNavigationItems } from "@/hooks/use-filter-navigation-items";
 
 import { Separator } from "@/components/ui/separator";
 import { DashboardMenu } from "@/components/ui/sidebar/dashboard-menu";
