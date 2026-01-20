@@ -4,8 +4,8 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { SearchParams } from "nuqs";
 
-import { getQueryClient, trpc } from "@/trpc/server";
-import { HydrateClient } from "@/components/hydration-client";
+import { trpc } from "@/trpc/server";
+import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/params";
 
@@ -33,10 +33,7 @@ export default async function ManagePage({ searchParams }: ManagePageProps) {
 
   const filters = await loadSearchParams(searchParams);
 
-  const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(
-    trpc.manage.getUsers.queryOptions({ ...filters }),
-  );
+  prefetch(trpc.manage.getUsers.queryOptions({ ...filters }));
 
   return (
     <>

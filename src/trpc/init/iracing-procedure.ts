@@ -1,14 +1,12 @@
 import { eq, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import { refreshAccessToken } from "better-auth";
+import { OAuth2Tokens, refreshAccessToken } from "better-auth";
 
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
-import { protectedProcedure } from ".";
 
-import { refreshIracingAccessToken } from "@/lib/auth/utils/iracing-oauth-helpers";
-import { TokenResponse } from "@/lib/auth/types";
+import { protectedProcedure } from ".";
 
 const EXPIRY_SKEW_MS = 60_000;
 
@@ -21,38 +19,28 @@ export const iracingProcedure = protectedProcedure.use(
       new Date(account.accessTokenExpiresAt.getTime() - EXPIRY_SKEW_MS) <
         new Date();
 
-    if (isExpired) {
-      const refreshed = await refreshAccessToken({
-        refreshToken: account.refreshToken!,
-        options: {},
-        tokenEndpoint: "https://oauth.iracing.com/oauth2/token",
+    if (!isExpired) {
+      return next({
+        ctx: {
+          ...ctx,
+          iracingAccessToken: account.accessToken,
+          custId: account.accountId,
+        },
       });
-
-      try {
-        const refreshed = await refreshIracingAccessToken(
-          account?.refreshToken,
-        );
-        await persistRefreshedTokens(account.id, refreshed);
-
-        return next({
-          ctx: {
-            ...ctx,
-            iracingAccessToken: refreshed.access_token,
-            custId: account.accountId,
-          },
-        });
-      } catch (error) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Failed to refresh iRacing session. Please reconnect.",
-        });
-      }
     }
+
+    const refreshed = await refreshAccessToken({
+      refreshToken: account.refreshToken,
+      options: {},
+      tokenEndpoint: "https://oauth.iracing.com/oauth2/token",
+    });
+
+    await persistRefreshedTokens(account.id, refreshed);
 
     return next({
       ctx: {
         ...ctx,
-        iracingAccessToken: account.accessToken,
+        iracingAccessToken: refreshed.accessToken,
         custId: account.accountId,
       },
     });
@@ -91,27 +79,46 @@ async function getUserAccount(userId: string) {
     });
   }
 
-  return account;
+  return {
+    id: account.id,
+    accountId: account.accountId,
+    accessToken: account.accessToken,
+    refreshToken: account.refreshToken,
+    accessTokenExpiresAt: account.accessTokenExpiresAt,
+    refreshTokenExpiresAt: account.refreshTokenExpiresAt,
+  };
 }
 
-async function persistRefreshedTokens(
-  accountId: string,
-  tokens: TokenResponse,
-) {
+async function persistRefreshedTokens(accountId: string, token: OAuth2Tokens) {
+  if (!token.accessTokenExpiresAt) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "iracing access token expiration missing",
+    });
+  }
+
+  if (!token.refreshTokenExpiresAt) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "iracing refresh token expiration missing",
+    });
+  }
+
   const now = new Date();
 
   const accessTokenExpiresAt = new Date(
-    now.getTime() + tokens.expires_in * 1000,
+    now.getTime() + token.accessTokenExpiresAt.getTime() * 1000,
   );
   const refreshTokenExpiresAt = new Date(
-    now.getTime() + tokens.refresh_token_expires_in * 1000,
+    now.getTime() + token.refreshTokenExpiresAt.getTime() * 1000,
   );
+
   await db
     .update(accountTable)
     .set({
-      accessToken: tokens.access_token,
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
       accessTokenExpiresAt,
-      refreshToken: tokens.refresh_token,
       refreshTokenExpiresAt,
     })
     .where(eq(accountTable.id, accountId));

@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { redirect } from "next/navigation";
 
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClient, trpc } from "@/trpc/server";
+import { trpc } from "@/trpc/server";
 
 import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 // import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 
 import SchedulePageView from "@/modules/schedule/ui/views/schedule-page-view";
+import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 export default async function SchedulePage() {
   const session = await getCurrentSession();
@@ -19,8 +19,6 @@ export default async function SchedulePage() {
 
   // const seasonInfo = getCurrentSeasonInfo();
 
-  const queryClient = getQueryClient();
-
   // void queryClient.prefetchQuery(
   //   trpc.schedule.seasonSchedule.queryOptions({
   //     includeSeries: "true",
@@ -28,18 +26,15 @@ export default async function SchedulePage() {
   //     seasonQuarter: seasonInfo.currentQuarter,
   //   }),
   // );
-  void queryClient.prefetchQuery(
-    trpc.schedule.getLeagueSchedules.queryOptions(),
-  );
+
+  prefetch(trpc.schedule.getLeagueSchedules.queryOptions());
   return (
-    <>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<p>Loading..</p>}>
-          <ErrorBoundary fallback={<p>Error..</p>}>
-            {/* <SchedulePageView seasonInfo={seasonInfo} isAdmin={isAdmin} />; */}
-          </ErrorBoundary>
-        </Suspense>
-      </HydrationBoundary>
-    </>
+    <HydrateClient>
+      <Suspense fallback={<p>Loading..</p>}>
+        <ErrorBoundary fallback={<p>Error..</p>}>
+          {/* <SchedulePageView seasonInfo={seasonInfo} isAdmin={isAdmin} />; */}
+        </ErrorBoundary>
+      </Suspense>
+    </HydrateClient>
   );
 }

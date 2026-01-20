@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 import { SearchParams } from "nuqs";
 
-import { getQueryClient, trpc } from "@/trpc/server";
-import { HydrateClient } from "@/components/hydration-client";
+import { trpc } from "@/trpc/server";
+import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
@@ -29,14 +29,9 @@ export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
 
   const filters = await loadSearchParams(searchParams);
 
-  const queryClient = getQueryClient();
+  prefetch(trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }));
+  prefetch(trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }));
 
-  void queryClient.prefetchQuery(
-    trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
-  );
-  // void queryClient.prefetchQuery(
-  //   trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
-  // );
   return (
     <>
       <HydrateClient>
