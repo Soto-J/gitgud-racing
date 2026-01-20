@@ -59,14 +59,14 @@ export const userChartDataProcedure = iracingProcedure
 
     const results = await Promise.allSettled(promiseArr);
 
-    // Step 5: Handle partial failures gracefully
+    // Handle partial failures gracefully
     const failedResults = results.filter((res) => res.status === "rejected");
 
     if (failedResults.length > 0) {
       console.warn("Some chart data requests failed:", failedResults);
     }
 
-    // Step 6: Process successful API responses
+    // Process successful API responses
     const res = results
       .filter((res) => res.status === "fulfilled")
       .map((res) => res.value);
@@ -75,11 +75,11 @@ export const userChartDataProcedure = iracingProcedure
       return [];
     }
 
-    // Step 7: Validate and transform API data for database insertion
+    // Validate and transform API data for database insertion
     const data = UserChartDataResponseSchema.parse(res);
     const dataToInsert = buildChartData(data, input.userId);
 
-    // Step 8: Update cache with fresh data (upsert on duplicate keys)
+    // Update cache with fresh data (upsert on duplicate keys)
     await db
       .insert(userChartDataTable)
       .values(dataToInsert)
@@ -90,7 +90,7 @@ export const userChartDataProcedure = iracingProcedure
         },
       });
 
-    // Step 9: Fetch updated data and return transformed results
+    // Fetch updated data and return transformed results
     const newChartData = await db
       .select()
       .from(userChartDataTable)

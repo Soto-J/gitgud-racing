@@ -38,11 +38,15 @@ export default function SidebarUserButton() {
   const onSignout = () => {
     authClient.signOut({
       fetchOptions: {
-        onSuccess: () => router.push("/sign-in"),
+        onSuccess: () => router.refresh(),
       },
     });
   };
 
+  if (!session?.user) {
+    return null;
+  }
+  
   if (isPending || !session?.user) {
     return <div>Loading...</div>;
   }

@@ -22,7 +22,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const trpc = useTRPC();
   const [userPayload, chartPayload] = useSuspenseQueries({
     queries: [
-      trpc.iracing.getUser.queryOptions({ userId }, { retry: false }),
+      trpc.iracing.getUser.queryOptions({ userId }),
       trpc.iracing.userChartData.queryOptions({ userId }),
     ],
   });

@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity } from 'react'
+import { Activity } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -143,16 +143,16 @@ export default function AppSidebar({ session }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="via-secondary/60 my-4 h-px bg-gradient-to-r from-transparent to-transparent" />
+        <Activity mode={role === "guest" ? "hidden" : "visible"}>
+          <Separator className="via-secondary/60 my-4 h-px bg-gradient-to-r from-transparent to-transparent" />
 
-        <SidebarGroup>
-          <div className="mb-3">
-            <h3 className="text-secondary px-2 text-xs font-semibold tracking-wider uppercase">
-              Driver Zone
-            </h3>
-          </div>
+          <SidebarGroup>
+            <div className="mb-3">
+              <h3 className="text-secondary px-2 text-xs font-semibold tracking-wider uppercase">
+                Driver Zone
+              </h3>
+            </div>
 
-          <Activity mode={role === "guest" ? "hidden" : "visible"}>
             <SidebarGroupContent>
               <SidebarMenu>
                 {driverZone.map(({ href, label, icon: Icon }) => {
@@ -189,14 +189,14 @@ export default function AppSidebar({ session }: AppSidebarProps) {
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
-          </Activity>
-        </SidebarGroup>
+          </SidebarGroup>
+        </Activity>
 
         {/* <QuickStatsCard summaryData={data} /> */}
       </SidebarContent>
 
       <SidebarFooter className="text-muted">
-        <SidebarMenuButton />
+        <SidebarUserButton />
       </SidebarFooter>
     </Sidebar>
   );
