@@ -4,11 +4,11 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import { SearchParams } from "nuqs";
 
-import { getQueryClient, trpc } from "@/trpc/server";
+import { trpc } from "@/trpc/server";
 
 import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
-import { HydrateClient } from "@/components/hydration-client";
+import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
 
@@ -30,22 +30,16 @@ export default async function RosterPage({ searchParams }: RosterPageProps) {
 
   const filters = await loadSearchParams(searchParams);
 
-  const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(
-    trpc.roster.getMany.queryOptions({ ...filters }),
-  );
+  prefetch(trpc.roster.getMany.queryOptions({ ...filters }));
 
   return (
-    <>
-      <RosterHeader />
-
-      <HydrateClient>
-        <Suspense fallback={<LoadingRosterView />}>
-          <ErrorBoundary fallback={<ErrorRosterView />}>
-            <RosterView loggedInUserId={session.user.id} />
-          </ErrorBoundary>
-        </Suspense>
-      </HydrateClient>
-    </>
+    <HydrateClient>
+      <Suspense fallback={<LoadingRosterView />}>
+        <ErrorBoundary fallback={<ErrorRosterView />}>
+          <RosterHeader />
+          <RosterView loggedInUserId={session.user.id} />
+        </ErrorBoundary>
+      </Suspense>
+    </HydrateClient>
   );
 }

@@ -1,5 +1,7 @@
 import { betterAuth } from "better-auth";
 import { genericOAuth, admin, createAuthMiddleware } from "better-auth/plugins";
+import { ac, roles } from "./permissions";
+
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { eq } from "drizzle-orm";
 
@@ -7,7 +9,6 @@ import env from "@/env";
 
 import { db } from "@/db";
 import * as dbSchema from "@/db/schemas";
-import { ac, roles } from "./permissions";
 
 import { IRACING_URL } from "@/constants";
 import { IracingUserInfoSchema } from "./types/schemas";

@@ -36,7 +36,6 @@ export const deleteUserProcedure = manageProcedure
 
     try {
       await db.delete(user).where(eq(user.id, input.userId));
-      console.log(`User ${input.userId} deleted by ${ctx.auth.user.id}`);
     } catch (error) {
       if (error instanceof TRPCError) {
         throw error;
