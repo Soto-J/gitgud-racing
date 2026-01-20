@@ -146,7 +146,10 @@ export default function SeriesChart({ data }: SeriesChartProps) {
 
             <ChartLegend
               content={
-                <ChartLegendContent className="mt-6 text-sm font-medium" />
+                <ChartLegendContent
+                  className="mt-6 text-sm font-medium"
+                  payload={undefined}
+                />
               }
             />
 

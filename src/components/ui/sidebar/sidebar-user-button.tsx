@@ -30,7 +30,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
-export const DashboardUserButton = () => {
+export default function SidebarUserButton() {
   const router = useRouter();
   const isMobile = useIsMobile();
   const { data: session, isPending } = authClient.useSession();
@@ -139,4 +139,4 @@ export const DashboardUserButton = () => {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}

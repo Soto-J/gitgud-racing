@@ -7,7 +7,7 @@ import {
   boolean,
 } from "drizzle-orm/mysql-core";
 
-export const roles = ["admin", "staff", "user", "guest"] as const;
+export const USER_ROLES = ["admin", "staff", "user", "guest"] as const;
 
 export const user = mysqlTable("user", {
   id: varchar("id", { length: 36 }).primaryKey(),
@@ -19,7 +19,7 @@ export const user = mysqlTable("user", {
   image: text("image"),
 
   // admin plugin attributes
-  role: mysqlEnum("role", roles).notNull().default("user"),
+  role: mysqlEnum("role", USER_ROLES).notNull().default("user"),
   banned: boolean("banned"),
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
@@ -59,7 +59,7 @@ export const account = mysqlTable("account", {
   idToken: text("id_token"),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
-  
+
   accessTokenExpiresAt: timestamp("access_token_expires_at"),
   refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
 

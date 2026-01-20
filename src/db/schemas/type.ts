@@ -8,6 +8,7 @@ import {
   seriesWeeklyStatsTable,
   userChartDataTable,
   licenseTable,
+  USER_ROLES,
 } from ".";
 
 export type UserTable = InferSelectModel<typeof userTable>;
@@ -19,3 +20,5 @@ export type UserChartDataTable = InferSelectModel<typeof userChartDataTable>;
 export type SeriesWeeklyStatsTable = InferSelectModel<
   typeof seriesWeeklyStatsTable
 >;
+
+export type UserRole = (typeof USER_ROLES)[number];
