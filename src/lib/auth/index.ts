@@ -7,10 +7,11 @@ import env from "@/env";
 
 import { db } from "@/db";
 import * as dbSchema from "@/db/schemas";
+import { ac, roles } from "./permissions";
 
 import { IRACING_URL } from "@/constants";
 import { IracingUserInfoSchema } from "./types/schemas";
-import { maskIRacingSecret } from "./iracing-oauth-helpers";
+import { maskIRacingSecret } from "./utils/iracing-oauth-helpers";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -25,13 +26,7 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-      },
-    },
-  },
+
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
       const user = ctx.context.session?.user;
@@ -50,7 +45,11 @@ export const auth = betterAuth({
   },
 
   plugins: [
-    admin({ defaultRole: "user" }),
+    admin({
+      defaultRole: "user",
+      ac,
+      roles,
+    }),
     genericOAuth({
       config: [
         {

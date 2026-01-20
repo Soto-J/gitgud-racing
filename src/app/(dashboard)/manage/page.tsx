@@ -9,7 +9,7 @@ import { HydrateClient } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/manage/server/procedures/get-users/params";
 
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 import ManageListHeader from "@/modules/manage/ui/components/manage-list-header";
 

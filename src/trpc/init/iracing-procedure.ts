@@ -7,7 +7,7 @@ import { account as accountTable } from "@/db/schemas";
 
 import { protectedProcedure } from ".";
 
-import { refreshIracingAccessToken } from "@/lib/auth/iracing-oauth-helpers";
+import { refreshIracingAccessToken } from "@/lib/auth/utils/iracing-oauth-helpers";
 import { TokenResponse } from "@/lib/auth/types";
 
 const EXPIRY_SKEW_MS = 60_000;

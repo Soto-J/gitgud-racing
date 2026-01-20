@@ -18,7 +18,6 @@ import { useTRPC } from "@/trpc/client";
 
 import { authClient } from "@/lib/auth/auth-client";
 
-import { DashboardUserButton } from "@/components/ui/sidebar/sidebar-user-button";
 import { QuickStatsCard } from "@/components/ui/sidebar/quick-stats-card";
 
 import { Separator } from "@/components/ui/separator";
@@ -33,6 +32,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import SidebarUserButton from "./sidebar-user-button";
 
 const firstSection = [
   { icon: IoHomeOutline, label: "Home", href: "/" },
@@ -155,7 +155,7 @@ export const DashboardMenu = () => {
       </SidebarContent>
 
       <SidebarFooter className="text-muted">
-        <DashboardUserButton />
+        <SidebarUserButton />
       </SidebarFooter>
     </Sidebar>
   );

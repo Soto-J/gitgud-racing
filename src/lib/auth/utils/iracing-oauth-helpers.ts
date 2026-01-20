@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 
-import type { TokenResponse } from "./types";
-import { TokenRespnseSchema } from "./types/schemas";
+import type { TokenResponse } from "../types";
+import { TokenRespnseSchema } from "../types/schemas";
 import env from "@/env";
 
 export function maskIRacingSecret(secret: string, identifier: string): string {

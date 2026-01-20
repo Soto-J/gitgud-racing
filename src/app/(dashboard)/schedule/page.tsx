@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 // import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 
 import SchedulePageView from "@/modules/schedule/ui/views/schedule-page-view";

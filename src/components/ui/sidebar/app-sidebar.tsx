@@ -1,11 +1,10 @@
 "use client";
 
-import { redirect, usePathname } from "next/navigation";
+import { Activity } from 'react'
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { TRPCError } from "@trpc/server";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getQueryClient, trpc } from "@/trpc/server";
+import { cn } from "@/lib/utils";
 
 import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
@@ -13,10 +12,14 @@ import { IoPeopleOutline } from "react-icons/io5";
 import { SlCalender } from "react-icons/sl";
 import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 
+import { Session } from "@/lib/auth";
+
 import SidebarUserButton from "@/components/ui/sidebar/sidebar-user-button";
 import { QuickStatsCard } from "@/components/ui/sidebar/quick-stats-card";
+import { useFilterNavigationItems } from "@/hooks/use-filter-navigation-items";
 
 import { Separator } from "@/components/ui/separator";
+import { DashboardMenu } from "@/components/ui/sidebar/dashboard-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -28,18 +31,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { DashboardMenu } from "@/components/ui/sidebar/dashboard-menu";
-import { cn } from "@/lib/utils";
-import { useFilterNavigationItems } from "@/hooks/use-filter-navigation-items";
-import { Session } from "@/lib/auth";
+import { UserRole } from "@/db/schemas/type";
+import { USER_ROLES } from "@/db/schemas";
 
 const firstSection = [
-  { icon: IoHomeOutline, label: "Home", href: "/" },
+  {
+    icon: IoHomeOutline,
+    label: "Home",
+    href: "/",
+    roles: ["guest", "user", "staff", "admin"],
+  },
   {
     icon: BarChart3,
     label: "Series Stats",
     href: "/series-stats",
-    roles: ["guest"],
+    roles: ["guest", "user", "staff", "admin"],
   },
   {
     icon: SlCalender,
@@ -47,7 +53,7 @@ const firstSection = [
     href: "/schedule",
     roles: ["user", "staff", "admin"],
   },
-] as const;
+];
 
 const secondSection = [
   {
@@ -72,10 +78,9 @@ const secondSection = [
     icon: Crown,
     label: "Manage",
     href: "/manage",
-    manageTab: true,
-    roles: ["user", "staff", "admin"],
+    roles: ["staff", "admin"],
   },
-] as const;
+];
 
 interface AppSidebarProps {
   session: Session | null;
@@ -84,11 +89,12 @@ interface AppSidebarProps {
 export default function AppSidebar({ session }: AppSidebarProps) {
   const pathname = usePathname();
 
-  const isAuthenticated = !!session?.user;
-  const role = session?.user?.role ?? null;
+  const role: UserRole = USER_ROLES.includes(session?.user?.role as UserRole)
+    ? (session?.user.role as UserRole)
+    : "guest";
 
-  const FIRST = useFilterNavigationItems(firstSection, session?.user?.role );
-  const SECOND = useFilterNavigationItems(secondSection, role);
+  const racingHub = firstSection.filter((navs) => navs.roles.includes(role));
+  const driverZone = secondSection.filter((navs) => navs.roles.includes(role));
 
   return (
     <Sidebar>
@@ -110,7 +116,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {firstSection.map(({ href, label, icon: Icon }) => (
+              {racingHub.map(({ href, label, icon: Icon }) => (
                 <SidebarMenuItem key={href}>
                   <SidebarMenuButton asChild isActive={pathname === href}>
                     <Link
@@ -146,42 +152,44 @@ export default function AppSidebar({ session }: AppSidebarProps) {
             </h3>
           </div>
 
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {secondSection.map(({ href, label, icon: Icon, manageTab }) => {
-                // if (manageTab && currentUserIsAdmin === false) {
-                //   return null;
-                // }
+          <Activity mode={role === "guest" ? "hidden" : "visible"}>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {driverZone.map(({ href, label, icon: Icon }) => {
+                  // if (manageTab && currentUserIsAdmin === false) {
+                  //   return null;
+                  // }
 
-                return (
-                  <SidebarMenuItem key={href}>
-                    <SidebarMenuButton asChild isActive={pathname === href}>
-                      <Link
-                        href={href}
-                        className={cn(
-                          "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
-                          pathname === href
-                            ? "text-secondary"
-                            : "text-muted hover:text-primary",
-                        )}
-                      >
-                        <Icon size={20} />
-                        <span className="font-medium tracking-tight">
-                          {label}
-                        </span>
-                        {pathname === href && (
-                          <ChevronRight
-                            className="text-primary ml-auto"
-                            size={16}
-                          />
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
+                  return (
+                    <SidebarMenuItem key={href}>
+                      <SidebarMenuButton asChild isActive={pathname === href}>
+                        <Link
+                          href={href}
+                          className={cn(
+                            "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                            pathname === href
+                              ? "text-secondary"
+                              : "text-muted hover:text-primary",
+                          )}
+                        >
+                          <Icon size={20} />
+                          <span className="font-medium tracking-tight">
+                            {label}
+                          </span>
+                          {pathname === href && (
+                            <ChevronRight
+                              className="text-primary ml-auto"
+                              size={16}
+                            />
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </Activity>
         </SidebarGroup>
 
         {/* <QuickStatsCard summaryData={data} /> */}

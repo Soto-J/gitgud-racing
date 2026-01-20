@@ -6,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { HydrateClient } from "@/components/hydration-client";
 
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 import {
   ErrorProfileView,

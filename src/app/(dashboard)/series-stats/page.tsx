@@ -10,7 +10,7 @@ import { HydrateClient } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 import SeriesStatsHeader from "@/modules/series-stats/ui/components/series-stats-header";
 import {

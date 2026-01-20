@@ -2,7 +2,9 @@ import SidebarToggle from "@/components/ui/sidebar/sidebar-toggle";
 import AppSidebar from "@/components/ui/sidebar/app-sidebar";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
+
+import { getRoutePermission } from "@/lib/auth/utils/get-route-permission";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

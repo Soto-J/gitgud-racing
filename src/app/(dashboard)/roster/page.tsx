@@ -6,7 +6,7 @@ import { SearchParams } from "nuqs";
 
 import { getQueryClient, trpc } from "@/trpc/server";
 
-import { getCurrentSession } from "@/lib/auth/get-current-session";
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 import { HydrateClient } from "@/components/hydration-client";
 
