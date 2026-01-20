@@ -1,10 +1,10 @@
 import { eq, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
+import { refreshAccessToken } from "better-auth";
 
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
-
 import { protectedProcedure } from ".";
 
 import { refreshIracingAccessToken } from "@/lib/auth/utils/iracing-oauth-helpers";
@@ -22,6 +22,12 @@ export const iracingProcedure = protectedProcedure.use(
         new Date();
 
     if (isExpired) {
+      const refreshed = await refreshAccessToken({
+        refreshToken: account.refreshToken!,
+        options: {},
+        tokenEndpoint: "https://oauth.iracing.com/oauth2/token",
+      });
+
       try {
         const refreshed = await refreshIracingAccessToken(
           account?.refreshToken,
