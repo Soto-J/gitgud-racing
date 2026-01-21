@@ -6,19 +6,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
+import { Session } from "@/lib/auth";
+import { UserRole } from "@/db/schemas/type";
+import { USER_ROLES } from "@/db/schemas";
+
 import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
 import { SlCalender } from "react-icons/sl";
 import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 
-import { Session } from "@/lib/auth";
-
 import SidebarUserButton from "@/components/ui/sidebar/sidebar-user-button";
 import { QuickStatsCard } from "@/components/ui/sidebar/quick-stats-card";
 
 import { Separator } from "@/components/ui/separator";
-import { DashboardMenu } from "@/components/ui/sidebar/dashboard-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -30,8 +31,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { UserRole } from "@/db/schemas/type";
-import { USER_ROLES } from "@/db/schemas";
 
 const firstSection = [
   {
@@ -154,44 +153,38 @@ export default function AppSidebar({ session }: AppSidebarProps) {
 
             <SidebarGroupContent>
               <SidebarMenu>
-                {driverZone.map(({ href, label, icon: Icon }) => {
-                  // if (manageTab && currentUserIsAdmin === false) {
-                  //   return null;
-                  // }
-
-                  return (
-                    <SidebarMenuItem key={href}>
-                      <SidebarMenuButton asChild isActive={pathname === href}>
-                        <Link
-                          href={href}
-                          className={cn(
-                            "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
-                            pathname === href
-                              ? "text-secondary"
-                              : "text-muted hover:text-primary",
-                          )}
-                        >
-                          <Icon size={20} />
-                          <span className="font-medium tracking-tight">
-                            {label}
-                          </span>
-                          {pathname === href && (
-                            <ChevronRight
-                              className="text-primary ml-auto"
-                              size={16}
-                            />
-                          )}
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
+                {driverZone.map(({ href, label, icon: Icon }) => (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton asChild isActive={pathname === href}>
+                      <Link
+                        href={href}
+                        className={cn(
+                          "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                          pathname === href
+                            ? "text-secondary"
+                            : "text-muted hover:text-primary",
+                        )}
+                      >
+                        <Icon size={20} />
+                        <span className="font-medium tracking-tight">
+                          {label}
+                        </span>
+                        {pathname === href && (
+                          <ChevronRight
+                            className="text-primary ml-auto"
+                            size={16}
+                          />
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
         </Activity>
 
-        {/* <QuickStatsCard summaryData={data} /> */}
+        <QuickStatsCard />
       </SidebarContent>
 
       <SidebarFooter className="text-muted">

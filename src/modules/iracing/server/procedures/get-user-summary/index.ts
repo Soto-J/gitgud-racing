@@ -9,6 +9,10 @@ import { MemberSummary } from "@/modules/iracing/server/procedures/get-user-summ
 
 export const getUserSummaryProcedure = iracingProcedure.query(
   async ({ ctx }) => {
+    if (!ctx.iracingAccessToken) {
+      return null;
+    }
+
     const res = await fetchIracingData(
       "/data/stats/member_summary",
       ctx.iracingAccessToken,

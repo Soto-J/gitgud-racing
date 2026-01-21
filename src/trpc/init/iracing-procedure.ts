@@ -115,34 +115,6 @@ async function persistRefreshedTokens(accountId: string, token: OAuth2Tokens) {
 
   await db
     .update(accountTable)
-    .set({
-      accessToken: token.accessToken,
-      refreshToken: token.refreshToken,
-      accessTokenExpiresAt,
-      refreshTokenExpiresAt,
-    })
+    .set({ ...token })
     .where(eq(accountTable.id, accountId));
 }
-
-// TODO
-// const refreshLocks = new Map<string, Promise<IracingTokenResponse>>();
-
-// async function refreshSingleFlight(account) {
-//   if (refreshLocks.has(account.id)) {
-//     return refreshLocks.get(account.id)!;
-//   }
-
-//   const promise = (async () => {
-//     const refreshed = await refreshIracingAccessToken(account.refreshToken!);
-//     await persistRefreshedTokens(account.id, refreshed);
-//     return refreshed;
-//   })();
-
-//   refreshLocks.set(account.id, promise);
-
-//   try {
-//     return await promise;
-//   } finally {
-//     refreshLocks.delete(account.id);
-//   }
-// }
