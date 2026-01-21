@@ -2,24 +2,20 @@
 
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
-import { skipToken } from "@tanstack/react-query";
-export const QuickStatsCard = () => {
+
+export default function QuickStatsCard() {
   const trpc = useTRPC();
   const { data, isLoading, isError, error } = useQuery(
     trpc.iracing.getUserSummary.queryOptions(),
   );
 
-  if (isError) {
-    console.error(`[ERROR]: ${error}`);
+  if (!data || isError) {
+    return null;
   }
-
-  if (!data || isError) return null;
 
   if (isLoading) {
     return <div>Loading..</div>;
   }
-
-  const currentYear = new Date().getFullYear();
 
   const { this_year: thisYear, cust_id: custId } = data;
 
@@ -30,6 +26,8 @@ export const QuickStatsCard = () => {
           100
         ).toFixed(1)
       : "0.0";
+
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="border-secondary/20 from-secondary/60 to-secondary/20 mt-6 rounded-xl border bg-gradient-to-br p-4 shadow-sm backdrop-blur-sm">
@@ -79,4 +77,4 @@ export const QuickStatsCard = () => {
       </div>
     </div>
   );
-};
+}

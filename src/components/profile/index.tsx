@@ -7,11 +7,11 @@ import ContactInfo from "./contact-info";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ProfileProps {
-  iRacingInfo: UserChartData | null;
+  // iRacingInfo: UserChartData | null;
   contactInfo: UserData;
 }
 
-export default function Profile({ iRacingInfo, contactInfo }: ProfileProps) {
+export default function Profile({ contactInfo }: ProfileProps) {
   return (
     <Tabs defaultValue="iRacing">
       <TabsList className="mb-6 grid w-full grid-cols-2 gap-x-2 rounded-lg border border-white/20 bg-black/80 p-0 backdrop-blur-sm sm:p-2 md:h-16">
@@ -29,7 +29,10 @@ export default function Profile({ iRacingInfo, contactInfo }: ProfileProps) {
         </TabsTrigger>
       </TabsList>
 
-      <IracingInfo user={contactInfo} chartData={iRacingInfo} />
+      {/* <IracingInfo
+        user={contactInfo}
+        chartData={iRacingInfo}
+      /> */}
       <ContactInfo user={contactInfo} />
     </Tabs>
   );

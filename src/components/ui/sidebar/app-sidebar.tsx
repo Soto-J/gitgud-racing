@@ -17,7 +17,7 @@ import { SlCalender } from "react-icons/sl";
 import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 
 import SidebarUserButton from "@/components/ui/sidebar/sidebar-user-button";
-import { QuickStatsCard } from "@/components/ui/sidebar/quick-stats-card";
+import QuickStatsCard from "@/components/ui/sidebar/quick-stats-card";
 
 import { Separator } from "@/components/ui/separator";
 import {

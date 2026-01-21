@@ -1,7 +1,7 @@
 import { getTableColumns, eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { licenseTable, user, profileTable } from "@/db/schemas";
+import { licenseTable, user, profileTable, account } from "@/db/schemas";
 
 import { fetchIracingData } from "@/modules/iracing/server/api";
 
@@ -260,36 +260,18 @@ export const mapLicenseTypesToDb = (
   return result;
 };
 
-/**
- * Fetches complete user data with joined profile and license information
- *
- * This function performs a standardized query to get user data along with
- * their profile and license information from the database. It's used both
- * for initial data retrieval and after syncing fresh data from iRacing.
- *
- * @param userId - The user ID to fetch data for
- *
- * @returns Promise resolving to user data with profile and licenses, or undefined if not found
- *
- * @example
- * ```typescript
- * const userData = await getUserWithLicenses("user_123");
- * if (userData?.user) {
- *   console.log(userData.user.name);
- *   console.log(userData.licenses?.ovalIRating);
- * }
- * ```
- */
 export const getUserWithLicenses = async (userId: string) => {
   return await db
     .select({
       user: { ...getTableColumns(user) },
       profile: { ...getTableColumns(profileTable) },
-      licenses: { ...getTableColumns(licenseTable) },
+      account: { ...getTableColumns(account) },
+      // licenses: { ...getTableColumns(licenseTable) },
     })
     .from(user)
     .leftJoin(profileTable, eq(profileTable.userId, user.id))
-    .leftJoin(licenseTable, eq(licenseTable.userId, user.id))
+    .leftJoin(account, eq(account.userId, user.id))
+    // .leftJoin(licenseTable, eq(licenseTable.userId, user.id))
     .where(eq(user.id, userId))
     .then((rows) => rows[0]);
 };

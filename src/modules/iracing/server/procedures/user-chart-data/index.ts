@@ -27,15 +27,10 @@ export const userChartDataProcedure = iracingProcedure
   .input(UserChartDataInputSchema)
   .query(async ({ ctx, input }) => {
     // Get user's iRacing ID from their profile
-    // const userProfile = await db
-    //   .select({ iracingId: profileTable.iracingId })
-    //   .from(profileTable)
-    //   .where(eq(profileTable.userId, input.userId))
-    //   .then((row) => row[0]);
-
-    // if (!userProfile?.iracingId) {
-    //   return null;
-    // }
+    // const [userProfile] = await db
+    //   .select({ custId: account.accountId })
+    //   .from(account)
+    //   .where(eq(account.userId, input.userId))
 
     // Check existing cached chart data
     // const chartData = await db
@@ -52,7 +47,7 @@ export const userChartDataProcedure = iracingProcedure
     // Fetch fresh data from iRacing API for all racing categories
     const promiseArr = Object.keys(categoryMap).map((categoryId) =>
       fetchIracingData(
-        `/data/member/chart_data?chart_type=${IRACING_CHART_TYPE_IRATING}&cust_id=${input.userId}&category_id=${categoryId}`,
+        `/data/member/chart_data?cust_id=${input.userId}&category_id=${categoryId}&chart_type=${IRACING_CHART_TYPE_IRATING}`,
         ctx.iracingAccessToken,
       ),
     );

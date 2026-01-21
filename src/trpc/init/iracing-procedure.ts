@@ -1,12 +1,13 @@
 import { eq, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
-import { OAuth2Tokens, refreshAccessToken } from "better-auth";
 
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
 
 import { protectedProcedure } from ".";
+import { refreshIracingAccessToken } from "@/lib/auth/utils/iracing-oauth-helpers";
+import type { TokenResponse } from "@/lib/auth/types";
 
 const EXPIRY_SKEW_MS = 60_000;
 
@@ -19,28 +20,25 @@ export const iracingProcedure = protectedProcedure.use(
       new Date(account.accessTokenExpiresAt.getTime() - EXPIRY_SKEW_MS) <
         new Date();
 
-    if (!isExpired) {
+    if (isExpired) {
+      console.log({ isExpired });
+      const refreshed = await refreshIracingAccessToken(account.refreshToken);
+
+      await persistRefreshedTokens(account.id, refreshed);
+
       return next({
         ctx: {
           ...ctx,
-          iracingAccessToken: account.accessToken,
+          iracingAccessToken: refreshed.access_token,
           custId: account.accountId,
         },
       });
     }
 
-    const refreshed = await refreshAccessToken({
-      refreshToken: account.refreshToken,
-      options: {},
-      tokenEndpoint: "https://oauth.iracing.com/oauth2/token",
-    });
-
-    await persistRefreshedTokens(account.id, refreshed);
-
     return next({
       ctx: {
         ...ctx,
-        iracingAccessToken: refreshed.accessToken,
+        iracingAccessToken: account.accessToken,
         custId: account.accountId,
       },
     });
@@ -89,32 +87,20 @@ async function getUserAccount(userId: string) {
   };
 }
 
-async function persistRefreshedTokens(accountId: string, token: OAuth2Tokens) {
-  if (!token.accessTokenExpiresAt) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "iracing access token expiration missing",
-    });
-  }
-
-  if (!token.refreshTokenExpiresAt) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "iracing refresh token expiration missing",
-    });
-  }
-
-  const now = new Date();
-
-  const accessTokenExpiresAt = new Date(
-    now.getTime() + token.accessTokenExpiresAt.getTime() * 1000,
-  );
+async function persistRefreshedTokens(accountId: string, token: TokenResponse) {
+  const now = Date.now();
+  const accessTokenExpiresAt = new Date(now + token.expires_in * 1000);
   const refreshTokenExpiresAt = new Date(
-    now.getTime() + token.refreshTokenExpiresAt.getTime() * 1000,
+    now + token.refresh_token_expires_in * 1000,
   );
 
   await db
     .update(accountTable)
-    .set({ ...token })
+    .set({
+      accessTokenExpiresAt,
+      refreshTokenExpiresAt,
+      accessToken: token.access_token,
+      refreshToken: token.refresh_token,
+    })
     .where(eq(accountTable.id, accountId));
 }
