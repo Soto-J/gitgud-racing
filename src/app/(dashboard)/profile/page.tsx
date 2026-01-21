@@ -16,12 +16,12 @@ import {
 
 export default async function ProfilePage() {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   prefetch(trpc.iracing.getUser.queryOptions({ userId: session.user.id }));
-  // prefetch(
-  //   trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
-  // );
+  prefetch(
+    trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
+  );
 
   return (
     <HydrateClient>

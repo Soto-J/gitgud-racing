@@ -3,7 +3,11 @@ import { desc, eq, sql } from "drizzle-orm";
 import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { db } from "@/db";
-import { profileTable, userChartDataTable } from "@/db/schemas";
+import {
+  account as accountTable,
+  profileTable,
+  userChartDataTable,
+} from "@/db/schemas";
 
 import { fetchIracingData } from "@/modules/iracing/server/api";
 
@@ -45,16 +49,21 @@ export const userChartDataProcedure = iracingProcedure
     // }
 
     // Fetch fresh data from iRacing API for all racing categories
+    const [account] = await db
+      .select()
+      .from(accountTable)
+      .where(eq(accountTable.userId, input.userId));
+
     const promiseArr = Object.keys(categoryMap).map((categoryId) =>
       fetchIracingData(
-        `/data/member/chart_data?cust_id=${input.userId}&category_id=${categoryId}&chart_type=${IRACING_CHART_TYPE_IRATING}`,
+        `/data/member/chart_data?cust_id=${ctx.custId}&category_id=${categoryId}&chart_type=${IRACING_CHART_TYPE_IRATING}`,
         ctx.iracingAccessToken,
       ),
     );
 
     const results = await Promise.allSettled(promiseArr);
+    console.log("Result: ", results);
 
-    // Handle partial failures gracefully
     const failedResults = results.filter((res) => res.status === "rejected");
 
     if (failedResults.length > 0) {
@@ -62,16 +71,18 @@ export const userChartDataProcedure = iracingProcedure
     }
 
     // Process successful API responses
-    const res = results
+    const payload = results
       .filter((res) => res.status === "fulfilled")
       .map((res) => res.value);
 
-    if (res.length === 0) {
+    if (payload.length === 0) {
       return [];
     }
+    console.log({ payload });
+    return payload;
 
     // Validate and transform API data for database insertion
-    const data = UserChartDataResponseSchema.parse(res);
+    const data = UserChartDataResponseSchema.parse(payload);
     const dataToInsert = buildChartData(data, input.userId);
 
     // Update cache with fresh data (upsert on duplicate keys)

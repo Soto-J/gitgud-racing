@@ -25,7 +25,7 @@ interface HomePageProps {
 
 export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   const filters = await loadSearchParams(searchParams);
 

@@ -5,9 +5,11 @@ import { TRPCError } from "@trpc/server";
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
 
+import type { TokenResponse } from "@/lib/auth/types";
+
 import { protectedProcedure } from ".";
 import { refreshIracingAccessToken } from "@/lib/auth/utils/iracing-oauth-helpers";
-import type { TokenResponse } from "@/lib/auth/types";
+import { mapRefreshErrorToTRPC, RefreshTokenError } from "@/trpc/errors";
 
 const EXPIRY_SKEW_MS = 60_000;
 
@@ -16,23 +18,37 @@ export const iracingProcedure = protectedProcedure.use(
     const account = await getUserAccount(ctx.auth.user.id);
 
     const isExpired =
-      !!account.accessTokenExpiresAt &&
+      !!account?.accessTokenExpiresAt &&
       new Date(account.accessTokenExpiresAt.getTime() - EXPIRY_SKEW_MS) <
         new Date();
 
     if (isExpired) {
-      console.log({ isExpired });
-      const refreshed = await refreshIracingAccessToken(account.refreshToken);
+      console.warn({ isExpired });
 
-      await persistRefreshedTokens(account.id, refreshed);
+      try {
+        const refreshedPlayload = await refreshIracingAccessToken(
+          account.refreshToken,
+        );
 
-      return next({
-        ctx: {
-          ...ctx,
-          iracingAccessToken: refreshed.access_token,
-          custId: account.accountId,
-        },
-      });
+        await persistRefreshedTokens(account.id, refreshedPlayload);
+
+        return next({
+          ctx: {
+            ...ctx,
+            iracingAccessToken: refreshedPlayload.access_token,
+            custId: account.accountId,
+          },
+        });
+      } catch (err) {
+        if (err instanceof RefreshTokenError) {
+          throw mapRefreshErrorToTRPC(err);
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Unexpected error refreshing iRacing session",
+        });
+      }
     }
 
     return next({

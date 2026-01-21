@@ -25,7 +25,7 @@ interface ManagePageProps {
 
 export default async function ManagePage({ searchParams }: ManagePageProps) {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   if (session.user?.role !== "admin" && session.user?.role !== "staff") {
     redirect("/");

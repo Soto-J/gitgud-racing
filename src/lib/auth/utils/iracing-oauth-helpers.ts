@@ -1,28 +1,17 @@
-import { TRPCError } from "@trpc/server";
 import crypto from "crypto";
 
-import type { TokenResponse } from "../types";
-import { TokenRespnseSchema } from "../types/schemas";
 import env from "@/env";
 
-export function maskIRacingSecret(secret: string, identifier: string): string {
-  return crypto
-    .createHash("sha256")
-    .update(secret + identifier.trim().toLowerCase())
-    .digest("base64");
-}
+import type { TokenResponse } from "@/lib/auth/types";
+import { TokenRespnseSchema } from "@/lib/auth/types/schemas";
+
+import { RefreshTokenError, TokenErrorCode } from "@/trpc/errors";
+import { IRACING_REFRESH_TOKEN_URL } from "@/constants";
 
 export async function refreshIracingAccessToken(
-  refreshToken: string | null,
+  refreshToken: string,
 ): Promise<TokenResponse> {
-  if (!refreshToken) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "iRacing session expired. Please re-authenticate.",
-    });
-  }
-
-  const response = await fetch("https://oauth.iracing.com/oauth2/token", {
+  const response = await fetch(IRACING_REFRESH_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
@@ -37,11 +26,34 @@ export async function refreshIracingAccessToken(
   });
 
   if (!response.ok) {
+    const contentType = response.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      const payload = (await response.json()) as {
+        error?: string;
+        error_description?: string;
+      };
+
+      throw new RefreshTokenError(
+        payload.error_description ?? "Failed to refresh iRacing token",
+        (payload.error?.toUpperCase() as TokenErrorCode) ?? "SERVER_ERROR",
+      );
+    }
+
     const text = await response.text();
-    throw new Error(`Failed to refresh iRacing token: ${text}`);
+    throw new RefreshTokenError(
+      text || `Failed to refresh iRacing token`,
+      "SERVER_ERROR",
+    );
   }
 
   const payload = await response.json();
-
   return TokenRespnseSchema.parse(payload);
+}
+
+export function maskIRacingSecret(secret: string, identifier: string): string {
+  return crypto
+    .createHash("sha256")
+    .update(secret + identifier.trim().toLowerCase())
+    .digest("base64");
 }
