@@ -10,12 +10,12 @@ import { Card, CardContent } from "@/components/ui/card";
 
 interface ProfileCardProps {
   user: UserData;
-  chartData: UserChartData | null;
+  // chartData: UserChartData | null;
 }
 
-export default function IracingInfo({ user, chartData }: ProfileCardProps) {
+export default function IracingInfo({ user }: ProfileCardProps) {
   const disciplines =
-    user?.licenses?.disciplines?.length > 0
+    user.members?.licenses?.disciplines?.length > 0
       ? user.licenses.disciplines
       : seedData;
 

@@ -1,16 +1,23 @@
-import { UserSummary } from "@/modules/iracing/server/procedures/get-user-summary/schema";
+"use client";
 
-interface QuickStatsCardProps {
-  summaryData: UserSummary;
-}
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
-export const QuickStatsCard = ({ summaryData }: QuickStatsCardProps) => {
-  if (!summaryData) {
+export default function QuickStatsCard() {
+  const trpc = useTRPC();
+  const { data, isLoading, isError, error } = useQuery(
+    trpc.iracing.getUserSummary.queryOptions(),
+  );
+
+  if (!data || isError) {
     return null;
   }
 
-  const currentYear = new Date().getFullYear();
-  const { this_year: thisYear } = summaryData;
+  if (isLoading) {
+    return <div>Loading..</div>;
+  }
+
+  const { this_year: thisYear, cust_id: custId } = data;
 
   const winRate =
     thisYear?.num_official_sessions > 0
@@ -20,13 +27,15 @@ export const QuickStatsCard = ({ summaryData }: QuickStatsCardProps) => {
         ).toFixed(1)
       : "0.0";
 
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="border-secondary/20 from-secondary/60 to-secondary/20 mt-6 rounded-xl border bg-gradient-to-br p-4 shadow-sm backdrop-blur-sm">
       <h4 className="text-foreground mb-1 text-sm font-semibold">
         Quick Stats - {currentYear}
       </h4>
 
-      <p className="text-foreground mb-3 text-xs">ID: {summaryData.cust_id}</p>
+      <p className="text-foreground mb-3 text-xs">ID: {custId}</p>
 
       <div className="space-y-2 text-xs">
         <div className="flex justify-between">
@@ -68,4 +77,4 @@ export const QuickStatsCard = ({ summaryData }: QuickStatsCardProps) => {
       </div>
     </div>
   );
-};
+}
