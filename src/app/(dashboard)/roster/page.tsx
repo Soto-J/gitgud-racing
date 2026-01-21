@@ -26,7 +26,7 @@ interface RosterPageProps {
 
 export default async function RosterPage({ searchParams }: RosterPageProps) {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   const filters = await loadSearchParams(searchParams);
 

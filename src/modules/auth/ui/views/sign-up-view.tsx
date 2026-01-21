@@ -299,7 +299,7 @@ export default function SignUpView() {
                   <div className="text-center text-sm">
                     Already have an account?{" "}
                     <Link
-                      href="/sign-in"
+                      href="/"
                       className="underline underline-offset-4 hover:text-[#16A34A]"
                     >
                       Sign in

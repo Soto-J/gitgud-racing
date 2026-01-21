@@ -9,7 +9,7 @@ import { HydrateClient } from "@/components/hydration-client";
 
 export default async function TeamsPage() {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   // const seasonInfo = getCurrentSeasonInfo();
   // console.log(seasonInfo);

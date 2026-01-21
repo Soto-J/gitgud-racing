@@ -19,7 +19,7 @@ interface MemberIdPageProps {
 
 export default async function MemberIdPage({ params }: MemberIdPageProps) {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   const { memberId } = await params;
 

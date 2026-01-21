@@ -12,7 +12,7 @@ import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 export default async function SchedulePage() {
   const session = await getCurrentSession();
-  if (!session) redirect("/sign-in");
+  if (!session) redirect("/");
 
   const isAdmin =
     session.user.role === "admin" || session.user.role === "staff";

@@ -10,7 +10,14 @@ import env from "@/env";
 import { db } from "@/db";
 import * as dbSchema from "@/db/schemas";
 
-import { IRACING_URL } from "@/constants";
+import {
+  IRACING_URL,
+  IRACING_REFRESH_TOKEN_URL,
+  IRACING_AUTHORIZATION_URL,
+  IRACING_REDIRECT_URI,
+  IRACING_SCOPES,
+} from "@/constants";
+
 import { IracingUserInfoSchema } from "./types/schemas";
 import { maskIRacingSecret } from "./utils/iracing-oauth-helpers";
 
@@ -60,10 +67,10 @@ export const auth = betterAuth({
             env.IRACING_AUTH_SECRET,
             env.IRACING_CLIENT_ID,
           ),
-          redirectURI: `${env.NEXT_PUBLIC_APP_URL}/api/auth/callback/iracing`,
-          authorizationUrl: "https://oauth.iracing.com/oauth2/authorize",
-          tokenUrl: "https://oauth.iracing.com/oauth2/token",
-          scopes: ["iracing.auth", "iracing.profile"],
+          redirectURI: IRACING_REDIRECT_URI,
+          authorizationUrl: IRACING_AUTHORIZATION_URL,
+          tokenUrl: IRACING_REFRESH_TOKEN_URL,
+          scopes: IRACING_SCOPES,
           authorizationUrlParams: { audience: "data-server", debug: "1" },
           pkce: true,
 
