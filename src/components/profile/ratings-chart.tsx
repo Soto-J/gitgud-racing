@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import { ChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
+import { ChartData } from "@/modules/iracing/server/procedures/chart-data/types/schema";
 
 import {
   ChartConfig,

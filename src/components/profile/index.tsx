@@ -1,4 +1,4 @@
-import type { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
+import type { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
 
 import type { ProfileGetOne } from "@/modules/profile/types";
 

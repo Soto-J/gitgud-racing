@@ -20,11 +20,11 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const trpc = useTRPC();
-  const [profile, iracingPayload /*, chart*/] = useSuspenseQueries({
+  const [profile, iracingPayload, chart] = useSuspenseQueries({
     queries: [
       trpc.profile.getOne.queryOptions({ userId }),
       trpc.iracing.userLicenses.queryOptions({ userId }),
-      // trpc.iracing.userChartData.queryOptions({ userId }),
+      trpc.iracing.userChartData.queryOptions({ userId }),
     ],
   });
 

@@ -54,4 +54,4 @@ export const seedData = [
   },
 ];
 
-export const IRACING_CHART_TYPE_IRATING = 1;
+export const CHART_TYPE_IRATING = 1;

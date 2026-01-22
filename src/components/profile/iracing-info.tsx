@@ -1,4 +1,4 @@
-import { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
+import { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
 import { seedData } from "@/modules/iracing/constants";
 
 import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
