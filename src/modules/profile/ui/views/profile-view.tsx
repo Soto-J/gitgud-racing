@@ -20,19 +20,25 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const trpc = useTRPC();
-  const [userPayload /* chartPayload*/] = useSuspenseQueries({
+  const [profile, licenses /*, chart*/] = useSuspenseQueries({
     queries: [
-      trpc.iracing.getUser.queryOptions({ userId }),
+      trpc.profile.getOne.queryOptions({ userId }),
+      trpc.iracing.userLicenses.queryOptions({ userId }),
       // trpc.iracing.userChartData.queryOptions({ userId }),
     ],
   });
-  console.log("Data: ", userPayload.data);
+
+  console.log("Data: ", {
+    profile: profile.data,
+    licenses: licenses.data,
+    // userChartData: chartPayload.data,
+  });
   return (
     <>
       <EditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={userPayload.data}
+        initialValues={profile.data}
       />
 
       {/* <Banner
@@ -43,9 +49,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
         onEdit={() => setOpenDialog(true)}
       /> */}
 
-      <Profile
-        /*iRacingInfo={chartPayload.data}*/ contactInfo={userPayload.data}
-      />
+      <Profile profile={profile.data} licenses={licenses.data} chartData={{}} />
     </>
   );
 };

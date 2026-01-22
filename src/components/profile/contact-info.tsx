@@ -1,12 +1,11 @@
 import { MessageCircle, User, Users } from "lucide-react";
 
-import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
-
 import InfoCard from "@/components/profile/info-card";
 import { TabsContent } from "@/components/ui/tabs";
+import { ProfileGetOne } from "@/modules/profile/types";
 
 interface ContactInfoProps {
-  user: UserData;
+  user: ProfileGetOne;
 }
 
 export default function ContactInfo({ user }: ContactInfoProps) {

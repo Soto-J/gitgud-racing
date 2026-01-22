@@ -8,7 +8,7 @@ import { fetchIracingData } from "@/modules/iracing/server/api";
 import {
   UserResponseSchema,
   TransformLicensesInput,
-} from "@/modules/iracing/server/procedures/get-user/schema";
+} from "@/modules/iracing/server/procedures/user-licenses/types/schema";
 
 import type {
   LicenseDiscipline,

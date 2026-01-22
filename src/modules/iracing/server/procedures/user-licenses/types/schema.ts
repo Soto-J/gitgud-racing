@@ -6,18 +6,6 @@ import { LicenseTable, ProfileTable, UserTable } from "@/db/schemas/type";
 // INPUT SCHEMAS
 // =============================================================================
 
-/**
- * Input validation schema for getUserProcedure
- *
- * Validates the input parameters required to fetch user data. The userId
- * must be a non-empty string that corresponds to an existing user in the
- * database.
- *
- * @example
- * ```typescript
- * const input = UserInputSchema.parse({ userId: "user_123" });
- * ```
- */
 export const UserInputSchema = z.object({
   userId: z.string().min(1, { message: "Id is required" }),
 });
@@ -26,21 +14,7 @@ export const UserInputSchema = z.object({
 // API RESPONSE SCHEMAS
 // =============================================================================
 
-/**
- * Schema for validating the complete response from iRacing's member API
- *
- * This schema validates the response from the `/data/member/get` endpoint
- * which includes user profile information and license data for all racing
- * disciplines. The response structure matches iRacing's official API format.
- *
- * @example
- * ```typescript
- * const response = await fetchIracingData({
- *   query: `/data/member/get?cust_ids=123456&include_licenses=true`
- * });
- * const validatedData = UserResponseSchema.parse(response);
- * ```
- */
+
 /**
  * Schema for individual license data from iRacing API
  *

@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export default function QuickStatsCard() {
   const trpc = useTRPC();
   const { data, isLoading, isError, error } = useQuery(
-    trpc.iracing.getUserSummary.queryOptions(),
+    trpc.iracing.userSummary.queryOptions(),
   );
 
   if (!data || isError) {

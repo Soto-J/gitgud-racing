@@ -27,13 +27,6 @@ export const auth = betterAuth({
     schema: { ...dbSchema },
   }),
   logger: { level: "debug" },
-  emailAndPassword: { enabled: true },
-  socialProviders: {
-    google: {
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    },
-  },
 
   hooks: {
     after: createAuthMiddleware(async (ctx) => {

@@ -20,7 +20,6 @@ export const profileTable = mysqlTable("profile", {
     .unique()
     .notNull(),
 
-  iracingId: varchar("iracing_id", { length: 10 }).unique(),
   isActive: boolean("is_active").notNull().default(false),
 
   discord: varchar("discord", { length: 37 }).default(""),

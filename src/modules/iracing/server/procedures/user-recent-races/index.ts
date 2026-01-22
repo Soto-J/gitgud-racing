@@ -5,9 +5,9 @@ import { fetchIracingData } from "@/modules/iracing/server/api";
 import {
   GetUserRecentRacesInput,
   GetUserRecentRacesResponse,
-} from "@/modules/iracing/server/procedures/get-user-recent-races/schema";
+} from "@/modules/iracing/server/procedures/user-recent-races/schema";
 
-export const getUserRecentRacesProcedure = iracingProcedure
+export const userRecentRacesProcedure = iracingProcedure
   .input(GetUserRecentRacesInput)
   .query(async ({ ctx, input }) => {
     if (!input.custId) {

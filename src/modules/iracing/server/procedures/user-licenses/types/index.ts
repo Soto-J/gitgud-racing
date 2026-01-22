@@ -11,6 +11,9 @@ import {
   UserResponseSchema,
 } from "./schema";
 
+export type UserLicenses =
+  inferRouterOutputs<AppRouter>["iracing"]["userLicenses"];
+
 // =============================================================================
 // PROCEDURE OUTPUT TYPES
 // =============================================================================
@@ -34,7 +37,7 @@ import {
  * console.log(userData.licenses.disciplines[0].iRating);
  * ```
  */
-export type UserData = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
+// export type UserData = inferRouterOutputs<AppRouter>["iracing"]["getUser"];
 
 // =============================================================================
 // API RESPONSE TYPES

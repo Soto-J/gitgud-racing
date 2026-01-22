@@ -1,4 +1,3 @@
-import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 import { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 
@@ -7,15 +6,18 @@ import { RatingsChart } from "@/components/profile/ratings-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProfileGetOne } from "@/modules/profile/types";
+import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
 interface ProfileCardProps {
-  user: UserData;
+  user: ProfileGetOne;
+  licenses: UserLicenses;
   // chartData: UserChartData | null;
 }
 
-export default function IracingInfo({ user }: ProfileCardProps) {
+export default function IracingInfo({ user, licenses }: ProfileCardProps) {
   const disciplines =
-    user.members?.licenses?.disciplines?.length > 0
+    licenses?.licenses?.disciplines?.length > 0
       ? user.licenses.disciplines
       : seedData;
 

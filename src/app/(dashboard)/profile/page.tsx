@@ -18,16 +18,17 @@ export default async function ProfilePage() {
   const session = await getCurrentSession();
   if (!session) redirect("/");
 
-  prefetch(trpc.iracing.getUser.queryOptions({ userId: session.user.id }));
-  prefetch(
-    trpc.iracing.userChartData.queryOptions({ userId: session.user.id }),
-  );
+  const userId = session.user.id;
+
+  prefetch(trpc.profile.getOne.queryOptions({ userId }));
+  prefetch(trpc.iracing.userLicenses.queryOptions({ userId }));
+  prefetch(trpc.iracing.userChartData.queryOptions({ userId }));
 
   return (
     <HydrateClient>
       <Suspense fallback={<LoadingProfileView />}>
         <ErrorBoundary fallback={<ErrorProfileView />}>
-          <ProfileView userId={session.user.id} />
+          <ProfileView userId={userId} />
         </ErrorBoundary>
       </Suspense>
     </HydrateClient>

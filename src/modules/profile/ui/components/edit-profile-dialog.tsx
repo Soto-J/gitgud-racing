@@ -11,8 +11,6 @@ import { useTRPC } from "@/trpc/client";
 
 import { ProfileSchema } from "@/modules/profile/server/procedures/edit/schema";
 
-import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
-
 import ResponsiveDialog from "@/components/responsive-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -21,11 +19,12 @@ import { Input } from "@/components/ui/input";
 
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import FieldErrorMessage from "@/components/field-error-message";
+import { ProfileGetOne } from "../../types";
 
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
   onCloseDialog: () => void;
-  initialValues: UserData;
+  initialValues: ProfileGetOne;
 }
 
 export const EditProfileDialog = ({

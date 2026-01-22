@@ -1,17 +1,25 @@
-import type { UserData } from "@/modules/iracing/server/procedures/get-user/types";
 import type { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
+
+import type { ProfileGetOne } from "@/modules/profile/types";
 
 import IracingInfo from "@/components/profile/iracing-info";
 import ContactInfo from "./contact-info";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
 interface ProfileProps {
   // iRacingInfo: UserChartData | null;
-  contactInfo: UserData;
+  profile: ProfileGetOne;
+  licenses: UserLicenses;
+  chartData: {};
 }
 
-export default function Profile({ contactInfo }: ProfileProps) {
+export default function Profile({
+  profile,
+  licenses,
+  chartData,
+}: ProfileProps) {
   return (
     <Tabs defaultValue="iRacing">
       <TabsList className="mb-6 grid w-full grid-cols-2 gap-x-2 rounded-lg border border-white/20 bg-black/80 p-0 backdrop-blur-sm sm:p-2 md:h-16">
@@ -33,7 +41,7 @@ export default function Profile({ contactInfo }: ProfileProps) {
         user={contactInfo}
         chartData={iRacingInfo}
       /> */}
-      <ContactInfo user={contactInfo} />
+      {/* <ContactInfo user={contactInfo} /> */}
     </Tabs>
   );
 }
