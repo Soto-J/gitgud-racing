@@ -11,13 +11,13 @@ import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/
 interface ProfileProps {
   // iRacingInfo: UserChartData | null;
   profile: ProfileGetOne;
-  licenses: UserLicenses;
+  iracingPayload: UserLicenses;
   chartData: {};
 }
 
 export default function Profile({
   profile,
-  licenses,
+  iracingPayload,
   chartData,
 }: ProfileProps) {
   return (
@@ -37,11 +37,9 @@ export default function Profile({
         </TabsTrigger>
       </TabsList>
 
-      {/* <IracingInfo
-        user={contactInfo}
-        chartData={iRacingInfo}
-      /> */}
-      {/* <ContactInfo user={contactInfo} /> */}
+      <IracingInfo iracingPayload={iracingPayload} chartData={{}} />
+
+      <ContactInfo profile={profile} />
     </Tabs>
   );
 }

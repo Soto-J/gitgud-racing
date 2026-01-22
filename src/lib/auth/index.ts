@@ -64,6 +64,7 @@ export const auth = betterAuth({
           authorizationUrl: IRACING_AUTHORIZATION_URL,
           tokenUrl: IRACING_REFRESH_TOKEN_URL,
           scopes: IRACING_SCOPES,
+          accessType: "offline",
           authorizationUrlParams: { audience: "data-server", debug: "1" },
           pkce: true,
 

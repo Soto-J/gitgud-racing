@@ -1,39 +1,37 @@
 import { UserChartData } from "@/modules/iracing/server/procedures/user-chart-data/schema";
 import { seedData } from "@/modules/iracing/constants";
 
-import { DisciplineCard } from "@/components/profile/discipline-card";
+import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
+
+import DisciplineCard from "@/components/profile/discipline-card";
 import { RatingsChart } from "@/components/profile/ratings-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { ProfileGetOne } from "@/modules/profile/types";
-import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
-interface IracingInfodProps {
-  user: ProfileGetOne;
-  licenses: UserLicenses;
+interface IracingInfoProps {
+  iracingPayload: UserLicenses;
   // chartData: UserChartData | null;
+  chartData: {};
 }
 
-export default function IracingInfo({ user, licenses }: IracingInfodProps) {
-  // const disciplines =
-  //   licenses?.licenses?.disciplines?.length > 0
-  //     ? user.licenses.disciplines
-  //     : seedData;
-  const disciplines = seedData;
-
+export default function IracingInfo({
+  iracingPayload,
+  chartData,
+}: IracingInfoProps) {
   return (
     <TabsContent value="iRacing">
       <div className="space-y-12">
         <Tabs defaultValue="Oval" className="mx-auto">
           <TabsList className="flex flex-wrap items-center justify-center">
-            {disciplines.map((discipline, idx) => (
-              <TabsTrigger value={discipline.category} key={idx} className="">
+            {iracingPayload.licenses.map((discipline, idx) => (
+              <TabsTrigger key={idx} value={discipline.categoryName}>
                 <DisciplineCard
-                  title={discipline.category}
-                  iRating={discipline.iRating || 0}
+                  categoryName={discipline.categoryName}
+                  iRating={discipline.irating ?? 0}
+                  safetyRating={discipline.safetyRating}
                   licenseClass={discipline.licenseClass}
-                  safetyRating={discipline.safetyRating || "0.0"}
+                  licenseColor={discipline.color}
                 />
               </TabsTrigger>
             ))}

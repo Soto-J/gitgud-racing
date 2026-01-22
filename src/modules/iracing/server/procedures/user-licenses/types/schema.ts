@@ -6,14 +6,13 @@ import { LicenseTable, ProfileTable, UserTable } from "@/db/schemas/type";
 // INPUT SCHEMAS
 // =============================================================================
 
-export const UserInputSchema = z.object({
+export const GetLicensesInputSchema = z.object({
   userId: z.string().min(1, { message: "Id is required" }),
 });
 
 // =============================================================================
 // API RESPONSE SCHEMAS
 // =============================================================================
-
 
 /**
  * Schema for individual license data from iRacing API

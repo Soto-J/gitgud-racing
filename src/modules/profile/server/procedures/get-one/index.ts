@@ -13,8 +13,8 @@ export const getProfileProcedure = protectedProcedure
   .query(async ({ input }) => {
     const [profile] = await db
       .select({
-        profile: getTableColumns(profileTable),
-        memberName: userTable.name,
+        ...getTableColumns(profileTable),
+        userName: userTable.name,
       })
       .from(profileTable)
       .innerJoin(userTable, eq(userTable.id, profileTable.userId))

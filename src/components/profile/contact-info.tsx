@@ -5,10 +5,10 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ProfileGetOne } from "@/modules/profile/types";
 
 interface ContactInfoProps {
-  user: ProfileGetOne;
+  profile: ProfileGetOne;
 }
 
-export default function ContactInfo({ user }: ContactInfoProps) {
+export default function ContactInfo({ profile }: ContactInfoProps) {
   return (
     <TabsContent value="contact">
       <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
@@ -32,14 +32,14 @@ export default function ContactInfo({ user }: ContactInfoProps) {
             <InfoCard
               icon={Users}
               label="Team"
-              value={user.profile?.team || "N/A"}
+              value={profile?.team || "N/A"}
               accentColor="bg-purple-600"
             />
 
             <InfoCard
               icon={MessageCircle}
               label="Discord"
-              value={user.profile?.discord || ""}
+              value={profile?.discord || ""}
               accentColor="bg-indigo-600"
             />
           </div>
@@ -57,10 +57,10 @@ export default function ContactInfo({ user }: ContactInfoProps) {
               </div>
 
               <div className="prose max-w-none">
-                {user.profile?.bio ? (
+                {profile?.bio ? (
                   <div className="rounded-lg border border-gray-100 bg-white p-4">
                     <p className="leading-relaxed text-gray-700">
-                      {user.profile.bio}
+                      {profile.bio}
                     </p>
                   </div>
                 ) : (
