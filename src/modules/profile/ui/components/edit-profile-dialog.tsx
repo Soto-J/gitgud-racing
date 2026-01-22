@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { ProfileSchema } from "@/modules/profile/server/procedures/edit/schema";
+import { ProfileSchema } from "@/modules/profile/server/procedures/edit/types/schema";
 
 import ResponsiveDialog from "@/components/responsive-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -32,17 +32,13 @@ export const EditProfileDialog = ({
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) => {
-  const [firstName, lastName] = initialValues?.user?.name?.split(" ") || [
-    "",
-    "",
-  ];
+  const [firstName, lastName] = initialValues.memberName.split(" ");
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
       firstName: firstName,
       lastName: lastName,
-      iRacingId: initialValues?.profile?.iracingId || "0",
       discord: initialValues?.profile?.discord ?? "",
       bio: initialValues?.profile?.bio ?? "",
     },
@@ -54,10 +50,10 @@ export const EditProfileDialog = ({
   const editProfile = useMutation(
     trpc.profile.edit.mutationOptions({
       onSuccess: async () => {
-        if (initialValues?.user?.id) {
+        if (initialValues?.profile.userId) {
           await queryClient.invalidateQueries(
             trpc.profile.getOne.queryOptions({
-              userId: initialValues.user.id,
+              userId: initialValues?.profile.userId,
             }),
           );
         }
@@ -74,19 +70,19 @@ export const EditProfileDialog = ({
   );
 
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
-    if (!initialValues?.user?.id) {
+    if (!initialValues?.profile.userId) {
       console.warn("EditProfileDialog: Cannot submit without user ID");
       return;
     }
 
     editProfile.mutate({
-      userId: initialValues.user.id,
+      userId: initialValues?.profile.userId,
       ...values,
     });
   };
 
   // Defensive guard: Don't render if user data is missing
-  if (!initialValues?.user?.id) {
+  if (!initialValues?.profile.userId) {
     console.warn("EditProfileDialog: Missing user data");
     return null;
   }
@@ -177,30 +173,6 @@ export const EditProfileDialog = ({
                     Racing Information
                   </h3>
                 </div>
-
-                <Controller
-                  name="iRacingId"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field>
-                      <FieldLabel
-                        htmlFor={field.name}
-                        className="text-sm font-medium text-gray-700"
-                      >
-                        iRacing ID
-                      </FieldLabel>
-
-                      <Input
-                        {...field}
-                        id={field.name}
-                        placeholder="Enter your iRacing ID"
-                        className="border-gray-300 focus:border-red-500 focus:ring-red-500"
-                      />
-
-                      <FieldErrorMessage error={fieldState.error} />
-                    </Field>
-                  )}
-                />
               </div>
 
               {/* Contact Information Section */}

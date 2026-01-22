@@ -9,17 +9,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ProfileGetOne } from "@/modules/profile/types";
 import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
-interface ProfileCardProps {
+interface IracingInfodProps {
   user: ProfileGetOne;
   licenses: UserLicenses;
   // chartData: UserChartData | null;
 }
 
-export default function IracingInfo({ user, licenses }: ProfileCardProps) {
-  const disciplines =
-    licenses?.licenses?.disciplines?.length > 0
-      ? user.licenses.disciplines
-      : seedData;
+export default function IracingInfo({ user, licenses }: IracingInfodProps) {
+  // const disciplines =
+  //   licenses?.licenses?.disciplines?.length > 0
+  //     ? user.licenses.disciplines
+  //     : seedData;
+  const disciplines = seedData;
 
   return (
     <TabsContent value="iRacing">
@@ -38,7 +39,7 @@ export default function IracingInfo({ user, licenses }: ProfileCardProps) {
             ))}
           </TabsList>
 
-          {chartData ? (
+          {/* {chartData ? (
             Object.values(chartData).map(
               ({ discipline, chartData: disciplineChartData }) => (
                 <TabsContent value={discipline} key={discipline}>
@@ -54,7 +55,7 @@ export default function IracingInfo({ user, licenses }: ProfileCardProps) {
                 </div>
               </CardContent>
             </Card>
-          )}
+          )} */}
         </Tabs>
       </div>
     </TabsContent>

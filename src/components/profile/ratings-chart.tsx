@@ -21,7 +21,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface ProfileChartProps {
+interface RatingsChartProps {
   data: ChartData[];
   title: string;
 }
@@ -38,7 +38,7 @@ const parseDateTime = (dateValue: string | Date): DateTime => {
   }
 };
 
-export const RatingsChart = ({ data, title }: ProfileChartProps) => {
+export const RatingsChart = ({ data, title }: RatingsChartProps) => {
   if (data.length === 0) {
     return <div>No chart data available</div>;
   }

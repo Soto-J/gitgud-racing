@@ -15,23 +15,24 @@ interface MemberIdViewProps {
 export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   const trpc = useTRPC();
 
-  const [userPayload, chartPayload] = useSuspenseQueries({
+  const [profile, licenses /*, chart*/] = useSuspenseQueries({
     queries: [
-      trpc.iracing.getUser.queryOptions({ userId }),
-      trpc.iracing.userChartData.queryOptions({ userId }),
+      trpc.profile.getOne.queryOptions({ userId }),
+      trpc.iracing.userLicenses.queryOptions({ userId }),
+      // trpc.iracing.userChartData.queryOptions({ userId }),
     ],
   });
 
   return (
     <>
-      <Banner
+      {/* <Banner
         section="IRacing Profile"
         title={userPayload.data.user?.name || ""}
         subTitle1="Professional Driver"
         subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
-      />
+      /> */}
 
-      <Profile iRacingInfo={chartPayload.data} contactInfo={userPayload.data} />
+      <Profile profile={profile.data} licenses={licenses.data} chartData={{}} />
     </>
   );
 };

@@ -4,8 +4,7 @@ import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
 import { profileTable, user } from "@/db/schemas";
-
-import type { ProfileUpdateData } from "./types";
+import { ProfileUpdateData } from "./types";
 
 /**
  * Updates profile and user information
@@ -15,15 +14,13 @@ export async function updateUserProfile(
   currentUserId: string,
   updates: ProfileUpdateData,
 ) {
-  const result = await db
+  const [result] = await db
     .update(profileTable)
     .set({
-      iracingId: updates.iRacingId.trim(),
       discord: updates.discord.trim(),
       bio: updates.bio.trim(),
     })
-    .where(eq(profileTable.userId, userId))
-    .then((row) => row[0]);
+    .where(eq(profileTable.userId, userId));
 
   if (!result || result.affectedRows === 0) {
     throw new TRPCError({

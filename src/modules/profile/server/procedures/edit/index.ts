@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
 
-import { ProfileUpdateSchema } from "./schema";
+import { ProfileUpdateSchema } from "./types/schema";
 import { updateUserProfile } from "./utilities";
 
 /**
@@ -14,7 +14,6 @@ export const editProfileProcedure = protectedProcedure
       await updateUserProfile(input.userId, ctx.auth.user.id, {
         firstName: input.firstName,
         lastName: input.lastName,
-        iRacingId: input.iRacingId,
         discord: input.discord,
         bio: input.bio,
       });
