@@ -11,7 +11,6 @@ export const iracingRouter = createTRPCRouter({
   userLicenses: userLicensesProcedure,
   userRecentRaces: userRecentRacesProcedure,
   userSummary: userSummaryProcedure,
-
   userChartData: userChartDataProcedure,
 
   weeklySeriesResults: weeklySeriesResultsProcedure,

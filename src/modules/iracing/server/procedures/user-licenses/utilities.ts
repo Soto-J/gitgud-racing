@@ -17,35 +17,39 @@ import type {
 } from "./types";
 
 /**
- * Builds a complete user profile from database components
+ * Maps iRacing license level (1-20) to license class letter
  *
- * This function takes the flat database result (user, profile, and licenses)
- * and assembles it into a structured user profile object with organized
- * license disciplines. It handles cases where license data may be missing
- * or incomplete.
- *
- * @param member - Database result including user, profile, and license information
- *
- * @returns Complete user profile with structured license disciplines
- *
- * @example
- * ```typescript
- * const dbResult = {
- *   user: { id: "123", name: "John" },
- *   profile: { iracingId: "958942" },
- *   licenses: {
- *     ovalIRating: 2500,
- *     ovalSafetyRating: "3.45",
- *     ovalLicenseClass: "A",
- *     // ... other license data
- *   }
- * };
- *
- * const userProfile = buildUserProfile(dbResult);
- * console.log(userProfile.licenses.disciplines[0]);
- * // { category: "Oval", iRating: 2500, safetyRating: "3.45", licenseClass: "A" }
- * ```
+ * iRacing license levels are grouped in sets of 4:
+ * - 1-4: Rookie (R)
+ * - 5-8: D class
+ * - 9-12: C class
+ * - 13-16: B class
+ * - 17-20: A class
+ * - 21+: Pro (A+)
  */
+export function getLicenseClassFromLevel(licenseLevel: number): string {
+  if (licenseLevel >= 21) return "A+";
+  if (licenseLevel >= 17) return "A";
+  if (licenseLevel >= 13) return "B";
+  if (licenseLevel >= 9) return "C";
+  if (licenseLevel >= 5) return "D";
+  return "R";
+}
+
+/**
+ * Transforms raw iRacing license data for frontend consumption
+ */
+export function transformLicenseForClient(license: LicenseType) {
+  return {
+    category_id: license.category_id,
+    category: license.category,
+    irating: license.irating ?? 0,
+    safety_rating: license.safety_rating,
+    license_class: getLicenseClassFromLevel(license.license_level),
+  };
+}
+
+
 export const buildUserProfile = (member: TransformLicensesInput) => {
   if (!member?.licenses) {
     return {
