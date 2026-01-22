@@ -58,7 +58,7 @@ export const userLicensesProcedure = iracingProcedure
         mprNumRaces: license.mpr_num_races,
         mprNumTts: license.mpr_num_tts,
         color: license.color,
-        groupName: license.group_name,
+        groupName: `#${license.group_name}`,
         groupId: license.group_id,
         proPromotable: license.pro_promotable,
         seq: license.seq,

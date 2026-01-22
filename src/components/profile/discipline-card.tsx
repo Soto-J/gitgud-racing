@@ -76,7 +76,7 @@ export default function DisciplineCard({
           <div className="flex flex-col items-center">
             <div
               className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-black text-white shadow-lg transition-all duration-200 group-hover:scale-110"
-              style={{ backgroundColor: `#${licenseColor}` }}
+              style={{ backgroundColor: licenseColor }}
             >
               {licenseClass}
             </div>

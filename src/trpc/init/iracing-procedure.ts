@@ -38,9 +38,16 @@ export const iracingProcedure = protectedProcedure.use(
           new Date();
 
       if (!isExpired) {
+        if (!account.accessToken) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Access token missing",
+          });
+        }
+
         return {
-          accessToken: account.accessToken!,
-          custId: account.accountId!,
+          accessToken: account.accessToken,
+          custId: account.accountId,
         };
       }
 
