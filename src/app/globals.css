@@ -88,6 +88,7 @@
   --chart-3: oklch(0.6645 0.1609 152.2025);
   --chart-4: oklch(0.5103 0 0);
   --chart-5: oklch(0.8452 0 0);
+
   --sidebar: oklch(0.1457 0 0);
   --sidebar-foreground: oklch(0.9848 0 0);
   --sidebar-primary: oklch(0.577 0.2292 28.5315);
@@ -96,6 +97,7 @@
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.2697 0 0);
   --sidebar-ring: oklch(0.577 0.2292 28.5315);
+
   --font-sans: Inter, system-ui, sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: JetBrains Mono, monospace;
@@ -146,6 +148,7 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -185,29 +188,7 @@ body {
   letter-spacing: var(--tracking-normal);
 }
 
-/* @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
-
 @layer components {
-  /* Ferrari Racing themed with semantic colors 🏎️ */
-  /* .btn-ferrari {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90;
-  }
-
-  .bg-racing-gradient {
-    @apply from-primary to-secondary bg-gradient-to-br;
-  }
-
-  .bg-racing-gradient-subtle {
-    @apply from-primary/10 to-secondary/10 bg-gradient-to-br;
-  } */
-
   /* Gives buttons cursor-pointer */
   button:not(:disabled),
   [role="button"]:not(:disabled) {

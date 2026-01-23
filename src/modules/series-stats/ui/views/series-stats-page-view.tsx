@@ -22,7 +22,7 @@ export const SeriesStatsPageView = () => {
       <SeriesChart data={data} />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-blue-100 opacity-20" />
 
           <div className="relative">
@@ -43,7 +43,7 @@ export const SeriesStatsPageView = () => {
           </div>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-br from-green-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-green-100 opacity-20" />
 
           <div className="relative">
@@ -73,7 +73,7 @@ export const SeriesStatsPageView = () => {
           </div>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-purple-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-br from-purple-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-purple-100 opacity-20" />
 
           <div className="relative">

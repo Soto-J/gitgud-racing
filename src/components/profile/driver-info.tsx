@@ -11,7 +11,7 @@ export const DriverInfo = ({ profile }: DriverInfoProps) => {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
       <div className="mb-8 flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 shadow-lg">
           <User className="h-6 w-6 text-white" />
         </div>
 
@@ -40,12 +40,12 @@ export const DriverInfo = ({ profile }: DriverInfoProps) => {
           />
         </div>
 
-        <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-6 shadow-sm">
+        <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-gray-50 to-white p-6 shadow-sm">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-gray-100 opacity-20" />
 
           <div className="relative">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-green-500 to-green-600">
                 <User className="h-4 w-4 text-white" />
               </div>
 

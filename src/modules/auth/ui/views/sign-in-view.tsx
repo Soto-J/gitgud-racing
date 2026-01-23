@@ -223,7 +223,7 @@ export default function SignInView() {
             </FieldGroup>
           </form>
 
-          <div className="relative hidden bg-gradient-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] md:block">
+          <div className="relative hidden bg-linear-to-br from-[#000000] via-[#ED1C24] via-60% to-[#FFF200] md:block">
             <Image
               src="/gitgud-logo.png"
               alt="Image"

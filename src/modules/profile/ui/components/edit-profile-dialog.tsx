@@ -102,7 +102,7 @@ export const EditProfileDialog = ({
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
               {/* Personal Information Section */}
-              <div className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4">
+              <div className="rounded-xl border border-blue-100 bg-linear-to-br from-blue-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500">
                     <span className="text-sm font-bold text-white">👤</span>
@@ -164,7 +164,7 @@ export const EditProfileDialog = ({
               </div>
 
               {/* Racing Information Section */}
-              <div className="rounded-xl border border-red-100 bg-gradient-to-br from-red-50 to-white p-4">
+              <div className="rounded-xl border border-red-100 bg-linear-to-br from-red-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500">
                     <span className="text-sm font-bold text-white">🏁</span>
@@ -176,7 +176,7 @@ export const EditProfileDialog = ({
               </div>
 
               {/* Contact Information Section */}
-              <div className="rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4">
+              <div className="rounded-xl border border-purple-100 bg-linear-to-br from-purple-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500">
                     <span className="text-sm font-bold text-white">💬</span>
@@ -212,7 +212,7 @@ export const EditProfileDialog = ({
               </div>
 
               {/* Bio Section */}
-              <div className="rounded-xl border border-green-100 bg-gradient-to-br from-green-50 to-white p-4">
+              <div className="rounded-xl border border-green-100 bg-linear-to-br from-green-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500">
                     <span className="text-sm font-bold text-white">📝</span>
@@ -261,7 +261,7 @@ export const EditProfileDialog = ({
               type="submit"
               size="lg"
               disabled={editProfile.isPending}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:from-blue-700 hover:to-blue-800"
+              className="bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:from-blue-700 hover:to-blue-800"
             >
               {editProfile.isPending ? "Updating..." : "Update Profile"}
             </Button>

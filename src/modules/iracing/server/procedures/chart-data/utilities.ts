@@ -1,22 +1,9 @@
-/**
- * @fileoverview Utilities for processing and transforming iRacing user chart data
- *
- * This module provides utilities for:
- * - Checking data freshness based on iRacing's weekly reset schedule
- * - Transforming chart data for frontend consumption
- * - Processing raw API data for database insertion
- */
-
 import { DateTime } from "luxon";
 
 import { categoryMap, chartTypeMap } from "@/modules/iracing/constants";
 
 import { UserChartDataTable } from "@/db/schemas/type";
-
-import {
-  ChartData,
-  UserChartDataResponse,
-} from "@/modules/iracing/server/procedures/user-chart-data/schema";
+import { ChartData, UserChartDataResponse } from "./types";
 
 /**
  * Determines if chart data is fresh based on iRacing's weekly reset schedule
