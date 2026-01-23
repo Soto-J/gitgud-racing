@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 import type { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
 import type { ProfileGetOne } from "@/modules/profile/types";
 import type { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
@@ -6,6 +8,7 @@ import PersonalInfoTab from "./personal-info-tab/contact-info";
 import IracingInfoTab from "./iracing-info-tab";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Flag, User } from "lucide-react";
 
 interface ProfileProps {
   chartDataPoints: UserChartData;
@@ -20,16 +23,48 @@ export default function Profile({
 }: ProfileProps) {
   return (
     <Tabs defaultValue="iRacing">
-      <TabsList className="mb-6 grid w-full grid-cols-2 gap-x-2 rounded-lg border border-white/20 bg-black/80 p-0 backdrop-blur-sm sm:p-2 md:h-16">
+      <TabsList className="border-border bg-muted/30 mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16 dark:sm:p-2">
         <TabsTrigger
           value="iRacing"
-          className="text-accent text-lg transition-all duration-200 hover:bg-white/10 data-[state=active]:bg-red-600 data-[state=active]:text-white"
+          className={cn(
+            "hover:bg-muted/70 text-lg font-semibold transition-all duration-200",
+            "dark:data-[state=active]:bg-primary dark:text-secondary dark:data-[state=active]:text-foreground",
+          )}
         >
           iRacing Information
         </TabsTrigger>
         <TabsTrigger
           value="contact"
-          className="text-accent text-lg transition-all duration-200 hover:bg-white/10 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+          className={cn(
+            "hover:bg-muted/70 text-lg font-semibold transition-all duration-200",
+            "dark:data-[state=active]:bg-secondary dark:data-[state=active]:text-secondary-foreground dark:text-primary",
+          )}
+        >
+          Personal Information
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsList className="border-border bg-muted/30 mb-6 grid w-full grid-cols-2 gap-2 rounded-xl border backdrop-blur-sm md:h-16 dark:p-1">
+        <TabsTrigger
+          value="iRacing"
+          className={
+            cn()
+            // "rounded-lg text-base font-semibold transition-all duration-200 md:text-lg",
+            // "hover:bg-background/60",
+            // "dark:data-[state=active]:bg-background dark:data-[state=active]:shadow-sm",
+            // "dark:data-[state=inactive]:text-muted-foreground",
+          }
+        >
+          iRacing Information
+        </TabsTrigger>
+        <TabsTrigger
+          value="contact"
+          className={cn(
+            "rounded-lg text-base font-semibold transition-all duration-200 md:text-lg",
+            "hover:bg-background/60",
+            "dark:data-[state=active]:bg-background dark:data-[state=active]:shadow-sm",
+            "dark:data-[state=inactive]:text-muted-foreground",
+          )}
         >
           Personal Information
         </TabsTrigger>
