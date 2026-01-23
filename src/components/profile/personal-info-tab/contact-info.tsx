@@ -1,14 +1,14 @@
 import { MessageCircle, User, Users } from "lucide-react";
 
-import InfoCard from "@/components/profile/info-card";
+import InfoCard from "@/components/profile/personal-info-tab/info-card";
 import { TabsContent } from "@/components/ui/tabs";
 import { ProfileGetOne } from "@/modules/profile/types";
 
-interface ContactInfoProps {
+interface PersonalInfoTabProps {
   profile: ProfileGetOne;
 }
 
-export default function ContactInfo({ profile }: ContactInfoProps) {
+export default function PersonalInfoTab({ profile }: PersonalInfoTabProps) {
   return (
     <TabsContent value="contact">
       <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">

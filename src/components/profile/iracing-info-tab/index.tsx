@@ -2,8 +2,8 @@ import { UserChartData } from "@/modules/iracing/server/procedures/chart-data/ty
 
 import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
-import DisciplineCard from "@/components/profile/discipline-card";
-import { RatingsChart } from "@/components/profile/ratings-chart";
+import DisciplineCard from "./discipline-card";
+import RatingsChart from "./ratings-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -12,7 +12,7 @@ interface IracingInfoProps {
   chartDataPoints: UserChartData;
 }
 
-export default function IracingInfo({
+export default function IracingInfoTab({
   iracingPayload,
   chartDataPoints,
 }: IracingInfoProps) {
