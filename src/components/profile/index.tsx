@@ -1,12 +1,11 @@
 import type { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
-
 import type { ProfileGetOne } from "@/modules/profile/types";
+import type { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
-import IracingInfo from "@/components/profile/iracing-info";
-import ContactInfo from "./contact-info";
+import PersonalInfoTab from "./personal-info-tab/contact-info";
+import IracingInfoTab from "./iracing-info-tab";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
 interface ProfileProps {
   chartDataPoints: UserChartData;
@@ -36,9 +35,12 @@ export default function Profile({
         </TabsTrigger>
       </TabsList>
 
-      <IracingInfo iracingPayload={iracingPayload} chartDataPoints={chartDataPoints} />
+      <IracingInfoTab
+        iracingPayload={iracingPayload}
+        chartDataPoints={chartDataPoints}
+      />
 
-      <ContactInfo profile={profile} />
+      <PersonalInfoTab profile={profile} />
     </Tabs>
   );
 }

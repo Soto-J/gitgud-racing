@@ -41,7 +41,11 @@ interface RatingsChartProps {
   chartType: string;
 }
 
-export const RatingsChart = ({ data, title, chartType }: RatingsChartProps) => {
+export default function RatingsChart({
+  data,
+  title,
+  chartType,
+}: RatingsChartProps) {
   if (data.length === 0) {
     return <div>No chart data available</div>;
   }
@@ -218,4 +222,4 @@ export const RatingsChart = ({ data, title, chartType }: RatingsChartProps) => {
       </div>
     </div>
   );
-};
+}

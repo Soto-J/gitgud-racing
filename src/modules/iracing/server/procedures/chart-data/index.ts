@@ -4,6 +4,8 @@ import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
+
+import type { UserChartDataResponse } from "./types";
 import {
   UserChartDataInputSchema,
   UserChartDataResponseSchema,
@@ -12,7 +14,6 @@ import {
 import { fetchIracingData } from "@/modules/iracing/server/api";
 
 import { categoryMap, CHART_TYPE_IRATING } from "@/modules/iracing/constants";
-import { UserChartDataResponse } from "./types";
 
 export const chartDataProcedure = iracingProcedure
   .input(UserChartDataInputSchema)
