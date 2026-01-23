@@ -35,7 +35,7 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
       <Profile
         profile={profile.data}
         iracingPayload={iracingPayload.data}
-        chart={chart.data}
+        chartDataPoints={chart.data}
       />
     </>
   );
