@@ -9,6 +9,7 @@ import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 import SchedulePageView from "@/modules/schedule/ui/views/schedule-page-view";
 import { HydrateClient, prefetch } from "@/components/hydration-client";
+import UnderConstruction from "@/components/under-construction";
 
 export default async function SchedulePage() {
   const session = await getCurrentSession();
@@ -32,6 +33,10 @@ export default async function SchedulePage() {
     <HydrateClient>
       <Suspense fallback={<p>Loading..</p>}>
         <ErrorBoundary fallback={<p>Error..</p>}>
+          <UnderConstruction
+            title="Schedule view"
+            message="Working on an amazing page for you!"
+          />
           {/* <SchedulePageView seasonInfo={seasonInfo} isAdmin={isAdmin} />; */}
         </ErrorBoundary>
       </Suspense>

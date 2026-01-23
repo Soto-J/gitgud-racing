@@ -5,6 +5,7 @@ import { Montserrat } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next";
 
 import { TRPCReactProvider } from "@/trpc/client";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import { Toaster } from "sonner";
 
@@ -31,13 +32,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${montserrat.className} antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${montserrat.className} bg-muted antialiased`}>
         <NuqsAdapter>
           <TRPCReactProvider>
-            {children}
-
-            <Toaster />
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
           </TRPCReactProvider>
         </NuqsAdapter>
       </body>
