@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQueries } from "@tanstack/react-query";
+import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
 
 import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
 
@@ -28,11 +28,8 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
     ],
   });
 
-  console.log("Data: ", {
-    profile: profile.data,
-    licenses: iracingPayload.data.licenses,
-    // userChartData: chartPayload.data,
-  });
+  const { data } = useQuery(trpc.iracing.getDocumentation.queryOptions());
+  console.log({ data });
   return (
     <>
       <EditProfileDialog
@@ -52,7 +49,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
       <Profile
         profile={profile.data}
         iracingPayload={iracingPayload.data}
-        chartData={{}}
+        chartDataPoints={chart.data}
       />
     </>
   );

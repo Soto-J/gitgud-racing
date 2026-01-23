@@ -53,7 +53,7 @@ export const LicenseSchema = z.object({
   mpr_num_tts: z.number(),
 });
 
-export const UserResponseSchema = z.object({
+export const LicensesResponseSchema = z.object({
   success: z.boolean().optional(),
   cust_ids: z.array(z.number()).optional(),
   members: z.array(

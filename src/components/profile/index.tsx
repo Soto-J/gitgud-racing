@@ -9,16 +9,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
 interface ProfileProps {
-  // iRacingInfo: UserChartData | null;
+  chartDataPoints: UserChartData;
   profile: ProfileGetOne;
   iracingPayload: UserLicenses;
-  chartData: {};
 }
 
 export default function Profile({
   profile,
   iracingPayload,
-  chartData,
+  chartDataPoints,
 }: ProfileProps) {
   return (
     <Tabs defaultValue="iRacing">
@@ -37,7 +36,7 @@ export default function Profile({
         </TabsTrigger>
       </TabsList>
 
-      <IracingInfo iracingPayload={iracingPayload} chartData={{}} />
+      <IracingInfo iracingPayload={iracingPayload} chartDataPoints={chartDataPoints} />
 
       <ContactInfo profile={profile} />
     </Tabs>

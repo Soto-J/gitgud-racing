@@ -12,6 +12,7 @@ import {
 import { fetchIracingData } from "@/modules/iracing/server/api";
 
 import { categoryMap, CHART_TYPE_IRATING } from "@/modules/iracing/constants";
+import { UserChartDataResponse } from "./types";
 
 export const chartDataProcedure = iracingProcedure
   .input(UserChartDataInputSchema)
@@ -34,8 +35,6 @@ export const chartDataProcedure = iracingProcedure
     );
 
     const results = await Promise.allSettled(promiseArr);
-    console.log("Result: ", results);
-
     const failedResults = results.filter((res) => res.status === "rejected");
 
     if (failedResults.length > 0) {
@@ -51,9 +50,22 @@ export const chartDataProcedure = iracingProcedure
 
     const data = UserChartDataResponseSchema.parse(payload);
 
-    return data.map((chart) => ({
-      ...chart,
-      categoryId: chart.category_id,
-      chartType: chart.chart_type,
-    }));
+    return transformData(data);
   });
+
+function transformData(data: UserChartDataResponse) {
+  const CATEGORY_NAME_MAP: Record<number, string> = {
+    1: "oval",
+    2: "road",
+    3: "dirt oval",
+    4: "dirt road",
+    5: "sports car",
+    6: "formula car",
+  };
+
+  return data.map((chart) => ({
+    data: chart.data,
+    categoryName: CATEGORY_NAME_MAP[chart.category_id],
+    chartType: chart.chart_type,
+  }));
+}

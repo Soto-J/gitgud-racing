@@ -1,5 +1,4 @@
 import { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
-import { seedData } from "@/modules/iracing/constants";
 
 import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
@@ -7,28 +6,31 @@ import DisciplineCard from "@/components/profile/discipline-card";
 import { RatingsChart } from "@/components/profile/ratings-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface IracingInfoProps {
   iracingPayload: UserLicenses;
-  // chartData: UserChartData | null;
-  chartData: {};
+  chartDataPoints: UserChartData;
 }
 
 export default function IracingInfo({
   iracingPayload,
-  chartData,
+  chartDataPoints,
 }: IracingInfoProps) {
+  console.log({ chartDataPoints });
   return (
     <TabsContent value="iRacing">
       <div className="space-y-12">
-        <Tabs defaultValue="Oval" className="mx-auto">
+        <Tabs defaultValue="oval" className="mx-auto space-y-6">
           <TabsList className="flex flex-wrap items-center justify-center">
             {iracingPayload.licenses.map((discipline, idx) => (
-              <TabsTrigger key={idx} value={discipline.categoryName}>
+              <TabsTrigger
+                key={idx}
+                value={discipline.categoryName.toLowerCase()}
+              >
                 <DisciplineCard
+                  categoryImageSrc={discipline.categoryImageSrc}
                   categoryName={discipline.categoryName}
-                  iRating={discipline.irating ?? 0}
+                  iRating={discipline?.irating ?? 0}
                   safetyRating={discipline.safetyRating}
                   licenseClass={discipline.licenseClass}
                   licenseColor={discipline.color}
@@ -37,23 +39,11 @@ export default function IracingInfo({
             ))}
           </TabsList>
 
-          {/* {chartData ? (
-            Object.values(chartData).map(
-              ({ discipline, chartData: disciplineChartData }) => (
-                <TabsContent value={discipline} key={discipline}>
-                  <RatingsChart data={disciplineChartData} title={discipline} />
-                </TabsContent>
-              ),
-            )
-          ) : (
-            <Card>
-              <CardContent>
-                <div className="py-8 text-center text-gray-500">
-                  No chart data available for this category
-                </div>
-              </CardContent>
-            </Card>
-          )} */}
+          {chartDataPoints.map(({ data, categoryName }) => (
+            <TabsContent key={categoryName} value={categoryName}>
+              <RatingsChart data={data} title={categoryName} />
+            </TabsContent>
+          ))}
         </Tabs>
       </div>
     </TabsContent>
