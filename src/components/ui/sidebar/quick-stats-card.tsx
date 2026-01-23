@@ -31,7 +31,7 @@ export default function QuickStatsCard() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="border-secondary/20 from-secondary/60 to-secondary/20 mt-6 rounded-xl border bg-gradient-to-br p-4 shadow-sm backdrop-blur-sm">
+    <div className="border-secondary/20 from-secondary/60 to-secondary/20 mt-6 rounded-xl border bg-linear-to-br p-4 shadow-sm backdrop-blur-sm">
       <h4 className="text-foreground mb-1 text-sm font-semibold">
         Quick Stats - {currentYear}
       </h4>

@@ -5,8 +5,7 @@ import { TrendingUp } from "lucide-react";
 import { DateTime } from "luxon";
 
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
-
-import { ChartData } from "@/modules/iracing/server/procedures/chart-data/types/schema";
+import type { ChartData } from "@/modules/iracing/server/procedures/chart-data/types";
 
 import {
   ChartConfig,
@@ -21,11 +20,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-interface RatingsChartProps {
-  data: ChartData[];
-  title: string;
-}
-
 const parseDateTime = (dateValue: string | Date): DateTime => {
   if (typeof dateValue === "string") {
     return DateTime.fromISO(dateValue);
@@ -38,7 +32,16 @@ const parseDateTime = (dateValue: string | Date): DateTime => {
   }
 };
 
-export const RatingsChart = ({ data, title }: RatingsChartProps) => {
+interface RatingsChartProps {
+  data: {
+    when: Date;
+    value: number;
+  }[];
+  title: string;
+  chartType: string;
+}
+
+export const RatingsChart = ({ data, title, chartType }: RatingsChartProps) => {
   if (data.length === 0) {
     return <div>No chart data available</div>;
   }
@@ -53,25 +56,21 @@ export const RatingsChart = ({ data, title }: RatingsChartProps) => {
     "MMM dd, yyyy",
   );
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 shadow-2xl">
-      {/* Subtle racing-themed decorative elements */}
-      <div className="absolute top-0 right-0 h-24 w-24 translate-x-6 -translate-y-6 rounded-full bg-gradient-to-br from-red-600/10 to-red-400/5 opacity-60" />
-      <div className="absolute bottom-0 left-0 h-16 w-16 -translate-x-4 translate-y-4 rounded-full bg-gradient-to-br from-red-500/5 to-red-600/10 opacity-40" />
-
+    <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-linear-to-br from-slate-900 via-slate-800 to-slate-950 shadow-2xl">
       <div className="relative">
-        {/* Compact header with Ferrari accent */}
-        <div className="border-b border-gray-700/50 bg-gradient-to-r from-slate-900/90 to-slate-800/90 p-4">
+        <div className="border-b border-gray-700/50 bg-linear-to-r from-slate-900/90 to-slate-800/90 p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-red-700 shadow-lg">
+            <div className="from-primary to-primary/70 flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br shadow-lg">
               <TrendingUp className="h-5 w-5 text-white" />
             </div>
 
             <div className="flex-1">
               <h3 className="text-lg font-bold text-white">{title}</h3>
+
               <div className="flex items-center gap-4 text-xs text-gray-400">
                 <div className="flex items-center gap-1.5">
-                  <span className="inline-flex h-1.5 w-1.5 rounded-full bg-red-400"></span>
-                  {latestEntry.chartType}
+                  <span className="bg-primary inline-flex h-1.5 w-1.5 rounded-full" />
+                  {chartType}
                 </div>
                 <div>
                   {formattedDate} • {sortedByDate.length} points
@@ -205,7 +204,7 @@ export const RatingsChart = ({ data, title }: RatingsChartProps) => {
           </ChartContainer>
         </div>
 
-        <div className="border-t border-gray-700/50 bg-gradient-to-r from-slate-800/90 to-slate-900/90 px-4 py-3">
+        <div className="border-t border-gray-700/50 bg-linear-to-r from-slate-800/90 to-slate-900/90 px-4 py-3">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 text-gray-400">
               <div className="h-1.5 w-1.5 rounded-full bg-red-400" />

@@ -102,7 +102,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
         </Link>
       </SidebarHeader>
 
-      <Separator className="via-secondary/60 my-4 h-px bg-gradient-to-r from-transparent to-transparent" />
+      <Separator className="via-secondary/60 my-4 h-px bg-linear-to-r from-transparent to-transparent" />
 
       <SidebarContent className="p-4">
         <SidebarGroup>
@@ -142,7 +142,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
         </SidebarGroup>
 
         <Activity mode={role === "guest" ? "hidden" : "visible"}>
-          <Separator className="via-secondary/60 my-4 h-px bg-gradient-to-r from-transparent to-transparent" />
+          <Separator className="via-secondary/60 my-4 h-px bg-linear-to-r from-transparent to-transparent" />
 
           <SidebarGroup>
             <div className="mb-3">

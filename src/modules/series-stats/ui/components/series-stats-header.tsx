@@ -31,7 +31,7 @@ export default function SeriesStatsHeader() {
 
   return (
     <>
-      <div className="relative mb-8 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 px-8 py-12 text-white shadow-2xl">
+      <div className="relative mb-8 overflow-hidden rounded-2xl bg-linear-to-r from-blue-600 via-blue-700 to-blue-800 px-8 py-12 text-white shadow-2xl">
         <div className="absolute inset-0 bg-[url('/iRacing-Brandmarks/iRacing-Icon-BW-White.svg')] bg-[length:250px] bg-center bg-no-repeat opacity-10" />
 
         <div className="relative z-10 text-center">
@@ -49,7 +49,7 @@ export default function SeriesStatsHeader() {
           </p>
         </div>
 
-        <div className="absolute right-0 bottom-0 left-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+        <div className="absolute right-0 bottom-0 left-0 h-px bg-linear-to-r from-transparent via-white/20 to-transparent"></div>
       </div>
 
       <div className="flex flex-col gap-6 pt-8 lg:flex-row lg:items-center lg:justify-between">

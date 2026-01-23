@@ -99,9 +99,9 @@ export const LeagueScheduleContent = ({
       <ConfirmationDialog />
 
       <TabsContent value="gitGud">
-        <Card className="overflow-hidden border-0 bg-gradient-to-br from-blue-900 via-gray-800 to-blue-900 pt-0 opacity-90">
+        <Card className="overflow-hidden border-0 bg-linear-to-br from-blue-900 via-gray-800 to-blue-900 pt-0 opacity-90">
           <CardHeader className="relative overflow-hidden py-4 text-center">
-            <div className="absolute -inset-10 bg-gradient-to-r from-blue-500/20 to-red-500/20" />
+            <div className="absolute -inset-10 bg-linear-to-r from-blue-500/20 to-red-500/20" />
 
             <CardTitle className="z-10 text-4xl font-bold text-red-500">
               SEASON 1

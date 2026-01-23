@@ -16,7 +16,6 @@ export default function IracingInfo({
   iracingPayload,
   chartDataPoints,
 }: IracingInfoProps) {
-  console.log({ chartDataPoints });
   return (
     <TabsContent value="iRacing">
       <div className="space-y-12">
@@ -39,9 +38,13 @@ export default function IracingInfo({
             ))}
           </TabsList>
 
-          {chartDataPoints.map(({ data, categoryName }) => (
+          {chartDataPoints.map(({ data, categoryName, chartType }) => (
             <TabsContent key={categoryName} value={categoryName}>
-              <RatingsChart data={data} title={categoryName} />
+              <RatingsChart
+                data={data}
+                title={categoryName}
+                chartType={chartType}
+              />
             </TabsContent>
           ))}
         </Tabs>

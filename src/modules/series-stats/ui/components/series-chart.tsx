@@ -38,12 +38,12 @@ export default function SeriesChart({ data }: SeriesChartProps) {
   const isEmpty = data.series.length === 0;
 
   return (
-    <div className="group rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-gray-50/30 p-3 shadow-xl transition-all duration-300 hover:border-gray-200 hover:shadow-2xl sm:rounded-3xl sm:p-8">
+    <div className="group rounded-2xl border border-gray-100 bg-linear-to-br from-white to-gray-50/30 p-3 shadow-xl transition-all duration-300 hover:border-gray-200 hover:shadow-2xl sm:rounded-3xl sm:p-8">
       <div className="mb-4 flex flex-col items-center gap-2 sm:mb-6 sm:flex-row sm:justify-between sm:gap-3">
         <div className="flex items-center gap-3">
-          <div className="h-1 w-8 rounded-full bg-gradient-to-r from-blue-500 to-green-500" />
+          <div className="h-1 w-8 rounded-full bg-linear-to-r from-blue-500 to-green-500" />
 
-          <h2 className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent sm:text-2xl lg:text-3xl">
+          <h2 className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent sm:text-2xl lg:text-3xl">
             Series Performance
           </h2>
         </div>

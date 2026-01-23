@@ -20,9 +20,9 @@ export default function DisciplineCard({
   categoryImageSrc,
 }: DisciplineCardProps) {
   return (
-    <div className="group cursor-pointer overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 p-4 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:from-slate-700 hover:via-slate-800 hover:to-slate-900 hover:shadow-2xl">
+    <div className="group cursor-pointer overflow-hidden rounded-xl bg-linear-to-br from-slate-800 via-slate-900 to-slate-950 p-4 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:from-slate-700 hover:via-slate-800 hover:to-slate-900 hover:shadow-2xl">
       <div className="mb-4 flex items-center space-x-2.5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-red-600/20 bg-gradient-to-br from-red-600/15 to-red-400/10 backdrop-blur-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-red-600/20 bg-linear-to-br from-red-600/15 to-red-400/10 backdrop-blur-sm">
           <Image
             src={categoryImageSrc}
             alt={`${categoryName} racing category logo`}
@@ -36,7 +36,7 @@ export default function DisciplineCard({
           <h3 className="truncate text-start text-sm font-bold text-white">
             {categoryName}
           </h3>
-          <div className="mt-0.5 h-0.5 w-6 rounded-full bg-gradient-to-r from-red-500 to-red-600" />
+          <div className="mt-0.5 h-0.5 w-6 rounded-full bg-linear-to-r from-red-500 to-red-600" />
         </div>
       </div>
 

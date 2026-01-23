@@ -14,7 +14,7 @@ export default function InfoCard({
   accentColor = "bg-gray-600",
 }: InfoCardProps) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-white to-gray-50 p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 h-12 w-12 translate-x-2 -translate-y-2 rounded-full bg-gray-100 opacity-20 transition-transform duration-500 group-hover:scale-110"></div>
 

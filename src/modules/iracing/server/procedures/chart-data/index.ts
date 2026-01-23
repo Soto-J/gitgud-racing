@@ -63,9 +63,13 @@ function transformData(data: UserChartDataResponse) {
     6: "formula car",
   };
 
+  const CHART_TYPE: Record<number, string> = {
+    1: "iRating",
+  };
+
   return data.map((chart) => ({
     data: chart.data,
     categoryName: CATEGORY_NAME_MAP[chart.category_id],
-    chartType: chart.chart_type,
+    chartType: CHART_TYPE[chart.chart_type],
   }));
 }
