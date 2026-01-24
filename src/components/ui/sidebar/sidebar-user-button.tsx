@@ -43,12 +43,12 @@ export default function SidebarUserButton() {
     });
   };
 
-  if (!session?.user) {
-    return null;
+  if (isPending) {
+    return <div>Loading...</div>;
   }
 
-  if (isPending || !session?.user) {
-    return <div>Loading...</div>;
+  if (!session?.user) {
+    return null;
   }
 
   if (isMobile) {

@@ -12,8 +12,7 @@ export default function ChartFooter({
   return (
     <div
       className={cn(
-        "text-muted-foreground font-mediu border-t border-gray-700/50 px-4 py-3",
-        // "bg-linear-to-r from-slate-800/90 to-slate-900/90",
+        "text-muted-foreground border-t border-gray-700/50 px-4 py-3 font-medium",
       )}
     >
       <div className="flex items-center justify-between text-xs">
