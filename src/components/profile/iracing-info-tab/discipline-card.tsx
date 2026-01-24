@@ -29,7 +29,7 @@ export default function DisciplineCard({
       )}
     >
       <div className="mb-4 flex items-center space-x-2.5">
-        <div className="border-primary/20 from-primary/15 to-orimary/10 flex h-12 w-12 items-center justify-center rounded-lg border bg-linear-to-br backdrop-blur-sm">
+        <div className="border-primary/20 from-primary/15 to-primary/10 flex h-12 w-12 items-center justify-center rounded-lg border bg-linear-to-br backdrop-blur-sm">
           <Image
             src={categoryImageSrc}
             alt={`${categoryName} racing category logo`}
