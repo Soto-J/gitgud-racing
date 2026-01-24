@@ -10,16 +10,16 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { ProfileSchema } from "@/modules/profile/server/procedures/edit/types/schema";
+import { ProfileGetOne } from "@/modules/profile/types";
 
 import ResponsiveDialog from "@/components/responsive-dialog";
+import FieldErrorMessage from "@/components/field-error-message";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import FieldErrorMessage from "@/components/field-error-message";
-import { ProfileGetOne } from "../../types";
 
 interface EditProfileDialogProps {
   onOpenDialog: boolean;
@@ -27,11 +27,11 @@ interface EditProfileDialogProps {
   initialValues: ProfileGetOne;
 }
 
-export const EditProfileDialog = ({
+export default function EditProfileDialog({
   onOpenDialog,
   onCloseDialog,
   initialValues,
-}: EditProfileDialogProps) => {
+}: EditProfileDialogProps) {
   const [firstName, lastName] = initialValues.userName.split(" ");
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
@@ -81,7 +81,6 @@ export const EditProfileDialog = ({
     });
   };
 
-  // Defensive guard: Don't render if user data is missing
   if (!initialValues?.userId) {
     console.warn("EditProfileDialog: Missing user data");
     return null;
@@ -215,7 +214,7 @@ export const EditProfileDialog = ({
               <div className="rounded-xl border border-green-100 bg-linear-to-br from-green-50 to-white p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500">
-                    <span className="text-sm font-bold text-white">📝</span>
+                    <span className="text-sm font-bold text-white" />
                   </div>
                   <h3 className="font-semibold text-gray-900">About You</h3>
                 </div>
@@ -270,4 +269,4 @@ export const EditProfileDialog = ({
       </form>
     </ResponsiveDialog>
   );
-};
+}

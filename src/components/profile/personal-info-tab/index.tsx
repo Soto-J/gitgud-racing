@@ -5,12 +5,16 @@ import { TabsContent } from "@/components/ui/tabs";
 import { ProfileGetOne } from "@/modules/profile/types";
 
 interface PersonalInfoTabProps {
-  profile: ProfileGetOne;
+  tabContenValue: string;
+  profilePayload: ProfileGetOne;
 }
 
-export default function PersonalInfoTab({ profile }: PersonalInfoTabProps) {
+export default function PersonalInfoTab({
+  tabContenValue,
+  profilePayload,
+}: PersonalInfoTabProps) {
   return (
-    <TabsContent value="contact">
+    <TabsContent value={tabContenValue}>
       <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
         <div className="mb-8 flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 shadow-lg">
@@ -32,14 +36,14 @@ export default function PersonalInfoTab({ profile }: PersonalInfoTabProps) {
             <InfoCard
               icon={Users}
               label="Team"
-              value={profile?.team || "N/A"}
+              value={profilePayload?.team || "N/A"}
               accentColor="bg-purple-600"
             />
 
             <InfoCard
               icon={MessageCircle}
               label="Discord"
-              value={profile?.discord || ""}
+              value={profilePayload?.discord || ""}
               accentColor="bg-indigo-600"
             />
           </div>
@@ -57,10 +61,10 @@ export default function PersonalInfoTab({ profile }: PersonalInfoTabProps) {
               </div>
 
               <div className="prose max-w-none">
-                {profile?.bio ? (
+                {profilePayload?.bio ? (
                   <div className="rounded-lg border border-gray-100 bg-white p-4">
                     <p className="leading-relaxed text-gray-700">
-                      {profile.bio}
+                      {profilePayload.bio}
                     </p>
                   </div>
                 ) : (

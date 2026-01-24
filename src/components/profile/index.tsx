@@ -4,78 +4,71 @@ import type { UserChartData } from "@/modules/iracing/server/procedures/chart-da
 import type { ProfileGetOne } from "@/modules/profile/types";
 import type { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
-import PersonalInfoTab from "./personal-info-tab/contact-info";
+import PersonalInfoTab from "./personal-info-tab";
 import IracingInfoTab from "./iracing-info-tab";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Flag, User } from "lucide-react";
 
 interface ProfileProps {
-  chartDataPoints: UserChartData;
-  profile: ProfileGetOne;
+  profilePayload: ProfileGetOne;
   iracingPayload: UserLicenses;
+  chartDataPoints: UserChartData;
 }
 
 export default function Profile({
-  profile,
+  profilePayload,
   iracingPayload,
   chartDataPoints,
 }: ProfileProps) {
+  const iRacingTab = "iRacing";
+  const personalTab = "Personal";
+
+  const baseClassName =
+    "hover:bg-muted/70 rounded text-lg font-semibold transition-all duration-200";
+  const baseDarkMode =
+    "dark:data-[state=active]:border-muted/40 dark:data-[state=active]:border-3";
+
+  const tabTriggers = [
+    {
+      value: iRacingTab,
+      darkMode:
+        "dark:data-[state=active]:bg-primary dark:text-secondary dark:data-[state=active]:text-foreground",
+    },
+    {
+      value: personalTab,
+      darkMode:
+        "dark:data-[state=active]:bg-secondary dark:data-[state=active]:text-secondary-foreground dark:text-primary",
+    },
+  ];
   return (
     <Tabs defaultValue="iRacing">
-      <TabsList className="border-border bg-muted/30 mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16 dark:sm:p-2">
-        <TabsTrigger
-          value="iRacing"
-          className={cn(
-            "hover:bg-muted/70 text-lg font-semibold transition-all duration-200",
-            "dark:data-[state=active]:bg-primary dark:text-secondary dark:data-[state=active]:text-foreground",
-          )}
-        >
-          iRacing Information
-        </TabsTrigger>
-        <TabsTrigger
-          value="contact"
-          className={cn(
-            "hover:bg-muted/70 text-lg font-semibold transition-all duration-200",
-            "dark:data-[state=active]:bg-secondary dark:data-[state=active]:text-secondary-foreground dark:text-primary",
-          )}
-        >
-          Personal Information
-        </TabsTrigger>
-      </TabsList>
-
-      <TabsList className="border-border bg-muted/30 mb-6 grid w-full grid-cols-2 gap-2 rounded-xl border backdrop-blur-sm md:h-16 dark:p-1">
-        <TabsTrigger
-          value="iRacing"
-          className={
-            cn()
-            // "rounded-lg text-base font-semibold transition-all duration-200 md:text-lg",
-            // "hover:bg-background/60",
-            // "dark:data-[state=active]:bg-background dark:data-[state=active]:shadow-sm",
-            // "dark:data-[state=inactive]:text-muted-foreground",
-          }
-        >
-          iRacing Information
-        </TabsTrigger>
-        <TabsTrigger
-          value="contact"
-          className={cn(
-            "rounded-lg text-base font-semibold transition-all duration-200 md:text-lg",
-            "hover:bg-background/60",
-            "dark:data-[state=active]:bg-background dark:data-[state=active]:shadow-sm",
-            "dark:data-[state=inactive]:text-muted-foreground",
-          )}
-        >
-          Personal Information
-        </TabsTrigger>
+      <TabsList
+        className={cn(
+          "border-border bg-muted/70 mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
+          "dark:sm:p-2",
+        )}
+      >
+        {tabTriggers.map((tab) => (
+          <TabsTrigger
+            key={tab.value}
+            value={tab.value}
+            className={cn(tab.darkMode, baseClassName, baseDarkMode)}
+          >
+            {tab.value} Information
+          </TabsTrigger>
+        ))}
       </TabsList>
 
       <IracingInfoTab
+        tabContenValue={iRacingTab}
         iracingPayload={iracingPayload}
         chartDataPoints={chartDataPoints}
       />
 
-      <PersonalInfoTab profile={profile} />
+      <PersonalInfoTab
+        tabContenValue={personalTab}
+        profilePayload={profilePayload}
+      />
     </Tabs>
   );
 }

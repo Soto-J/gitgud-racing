@@ -5,8 +5,7 @@ import { useState } from "react";
 import { useTRPC } from "@/trpc/client";
 import { useQuery, useSuspenseQueries } from "@tanstack/react-query";
 
-import { EditProfileDialog } from "@/modules/profile/ui/components/edit-profile-dialog";
-
+import EditProfileDialog from "@/modules/profile/ui/components/edit-profile-dialog";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
 import Banner from "@/components/banner";
@@ -20,7 +19,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   const [openDialog, setOpenDialog] = useState(false);
 
   const trpc = useTRPC();
-  const [profile, iracingPayload, chart] = useSuspenseQueries({
+  const [profilePayload, iracingPayload, chartPayload] = useSuspenseQueries({
     queries: [
       trpc.profile.getOne.queryOptions({ userId }),
       trpc.iracing.userLicenses.queryOptions({ userId }),
@@ -35,7 +34,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
       <EditProfileDialog
         onOpenDialog={openDialog}
         onCloseDialog={() => setOpenDialog(false)}
-        initialValues={profile.data}
+        initialValues={profilePayload.data}
       />
 
       {/* <Banner
@@ -47,9 +46,9 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
       /> */}
 
       <Profile
-        profile={profile.data}
+        profilePayload={profilePayload.data}
         iracingPayload={iracingPayload.data}
-        chartDataPoints={chart.data}
+        chartDataPoints={chartPayload.data}
       />
     </>
   );
