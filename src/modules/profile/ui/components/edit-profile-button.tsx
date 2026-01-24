@@ -6,7 +6,7 @@ interface EditProfileButtonProps {
   onEdit: () => void;
 }
 
-export const EditProfileButton = ({ onEdit }: EditProfileButtonProps) => {
+export default function EditProfileButton({ onEdit }: EditProfileButtonProps) {
   return (
     <button
       onClick={onEdit}
@@ -17,4 +17,4 @@ export const EditProfileButton = ({ onEdit }: EditProfileButtonProps) => {
       <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
     </button>
   );
-};
+}
