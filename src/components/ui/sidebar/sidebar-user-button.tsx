@@ -46,7 +46,7 @@ export default function SidebarUserButton() {
   if (!session?.user) {
     return null;
   }
-  
+
   if (isPending || !session?.user) {
     return <div>Loading...</div>;
   }
@@ -54,7 +54,7 @@ export default function SidebarUserButton() {
   if (isMobile) {
     return (
       <Drawer>
-        <DrawerTrigger className="border-border/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg border bg-white/5 p-3 hover:bg-white/10">
+        <DrawerTrigger className="border-border/10 bg-foreground/5 hover:bg-foreground/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg border p-3">
           {session.user.image ? (
             <Avatar>
               <AvatarImage src={session.user.image} />
@@ -66,7 +66,7 @@ export default function SidebarUserButton() {
               className="size-8"
             />
           )}
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden text-left">
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden text-left font-medium">
             <p className="w-full truncate text-sm capitalize">
               {session.user.name}
             </p>
@@ -76,7 +76,7 @@ export default function SidebarUserButton() {
         </DrawerTrigger>
 
         <DrawerContent>
-          <DrawerHeader>
+          <DrawerHeader className="font-medium">
             <DrawerTitle className="capitalize">
               {session.user.name}
             </DrawerTitle>
@@ -85,7 +85,7 @@ export default function SidebarUserButton() {
 
           <DrawerFooter>
             <Button variant="outline" onClick={onSignout}>
-              <LogOutIcon className="size-4 text-black" />
+              <LogOutIcon className="text-background size-4" />
               <span>Logout</span>
             </Button>
           </DrawerFooter>
@@ -96,7 +96,7 @@ export default function SidebarUserButton() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="border-border/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg border bg-white/5 p-3 hover:bg-white/10">
+      <DropdownMenuTrigger className="border-border/10 bg-foreground/5 hover:bg-foreground/10 flex w-full items-center justify-between gap-x-2 overflow-hidden rounded-lg border p-3">
         {session.user.image ? (
           <Avatar>
             <AvatarImage src={session.user.image} />
@@ -109,7 +109,7 @@ export default function SidebarUserButton() {
           />
         )}
 
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden text-left">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 overflow-hidden text-left font-medium">
           <p className="w-full truncate text-sm capitalize">
             {session.user.name}
           </p>
@@ -119,7 +119,11 @@ export default function SidebarUserButton() {
         <ChevronDownIcon className="size-4 shrink-0" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" side="right" className="w-72">
+      <DropdownMenuContent
+        align="end"
+        side="right"
+        className="border-border bg-muted w-72 rounded"
+      >
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">
             <span className="truncate font-medium capitalize">

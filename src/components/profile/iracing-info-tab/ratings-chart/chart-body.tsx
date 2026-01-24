@@ -4,7 +4,6 @@ import {
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart";
-import { parseDateTime } from ".";
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -70,16 +69,6 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
               const startDate = dataPoints[0].when;
               const endDate = dataPoints[dataPoints.length - 1].when;
 
-              const formatMonthYear = new Intl.DateTimeFormat("en-US", {
-                month: "short",
-                year: "numeric",
-              });
-
-              const formatMonthDay = new Intl.DateTimeFormat("en-US", {
-                month: "short",
-                day: "2-digit",
-              });
-
               const dataSpan = Math.floor(
                 (Date.UTC(
                   endDate.getUTCFullYear(),
@@ -93,6 +82,16 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
                   )) /
                   MS_PER_DAY,
               );
+
+              const formatMonthYear = new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                year: "numeric",
+              });
+
+              const formatMonthDay = new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "2-digit",
+              });
 
               return dataSpan > 365
                 ? formatMonthYear.format(value)
@@ -108,28 +107,28 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
           <ChartTooltip
             cursor={{ stroke: "#DC143C", strokeWidth: 2 }}
             content={({ active, payload, label }) => {
-              if (active && payload && payload.length) {
-                const date = parseDateTime(String(label));
-
-                const tooltipFormattedDate = date.isValid
-                  ? date.toFormat("MMM dd, yyyy")
-                  : String(label);
-
-                return (
-                  <div className="rounded-lg border border-gray-600 bg-slate-800 p-2.5 shadow-xl backdrop-blur">
-                    <p className="text-xs font-medium text-white">
-                      {tooltipFormattedDate}
-                    </p>
-                    <p className="text-xs text-gray-300">
-                      iRating:{" "}
-                      <span className="font-semibold text-red-400">
-                        {payload[0].value}
-                      </span>
-                    </p>
-                  </div>
-                );
+              if (!active || !payload) {
+                return null;
               }
-              return null;
+
+              const tooltipFormattedDate = new Intl.DateTimeFormat("en-US", {
+                month: "long",
+                year: "numeric",
+              }).format(label);
+
+              return (
+                <div className="space-y-2 rounded-lg border border-gray-600 bg-slate-800 p-2.5 shadow-xl backdrop-blur">
+                  <p className="text-xs font-medium text-white">
+                    {tooltipFormattedDate}
+                  </p>
+                  <p className="text-foreground text-xs font-semibold">
+                    iRating:{" "}
+                    <span className="text-primary font-medium">
+                      {payload[0].value}
+                    </span>
+                  </p>
+                </div>
+              );
             }}
           />
 

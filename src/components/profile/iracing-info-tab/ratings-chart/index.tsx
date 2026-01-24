@@ -1,22 +1,10 @@
 "use client";
 
-import { DateTime } from "luxon";
+import { cn } from "@/lib/utils";
 
 import ChartHeader from "./chart-header";
 import ChartFooter from "./chart-footer";
 import ChartBody from "./chart-body";
-
-export const parseDateTime = (dateValue: string | Date): DateTime => {
-  if (typeof dateValue === "string") {
-    return DateTime.fromISO(dateValue);
-  } else if (dateValue instanceof Date) {
-    return DateTime.fromJSDate(dateValue);
-  } else if (typeof dateValue === "number") {
-    return DateTime.fromMillis(dateValue);
-  } else {
-    throw new Error("Unsupported date value");
-  }
-};
 
 interface RatingsChartProps {
   data: {
@@ -36,26 +24,32 @@ export default function RatingsChart({
     return <div>No chart data available</div>;
   }
 
-  const sortedByDate = [...data].sort(
-    (a, b) =>
-      parseDateTime(a.when).toMillis() - parseDateTime(b.when).toMillis(),
-  );
+  const sortedByDate = [...data].sort((a, b) => +a.when - +b.when);
 
-  const latestEntry = sortedByDate[sortedByDate.length - 1];
-  const formattedDate = parseDateTime(latestEntry.when).toFormat(
-    "MMM dd, yyyy",
-  );
+  const latestEntry = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    year: "numeric",
+  }).format(sortedByDate[sortedByDate.length - 1].when);
+
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-800 bg-linear-to-br from-slate-900 via-slate-800 to-slate-950 shadow-2xl">
+    <div
+      className={cn(
+        "border-border rounded border shadow-2xl",
+        "from-muted via-muted to-muted/40 bg-linear-to-br",
+      )}
+    >
       <ChartHeader
-        date={formattedDate}
+        latestEntry={latestEntry}
         title={title}
         chartType={chartType}
         numberOfPoints={sortedByDate.length}
       />
 
       <ChartBody dataPoints={sortedByDate} />
-      <ChartFooter date={formattedDate} numberOfPoints={sortedByDate.length} />
+      <ChartFooter
+        latestEntry={latestEntry}
+        numberOfPoints={sortedByDate.length}
+      />
     </div>
   );
 }

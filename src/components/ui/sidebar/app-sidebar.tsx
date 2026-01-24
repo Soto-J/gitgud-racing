@@ -107,7 +107,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
       <SidebarContent className="p-4">
         <SidebarGroup>
           <div className="mb-3">
-            <h3 className="text-primary px-2 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="text-primary px-2 text-sm font-bold tracking-wider uppercase">
               Racing Hub
             </h3>
           </div>
@@ -120,11 +120,12 @@ export default function AppSidebar({ session }: AppSidebarProps) {
                     <Link
                       href={href}
                       className={cn(
-                        "text-muted flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                        "flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
+                        "text-muted-foreground",
                       )}
                     >
-                      <Icon size={20} />
-                      <span className="font-medium tracking-tight">
+                      <Icon className="size-6" />
+                      <span className="font-semibold tracking-tight">
                         {label}
                       </span>
                       {pathname === href && (
@@ -146,7 +147,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
 
           <SidebarGroup>
             <div className="mb-3">
-              <h3 className="text-secondary px-2 text-xs font-semibold tracking-wider uppercase">
+              <h3 className="text-secondary px-2 text-sm font-bold tracking-wider uppercase">
                 Driver Zone
               </h3>
             </div>
@@ -159,14 +160,11 @@ export default function AppSidebar({ session }: AppSidebarProps) {
                       <Link
                         href={href}
                         className={cn(
-                          "relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
-                          pathname === href
-                            ? "text-secondary"
-                            : "text-muted hover:text-primary",
+                          "text-muted-foreground relative flex items-center gap-3 rounded-xl px-4 py-3 transition-colors duration-200",
                         )}
                       >
-                        <Icon size={20} />
-                        <span className="font-medium tracking-tight">
+                        <Icon />
+                        <span className="font-semibold tracking-tight">
                           {label}
                         </span>
                         {pathname === href && (
@@ -187,7 +185,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
         <QuickStatsCard />
       </SidebarContent>
 
-      <SidebarFooter className="text-muted">
+      <SidebarFooter className="text-muted-foreground">
         <SidebarUserButton />
       </SidebarFooter>
     </Sidebar>
