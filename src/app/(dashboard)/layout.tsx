@@ -17,7 +17,7 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar session={session} />
 
-      <SidebarInset className="bg-background">
+      <SidebarInset className="from-background via-muted to-muted/20 bg-linear-to-br via-80%">
         <SidebarToggle />
         {children}
       </SidebarInset>
