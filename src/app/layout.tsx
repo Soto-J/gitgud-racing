@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -33,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${montserrat.className} bg-muted antialiased`}>
+      <body className={cn("antialiased", montserrat.className)}>
         <NuqsAdapter>
           <TRPCReactProvider>
             <ThemeProvider

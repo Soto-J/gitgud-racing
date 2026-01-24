@@ -22,7 +22,7 @@ export default function IracingInfoTab({
     <TabsContent value={tabContenValue}>
       <div className="space-y-12">
         <Tabs defaultValue="oval" className="mx-auto space-y-6">
-          <TabsList className="flex flex-wrap items-center justify-center">
+          <TabsList className="bg-transparent flex flex-wrap items-center justify-center gap-4">
             {iracingPayload.licenses.map((discipline, idx) => (
               <TabsTrigger
                 key={idx}
