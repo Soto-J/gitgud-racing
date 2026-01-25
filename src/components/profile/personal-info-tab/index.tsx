@@ -15,19 +15,17 @@ export default function PersonalInfoTab({
 }: PersonalInfoTabProps) {
   return (
     <TabsContent value={tabContenValue}>
-      <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
+      <div className="border-border bg-muted rounded-2xl border p-8 shadow-lg">
         <div className="mb-8 flex items-center gap-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 shadow-lg">
-            <User className="h-6 w-6 text-white" />
+            <User className="h-6 w-6" />
           </div>
 
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="">
+            <h2 className="text-primary- text-2xl font-bold">
               Driver Information
             </h2>
-            <p className="text-gray-600">
-              Contact details and team affiliation
-            </p>
+            <p className="font-medium">Contact details and team affiliation</p>
           </div>
         </div>
 
