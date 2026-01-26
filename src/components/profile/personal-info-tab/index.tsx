@@ -1,82 +1,124 @@
-import { MessageCircle, User, Users } from "lucide-react";
+"use client";
 
-import InfoCard from "@/components/profile/personal-info-tab/info-card";
-import { TabsContent } from "@/components/ui/tabs";
+import { Activity, useState } from "react";
+
+import { Edit2, FileText, MessageCircle, User, Users } from "lucide-react";
+
+import { authClient } from "@/lib/auth/auth-client";
 import { ProfileGetOne } from "@/modules/profile/types";
 
+import ProfileField from "@/components/profile/personal-info-tab/profile-field";
+import EditProfileDialog from "@/modules/profile/ui/components/edit-profile-dialog";
+import { TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 interface PersonalInfoTabProps {
-  tabContenValue: string;
+  tabContentValue: string;
   profilePayload: ProfileGetOne;
 }
 
 export default function PersonalInfoTab({
-  tabContenValue,
+  tabContentValue,
   profilePayload,
 }: PersonalInfoTabProps) {
+  const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const { data } = authClient.useSession();
+
+  const isOwnProfile = profilePayload.userId === data?.user.id;
+
   return (
-    <TabsContent value={tabContenValue}>
-      <div className="border-border bg-muted rounded-2xl border p-8 shadow-lg">
-        <div className="mb-8 flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 shadow-lg">
-            <User className="h-6 w-6" />
-          </div>
+    <>
+      <EditProfileDialog
+        isOpen={dialogIsOpen}
+        onCloseDialog={() => setDialogIsOpen(false)}
+        initialValues={profilePayload}
+      />
 
-          <div className="">
-            <h2 className="text-primary- text-2xl font-bold">
-              Driver {profilePayload.userName}
-            </h2>
-            <p className="font-medium">Contact details and team affiliation</p>
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <InfoCard
-              icon={Users}
-              label="Team"
-              value={profilePayload?.team || "N/A"}
-              accentColor="bg-purple-600"
-            />
-
-            <InfoCard
-              icon={MessageCircle}
-              label="Discord"
-              value={profilePayload?.discord || ""}
-              accentColor="bg-indigo-600"
-            />
-          </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-linear-to-br from-gray-50 to-white p-6 shadow-sm">
-            <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-gray-100 opacity-20" />
-
-            <div className="relative">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-green-500 to-green-600">
-                  <User className="h-4 w-4 text-white" />
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-900">Driver Bio</h3>
+      <TabsContent value={tabContentValue}>
+        <Card className="border-border bg-background/20 rounded-2xl shadow-sm backdrop-blur-lg">
+          <CardHeader className="border-border flex justify-between border-b pb-6">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-600">
+                {/* TODO add avatar */}
+                <User className="h-6 w-6 text-white" />
               </div>
 
-              <div className="prose max-w-none">
-                {profilePayload?.bio ? (
-                  <div className="rounded-lg border border-gray-100 bg-white p-4">
-                    <p className="leading-relaxed text-gray-700">
-                      {profilePayload.bio}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
-                    <p className="text-gray-500 italic">
-                      No bio provided yet. Share your racing story!
-                    </p>
-                  </div>
-                )}
+              <div>
+                <CardTitle className="text-foreground text-2xl font-semibold">
+                  {profilePayload.userName}
+                </CardTitle>
+                <CardDescription className="text-muted-foreground text-sm">
+                  Contact details and team affiliation
+                </CardDescription>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </TabsContent>
+
+            <Activity mode={isOwnProfile ? "visible" : "hidden"}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDialogIsOpen(true)}
+                className="shrink-0"
+              >
+                <Edit2 className="mr-2 h-4 w-4" />
+                Edit
+              </Button>
+            </Activity>
+          </CardHeader>
+
+          <CardContent className="space-y-6 p-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <ProfileField
+                icon={Users}
+                label="Team"
+                value={profilePayload?.team || "No team assigned"}
+                iconBgColor="bg-purple-600"
+              />
+              <ProfileField
+                icon={MessageCircle}
+                label="Discord"
+                value={profilePayload?.discord || "Not connected"}
+                iconBgColor="bg-indigo-600"
+              />
+              <ProfileField
+                icon={MessageCircle}
+                label="Email"
+                value={profilePayload?.discord || "Not connected"}
+                iconBgColor="bg-indigo-600"
+              />
+            </div>
+
+            {/* Bio Section */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <FileText className="text-muted-foreground h-5 w-5" />
+                <h3 className="text-foreground font-semibold">Driver Bio</h3>
+              </div>
+
+              {profilePayload?.bio ? (
+                <div className="bg-muted/30 rounded-lg border p-4">
+                  <p className="text-foreground text-sm leading-relaxed">
+                    {profilePayload.bio}
+                  </p>
+                </div>
+              ) : (
+                <div className="bg-muted/20 rounded-lg border border-dashed p-6 text-center">
+                  <p className="text-muted-foreground text-sm">
+                    No bio provided yet. Share your racing story!
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+    </>
   );
 }
