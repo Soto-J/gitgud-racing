@@ -35,8 +35,9 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
     day: "2-digit",
   });
 
-  const startDate = dataPoints[0].when;
-  const endDate = dataPoints[dataPoints.length - 1].when;
+  const now = new Date();
+  const startDate = dataPoints[0]?.when ?? now;
+  const endDate = dataPoints[dataPoints.length - 1]?.when ?? now;
 
   const dataSpan = Math.floor(
     (Date.UTC(
