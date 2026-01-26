@@ -41,7 +41,7 @@ export default function Profile({
     },
   ];
   return (
-    <Tabs defaultValue="iRacing">
+    <Tabs defaultValue={personalTab}>
       <TabsList
         className={cn(
           "border-border bg-muted/70 mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
