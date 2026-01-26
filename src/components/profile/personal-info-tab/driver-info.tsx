@@ -30,14 +30,14 @@ export const DriverInfo = ({ profile }: DriverInfoProps) => {
             icon={Users}
             label="Team"
             value={profile?.team || "N/A"}
-            accentColor="bg-purple-600"
+            iconBgColor="bg-purple-600"
           />
 
           <InfoCard
             icon={MessageCircle}
             label="Discord"
             value={profile?.discord || ""}
-            accentColor="bg-indigo-600"
+            iconBgColor="bg-indigo-600"
           />
         </div>
 
