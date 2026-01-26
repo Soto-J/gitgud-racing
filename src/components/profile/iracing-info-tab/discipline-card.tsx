@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface DisciplineCardProps {
   categoryName: string;
@@ -24,9 +24,17 @@ export default function DisciplineCard({
     <div
       className={cn(
         "group cursor-pointer overflow-hidden rounded-xl p-4 shadow-lg transition-all duration-300",
-        "from-muted-foreground/10 via-background/10 to-secondary/20 bg-linear-to-bl via-20%",
+        "from-muted-foreground/10 via-background/10 bg-linear-to-br",
         "hover:muted-foreground/20 hover:via-background/80 hover:to-secondary/40 via-40% hover:scale-[1.02] hover:shadow-2xl",
       )}
+      style={
+        {
+          "--tw-gradient-to": licenseColor,
+          "--tw-gradient-via-position": "70%",
+          "--tw-gradient-to-position": "90%",
+          "--tw-gradient-from-position": "80%",
+        } as React.CSSProperties
+      }
     >
       <div className="mb-4 flex items-center space-x-2.5">
         <div className="border-primary/20 from-primary/15 to-primary/10 flex h-12 w-12 items-center justify-center rounded-lg border bg-linear-to-br backdrop-blur-sm">
@@ -49,7 +57,7 @@ export default function DisciplineCard({
 
       <div className="grid grid-cols-3 items-center gap-3">
         <div className="text-center">
-          <div className="mb-1 text-lg font-medium text-white">
+          <div className="text-foreground mb-1 text-lg font-medium">
             {iRating ? iRating.toLocaleString() : "—"}
           </div>
           <div className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
@@ -57,9 +65,8 @@ export default function DisciplineCard({
           </div>
         </div>
 
-        {/* Safety Rating */}
         <div className="text-center">
-          <div className="mb-1 text-lg font-medium text-white">
+          <div className="text-foreground mb-1 text-lg font-medium">
             {safetyRating || "—"}
           </div>
           <div className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">

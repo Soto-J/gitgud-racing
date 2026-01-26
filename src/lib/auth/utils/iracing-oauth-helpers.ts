@@ -26,7 +26,6 @@ export async function refreshIracingAccessToken(
   });
 
   if (!response.ok) {
-    console.log({ response });
     const contentType = response.headers.get("content-type") ?? "";
 
     if (contentType.includes("application/json")) {

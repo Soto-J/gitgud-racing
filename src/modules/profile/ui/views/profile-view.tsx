@@ -28,7 +28,7 @@ export const ProfileView = ({ userId }: ProfileViewProps) => {
   });
 
   const { data } = useQuery(trpc.iracing.getDocumentation.queryOptions());
-  console.log({ data });
+
   return (
     <>
       <EditProfileDialog

@@ -23,7 +23,7 @@ export default function PersonalInfoTab({
 
           <div className="">
             <h2 className="text-primary- text-2xl font-bold">
-              Driver Information
+              Driver {profilePayload.userName}
             </h2>
             <p className="font-medium">Contact details and team affiliation</p>
           </div>
