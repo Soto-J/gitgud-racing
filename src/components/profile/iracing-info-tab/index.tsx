@@ -8,18 +8,18 @@ import RatingsChart from "./ratings-chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface IracingInfoProps {
-  tabContenValue: string;
+  tabContentValue: string;
   iracingPayload: UserLicenses;
   chartDataPoints: UserChartData;
 }
 
 export default function IracingInfoTab({
-  tabContenValue,
+  tabContentValue,
   iracingPayload,
   chartDataPoints,
 }: IracingInfoProps) {
   return (
-    <TabsContent value={tabContenValue}>
+    <TabsContent value={tabContentValue}>
       <div className="space-y-12">
         <Tabs defaultValue="oval" className="mx-auto space-y-6">
           <TabsList className="bg-transparent flex flex-wrap items-center justify-center gap-4">

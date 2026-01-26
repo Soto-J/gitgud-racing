@@ -22,23 +22,19 @@ import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 
 interface EditProfileDialogProps {
-  onOpenDialog: boolean;
+  isOpen: boolean;
   onCloseDialog: () => void;
   initialValues: ProfileGetOne;
 }
 
 export default function EditProfileDialog({
-  onOpenDialog,
+  isOpen,
   onCloseDialog,
   initialValues,
 }: EditProfileDialogProps) {
-  const [firstName, lastName] = initialValues.userName.split(" ");
-
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      firstName: firstName,
-      lastName: lastName,
       discord: initialValues.discord ?? "",
       bio: initialValues.bio ?? "",
     },
@@ -70,13 +66,8 @@ export default function EditProfileDialog({
   );
 
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
-    if (!initialValues?.userId) {
-      console.warn("EditProfileDialog: Cannot submit without user ID");
-      return;
-    }
-
     editProfile.mutate({
-      userId: initialValues?.userId,
+      userId: initialValues.userId,
       ...values,
     });
   };
@@ -90,7 +81,7 @@ export default function EditProfileDialog({
     <ResponsiveDialog
       title="Edit Profile"
       description="Update your racing profile information"
-      isOpen={onOpenDialog}
+      isOpen={isOpen}
       onOpenChange={onCloseDialog}
     >
       <form
@@ -100,85 +91,13 @@ export default function EditProfileDialog({
         <FieldGroup>
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
-              {/* Personal Information Section */}
-              <div className="rounded-xl border border-blue-100 bg-linear-to-br from-blue-50 to-white p-4">
-                <div className="mb-4 flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500">
-                    <span className="text-sm font-bold text-white">👤</span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900">
-                    Personal Information
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <Controller
-                    name="firstName"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field>
-                        <FieldLabel
-                          htmlFor={field.name}
-                          className="text-sm font-medium text-gray-700"
-                        >
-                          First Name
-                        </FieldLabel>
-
-                        <Input
-                          {...field}
-                          id={field.name}
-                          placeholder="John"
-                          className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        />
-
-                        <FieldErrorMessage error={fieldState.error} />
-                      </Field>
-                    )}
-                  />
-
-                  <Controller
-                    name="lastName"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field>
-                        <FieldLabel
-                          htmlFor={field.name}
-                          className="text-sm font-medium text-gray-700"
-                        >
-                          Last Name
-                        </FieldLabel>
-
-                        <Input
-                          {...field}
-                          id={field.name}
-                          placeholder="Smith"
-                          className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        />
-
-                        <FieldErrorMessage error={fieldState.error} />
-                      </Field>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Racing Information Section */}
-              <div className="rounded-xl border border-red-100 bg-linear-to-br from-red-50 to-white p-4">
-                <div className="mb-4 flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500">
-                    <span className="text-sm font-bold text-white">🏁</span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900">
-                    Racing Information
-                  </h3>
-                </div>
-              </div>
-
               {/* Contact Information Section */}
-              <div className="rounded-xl border border-purple-100 bg-linear-to-br from-purple-50 to-white p-4">
+              <div className="to-foreground rounded-xl border border-purple-100 bg-linear-to-br from-purple-50 p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500">
-                    <span className="text-sm font-bold text-white">💬</span>
+                    <span className="text-foreground text-sm font-bold">
+                      💬
+                    </span>
                   </div>
                   <h3 className="font-semibold text-gray-900">
                     Contact Information
@@ -211,10 +130,10 @@ export default function EditProfileDialog({
               </div>
 
               {/* Bio Section */}
-              <div className="rounded-xl border border-green-100 bg-linear-to-br from-green-50 to-white p-4">
+              <div className="to-foreground rounded-xl border border-green-100 bg-linear-to-br from-green-50 p-4">
                 <div className="mb-4 flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500">
-                    <span className="text-sm font-bold text-white" />
+                    <span className="text-foreground text-sm font-bold" />
                   </div>
                   <h3 className="font-semibold text-gray-900">About You</h3>
                 </div>
@@ -246,13 +165,13 @@ export default function EditProfileDialog({
             </div>
           </ScrollArea>
 
-          <div className="flex items-center justify-between border-t border-gray-200 bg-white pt-4">
+          <div className="border-muted-foreground flex items-center justify-between border-t pt-4">
             <Button
               type="button"
               variant="outline"
               disabled={editProfile.isPending}
               onClick={onCloseDialog}
-              className="border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="border-muted hover:bg-primary text-gray-700"
             >
               Cancel
             </Button>
@@ -260,7 +179,7 @@ export default function EditProfileDialog({
               type="submit"
               size="lg"
               disabled={editProfile.isPending}
-              className="bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:from-blue-700 hover:to-blue-800"
+              className="text-foreground rounded"
             >
               {editProfile.isPending ? "Updating..." : "Update Profile"}
             </Button>

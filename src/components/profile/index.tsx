@@ -60,13 +60,13 @@ export default function Profile({
       </TabsList>
 
       <IracingInfoTab
-        tabContenValue={iRacingTab}
+        tabContentValue={iRacingTab}
         iracingPayload={iracingPayload}
         chartDataPoints={chartDataPoints}
       />
 
       <PersonalInfoTab
-        tabContenValue={personalTab}
+        tabContentValue={personalTab}
         profilePayload={profilePayload}
       />
     </Tabs>

@@ -2,7 +2,7 @@ import { MessageCircle, User, Users } from "lucide-react";
 
 import type { ProfileTable } from "@/db/schemas/type";
 
-import InfoCard from "./info-card";
+import InfoCard from "./profile-field";
 
 interface DriverInfoProps {
   profile: ProfileTable | null;
