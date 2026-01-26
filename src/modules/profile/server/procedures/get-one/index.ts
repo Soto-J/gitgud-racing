@@ -15,6 +15,7 @@ export const getProfileProcedure = protectedProcedure
       .select({
         ...getTableColumns(profileTable),
         userName: userTable.name,
+        email: userTable.email,
       })
       .from(profileTable)
       .innerJoin(userTable, eq(userTable.id, profileTable.userId))

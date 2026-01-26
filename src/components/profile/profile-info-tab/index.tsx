@@ -2,12 +2,19 @@
 
 import { Activity, useState } from "react";
 
-import { Edit2, FileText, MessageCircle, User, Users } from "lucide-react";
+import {
+  Edit2,
+  FileText,
+  MailIcon,
+  MessageCircle,
+  User,
+  Users,
+} from "lucide-react";
 
 import { authClient } from "@/lib/auth/auth-client";
 import { ProfileGetOne } from "@/modules/profile/types";
 
-import ProfileField from "@/components/profile/personal-info-tab/profile-field";
+import ProfileField from "@/components/profile/profile-info-tab/profile-field";
 import EditProfileDialog from "@/modules/profile/ui/components/edit-profile-dialog";
 import { TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -19,15 +26,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface PersonalInfoTabProps {
-  tabContentValue: string;
+interface ProfileInfoTabProps {
+  tabKey: string;
   profilePayload: ProfileGetOne;
 }
 
-export default function PersonalInfoTab({
-  tabContentValue,
+export default function ProfileInfoTab({
+  tabKey,
   profilePayload,
-}: PersonalInfoTabProps) {
+}: ProfileInfoTabProps) {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
   const { data } = authClient.useSession();
 
@@ -41,7 +48,7 @@ export default function PersonalInfoTab({
         initialValues={profilePayload}
       />
 
-      <TabsContent value={tabContentValue}>
+      <TabsContent value={tabKey}>
         <Card className="border-border bg-background/20 rounded-2xl shadow-sm backdrop-blur-lg">
           <CardHeader className="border-border flex justify-between border-b pb-6">
             <div className="flex items-center gap-4">
@@ -76,6 +83,12 @@ export default function PersonalInfoTab({
           <CardContent className="space-y-6 p-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ProfileField
+                icon={MailIcon}
+                label="Email"
+                value={profilePayload?.email || "No email provided"}
+                iconBgColor="bg-indigo-600"
+              />
+              <ProfileField
                 icon={Users}
                 label="Team"
                 value={profilePayload?.team || "No team assigned"}
@@ -84,13 +97,7 @@ export default function PersonalInfoTab({
               <ProfileField
                 icon={MessageCircle}
                 label="Discord"
-                value={profilePayload?.discord || "Not connected"}
-                iconBgColor="bg-indigo-600"
-              />
-              <ProfileField
-                icon={MessageCircle}
-                label="Email"
-                value={profilePayload?.discord || "Not connected"}
+                value={profilePayload?.discord || "No discord provided"}
                 iconBgColor="bg-indigo-600"
               />
             </div>

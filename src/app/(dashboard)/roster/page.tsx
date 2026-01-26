@@ -5,10 +5,9 @@ import { ErrorBoundary } from "react-error-boundary";
 import { SearchParams } from "nuqs";
 
 import { trpc } from "@/trpc/server";
+import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
-
-import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
 
@@ -29,7 +28,6 @@ export default async function RosterPage({ searchParams }: RosterPageProps) {
   if (!session) redirect("/");
 
   const filters = await loadSearchParams(searchParams);
-
   prefetch(trpc.roster.getMany.queryOptions({ ...filters }));
 
   return (

@@ -1,75 +1,41 @@
+import { Activity } from "react";
 import { useRouter } from "next/navigation";
 
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { RosterGetMany } from "@/modules/roster/server/procedures/get-many/schema";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+
 import { Crown } from "lucide-react";
+import type { RosterGetMany } from "@/modules/roster/server/procedures/get-many/types";
 
-const StatusBadge = ({
-  isActive,
-  banned,
-}: {
-  isActive: boolean;
-  banned?: boolean | null;
-}) => {
-  if (banned) {
-    return (
-      <span className="bg-destructive/10 text-destructive inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
-        Banned
-      </span>
-    );
-  }
-
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-        isActive
-          ? "border border-green-400/20 bg-green-500/10 text-green-400"
-          : "border border-red-400/20 bg-red-500/10 text-red-400",
-      )}
-    >
-      {isActive ? "Active" : "Inactive"}
-    </span>
-  );
-};
-
-const getInitials = (name: string): string => {
-  return name
-    .split(" ")
-    .map((part) => part.charAt(0))
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-};
+import { TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface RosterTableBodyProps {
-  members: RosterGetMany["users"];
+  roster: RosterGetMany["users"];
   loggedInUserId: string;
 }
 
 export default function RosterTableBody({
-  members,
+  roster,
   loggedInUserId,
 }: RosterTableBodyProps) {
   const router = useRouter();
+
   return (
     <TableBody>
-      {members.length ? (
-        members.map((member, index) => {
+      {roster.length ? (
+        roster.map((member, index) => {
           const isAdmin = member.role === "admin" || member.role === "staff";
 
           return (
             <TableRow
               key={member.id}
               className={`hover:bg-ferrari-dark-red/20 cursor-pointer border-b border-zinc-800 transition-colors duration-150 ${
-                index % 2 === 0 ? "bg-zinc-900" : "bg-black"
+                index % 2 === 0 ? "bg-zinc-900" : "bg-background"
               }`}
               onClick={() =>
                 loggedInUserId === member.id
                   ? router.push(`/profile`)
-                  : router.push(`/members/${member.id}`)
+                  : router.push(`/profile/${member.id}`)
               }
             >
               <TableCell className="border-r border-zinc-800 p-4">
@@ -88,7 +54,9 @@ export default function RosterTableBody({
                       <p className="text-xs text-zinc-400">{member.email}</p>
                     </div>
 
-                    {isAdmin && <Crown className="h-4 w-4 text-yellow-400" />}
+                    <Activity mode={isAdmin ? "visible" : "hidden"}>
+                      <Crown className="text-secondary h-4 w-4" />
+                    </Activity>
                   </div>
                 </div>
               </TableCell>
@@ -104,7 +72,7 @@ export default function RosterTableBody({
                 <span
                   className={cn(
                     "text-sm font-medium capitalize",
-                    isAdmin ? "font-semibold text-yellow-400" : "text-zinc-300",
+                    isAdmin ? "text-secondary font-semibold" : "text-zinc-300",
                   )}
                 >
                   {member.role}
@@ -125,4 +93,42 @@ export default function RosterTableBody({
       )}
     </TableBody>
   );
+}
+
+function StatusBadge({
+  isActive,
+  banned,
+}: {
+  isActive: boolean;
+  banned?: boolean | null;
+}) {
+  if (banned) {
+    return (
+      <span className="bg-destructive/10 text-destructive inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
+        Banned
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        isActive
+          ? "border border-green-400/20 bg-green-500/10 text-green-400"
+          : "text-primary border border-red-400/20 bg-red-500/10",
+      )}
+    >
+      {isActive ? "Active" : "Inactive"}
+    </span>
+  );
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part.charAt(0))
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 }
