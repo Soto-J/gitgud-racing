@@ -11,11 +11,7 @@ import DataPagination from "@/components/data-pagination";
 
 import { RosterTable } from "@/modules/roster/ui/components/roster-table";
 
-interface RosterViewProps {
-  loggedInUserId: string;
-}
-
-export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
+export const RosterView = () => {
   const [filters, setFilters] = useRosterFilters();
 
   const trpc = useTRPC();
@@ -25,7 +21,7 @@ export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
 
   return (
     <>
-      <RosterTable roster={data.users} loggedInUserId={loggedInUserId} />
+      <RosterTable roster={data.users} />
 
       <DataPagination
         page={filters.page}
@@ -33,8 +29,8 @@ export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
         onPageChange={(page) => setFilters({ page })}
       />
 
-      <div className="mt-8 text-center">
-        <p className="text-gray-500">
+      <div className="pt-8 text-center">
+        <p className="text-muted-foreground/70">
           Click any member to view their profile and racing stats
         </p>
       </div>

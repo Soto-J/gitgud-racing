@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { Crown } from "lucide-react";
+import { authClient } from "@/lib/auth/auth-client";
 import type { RosterGetMany } from "@/modules/roster/server/procedures/get-many/types";
 
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -11,14 +12,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface RosterTableBodyProps {
   roster: RosterGetMany["users"];
-  loggedInUserId: string;
 }
 
-export default function RosterTableBody({
-  roster,
-  loggedInUserId,
-}: RosterTableBodyProps) {
+export default function RosterTableBody({ roster }: RosterTableBodyProps) {
   const router = useRouter();
+  const { data: currentSession } = authClient.useSession();
 
   return (
     <TableBody>
@@ -29,29 +27,32 @@ export default function RosterTableBody({
           return (
             <TableRow
               key={member.id}
-              className={`hover:bg-ferrari-dark-red/20 cursor-pointer border-b border-zinc-800 transition-colors duration-150 ${
-                index % 2 === 0 ? "bg-zinc-900" : "bg-background"
-              }`}
+              className={cn(
+                "hover:bg-primary/40 border-border cursor-pointer border-b transition-colors duration-150",
+                index % 2 === 0 ? "bg-muted" : "bg-background",
+              )}
               onClick={() =>
-                loggedInUserId === member.id
+                currentSession?.user.id === member.id
                   ? router.push(`/profile`)
                   : router.push(`/profile/${member.id}`)
               }
             >
-              <TableCell className="border-r border-zinc-800 p-4">
+              <TableCell className="border-border border-r p-4">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8 border border-zinc-700">
-                    <AvatarFallback className="bg-zinc-800 text-xs font-semibold text-yellow-100">
+                  <Avatar className="border-border h-8 w-8 border">
+                    <AvatarFallback className="text-secondary/70 bg-border text-xs font-semibold">
                       {getInitials(member.name)}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex items-center gap-2">
                     <div>
-                      <p className="font-medium text-yellow-100">
+                      <p className="text-secondary/70 font-medium">
                         {member.name}
                       </p>
-                      <p className="text-xs text-zinc-400">{member.email}</p>
+                      <p className="text-muted-foreground text-xs">
+                        {member.email}
+                      </p>
                     </div>
 
                     <Activity mode={isAdmin ? "visible" : "hidden"}>
@@ -61,7 +62,15 @@ export default function RosterTableBody({
                 </div>
               </TableCell>
 
-              <TableCell className="border-r border-zinc-800 p-4 text-center">
+              <TableCell className="border-border border-r p-4 text-center">
+                {member?.team || "Not provided"}
+              </TableCell>
+
+              <TableCell className="border-border border-r p-4 text-center">
+                {member?.discord || "Not provided"}
+              </TableCell>
+
+              <TableCell className="border-border border-r p-4 text-center">
                 <StatusBadge
                   isActive={member.isActive}
                   banned={member.banned}
@@ -72,7 +81,9 @@ export default function RosterTableBody({
                 <span
                   className={cn(
                     "text-sm font-medium capitalize",
-                    isAdmin ? "text-secondary font-semibold" : "text-zinc-300",
+                    isAdmin
+                      ? "text-secondary font-semibold"
+                      : "text-muted-foreground",
                   )}
                 >
                   {member.role}
@@ -84,8 +95,8 @@ export default function RosterTableBody({
       ) : (
         <TableRow>
           <TableCell
-            colSpan={3}
-            className="h-24 text-center font-medium text-zinc-500"
+            colSpan={5}
+            className="text-muted-foreground/70 h-24 text-center font-medium"
           >
             No members found.
           </TableCell>

@@ -24,8 +24,8 @@ interface RosterPageProps {
 }
 
 export default async function RosterPage({ searchParams }: RosterPageProps) {
-  const session = await getCurrentSession();
-  if (!session) redirect("/");
+  // const session = await getCurrentSession();
+  // if (!session) redirect("/");
 
   const filters = await loadSearchParams(searchParams);
   prefetch(trpc.roster.getMany.queryOptions({ ...filters }));
@@ -35,7 +35,7 @@ export default async function RosterPage({ searchParams }: RosterPageProps) {
       <Suspense fallback={<LoadingRosterView />}>
         <ErrorBoundary fallback={<ErrorRosterView />}>
           <RosterHeader />
-          <RosterView loggedInUserId={session.user.id} />
+          <RosterView />
         </ErrorBoundary>
       </Suspense>
     </HydrateClient>
