@@ -3,7 +3,7 @@
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { useMembersFilters } from "@/modules/roster/hooks/use-members-filter";
+import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
 
 import ErrorState from "@/components/error-state";
 import LoadingState from "@/components/loading-state";
@@ -16,7 +16,7 @@ interface RosterViewProps {
 }
 
 export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
-  const [filters, setFilters] = useMembersFilters();
+  const [filters, setFilters] = useRosterFilters();
 
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
@@ -25,7 +25,7 @@ export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
 
   return (
     <>
-      <RosterTable members={data.users} loggedInUserId={loggedInUserId} />
+      <RosterTable roster={data.users} loggedInUserId={loggedInUserId} />
 
       <DataPagination
         page={filters.page}

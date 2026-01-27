@@ -4,10 +4,31 @@ import type { UserChartData } from "@/modules/iracing/server/procedures/chart-da
 import type { ProfileGetOne } from "@/modules/profile/types";
 import type { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
 
-import PersonalInfoTab from "./personal-info-tab";
+import ProfileInfoTab from "./profile-info-tab";
 import IracingInfoTab from "./iracing-info-tab";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const iRacingTab = "iRacing";
+const profileTab = "Profile";
+
+const baseClassName =
+  "hover:bg-muted/70 rounded text-lg font-semibold transition-all duration-200";
+const baseDarkMode =
+  "dark:data-[state=active]:border-muted/40 dark:data-[state=active]:border-3";
+
+const tabTriggers = [
+  {
+    value: iRacingTab,
+    darkMode:
+      "dark:data-[state=active]:bg-primary dark:text-secondary dark:data-[state=active]:text-foreground",
+  },
+  {
+    value: profileTab,
+    darkMode:
+      "dark:data-[state=active]:bg-secondary dark:data-[state=active]:text-secondary-foreground dark:text-primary",
+  },
+];
 
 interface ProfileProps {
   profilePayload: ProfileGetOne;
@@ -20,28 +41,8 @@ export default function Profile({
   iracingPayload,
   chartDataPoints,
 }: ProfileProps) {
-  const iRacingTab = "iRacing";
-  const personalTab = "Personal";
-
-  const baseClassName =
-    "hover:bg-muted/70 rounded text-lg font-semibold transition-all duration-200";
-  const baseDarkMode =
-    "dark:data-[state=active]:border-muted/40 dark:data-[state=active]:border-3";
-
-  const tabTriggers = [
-    {
-      value: iRacingTab,
-      darkMode:
-        "dark:data-[state=active]:bg-primary dark:text-secondary dark:data-[state=active]:text-foreground",
-    },
-    {
-      value: personalTab,
-      darkMode:
-        "dark:data-[state=active]:bg-secondary dark:data-[state=active]:text-secondary-foreground dark:text-primary",
-    },
-  ];
   return (
-    <Tabs defaultValue={personalTab}>
+    <Tabs defaultValue={profileTab}>
       <TabsList
         className={cn(
           "border-border bg-muted/70 mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
@@ -60,15 +61,12 @@ export default function Profile({
       </TabsList>
 
       <IracingInfoTab
-        tabContentValue={iRacingTab}
+        tabKey={iRacingTab}
         iracingPayload={iracingPayload}
         chartDataPoints={chartDataPoints}
       />
 
-      <PersonalInfoTab
-        tabContentValue={personalTab}
-        profilePayload={profilePayload}
-      />
+      <ProfileInfoTab tabKey={profileTab} profilePayload={profilePayload} />
     </Tabs>
   );
 }

@@ -8,7 +8,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { DEFAULT_PAGE } from "@/modules/roster/server/procedures/get-many/params";
 
-import { useMembersFilters } from "@/modules/roster/hooks/use-members-filter";
+import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
 
 import RosterSearchFilter from "@/modules/roster/ui/components/roster-search-filter";
 
@@ -18,7 +18,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import Banner from "@/components/banner";
 
 export default function RosterHeader() {
-  const [filters, setFilters] = useMembersFilters();
+  const [filters, setFilters] = useRosterFilters();
 
   const isFilterActive = !!filters.search;
 

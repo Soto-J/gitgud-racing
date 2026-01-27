@@ -1,20 +1,18 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-
 import { useSuspenseQueries } from "@tanstack/react-query";
 
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
-import Banner from "@/components/banner";
 import Profile from "@/components/profile";
 
-interface MemberIdViewProps {
+interface ProfileViewProps {
   userId: string;
 }
-export const MemberIdView = ({ userId }: MemberIdViewProps) => {
-  const trpc = useTRPC();
 
+export const ProfileIdView = ({ userId }: ProfileViewProps) => {
+  const trpc = useTRPC();
   const [profilePayload, iracingPayload, chartPayload] = useSuspenseQueries({
     queries: [
       trpc.profile.getOne.queryOptions({ userId }),
@@ -24,26 +22,17 @@ export const MemberIdView = ({ userId }: MemberIdViewProps) => {
   });
 
   return (
-    <>
-      {/* <Banner
-        section="IRacing Profile"
-        title={userPayload.data.user?.name || ""}
-        subTitle1="Professional Driver"
-        subTitle2={userPayload.data?.profile?.isActive ? "Active" : "Inactive"}
-      /> */}
-
-      <Profile
-        profilePayload={profilePayload.data}
-        iracingPayload={iracingPayload.data}
-        chartDataPoints={chartPayload.data}
-      />
-    </>
+    <Profile
+      profilePayload={profilePayload.data}
+      iracingPayload={iracingPayload.data}
+      chartDataPoints={chartPayload.data}
+    />
   );
 };
 
-export const LoadingMemberIdView = () => (
+export const LoadingProfileView = () => (
   <LoadingState title="Loading" description="This make take a few seconds" />
 );
-export const ErrorMemberIdView = () => (
+export const ErrorProfileView = () => (
   <ErrorState title="Error" description="Something went wrong" />
 );

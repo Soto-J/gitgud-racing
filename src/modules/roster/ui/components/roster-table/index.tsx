@@ -1,8 +1,4 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-
-import { RosterGetMany } from "@/modules/roster/server/procedures/get-many/schema";
+import type { RosterGetMany } from "@/modules/roster/server/procedures/get-many/types";
 
 import RosterTableHeader from "./roster-table-header";
 import RosterTableBody from "./roster-table-body";
@@ -11,19 +7,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table } from "@/components/ui/table";
 
 interface RosterTableProps {
-  members: RosterGetMany["users"];
+  roster: RosterGetMany["users"];
   loggedInUserId: string;
 }
 
-export const RosterTable = ({ members, loggedInUserId }: RosterTableProps) => {
-  const router = useRouter();
-
+export const RosterTable = ({ roster, loggedInUserId }: RosterTableProps) => {
   return (
-    <Card className="border-0 bg-black">
+    <Card className="bg-background border-0">
       <CardContent className="px-0">
-        <Table className="bg-black text-white">
+        <Table className="text-foreground bg-background">
           <RosterTableHeader />
-          <RosterTableBody members={members} loggedInUserId={loggedInUserId} />
+          <RosterTableBody roster={roster} loggedInUserId={loggedInUserId} />
         </Table>
       </CardContent>
     </Card>

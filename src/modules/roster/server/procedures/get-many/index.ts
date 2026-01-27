@@ -5,7 +5,7 @@ import { protectedProcedure } from "@/trpc/init";
 
 import { profileTable, user } from "@/db/schemas";
 
-import { RosterGetManyInputSchema } from "./schema";
+import { RosterGetManyInputSchema } from "./types/schema";
 
 /**
  * Fetches multiple members with pagination and search functionality

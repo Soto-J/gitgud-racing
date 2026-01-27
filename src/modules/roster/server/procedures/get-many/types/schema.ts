@@ -1,14 +1,11 @@
 import { z } from "zod";
 
-import type { inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@/trpc/routers/_app";
-
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
-} from "./params";
+} from "../params";
 
 export const RosterGetManyInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
@@ -20,5 +17,3 @@ export const RosterGetManyInputSchema = z.object({
 
   search: z.string().nullish(),
 });
-
-export type RosterGetMany = inferRouterOutputs<AppRouter>["roster"]["getMany"];
