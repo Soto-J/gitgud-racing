@@ -8,16 +8,15 @@ import { Table } from "@/components/ui/table";
 
 interface RosterTableProps {
   roster: RosterGetMany["users"];
-  loggedInUserId: string;
 }
 
-export const RosterTable = ({ roster, loggedInUserId }: RosterTableProps) => {
+export const RosterTable = ({ roster }: RosterTableProps) => {
   return (
     <Card className="bg-background border-0">
       <CardContent className="px-0">
         <Table className="text-foreground bg-background">
           <RosterTableHeader />
-          <RosterTableBody roster={roster} loggedInUserId={loggedInUserId} />
+          <RosterTableBody roster={roster} />
         </Table>
       </CardContent>
     </Card>

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 import { Crown } from "lucide-react";
+import { authClient } from "@/lib/auth/auth-client";
 import type { RosterGetMany } from "@/modules/roster/server/procedures/get-many/types";
 
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -11,14 +12,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface RosterTableBodyProps {
   roster: RosterGetMany["users"];
-  loggedInUserId: string;
 }
 
-export default function RosterTableBody({
-  roster,
-  loggedInUserId,
-}: RosterTableBodyProps) {
+export default function RosterTableBody({ roster }: RosterTableBodyProps) {
   const router = useRouter();
+  const { data: currentSession } = authClient.useSession();
 
   return (
     <TableBody>
@@ -33,7 +31,7 @@ export default function RosterTableBody({
                 index % 2 === 0 ? "bg-zinc-900" : "bg-background"
               }`}
               onClick={() =>
-                loggedInUserId === member.id
+                currentSession?.user.id === member.id
                   ? router.push(`/profile`)
                   : router.push(`/profile/${member.id}`)
               }

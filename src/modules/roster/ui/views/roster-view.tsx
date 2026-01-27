@@ -11,11 +11,7 @@ import DataPagination from "@/components/data-pagination";
 
 import { RosterTable } from "@/modules/roster/ui/components/roster-table";
 
-interface RosterViewProps {
-  loggedInUserId: string;
-}
-
-export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
+export const RosterView = () => {
   const [filters, setFilters] = useRosterFilters();
 
   const trpc = useTRPC();
@@ -25,7 +21,7 @@ export const RosterView = ({ loggedInUserId }: RosterViewProps) => {
 
   return (
     <>
-      <RosterTable roster={data.users} loggedInUserId={loggedInUserId} />
+      <RosterTable roster={data.users} />
 
       <DataPagination
         page={filters.page}
