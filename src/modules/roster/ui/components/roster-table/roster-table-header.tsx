@@ -6,7 +6,7 @@ export default function RosterTableHeader() {
   return (
     <TableHeader className="h-14">
       <TableRow className="border-muted-foreground">
-        <TableHead className="text-secondary/ pl-6 font-semibold">
+        <TableHead className="text-secondary pl-6 font-semibold">
           Member
         </TableHead>
 

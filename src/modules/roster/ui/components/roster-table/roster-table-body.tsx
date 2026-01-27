@@ -95,7 +95,7 @@ export default function RosterTableBody({ roster }: RosterTableBodyProps) {
       ) : (
         <TableRow>
           <TableCell
-            colSpan={3}
+            colSpan={5}
             className="text-muted-foreground/70 h-24 text-center font-medium"
           >
             No members found.
