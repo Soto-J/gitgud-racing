@@ -3,44 +3,43 @@ import { and, count, desc, eq, getTableColumns, like } from "drizzle-orm";
 import { db } from "@/db";
 import { protectedProcedure } from "@/trpc/init";
 
-import { profileTable, user } from "@/db/schemas";
-
+import { profileTable, user as userTable } from "@/db/schemas";
 import { RosterGetManyInputSchema } from "./types/schema";
 
-/**
- * Fetches multiple members with pagination and search functionality
- * Includes statistics for total members and active members
- */
 export const getManyProcedure = protectedProcedure
   .input(RosterGetManyInputSchema)
   .query(async ({ input }) => {
     const { page, pageSize, search } = input;
 
-    const searchFilter = search ? like(user.name, `%${search}%`) : undefined;
+    const searchFilter = search
+      ? like(userTable.name, `%${search}%`)
+      : undefined;
 
     const [users, [total], [totalActive]] = await Promise.all([
       db
         .select({
-          ...getTableColumns(user),
+          ...getTableColumns(userTable),
           isActive: profileTable.isActive,
+          discord: profileTable.discord,
+          team: profileTable.team,
         })
-        .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .from(userTable)
+        .innerJoin(profileTable, eq(profileTable.userId, userTable.id))
         .where(searchFilter)
-        .orderBy(desc(user.createdAt), desc(user.id))
+        .orderBy(desc(userTable.createdAt), desc(userTable.id))
         .limit(pageSize)
         .offset((page - 1) * pageSize),
 
       db
         .select({ count: count() })
-        .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .from(userTable)
+        .innerJoin(profileTable, eq(profileTable.userId, userTable.id))
         .where(searchFilter),
 
       db
         .select({ count: count() })
-        .from(user)
-        .innerJoin(profileTable, eq(profileTable.userId, user.id))
+        .from(userTable)
+        .innerJoin(profileTable, eq(profileTable.userId, userTable.id))
         .where(and(searchFilter, eq(profileTable.isActive, true))),
     ]);
 

@@ -29,8 +29,8 @@ export const RosterView = () => {
         onPageChange={(page) => setFilters({ page })}
       />
 
-      <div className="mt-8 text-center">
-        <p className="text-gray-500">
+      <div className="pt-8 text-center">
+        <p className="text-muted-foreground/70">
           Click any member to view their profile and racing stats
         </p>
       </div>

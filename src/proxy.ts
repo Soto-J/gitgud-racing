@@ -1,26 +1,25 @@
-import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 import { NextResponse, NextRequest } from "next/server";
 
-export async function proxy(request: NextRequest) {
-  console.log("PROXY HIT:", request.nextUrl.pathname);
-  const session = await getCurrentSession();
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
-  if (request.url === "/profile") {
+const protectedRoutes = ["/profile", "/roster", "/teams", "/manage"];
+
+export async function proxy(request: NextRequest) {
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    request.nextUrl.pathname.startsWith(route),
+  );
+
+  if (isProtectedRoute) {
+    const session = await getCurrentSession();
+
+    if (!session?.user.id) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
-  //   request.
+
   return NextResponse.next();
-  //   return NextResponse.redirect(new URL("/home", request.url));
 }
 
 export const config = {
-  matcher: [
-    "/profile",
-    "/profile/:path*",
-    "/roster",
-    "/teams",
-    "/manage",
-
-    // Exclude API routes, static files, image optimizations, and .png files
-    // "/((?!api|_next/static|_next/image|.*\\.png$).*)",
-  ],
+  matcher: ["/profile", "/profile/:path*", "/roster", "/teams", "/manage"],
 };
