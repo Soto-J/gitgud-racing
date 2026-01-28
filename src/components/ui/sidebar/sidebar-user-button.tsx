@@ -43,8 +43,8 @@ export default function SidebarUserButton() {
     });
   };
 
-  if (isPending) {
-    return <div>Loading...</div>;
+  if (isPending || isMobile === undefined) {
+    return <div className="h-14" />;
   }
 
   if (!session?.user) {

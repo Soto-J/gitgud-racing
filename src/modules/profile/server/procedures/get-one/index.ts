@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
 
 import { db } from "@/db";
-import { profileTable, user as userTable } from "@/db/schemas";
+import { account, profileTable, user as userTable } from "@/db/schemas";
 
 import { ProfileGetOneInputSchema } from "./types/schema";
 
@@ -16,9 +16,11 @@ export const getProfileProcedure = protectedProcedure
         ...getTableColumns(profileTable),
         userName: userTable.name,
         email: userTable.email,
+        custId: account.accountId,
       })
       .from(profileTable)
       .innerJoin(userTable, eq(userTable.id, profileTable.userId))
+      .innerJoin(account, eq(account.userId, profileTable.userId))
       .where(eq(profileTable.userId, input.userId));
 
     if (!profile) {

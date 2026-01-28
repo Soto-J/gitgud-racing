@@ -51,7 +51,7 @@ export default function ResponsiveDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-xl">
+      <DialogContent className="border-border rounded-xl bg-card">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

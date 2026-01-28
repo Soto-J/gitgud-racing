@@ -38,7 +38,7 @@ const StatusBadge = ({
 }) => {
   if (banned) {
     return (
-      <span className="bg-destructive/10 text-destructive inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
+      <span className="bg-destructive/10 text-destructive border-destructive/20 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium">
         Banned
       </span>
     );
@@ -47,10 +47,10 @@ const StatusBadge = ({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
         isActive
-          ? "border border-green-400/20 bg-green-500/10 text-green-400"
-          : "border border-red-400/20 bg-red-500/10 text-red-400",
+          ? "border-secondary/20 bg-secondary/10 text-secondary"
+          : "border-destructive/20 bg-destructive/10 text-destructive",
       )}
     >
       {isActive ? "Active" : "Inactive"}

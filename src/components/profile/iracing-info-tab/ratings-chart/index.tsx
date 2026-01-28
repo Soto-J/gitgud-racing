@@ -32,12 +32,7 @@ export default function RatingsChart({
   }).format(sortedByDate[sortedByDate.length - 1].when);
 
   return (
-    <div
-      className={cn(
-        "border-border rounded border shadow-2xl",
-        "from-muted via-muted to-muted/40 bg-linear-to-br",
-      )}
-    >
+    <div className="border-border bg-card rounded border shadow-2xl">
       <ChartHeader
         latestEntry={latestEntry}
         title={title}

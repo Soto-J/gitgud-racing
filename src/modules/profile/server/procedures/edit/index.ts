@@ -4,16 +4,12 @@ import { protectedProcedure } from "@/trpc/init";
 import { ProfileUpdateSchema } from "./types/schema";
 import { updateUserProfile } from "./utilities";
 
-/**
- * Updates profile information for the authenticated user
- */
 export const editProfileProcedure = protectedProcedure
   .input(ProfileUpdateSchema)
   .mutation(async ({ ctx, input }) => {
     try {
       await updateUserProfile(input.userId, ctx.auth.user.id, {
-        firstName: input.firstName,
-        lastName: input.lastName,
+        email: input.email,
         discord: input.discord,
         bio: input.bio,
       });

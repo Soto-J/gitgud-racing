@@ -10,7 +10,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 import { ProfileSchema } from "@/modules/profile/server/procedures/edit/types/schema";
-import { ProfileGetOne } from "@/modules/profile/types";
+import type { ProfileGetOne } from "@/modules/profile/types";
+
+import { MessageCircle, FileText, Mail } from "lucide-react";
 
 import ResponsiveDialog from "@/components/responsive-dialog";
 import FieldErrorMessage from "@/components/field-error-message";
@@ -35,6 +37,7 @@ export default function EditProfileDialog({
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
+      email: initialValues.email ?? "",
       discord: initialValues.discord ?? "",
       bio: initialValues.bio ?? "",
     },
@@ -91,51 +94,80 @@ export default function EditProfileDialog({
         <FieldGroup>
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
-              {/* Contact Information Section */}
-              <div className="to-foreground rounded-xl border border-purple-100 bg-linear-to-br from-purple-50 p-4">
+              <div className="border-border bg-muted/30 overflow-hidden rounded-xl border p-4">
                 <div className="mb-4 flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500">
-                    <span className="text-foreground text-sm font-bold">
-                      💬
-                    </span>
+                  <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-lg">
+                    <MessageCircle className="text-primary h-4 w-4" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="text-card-foreground font-semibold">
                     Contact Information
                   </h3>
                 </div>
 
-                <Controller
-                  name="discord"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field>
-                      <FieldLabel
-                        htmlFor={field.name}
-                        className="text-sm font-medium text-gray-700"
-                      >
-                        Discord Username
-                      </FieldLabel>
+                <div className="space-y-4">
+                  <Controller
+                    name="email"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel
+                          htmlFor={field.name}
+                          className="text-muted-foreground text-sm font-medium"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Mail className="text-primary h-4 w-4" />
+                            Email Address
+                          </div>
+                        </FieldLabel>
 
-                      <Input
-                        {...field}
-                        id={field.name}
-                        placeholder="username#1234"
-                        className="border-gray-300 focus:border-purple-500 focus:ring-purple-500"
-                      />
+                        <Input
+                          {...field}
+                          id={field.name}
+                          type="email"
+                          placeholder="your@email.com"
+                          className="border-input focus:border-primary focus:ring-primary"
+                        />
 
-                      <FieldErrorMessage error={fieldState.error} />
-                    </Field>
-                  )}
-                />
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
+                    )}
+                  />
+
+                  <Controller
+                    name="discord"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel
+                          htmlFor={field.name}
+                          className="text-muted-foreground text-sm font-medium"
+                        >
+                          Discord Username
+                        </FieldLabel>
+
+                        <Input
+                          {...field}
+                          id={field.name}
+                          placeholder="username#1234"
+                          className="border-input focus:border-primary focus:ring-primary"
+                        />
+
+                        <FieldErrorMessage error={fieldState.error} />
+                      </Field>
+                    )}
+                  />
+                </div>
               </div>
 
               {/* Bio Section */}
-              <div className="to-foreground rounded-xl border border-green-100 bg-linear-to-br from-green-50 p-4">
+              <div className="border-border bg-muted/30 overflow-hidden rounded-xl border p-4">
                 <div className="mb-4 flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500">
-                    <span className="text-foreground text-sm font-bold" />
+                  <div className="bg-secondary/20 flex h-8 w-8 items-center justify-center rounded-lg">
+                    <FileText className="text-secondary h-4 w-4" />
                   </div>
-                  <h3 className="font-semibold text-gray-900">About You</h3>
+                  <h3 className="text-card-foreground font-semibold">
+                    About You
+                  </h3>
                 </div>
 
                 <Controller
@@ -145,7 +177,7 @@ export default function EditProfileDialog({
                     <Field>
                       <FieldLabel
                         htmlFor={field.name}
-                        className="text-sm font-medium text-gray-700"
+                        className="text-muted-foreground text-sm font-medium"
                       >
                         Driver Bio
                       </FieldLabel>
@@ -154,7 +186,7 @@ export default function EditProfileDialog({
                         {...field}
                         id={field.name}
                         placeholder="Tell us about your racing journey, favorite series, achievements..."
-                        className="min-h-[100px] resize-none border-gray-300 focus:border-green-500 focus:ring-green-500"
+                        className="border-input focus:border-secondary focus:ring-secondary min-h-[100px] resize-none"
                       />
 
                       <FieldErrorMessage error={fieldState.error} />
@@ -165,22 +197,16 @@ export default function EditProfileDialog({
             </div>
           </ScrollArea>
 
-          <div className="border-muted-foreground flex items-center justify-between border-t pt-4">
+          <div className="border-border flex items-center justify-between border-t pt-4">
             <Button
               type="button"
               variant="outline"
               disabled={editProfile.isPending}
               onClick={onCloseDialog}
-              className="border-muted hover:bg-primary text-gray-700"
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              size="lg"
-              disabled={editProfile.isPending}
-              className="text-foreground rounded"
-            >
+            <Button type="submit" size="lg" disabled={editProfile.isPending}>
               {editProfile.isPending ? "Updating..." : "Update Profile"}
             </Button>
           </div>
