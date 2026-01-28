@@ -8,7 +8,7 @@ import {
   boolean,
 } from "drizzle-orm/mysql-core";
 
-import { user } from "@/db/schemas/auth";
+import { user as userTable } from "@/db/schemas/auth";
 
 export const profileTable = mysqlTable("profile", {
   id: varchar("id", { length: 21 })
@@ -16,7 +16,7 @@ export const profileTable = mysqlTable("profile", {
     .$default(() => nanoid())
     .notNull(),
   userId: varchar("user_id", { length: 36 })
-    .references(() => user.id, { onDelete: "cascade" })
+    .references(() => userTable.id, { onDelete: "cascade" })
     .unique()
     .notNull(),
 

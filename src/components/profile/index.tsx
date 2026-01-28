@@ -42,10 +42,10 @@ export default function Profile({
   chartDataPoints,
 }: ProfileProps) {
   return (
-    <Tabs defaultValue={profileTab}>
+    <Tabs defaultValue={iRacingTab}>
       <TabsList
         className={cn(
-          "border-border bg-muted/70 mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
+          "border-border bg-card mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
           "dark:sm:p-2",
         )}
       >

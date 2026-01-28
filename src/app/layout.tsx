@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("antialiased", montserrat.className)}>
+      <body className={cn("bg-background antialiased", montserrat.className)}>
         <NuqsAdapter>
           <TRPCReactProvider>
             <ThemeProvider

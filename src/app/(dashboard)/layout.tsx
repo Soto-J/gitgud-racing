@@ -17,8 +17,8 @@ export default async function DashboardLayout({
     <SidebarProvider>
       <AppSidebar session={session} />
 
-      <SidebarInset className="from-background via-muted to-muted/20 bg-linear-to-br via-80%">
-        <SidebarToggle />
+      <SidebarInset className="bg-background">
+        <SidebarToggle isLoggedIn={!!session?.user.id} />
         {children}
       </SidebarInset>
     </SidebarProvider>

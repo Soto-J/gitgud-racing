@@ -101,16 +101,16 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
             tick={{ fontWeight: 500 }}
           />
           <ChartTooltip
-            content={({ active, payload, label: date }) => {
-              if (!active || !payload) {
+            content={({ active, payload, label }) => {
+              if (!active || !payload || !label) {
                 return null;
               }
 
+              const date = toolTipFormatter.format(new Date(label));
+
               return (
                 <div className="border-border space-y-2 rounded-lg border p-2.5 shadow-xl backdrop-blur">
-                  <p className="text-foreground font-bold">
-                    {toolTipFormatter.format(date)}
-                  </p>
+                  <p className="text-foreground font-bold">{date}</p>
 
                   <span className="text-foreground">iRating: </span>
                   <span className="text-primary font-medium">

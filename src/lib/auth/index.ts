@@ -22,6 +22,7 @@ import { IracingUserInfoSchema } from "./types/schemas";
 import { maskIRacingSecret } from "./utils/iracing-oauth-helpers";
 
 export const auth = betterAuth({
+  baseURL: env.NEXT_PUBLIC_APP_URL,
   database: drizzleAdapter(db, {
     provider: "mysql",
     schema: { ...dbSchema },
