@@ -7,19 +7,22 @@ import RosterTableFooter from "./roster-table-footer";
 import { Table } from "@/components/ui/table";
 
 interface RosterTableProps {
-  roster: RosterGetMany["users"];
+  roster: RosterGetMany;
 }
 
-export const RosterTable = ({ roster }: RosterTableProps) => {
+export default function RosterTable({ roster }: RosterTableProps) {
   return (
-    <div className="bg-background border-border overflow-hidden rounded-xl border">
+    <div className="bg-card border-border overflow-hidden rounded-xl border shadow-xl">
       <Table>
         <RosterTableHeader />
-        <RosterTableBody roster={roster} />
-        <RosterTableFooter />
+        <RosterTableBody roster={roster.users} />
+        <RosterTableFooter
+          total={roster.total}
+          totalActive={roster.totalActive}
+        />
       </Table>
     </div>
   );
-};
+}
 
 RosterTable.displayName = "RosterTable";

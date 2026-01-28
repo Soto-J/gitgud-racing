@@ -2,9 +2,9 @@ import { Activity } from "react";
 import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth/auth-client";
 
 import { Crown } from "lucide-react";
-import { authClient } from "@/lib/auth/auth-client";
 import type { RosterGetMany } from "@/modules/roster/server/procedures/get-many/types";
 
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -20,7 +20,7 @@ export default function RosterTableBody({ roster }: RosterTableBodyProps) {
 
   return (
     <TableBody>
-      {roster.length ? (
+      {!!roster.length ? (
         roster.map((member, index) => {
           const isAdmin = member.role === "admin" || member.role === "staff";
 
@@ -29,7 +29,7 @@ export default function RosterTableBody({ roster }: RosterTableBodyProps) {
               key={member.id}
               className={cn(
                 "hover:bg-primary/40 border-border cursor-pointer border-b transition-colors duration-150",
-                index % 2 === 0 ? "bg-muted" : "bg-background",
+                index % 2 === 0 ? "bg-background" : "bg-card",
               )}
               onClick={() =>
                 currentSession?.user.id === member.id
