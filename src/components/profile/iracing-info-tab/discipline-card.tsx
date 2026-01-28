@@ -25,7 +25,7 @@ export default function DisciplineCard({
       className={cn(
         "group cursor-pointer overflow-hidden rounded-xl p-4 shadow-lg transition-all duration-300",
         "from-card via-card/50 bg-linear-to-br",
-        "hover:card/20 hover:via-card/80 hover:to-secondary/40 via-40% hover:scale-[1.02] hover:shadow-2xl",
+        "hover:from-card/20 hover:via-card/80 hover:to-secondary/40 via-40% hover:scale-[1.02] hover:shadow-2xl",
       )}
       style={
         {
