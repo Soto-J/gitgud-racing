@@ -7,6 +7,7 @@ import { authClient } from "@/lib/auth/auth-client";
 
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { ThemeToggleButton } from "@/components/theme-provider/theme-toggle";
 
 interface SidebarToggleProps {
   isLoggedIn: boolean;
@@ -63,10 +64,11 @@ export default function SidebarToggle({ isLoggedIn }: SidebarToggleProps) {
             alt="iracing"
             width={25}
             height={25}
-            className=""
           />
         </Button>
       </Activity>
+
+      <ThemeToggleButton />
     </header>
   );
 }

@@ -100,6 +100,7 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
             tickMargin={8}
             tick={{ fontWeight: 500 }}
           />
+
           <ChartTooltip
             content={({ active, payload, label }) => {
               if (!active || !payload || !label) {
@@ -110,7 +111,7 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
 
               return (
                 <div className="border-border space-y-2 rounded-lg border p-2.5 shadow-xl backdrop-blur">
-                  <p className="text-foreground font-bold">{date}</p>
+                  <p className="text-secondary font-bold">{date}</p>
 
                   <span className="text-foreground">iRating: </span>
                   <span className="text-primary font-medium">
