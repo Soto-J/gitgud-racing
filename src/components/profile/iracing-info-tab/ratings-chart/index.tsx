@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-
 import ChartHeader from "./chart-header";
 import ChartFooter from "./chart-footer";
 import ChartBody from "./chart-body";

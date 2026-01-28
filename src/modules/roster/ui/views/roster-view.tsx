@@ -8,28 +8,27 @@ import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
 import ErrorState from "@/components/error-state";
 import LoadingState from "@/components/loading-state";
 import DataPagination from "@/components/data-pagination";
-
-import { RosterTable } from "@/modules/roster/ui/components/roster-table";
+import RosterTable from "@/modules/roster/ui/components/roster-table";
 
 export const RosterView = () => {
   const [filters, setFilters] = useRosterFilters();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
+  const { data: roster } = useSuspenseQuery(
     trpc.roster.getMany.queryOptions({ ...filters }),
   );
 
   return (
     <>
-      <RosterTable roster={data.users} />
+      <RosterTable roster={roster} />
 
       <DataPagination
         page={filters.page}
-        totalPages={data.totalPages}
+        totalPages={roster.totalPages}
         onPageChange={(page) => setFilters({ page })}
       />
 
-      <div className="pt-8 text-center">
+      <div className="pt-6 text-center">
         <p className="text-muted-foreground/70">
           Click any member to view their profile and racing stats
         </p>

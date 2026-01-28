@@ -20,17 +20,17 @@ export default function DataPagination({
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
-          size="sm"
           disabled={page === 1}
           onClick={() => onPageChange(Math.max(1, page - 1))}
+          className="shadow-lg disabled:shadow-none"
         >
           Previous
         </Button>
         <Button
           variant="outline"
-          size="sm"
           disabled={page === totalPages || totalPages === 0}
           onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+          className="shadow-lg disabled:shadow-none"
         >
           Next
         </Button>
