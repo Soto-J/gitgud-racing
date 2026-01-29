@@ -21,7 +21,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+} from "@/components/ui/field";
+import { FaDiscord } from "react-icons/fa";
 
 interface EditProfileDialogProps {
   isOpen: boolean;
@@ -75,11 +81,6 @@ export default function EditProfileDialog({
     });
   };
 
-  if (!initialValues?.userId) {
-    console.warn("EditProfileDialog: Missing user data");
-    return null;
-  }
-
   return (
     <ResponsiveDialog
       title="Edit Profile"
@@ -94,15 +95,15 @@ export default function EditProfileDialog({
         <FieldGroup>
           <ScrollArea className="h-[450px]">
             <div className="space-y-6 p-4">
-              <div className="border-border bg-muted/30 overflow-hidden rounded-xl border p-4">
-                <div className="mb-4 flex items-center gap-2">
+              <div className="border-border bg-card/30 rounded-xl border p-4 shadow-xs">
+                <FieldLegend className="mb-4 flex items-center gap-2">
                   <div className="bg-primary/20 flex h-8 w-8 items-center justify-center rounded-lg">
                     <MessageCircle className="text-primary h-4 w-4" />
                   </div>
-                  <h3 className="text-card-foreground font-semibold">
+                  <h3 className="text-card-foreground font-medium">
                     Contact Information
                   </h3>
-                </div>
+                </FieldLegend>
 
                 <div className="space-y-4">
                   <Controller
@@ -112,7 +113,7 @@ export default function EditProfileDialog({
                       <Field>
                         <FieldLabel
                           htmlFor={field.name}
-                          className="text-muted-foreground text-sm font-medium"
+                          className="text-muted-foreground"
                         >
                           <div className="flex items-center gap-2">
                             <Mail className="text-primary h-4 w-4" />
@@ -140,8 +141,9 @@ export default function EditProfileDialog({
                       <Field>
                         <FieldLabel
                           htmlFor={field.name}
-                          className="text-muted-foreground text-sm font-medium"
+                          className="text-[#5865F2]"
                         >
+                          <FaDiscord className="h-4 w-4 text-[#5865F2]" />
                           Discord Username
                         </FieldLabel>
 
@@ -160,15 +162,15 @@ export default function EditProfileDialog({
               </div>
 
               {/* Bio Section */}
-              <div className="border-border bg-muted/30 overflow-hidden rounded-xl border p-4">
-                <div className="mb-4 flex items-center gap-2">
+              <div className="border-border bg-card/30 rounded-xl border p-4 shadow-xs">
+                <FieldLegend className="mb-4 flex items-center gap-2">
                   <div className="bg-secondary/20 flex h-8 w-8 items-center justify-center rounded-lg">
                     <FileText className="text-secondary h-4 w-4" />
                   </div>
-                  <h3 className="text-card-foreground font-semibold">
+                  <h3 className="text-card-foreground font-medium">
                     About You
                   </h3>
-                </div>
+                </FieldLegend>
 
                 <Controller
                   name="bio"

@@ -5,7 +5,7 @@ import { useSuspenseQueries } from "@tanstack/react-query";
 
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
-import Profile from "@/components/profile";
+import Profile from "@/modules/profile/ui/components/profile";
 
 interface ProfileViewProps {
   userId: string;

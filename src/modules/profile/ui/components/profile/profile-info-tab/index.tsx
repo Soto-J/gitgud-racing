@@ -8,8 +8,8 @@ import { FaDiscord } from "react-icons/fa";
 import { authClient } from "@/lib/auth/auth-client";
 import { ProfileGetOne } from "@/modules/profile/types";
 
-import ProfileField from "@/components/profile/profile-info-tab/profile-field";
-import EditProfileDialog from "@/modules/profile/ui/components/edit-profile-dialog";
+import ProfileField from "@/modules/profile/ui/components/profile/profile-info-tab/profile-field";
+import EditProfileDialog from "@/modules/profile/ui/components/profile/edit-profile-dialog";
 import GeneratedAvatar from "@/components/generated-avatar";
 import { TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
