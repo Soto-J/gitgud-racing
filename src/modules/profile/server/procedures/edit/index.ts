@@ -5,10 +5,10 @@ import { TRPCError } from "@trpc/server";
 
 import { db } from "@/db";
 import { profileTable, user as userTable } from "@/db/schemas";
-import { ProfileUpdateSchema } from "./types/schema";
+import { ProfileSchema } from "./types/schema";
 
 export const editProfileProcedure = protectedProcedure
-  .input(ProfileUpdateSchema)
+  .input(ProfileSchema)
   .mutation(async ({ ctx, input }) => {
     const userId = ctx.auth.user.id;
 

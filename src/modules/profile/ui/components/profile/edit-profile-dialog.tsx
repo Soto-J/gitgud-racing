@@ -75,10 +75,7 @@ export default function EditProfileDialog({
   );
 
   const onSubmit = (values: z.infer<typeof ProfileSchema>) => {
-    editProfile.mutate({
-      userId: initialValues.userId,
-      ...values,
-    });
+    editProfile.mutate({ ...values });
   };
 
   return (

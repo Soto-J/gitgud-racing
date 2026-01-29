@@ -51,24 +51,26 @@ export default function SidebarToggle({ isLoggedIn }: SidebarToggleProps) {
         aria-label={`${state === "collapsed" ? "Expand" : "Collapse"} sidebar navigation`}
       />
 
-      <Activity mode={isLoggedIn ? "hidden" : "visible"}>
-        <Button
-          onClick={() => onIracingSubmit()}
-          disabled={isPending}
-          variant="outline"
-          type="button"
-          className="relative"
-        >
-          <Image
-            src="/iRacing-Brandmarks/iRacing-Stacked-Color-Blue.svg"
-            alt="iracing"
-            width={25}
-            height={25}
-          />
-        </Button>
-      </Activity>
+      <div className="flex gap-x-4">
+        <Activity mode={isLoggedIn ? "hidden" : "visible"}>
+          <Button
+            onClick={() => onIracingSubmit()}
+            disabled={isPending}
+            variant="outline"
+            type="button"
+            className="relative"
+          >
+            <Image
+              src="/iRacing-Brandmarks/iRacing-Stacked-Color-Blue.svg"
+              alt="iracing"
+              width={25}
+              height={25}
+            />
+          </Button>
+        </Activity>
 
-      <ThemeToggleButton />
+        <ThemeToggleButton />
+      </div>
     </header>
   );
 }
