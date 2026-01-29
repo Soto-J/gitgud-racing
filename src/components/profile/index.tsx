@@ -13,7 +13,7 @@ const iRacingTab = "iRacing";
 const profileTab = "Profile";
 
 const baseClassName =
-  "hover:bg-muted/70 rounded text-lg font-semibold transition-all duration-200";
+  "hover:bg-muted/70 rounded-lg text-lg font-semibold transition-all duration-200";
 const baseDarkMode =
   "dark:data-[state=active]:border-muted/40 dark:data-[state=active]:border-3";
 
@@ -45,7 +45,7 @@ export default function Profile({
     <Tabs defaultValue={iRacingTab}>
       <TabsList
         className={cn(
-          "border-border bg-card mb-6 grid w-full grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
+          "border-border bg-card mx-auto mb-6 grid w-7xl grid-cols-2 gap-x-2 rounded-xl border backdrop-blur-sm md:h-16",
           "dark:sm:p-2",
         )}
       >

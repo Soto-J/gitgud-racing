@@ -83,7 +83,7 @@ export default function ChartBody({ dataPoints }: ChartBodyProps) {
 
           <CartesianGrid
             strokeDasharray="2 4"
-            stroke="var(--chart-4)"
+            stroke="var(--chart-5)"
             vertical={false}
           />
           <XAxis

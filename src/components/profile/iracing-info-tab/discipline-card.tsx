@@ -23,9 +23,9 @@ export default function DisciplineCard({
   return (
     <div
       className={cn(
-        "group cursor-pointer overflow-hidden rounded-xl p-4 shadow-lg transition-all duration-300",
+        "group w-64 cursor-pointer overflow-hidden rounded-xl p-4 shadow-lg transition-all duration-300",
         "from-card via-card/50 bg-linear-to-br",
-        "hover:from-card/20 hover:via-card/80 hover:to-secondary/40 via-40% hover:scale-[1.02] hover:shadow-2xl",
+        "hover:from-card/20 hover:via-card/80 hover:to-secondary/40 hover:scale-[1.02] hover:via-40% hover:shadow-2xl",
       )}
       style={
         {
@@ -37,7 +37,17 @@ export default function DisciplineCard({
       }
     >
       <div className="mb-4 flex items-center space-x-2.5">
-        <div className="border-primary/20 from-primary/15 to-primary/10 flex h-12 w-12 items-center justify-center rounded-lg border bg-linear-to-br backdrop-blur-sm">
+        <div
+          className={cn(
+            "border-border flex h-12 w-12 items-center justify-center rounded-lg border shadow-xs backdrop-blur-sm",
+            "to-primary/10 bg-linear-to-b",
+          )}
+          style={
+            {
+              "--tw-gradient-from": licenseColor,
+            } as React.CSSProperties
+          }
+        >
           <Image
             src={categoryImageSrc}
             alt={`${categoryName} racing category logo`}

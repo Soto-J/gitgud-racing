@@ -97,8 +97,17 @@ export default function AppSidebar({ session }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/" className="flex items-center justify-center">
-          <Image src="/gitgud-logo.png" alt="Git Gud" height={90} width={90} />
+        <Link
+          href="/"
+          className="mx-auto inline-flex overflow-hidden rounded-full"
+        >
+          <Image
+            priority
+            src="/gitgud.png"
+            alt="Git Gud"
+            width={90}
+            height={90}
+          />
         </Link>
       </SidebarHeader>
 
