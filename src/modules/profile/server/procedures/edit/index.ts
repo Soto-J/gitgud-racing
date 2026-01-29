@@ -1,26 +1,47 @@
-import { TRPCError } from "@trpc/server";
-import { protectedProcedure } from "@/trpc/init";
+import { eq } from "drizzle-orm";
 
+import { protectedProcedure } from "@/trpc/init";
+import { TRPCError } from "@trpc/server";
+
+import { db } from "@/db";
+import { profileTable, user as userTable } from "@/db/schemas";
 import { ProfileUpdateSchema } from "./types/schema";
-import { updateUserProfile } from "./utilities";
 
 export const editProfileProcedure = protectedProcedure
   .input(ProfileUpdateSchema)
   .mutation(async ({ ctx, input }) => {
-    try {
-      await updateUserProfile(input.userId, ctx.auth.user.id, {
-        email: input.email,
-        discord: input.discord,
-        bio: input.bio,
-      });
-    } catch (error) {
-      if (error instanceof TRPCError) {
-        throw error;
+    const userId = ctx.auth.user.id;
+
+    return db.transaction(async (tx) => {
+      const [emailResult] = await tx
+        .update(userTable)
+        .set({ email: input.email })
+        .where(eq(userTable.id, userId));
+
+      if (emailResult.affectedRows === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
       }
 
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to update profile",
-      });
-    }
+      const [profileResult] = await tx
+        .update(profileTable)
+        .set({
+          discord: input.discord?.trim() || null,
+          bio: input.bio?.trim() || null,
+        })
+        .where(eq(profileTable.userId, userId));
+
+      if (profileResult.affectedRows === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Profile not found",
+        });
+      }
+
+      return {
+        success: true,
+      };
+    });
   });
