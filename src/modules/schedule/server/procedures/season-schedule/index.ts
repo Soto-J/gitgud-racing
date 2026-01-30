@@ -8,7 +8,7 @@ import { fetchIracingData } from "@/modules/iracing/server/api";
 import {
   SeasonScheduleInputSchema,
   SeasonScheduleResponse,
-} from "@/modules/schedule/server/procedures/season-schedule/schema";
+} from "@/modules/schedule/server/procedures/season-schedule/types/schema";
 
 export const seasonScheduleProcedure = iracingProcedure
   .input(SeasonScheduleInputSchema)

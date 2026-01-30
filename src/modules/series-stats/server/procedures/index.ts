@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "@/trpc/init";
-import { totalSeriesCountProcedure } from "./total-series-count";
 
-export const seriesStatsRouter = createTRPCRouter({
-  totalSeriesCount: totalSeriesCountProcedure,
+import { ResultsSearchSeriesProcedure } from "./results-series";
+
+export const seriesResultsRouter = createTRPCRouter({
+  resultsSearchSeries: ResultsSearchSeriesProcedure,
 });
