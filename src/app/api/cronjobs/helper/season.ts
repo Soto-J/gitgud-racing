@@ -22,8 +22,9 @@ export function getSeasonDates(now = new Date()) {
   if (now < currentSeason.start) {
     currentSeason = {
       season: 4,
-      start: new Date(`${year - 1}-12-15T20:00:00`),
+      start: seasonStart(year - 1, 11, 15),
     };
+
     seasonYear = year - 1;
   } else {
     // Find the most recent season that has started

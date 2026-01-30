@@ -16,22 +16,29 @@ export const ResultsSeriesParamsSchema = z.object({
   season_year: z.number().optional(),
   // Required when using season_year
   season_quarter: z.number().optional(),
-  // ISO-8601 UTC time zero offset: "2022-04-01T15:45Z". Exclusive. May be omitted if start_range_begin is less than 90 days in the past
+
+  // Session start times. ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\"
   start_range_begin: z.string().optional(),
-  // Session finish times. ISO-8601 UTC time zero offset: "2022-04-01T15:45Z"
+  // ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\". Exclusive. May be omitted if start_range_begin is less than 90 days in the past
   start_range_end: z.string().optional(),
-  // ISO-8601 UTC time zero offset: "2022-04-01T15:45Z". Exclusive. May be omitted if finish_range_begin is less than 90 days in the past
+
+  // Session finish times. ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\"
   finish_range_begin: z.string().optional(),
-  // Include only sessions in which this customer participated. Ignored if team_id is supplied
+  // ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\". Exclusive. May be omitted if finish_range_begin is less than 90 days in the past
   finish_range_end: z.string().optional(),
-  // Include only sessions in which this team participated. Takes priority over cust_id if both are supplied
+
+  // Only sessions in which this customer participated. Ignored if team_id is supplied
   cust_id: z.number().optional(),
-  // Include only sessions for series with this ID
+  // Only sessions in which this team participated. Takes priority over cust_id if both are supplied
+  team_id: z.number().optional(),
+  // Only sessions for series with this ID
   series_id: z.number().optional(),
-  // Include only sessions with this race week number
+  // Only sessions with this race week number
   race_week_num: z.number().optional(),
-  // If true, include only sessions earning championship points. Defaults to all
+
+  // If true, include only sessions earning championship points. Defaults to false
   official_only: z.boolean().optional(),
+
   // Types of events to include in the search. Defaults to all. ?event_types=2,3,4,5
   event_types: z.number().optional(),
   // License categories to include in the search. Defaults to all. ?category_ids=1,2,3,4

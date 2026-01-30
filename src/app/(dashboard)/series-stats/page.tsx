@@ -26,13 +26,13 @@ export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
 
   // prefetch(trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }));
   // prefetch(trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }));
-  prefetch(trpc.seriesResults.resultsSearchSeries.queryOptions({}));
+  // prefetch(trpc.seriesResults.resultsSearchSeries.queryOptions({}));
 
   return (
     <HydrateClient>
       <Suspense fallback={<LoadingHomeView />}>
         <ErrorBoundary fallback={<ErrorHomeView />}>
-          <SeriesStatsHeader />
+          {/* <SeriesStatsHeader /> */}
           {/* <SeriesStatsPageView /> */}
           <UnderConstruction
             title="Series Stats view"

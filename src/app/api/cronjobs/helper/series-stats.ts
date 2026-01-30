@@ -7,12 +7,12 @@ import { sql } from "drizzle-orm";
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 import { db } from "@/db";
 import type { ResultsSeriesParams } from "@/modules/series-stats/server/procedures/results-series/types";
-
 import {
   type SeriesResults,
-  SeriesResultsResponse,
+  type SeriesResultsResponse,
   SeriesResultsResponseSchema,
 } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+
 import { getAccessToken } from ".";
 
 export async function cacheCurrentWeekResults(currentSeason: {
@@ -32,12 +32,26 @@ export async function cacheCurrentWeekResults(currentSeason: {
     official_only: true,
   });
 
-  const accessToken = await getAccessToken();
+  let accessToken: string;
 
-  const response = await fetchIracingData(
-    `/data/results/search_series${searchParams}`,
-    accessToken,
-  );
+  try {
+    accessToken = await getAccessToken();
+  } catch (error) {
+    console.error("Failed to acquire access token:", error);
+    return { success: false, error: "Token acquisition failed" };
+  }
+
+  let response;
+
+  try {
+    response = await fetchIracingData(
+      `/data/results/search_series${searchParams}`,
+      accessToken,
+    );
+  } catch (error) {
+    console.error("Failed to fetch iRacing data:", error);
+    return { success: false, error: "API request failed" };
+  }
 
   const seriesResults = SeriesResultsResponseSchema.safeParse(response);
 
