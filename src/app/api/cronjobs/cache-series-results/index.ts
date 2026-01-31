@@ -1,28 +1,52 @@
-import { z } from "zod";
-
-import { fetchIracingData } from "@/modules/iracing/server/api";
-
-import { sql } from "drizzle-orm";
-
-import { seriesWeeklyStatsTable } from "@/db/schemas";
+import type { NextRequest } from "next/server";
 import { db } from "@/db";
-import type { ResultsSeriesParams } from "@/modules/series-stats/server/procedures/results-series/types";
+import { getAccessToken } from "./helpers/auth";
+import { getSeasonDates } from "./helpers/season";
+
+import { sql, eq, gt, and } from "drizzle-orm";
+import { seriesWeeklyStatsTable } from "@/db/schemas";
+import { ResultsSeriesParams } from "@/modules/series-stats/server/procedures/results-series/types";
 import {
-  type SeriesResults,
-  type SeriesResultsResponse,
+  SeriesResults,
+  SeriesResultsResponse,
   SeriesResultsResponseSchema,
 } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+import { fetchIracingData } from "@/modules/iracing/server/api";
+import { z } from "zod";
 
-import { getAccessToken } from ".";
+export { getAccessToken, getSeasonDates };
 
-export async function cacheCurrentWeekResults(currentSeason: {
-  year: number;
-  quarter: number;
-  raceWeek: number;
-}): Promise<{
+const MS_WITHIN_7_DAYS = 7 * 24 * 60 * 60 * 1_000;
+
+export async function cacheCurrentWeekResults(): Promise<{
   success: boolean;
   error?: string;
 }> {
+  const currentSeason = getSeasonDates();
+
+  const weeklyResults = await db
+    .select()
+    .from(seriesWeeklyStatsTable)
+    .where(
+      and(
+        eq(seriesWeeklyStatsTable.seasonYear, currentSeason.year),
+        eq(seriesWeeklyStatsTable.seasonQuarter, currentSeason.quarter),
+        eq(seriesWeeklyStatsTable.raceWeek, currentSeason.raceWeek),
+        gt(
+          seriesWeeklyStatsTable.updatedAt,
+          new Date(Date.now() - MS_WITHIN_7_DAYS),
+        ),
+      ),
+    );
+
+  if (weeklyResults.length > 0) {
+    console.log("[Cronjob] Using cached weekly results.");
+    console.log(
+      `Year ~ ${weeklyResults[0].seasonYear}, Quarter ~ ${weeklyResults[0].seasonQuarter}, Race Week ~ ${weeklyResults[0].raceWeek}`,
+    );
+    return { success: true };
+  }
+
   console.log("Refreshing weekly results.");
   const searchParams = createSearchParams({
     season_year: currentSeason.year,
