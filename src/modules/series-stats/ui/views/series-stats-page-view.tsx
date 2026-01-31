@@ -13,13 +13,13 @@ export const SeriesStatsPageView = () => {
   const [filters, _] = useChartFilter();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
-    trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
-  );
-  
+  // const { data } = useSuspenseQuery(
+  //   trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
+  // );
+
   return (
     <div className="space-y-8 p-6">
-      <SeriesChart data={data} />
+      {/* <SeriesChart data={data} /> */}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
@@ -37,7 +37,7 @@ export const SeriesStatsPageView = () => {
             </h3>
 
             <p className="text-3xl font-bold text-gray-900">
-              {data.totalPages}
+              {/* {data.totalPages} */}
             </p>
             <div className="mt-2 text-xs text-gray-500">Available series</div>
           </div>
@@ -60,14 +60,14 @@ export const SeriesStatsPageView = () => {
             </h3>
 
             <p className="text-3xl font-bold text-gray-900">
-              {data.series.length === 0
+              {/* {data.series.length === 0
                 ? "0.0"
                 : (
                     data.series.reduce(
                       (acc, item) => acc + parseFloat(item.averageEntrants),
                       0,
                     ) / data.series.length
-                  ).toFixed(1)}
+                  ).toFixed(1)} */}
             </p>
             <div className="mt-2 text-xs text-gray-500">Per race session</div>
           </div>
@@ -90,14 +90,14 @@ export const SeriesStatsPageView = () => {
             </h3>
 
             <p className="text-3xl font-bold text-gray-900">
-              {data.series.length === 0
+              {/* {data.series.length === 0
                 ? "0.0"
                 : (
                     data.series.reduce(
                       (acc, item) => acc + parseFloat(item.averageSplits),
                       0,
                     ) / data.series.length
-                  ).toFixed(1)}
+                  ).toFixed(1)} */}
             </p>
 
             <div className="mt-2 text-xs text-gray-500">Per time slot</div>

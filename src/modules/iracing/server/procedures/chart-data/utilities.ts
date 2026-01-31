@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+
 
 import { categoryMap, chartTypeMap } from "@/modules/iracing/constants";
 
@@ -24,21 +24,21 @@ import { ChartData, UserChartDataResponse } from "./types";
  * }
  * ```
  */
-export const chartDataIsFresh = (
-  latestRecord: ChartData | undefined | null,
-): boolean => {
-  // This week's Monday 8 PM UTC
-  let reset = DateTime.now().startOf("week").plus({ hours: 20 });
+// export const chartDataIsFresh = (
+//   latestRecord: ChartData | undefined | null,
+// ): boolean => {
+//   // This week's Monday 8 PM UTC
+//   let reset = DateTime.now().startOf("week").plus({ hours: 20 });
 
-  // If it's before Monday 8 PM, roll back to last week's reset
-  if (DateTime.now() < reset) {
-    reset = reset.minus({ weeks: 1 });
-  }
+//   // If it's before Monday 8 PM, roll back to last week's reset
+//   if (DateTime.now() < reset) {
+//     reset = reset.minus({ weeks: 1 });
+//   }
 
-  return latestRecord?.updatedAt
-    ? DateTime.fromJSDate(latestRecord.updatedAt) > reset
-    : false;
-};
+//   return latestRecord?.updatedAt
+//     ? DateTime.fromJSDate(latestRecord.updatedAt) > reset
+//     : false;
+// };
 
 /**
  * Transforms chart data records into grouped format by racing discipline

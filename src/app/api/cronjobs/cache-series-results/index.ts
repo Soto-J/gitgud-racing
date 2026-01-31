@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { z } from "zod";
+import { success, z } from "zod";
 import { sql, eq, gt, and, desc } from "drizzle-orm";
 
 import { db } from "@/db";
@@ -74,12 +74,17 @@ export async function cacheCurrentWeekResults() {
       `/data/results/search_series${searchParams}`,
       accessToken,
     );
+
+    if (!response.ok) {
+      console.error("[Cronjob] iRacing API error:", response.error);
+      return { success: false, error: `iRacing API error: ${response.error}` };
+    }
   } catch (error) {
     console.error("[Cronjob] Failed to fetch iRacing data:", error);
     return { success: false, error: "API request failed" };
   }
 
-  const chunkPayload = SeriesResultsResponseSchema.safeParse(response);
+  const chunkPayload = SeriesResultsResponseSchema.safeParse(response.data);
 
   if (!chunkPayload.success) {
     console.warn(
@@ -92,7 +97,7 @@ export async function cacheCurrentWeekResults() {
   }
 
   const { base_download_url, chunk_file_names } =
-    chunkPayload.data?.data.chunk_info;
+    chunkPayload.data.data.chunk_info;
 
   if (chunk_file_names.length === 0) {
     return { success: false, error: "[Cronjob] Chunkfiles empty" };
@@ -103,10 +108,9 @@ export async function cacheCurrentWeekResults() {
     const response = await fetch(url);
 
     if (!response.ok) {
-      return {
-        success: false,
-        message: `Failed to fetch chunk: ${response.statusText}`,
-      };
+      throw new Error(
+        `Failed to fetch chunk ${fileName}: ${response.statusText}`,
+      );
     }
 
     return response.json();
@@ -114,9 +118,15 @@ export async function cacheCurrentWeekResults() {
 
   const chunkResults = await Promise.allSettled(chunkPromises);
 
-  const failed = chunkResults.find((r) => r.status === "rejected");
+  const failed = chunkResults.filter(
+    (r) => r.status === "rejected",
+  ) as PromiseRejectedResult[];
 
-  if (failed) {
+  if (failed.length > 0) {
+    console.error(
+      "[Cronjob] Failed chunks:",
+      failed.map((f) => f.reason),
+    );
     return { success: false, error: "Failed to fetch all chunk files" };
   }
 

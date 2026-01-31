@@ -38,10 +38,10 @@ export const weeklySeriesResultsProcedure = iracingProcedure
       .select()
       .from(seriesWeeklyStatsTable)
       .where(searchClause)
-      .orderBy(
-        desc(seriesWeeklyStatsTable.averageEntrants), // Most popular series first
-        desc(seriesWeeklyStatsTable.averageSplits), // Then by split count
-      )
+      // .orderBy(
+      //   desc(seriesWeeklyStatsTable.averageEntrants), // Most popular series first
+      //   desc(seriesWeeklyStatsTable.averageSplits), // Then by split count
+      // )
       .limit(pageSize)
       .offset((page - 1) * pageSize);
 

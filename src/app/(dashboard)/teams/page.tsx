@@ -4,7 +4,7 @@ import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 // import { getCurrentSeasonInfo } from "@/app/api/cronjobs/utilities";
 import UnderConstruction from "@/components/under-construction";
-import { DateTime } from "luxon";
+
 import { HydrateClient } from "@/components/hydration-client";
 
 export default async function TeamsPage() {

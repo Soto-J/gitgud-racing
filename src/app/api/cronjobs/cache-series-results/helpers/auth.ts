@@ -17,6 +17,7 @@ export async function getAccessToken() {
         accessTokenExpiresAt: accountTable.accessTokenExpiresAt,
       })
       .from(accountTable)
+      .for("update")
       .innerJoin(userTable, eq(accountTable.userId, userTable.id))
       .where(
         and(
