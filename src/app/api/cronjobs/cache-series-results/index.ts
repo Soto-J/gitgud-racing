@@ -1,30 +1,30 @@
 import type { NextRequest } from "next/server";
+import { z } from "zod";
+import { sql, eq, gt, and, desc } from "drizzle-orm";
+
 import { db } from "@/db";
+import { seriesWeeklyStatsTable } from "@/db/schemas";
+
 import { getAccessToken } from "./helpers/auth";
 import { getSeasonDates } from "./helpers/season";
-
-import { sql, eq, gt, and } from "drizzle-orm";
-import { seriesWeeklyStatsTable } from "@/db/schemas";
-import { ResultsSeriesParams } from "@/modules/series-stats/server/procedures/results-series/types";
-import {
-  SeriesResults,
-  SeriesResultsResponse,
-  SeriesResultsResponseSchema,
-} from "@/modules/iracing/server/procedures/weekly-series-results/schema";
 import { fetchIracingData } from "@/modules/iracing/server/api";
-import { z } from "zod";
 
-export { getAccessToken, getSeasonDates };
+import type { SeriesResultsParams } from "./types";
+import {
+  type SeriesResults,
+  type SeriesResultsResponse,
+} from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+import {
+  ChunkResponseSchema,
+  SeriesResultsResponseSchema,
+} from "./types/schemas";
 
 const MS_WITHIN_7_DAYS = 7 * 24 * 60 * 60 * 1_000;
 
-export async function cacheCurrentWeekResults(): Promise<{
-  success: boolean;
-  error?: string;
-}> {
+export async function cacheCurrentWeekResults() {
   const currentSeason = getSeasonDates();
 
-  const weeklyResults = await db
+  const [weeklyResults] = await db
     .select()
     .from(seriesWeeklyStatsTable)
     .where(
@@ -37,64 +37,105 @@ export async function cacheCurrentWeekResults(): Promise<{
           new Date(Date.now() - MS_WITHIN_7_DAYS),
         ),
       ),
-    );
+    )
+    .orderBy(desc(seriesWeeklyStatsTable.updatedAt))
+    .limit(1);
 
-  if (weeklyResults.length > 0) {
+  if (weeklyResults) {
     console.log("[Cronjob] Using cached weekly results.");
     console.log(
-      `Year ~ ${weeklyResults[0].seasonYear}, Quarter ~ ${weeklyResults[0].seasonQuarter}, Race Week ~ ${weeklyResults[0].raceWeek}`,
+      `Year ~ ${weeklyResults.seasonYear}, Quarter ~ ${weeklyResults.seasonQuarter}, Race Week ~ ${weeklyResults.raceWeek}`,
     );
     return { success: true };
   }
 
-  console.log("Refreshing weekly results.");
-  const searchParams = createSearchParams({
-    season_year: currentSeason.year,
-    season_quarter: currentSeason.quarter,
-    race_week_num: currentSeason.raceWeek,
-    event_types: 5,
-    official_only: true,
-  });
-
   let accessToken: string;
 
   try {
+    console.log("[Cronjob] Refreshing weekly results.");
     accessToken = await getAccessToken();
   } catch (error) {
-    console.error("Failed to acquire access token:", error);
+    console.error("[Cronjob] Failed to acquire access token:", error);
     return { success: false, error: "Token acquisition failed" };
   }
 
   let response;
 
   try {
+    const searchParams = buildSearchParams({
+      season_year: currentSeason.year,
+      season_quarter: currentSeason.quarter,
+      race_week_num: currentSeason.raceWeek,
+      event_types: 5,
+      official_only: true,
+    });
+
     response = await fetchIracingData(
       `/data/results/search_series${searchParams}`,
       accessToken,
     );
   } catch (error) {
-    console.error("Failed to fetch iRacing data:", error);
+    console.error("[Cronjob] Failed to fetch iRacing data:", error);
     return { success: false, error: "API request failed" };
   }
 
-  const seriesResults = SeriesResultsResponseSchema.safeParse(response);
+  const chunkPayload = SeriesResultsResponseSchema.safeParse(response);
 
-  if (!seriesResults.success) {
+  if (!chunkPayload.success) {
     console.warn(
-      "Schema validation failed:",
-      z.treeifyError(seriesResults.error),
+      "[Cronjob] Schema validation failed:",
+      z.treeifyError(chunkPayload.error),
     );
     console.warn("Raw response:", JSON.stringify(response, null, 2));
 
     return { success: false };
   }
 
-  const sessionsBySeries = groupSessionsBySeries(seriesResults.data);
+  const { base_download_url, chunk_file_names } =
+    chunkPayload.data?.data.chunk_info;
 
-  const statsRecords = Object.values(sessionsBySeries).map((seriesSessions) => {
-    const firstSession = seriesSessions[0];
-    const totalSplits = seriesSessions.length;
-    const totalDrivers = seriesSessions.reduce(
+  if (chunk_file_names.length === 0) {
+    return { success: false, error: "[Cronjob] Chunkfiles empty" };
+  }
+
+  const chunkPromises = chunk_file_names.map(async (fileName) => {
+    const url = base_download_url + fileName;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: `Failed to fetch chunk: ${response.statusText}`,
+      };
+    }
+
+    return response.json();
+  });
+
+  const chunkResults = await Promise.allSettled(chunkPromises);
+
+  const failed = chunkResults.find((r) => r.status === "rejected");
+
+  if (failed) {
+    return { success: false, error: "Failed to fetch all chunk files" };
+  }
+
+  const data = chunkResults
+    .filter((r): r is PromiseFulfilledResult<any> => r.status === "fulfilled")
+    .flatMap((r) => r.value);
+
+  const payload = ChunkResponseSchema.safeParse(data);
+
+  if (!payload.success) {
+    return { success: false, error: `[Cronjob] ${payload.error.message}` };
+  }
+
+  const groupedSeries = groupSessionsBySeries(payload.data);
+
+  const statsRecords = Object.values(groupedSeries).map((series) => {
+    const firstSession = series[0];
+    const totalSplits = series.length;
+    const totalDrivers = series.reduce(
       (total, session) => total + session.num_drivers,
       0,
     );
@@ -111,7 +152,8 @@ export async function cacheCurrentWeekResults(): Promise<{
       seasonQuarter: firstSession.season_quarter,
       raceWeek: firstSession.race_week_num,
 
-      startTime: firstSession.start_time.trim(),
+      officialSession: firstSession.official_session,
+      startTime: new Date(firstSession.start_time),
       totalSplits,
       totalDrivers,
       strengthOfField: firstSession.event_strength_of_field,
@@ -122,10 +164,18 @@ export async function cacheCurrentWeekResults(): Promise<{
     await db
       .insert(seriesWeeklyStatsTable)
       .values(statsRecords)
-      .onDuplicateKeyUpdate({ set: { id: sql`id` } });
+      .onDuplicateKeyUpdate({
+        set: {
+          totalSplits: sql`VALUES(total_splits)`,
+          totalDrivers: sql`VALUES(total_drivers)`,
+          strengthOfField: sql`VALUES(strength_of_field)`,
+          startTime: sql`VALUES(start_time)`,
+          officialSession: sql`VALUES(official_session)`,
+        },
+      });
     return { success: true };
   } catch (error) {
-    console.error("Error in cacheCurrentWeekResults:", error);
+    console.error("[Cronjob] Error in cacheCurrentWeekResults:", error);
     if (error instanceof Error) {
       return { success: false, error: error.message };
     }
@@ -133,7 +183,7 @@ export async function cacheCurrentWeekResults(): Promise<{
   }
 }
 
-export function createSearchParams(params: ResultsSeriesParams) {
+export function buildSearchParams(params: SeriesResultsParams) {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {

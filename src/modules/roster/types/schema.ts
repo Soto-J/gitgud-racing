@@ -7,10 +7,6 @@ import {
   DEFAULT_PAGE_SIZE,
 } from "@/modules/roster/server/procedures/get-many/params";
 
-// =============================================================================
-// MEMBER QUERY SCHEMAS
-// =============================================================================
-
 export const GetMemberInputSchema = z.object({
   id: z.string().min(1, { message: "Member ID is required" }),
 });

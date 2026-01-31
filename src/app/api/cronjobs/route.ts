@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
     }).format(new Date()),
   );
 
-  const cachedWeeklyResults = await cacheCurrentWeekResults();
+  const result = await cacheCurrentWeekResults();
 
-  if (!cachedWeeklyResults.success || cachedWeeklyResults?.error) {
+  if (!result.success) {
     console.error(
-      `[Cronjob] error: Failed to cache weekly results. ${cachedWeeklyResults.error}`,
+      `[Cronjob] error: Failed to cache weekly results. ${result.error}`,
     );
     return Response.json({ success: false }, { status: 500 });
   }

@@ -1,7 +1,8 @@
 import { createTRPCRouter } from "@/trpc/init";
 
-import { ResultsSearchSeriesProcedure } from "./results-series";
+import { weeklySeriesResultsProcedure } from "./series-results";
 
 export const seriesResultsRouter = createTRPCRouter({
-  resultsSearchSeries: ResultsSearchSeriesProcedure,
+  SeriesResults: weeklySeriesResultsProcedure,
+  // resultsSearchSeries: ResultsSearchSeriesProcedure,
 });

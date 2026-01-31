@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-export const SeriesSeasonsSchema = z.object({});
-
 /**
  * Official series.
  * Maximum time frame of 90 days. Results split into one or more files with chunks of results.
@@ -11,7 +9,7 @@ export const SeriesSeasonsSchema = z.object({});
  * but groups together multiple splits of a series when multiple series launch sessions at the same time.
  * Requires at least one of: season_year and season_quarter, start_range_begin, finish_range_begin.
  */
-export const ResultsSeriesParamsSchema = z.object({
+export const SeriesResultsParamsSchema = z.object({
   // Required when using season_quarter
   season_year: z.number().optional(),
   // Required when using season_year
@@ -45,7 +43,7 @@ export const ResultsSeriesParamsSchema = z.object({
   category_ids: z.number().optional(),
 });
 
-export const ResultsSeriesSearchResponseSchema = z.object({
+export const SeriesResultsResponseSchema = z.object({
   type: z.string(),
 
   data: z.object({

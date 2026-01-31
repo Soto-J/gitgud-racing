@@ -1,13 +1,3 @@
-/**
- * @fileoverview Schema definitions for weekly series results procedures
- *
- * This module defines:
- * - Input validation schemas for weekly series results requests
- * - Response schemas for iRacing series results API validation
- * - Type definitions for series result data structures
- * - Router output type inference
- */
-
 import { z } from "zod";
 
 import type { inferRouterOutputs } from "@trpc/server";
@@ -20,28 +10,6 @@ import {
   MIN_PAGE_SIZE,
 } from "./params";
 
-// =============================================================================
-// INPUT SCHEMAS
-// =============================================================================
-
-/**
- * Schema for validating weekly series results requests
- *
- * Supports pagination, search filtering, and season-specific filtering
- * by race week, year, and quarter.
- *
- * @example
- * ```typescript
- * const input = WeeklySeriesResultsInput.parse({
- *   page: 1,
- *   pageSize: 20,
- *   search: "Formula",
- *   raceWeek: "12",
- *   year: "2024",
- *   quarter: "1"
- * });
- * ```
- */
 export const WeeklySeriesResultsInput = z.object({
   /** Page number for pagination (1-based) */
   page: z.number().default(DEFAULT_PAGE),
