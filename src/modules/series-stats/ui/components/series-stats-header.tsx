@@ -17,11 +17,11 @@ export default function SeriesStatsHeader() {
   const [filters, setFilters] = useChartFilter();
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
+  // const { data } = useSuspenseQuery(
     // trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
-    trpc.seriesResults.resultsSearchSeries.queryOptions({}),
-  );
-  console.log({ data });
+    // trpc.seriesResults.resultsSearchSeries.queryOptions({}),
+  // );
+  // console.log({ data });
   const isFilterActive = !!filters.search;
 
   const onClearFilters = () =>
