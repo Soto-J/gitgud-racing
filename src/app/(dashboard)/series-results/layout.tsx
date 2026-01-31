@@ -1,5 +1,5 @@
-export default function SeriesStatsLayout({
+export default function SeriesResultsLayout({
   children,
-}: LayoutProps<"/series-stats">) {
+}: LayoutProps<"/series-results">) {
   return <div className="mx-auto w-[90%] py-8">{children}</div>;
 }

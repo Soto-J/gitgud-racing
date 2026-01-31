@@ -30,11 +30,11 @@ export const weeklySeriesResultsProcedure = iracingProcedure.query(async () => {
       sof: seriesWeeklyStatsTable.strengthOfField,
 
       avgSplitsPerRace:
-        sql<number>`ROUND(${seriesWeeklyStatsTable.totalSplits} / ${seriesWeeklyStatsTable.totalRaceSessions}, 1)`.as(
+        sql<number>`ROUND(${seriesWeeklyStatsTable.totalSplits} / NULLIF(${seriesWeeklyStatsTable.totalRaceSessions}, 0), 1)`.as(
           "avg_splits_per_race",
         ),
       avgEntrantsPerRace:
-        sql<number>`ROUND(${seriesWeeklyStatsTable.totalDrivers} / ${seriesWeeklyStatsTable.totalRaceSessions}, 1)`.as(
+        sql<number>`ROUND(${seriesWeeklyStatsTable.totalDrivers} / NULLIF(${seriesWeeklyStatsTable.totalRaceSessions}, 0), 1)`.as(
           "avg_entrants_per_race",
         ),
     })
