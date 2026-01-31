@@ -1,0 +1,1 @@
+ALTER TABLE `series_weekly_stats` ADD `total_race_sessions` int NOT NULL;

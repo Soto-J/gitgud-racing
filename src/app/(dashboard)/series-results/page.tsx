@@ -12,16 +12,18 @@ import SeriesStatsHeader from "@/modules/series-stats/ui/components/series-stats
 import {
   ErrorHomeView,
   LoadingHomeView,
-  SeriesStatsPageView,
-} from "@/modules/series-stats/ui/views/series-stats-page-view";
+  SeriesResultsPageView,
+} from "@/modules/series-stats/ui/views/series-results-page-view";
 
 import UnderConstruction from "@/components/under-construction";
 
-interface HomePageProps {
+interface SeriesResultsPageProps {
   searchParams: Promise<SearchParams>;
 }
 
-export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
+export default async function SeriesResultsPage({
+  searchParams,
+}: SeriesResultsPageProps) {
   const filters = await loadSearchParams(searchParams);
 
   // prefetch(trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }));
@@ -33,7 +35,7 @@ export default async function SeriesStatsPage({ searchParams }: HomePageProps) {
       <Suspense fallback={<LoadingHomeView />}>
         <ErrorBoundary fallback={<ErrorHomeView />}>
           {/* <SeriesStatsHeader /> */}
-          {/* <SeriesStatsPageView /> */}
+          {/* <SeriesResultsPageView /> */}
           <UnderConstruction
             title="Series Stats view"
             message="Working on an amazing page for you!"
