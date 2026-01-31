@@ -9,7 +9,7 @@ import SeriesChart from "@/modules/series-stats/ui/components/series-chart";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
 
-export const SeriesStatsPageView = () => {
+export const SeriesResultsPageView = () => {
   const [filters, _] = useChartFilter();
 
   const trpc = useTRPC();

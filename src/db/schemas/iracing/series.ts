@@ -30,6 +30,7 @@ export const seriesWeeklyStatsTable = mysqlTable(
 
     officialSession: boolean("official_session").notNull().default(true),
     startTime: datetime("start_time").notNull(),
+    totalRaceSessions: int("total_race_sessions").notNull(),
     totalSplits: int("total_splits").notNull(),
     totalDrivers: int("total_drivers").notNull(),
     strengthOfField: int("strength_of_field").notNull(),

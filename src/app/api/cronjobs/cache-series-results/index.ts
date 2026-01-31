@@ -1,4 +1,3 @@
-import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { sql, eq, gt, and, desc } from "drizzle-orm";
 
@@ -150,6 +149,10 @@ export async function cacheCurrentWeekResults() {
       0,
     );
 
+    // Count unique race sessions (parent session_id, not subsession splits)
+    const uniqueRaceSessions = new Set(series.map((s) => s.session_id));
+    const totalRaceSessions = uniqueRaceSessions.size;
+
     return {
       seriesId: firstSession.series_id,
       seasonId: firstSession.season_id,
@@ -164,6 +167,7 @@ export async function cacheCurrentWeekResults() {
 
       officialSession: firstSession.official_session,
       startTime: new Date(firstSession.start_time),
+      totalRaceSessions,
       totalSplits,
       totalDrivers,
       strengthOfField: firstSession.event_strength_of_field,
@@ -176,6 +180,7 @@ export async function cacheCurrentWeekResults() {
       .values(statsRecords)
       .onDuplicateKeyUpdate({
         set: {
+          totalRaceSessions: sql`VALUES(total_race_sessions)`,
           totalSplits: sql`VALUES(total_splits)`,
           totalDrivers: sql`VALUES(total_drivers)`,
           strengthOfField: sql`VALUES(strength_of_field)`,
