@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { success, z } from "zod";
+import { z } from "zod";
 import { sql, eq, gt, and, desc } from "drizzle-orm";
 
 import { db } from "@/db";
