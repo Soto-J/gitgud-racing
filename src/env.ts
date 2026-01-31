@@ -13,8 +13,6 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string(),
   CRON_SECRET: z.string(),
   BETTER_AUTH_SECRET: z.string(),
-  GOOGLE_CLIENT_ID: z.string(),
-  GOOGLE_CLIENT_SECRET: z.string(),
   IRACING_AUTH_SECRET: z.string(),
   IRACING_CLIENT_ID: z.string(),
 });

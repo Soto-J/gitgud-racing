@@ -5,7 +5,7 @@ import { useTRPC } from "@/trpc/client";
 
 import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
 
-import SeriesChart from "@/modules/series-stats/ui/components/series-chart";
+import SeriesChart from "@/modules/series-results/ui/components/series-chart";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
 
@@ -13,16 +13,16 @@ export const SeriesResultsPageView = () => {
   const [filters, _] = useChartFilter();
 
   const trpc = useTRPC();
-  // const { data } = useSuspenseQuery(
-  //   trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }),
-  // );
+  const { data } = useSuspenseQuery(
+    trpc.seriesResults.weeklySeriesResults.queryOptions(),
+  );
 
   return (
     <div className="space-y-8 p-6">
       {/* <SeriesChart data={data} /> */}
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+        <div className="group border-border relative overflow-hidden rounded-2xl border bg-linear-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-blue-100 opacity-20" />
 
           <div className="relative">
@@ -43,7 +43,7 @@ export const SeriesResultsPageView = () => {
           </div>
         </div>
 
-        <div className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-linear-to-br from-green-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
+        <div className="group border-border relative overflow-hidden rounded-2xl border bg-linear-to-br from-green-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
           <div className="absolute top-0 right-0 h-20 w-20 translate-x-6 -translate-y-6 rounded-full bg-green-100 opacity-20" />
 
           <div className="relative">
@@ -108,9 +108,9 @@ export const SeriesResultsPageView = () => {
   );
 };
 
-export const LoadingHomeView = () => (
+export const LoadingSeriesResultsView = () => (
   <LoadingState title="Loading" description="This make take a few seconds" />
 );
-export const ErrorHomeView = () => (
+export const ErrorSeriesResultsView = () => (
   <ErrorState title="Error" description="Something went wrong" />
 );

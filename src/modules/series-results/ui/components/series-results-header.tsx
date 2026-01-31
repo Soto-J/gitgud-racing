@@ -13,13 +13,13 @@ import { ChartPagination } from "./chart-pagination";
 
 import { Button } from "@/components/ui/button";
 
-export default function SeriesStatsHeader() {
+export default function SeriesResultsHeader() {
   const [filters, setFilters] = useChartFilter();
 
   const trpc = useTRPC();
   // const { data } = useSuspenseQuery(
-    // trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
-    // trpc.seriesResults.resultsSearchSeries.queryOptions({}),
+  // trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }),
+  // trpc.seriesResults.resultsSearchSeries.queryOptions({}),
   // );
   // console.log({ data });
   const isFilterActive = !!filters.search;

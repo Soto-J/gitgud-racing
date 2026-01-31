@@ -8,12 +8,12 @@ import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
 
-import SeriesStatsHeader from "@/modules/series-stats/ui/components/series-stats-header";
+import SeriesResultsHeader from "@/modules/series-results/ui/components/series-results-header";
 import {
-  ErrorHomeView,
-  LoadingHomeView,
+  ErrorSeriesResultsView,
+  LoadingSeriesResultsView,
   SeriesResultsPageView,
-} from "@/modules/series-stats/ui/views/series-results-page-view";
+} from "@/modules/series-results/ui/views/series-results-page-view";
 
 import UnderConstruction from "@/components/under-construction";
 
@@ -26,15 +26,15 @@ export default async function SeriesResultsPage({
 }: SeriesResultsPageProps) {
   const filters = await loadSearchParams(searchParams);
 
-  // prefetch(trpc.iracing.weeklySeriesResults.queryOptions({ ...filters }));
+  prefetch(trpc.seriesResults.weeklySeriesResults.queryOptions());
   // prefetch(trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }));
   // prefetch(trpc.seriesResults.resultsSearchSeries.queryOptions({}));
 
   return (
     <HydrateClient>
-      <Suspense fallback={<LoadingHomeView />}>
-        <ErrorBoundary fallback={<ErrorHomeView />}>
-          {/* <SeriesStatsHeader /> */}
+      <Suspense fallback={<LoadingSeriesResultsView />}>
+        <ErrorBoundary fallback={<ErrorSeriesResultsView />}>
+          {/* <SeriesResultsHeader /> */}
           {/* <SeriesResultsPageView /> */}
           <UnderConstruction
             title="Series Stats view"
