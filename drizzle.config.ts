@@ -4,7 +4,7 @@ import env from "@/env";
 
 export default defineConfig({
   out: "./drizzle",
-  schema: "./src/db/schemas",
+  schema: "./src/db/schemas/index.ts",
   dialect: "mysql",
   dbCredentials: {
     url: env.DATABASE_URL,

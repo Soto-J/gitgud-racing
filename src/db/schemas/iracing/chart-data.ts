@@ -34,7 +34,6 @@ export const userChartDataTable = mysqlTable(
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
   (table) => [
-    // Prevent duplicate entries for same user, category, chart type, and date
     uniqueIndex("uniqueUserChartData").on(
       table.userId,
       table.category,

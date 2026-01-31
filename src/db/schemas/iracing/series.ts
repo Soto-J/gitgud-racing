@@ -28,7 +28,7 @@ export const seriesWeeklyStatsTable = mysqlTable(
     seasonQuarter: int("season_quarter").default(1).notNull(),
     raceWeek: int("race_week").default(0).notNull(),
 
-    officialSession: boolean("official_session").notNull(),
+    officialSession: boolean("official_session").notNull().default(true),
     startTime: datetime("start_time").notNull(),
     totalSplits: int("total_splits").notNull(),
     totalDrivers: int("total_drivers").notNull(),
