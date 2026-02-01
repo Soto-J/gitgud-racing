@@ -23,7 +23,7 @@ export const seriesWeeklyStatsTable = mysqlTable(
     trackName: varchar("track_name", { length: 100 }).notNull(),
 
     seasonYear: int("season_year").notNull(),
-    seasonQuarter: int("season_quarter").default(1) .notNull(),
+    seasonQuarter: int("season_quarter").default(1).notNull(),
     raceWeek: int("race_week").default(0).notNull(),
 
     officialSession: boolean("official_session").notNull().default(true),

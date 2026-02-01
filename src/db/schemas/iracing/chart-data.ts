@@ -34,7 +34,7 @@ export const userChartDataTable = mysqlTable(
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
   (table) => [
-    uniqueIndex("uniqueUserChartData").on(
+    uniqueIndex("unique_user_chart_data").on(
       table.userId,
       table.category,
       table.chartType,
