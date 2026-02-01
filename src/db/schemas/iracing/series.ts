@@ -7,7 +7,6 @@ import {
   int,
   unique,
   index,
-  datetime,
   boolean,
 } from "drizzle-orm/mysql-core";
 
@@ -19,17 +18,15 @@ export const seriesWeeklyStatsTable = mysqlTable(
       .$default(() => nanoid()),
     seriesId: int("series_id").notNull(),
     seasonId: int("season_id").notNull(),
-    // sessionId: int("session_id").notNull(),
 
     name: varchar("name", { length: 100 }).notNull(),
     trackName: varchar("track_name", { length: 100 }).notNull(),
 
     seasonYear: int("season_year").notNull(),
-    seasonQuarter: int("season_quarter").default(1).notNull(),
+    seasonQuarter: int("season_quarter").default(1) .notNull(),
     raceWeek: int("race_week").default(0).notNull(),
 
     officialSession: boolean("official_session").notNull().default(true),
-    // startTime: datetime("start_time").notNull(),
     totalRaceSessions: int("total_race_sessions").notNull(),
     totalSplits: int("total_splits").notNull(),
     totalDrivers: int("total_drivers").notNull(),
