@@ -60,10 +60,16 @@ export async function cacheCurrentWeekResults() {
     const uniqueRaceSessions = new Set(series.map((s) => s.session_id));
     const totalRaceSessions = uniqueRaceSessions.size;
 
+    // Aggregate calculations
+    const averageStrengthOfField = Math.round(
+      series.reduce((sum, s) => sum + s.event_strength_of_field, 0) /
+        series.length,
+    );
+    const allOfficial = series.every((s) => s.official_session);
+
     return {
       seriesId: firstSession.series_id,
       seasonId: firstSession.season_id,
-      sessionId: firstSession.session_id,
 
       name: firstSession.series_name.trim(),
       trackName: firstSession.track.track_name.trim(),
@@ -72,12 +78,11 @@ export async function cacheCurrentWeekResults() {
       seasonQuarter: firstSession.season_quarter,
       raceWeek: firstSession.race_week_num,
 
-      officialSession: firstSession.official_session,
-      startTime: new Date(firstSession.start_time),
+      officialSession: allOfficial,
       totalRaceSessions,
       totalSplits,
       totalDrivers,
-      strengthOfField: firstSession.event_strength_of_field,
+      averageStrengthOfField,
     };
   });
 
@@ -90,8 +95,7 @@ export async function cacheCurrentWeekResults() {
           totalRaceSessions: sql`VALUES(total_race_sessions)`,
           totalSplits: sql`VALUES(total_splits)`,
           totalDrivers: sql`VALUES(total_drivers)`,
-          strengthOfField: sql`VALUES(strength_of_field)`,
-          startTime: sql`VALUES(start_time)`,
+          averageStrengthOfField: sql`VALUES(strength_of_field)`,
           officialSession: sql`VALUES(official_session)`,
         },
       });
