@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { iracingProcedure } from "@/trpc/init/iracing-procedure";
-import { getSeasonDates } from "@/app/api/cronjobs/cache-series-results/helpers/season";
+import { getSeasonDates } from "@/lib/iracing/helpers/season-date";
 
 export const weeklySeriesResultsProcedure = iracingProcedure.query(async () => {
   const currentSeason = getSeasonDates();
@@ -13,8 +13,7 @@ export const weeklySeriesResultsProcedure = iracingProcedure.query(async () => {
     .select({
       seriesId: seriesWeeklyStatsTable.seriesId,
       seasonId: seriesWeeklyStatsTable.seasonId,
-      sessionId: seriesWeeklyStatsTable.sessionId,
-
+   
       name: seriesWeeklyStatsTable.name,
       trackName: seriesWeeklyStatsTable.trackName,
 
@@ -22,12 +21,10 @@ export const weeklySeriesResultsProcedure = iracingProcedure.query(async () => {
       seasonQuarter: seriesWeeklyStatsTable.seasonQuarter,
       raceWeek: seriesWeeklyStatsTable.raceWeek,
       officialSession: seriesWeeklyStatsTable.officialSession,
-      startTime: seriesWeeklyStatsTable.startTime,
-
+  
       totalRaceSessions: seriesWeeklyStatsTable.totalRaceSessions,
       totalSplits: seriesWeeklyStatsTable.totalSplits,
       totalDrivers: seriesWeeklyStatsTable.totalDrivers,
-      sof: seriesWeeklyStatsTable.strengthOfField,
 
       avgSplitsPerRace:
         sql<number>`ROUND(${seriesWeeklyStatsTable.totalSplits} / NULLIF(${seriesWeeklyStatsTable.totalRaceSessions}, 0), 1)`.as(

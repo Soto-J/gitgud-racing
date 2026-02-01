@@ -28,14 +28,14 @@ export async function getAccessToken() {
       .limit(1);
 
     if (!adminAccount) {
-      throw new Error("[Cronjob] No admin iRacing account found");
+      throw new Error("[AccessToken] No admin iRacing account found");
     }
 
     const { id, accessToken, refreshToken, accessTokenExpiresAt } =
       adminAccount;
 
     if (!refreshToken) {
-      throw new Error("[Cronjob] Admin account has no refresh token");
+      throw new Error("[AccessToken] Admin account has no refresh token");
     }
 
     const isTokenValid =
@@ -44,11 +44,11 @@ export async function getAccessToken() {
       accessTokenExpiresAt.getTime() > Date.now() + MS_10_MINUTES;
 
     if (isTokenValid) {
-      console.log("[Cronjob] Using existing access token");
+      console.log("[AccessToken] Using existing access token");
       return accessToken;
     }
 
-    console.log("[Cronjob] Refreshing access token...");
+    console.log("[AccessToken] Refreshing access token...");
     const newTokens = await refreshIracingAccessToken(refreshToken);
 
     // Update the account with new tokens
@@ -63,7 +63,7 @@ export async function getAccessToken() {
       })
       .where(eq(accountTable.id, id));
 
-    console.log("[Cronjob] Access token refreshed successfully");
+    console.log("[AccessToken] Access token refreshed successfully");
     return newTokens.access_token;
   });
 }
