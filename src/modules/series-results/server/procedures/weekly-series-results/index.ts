@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { iracingProcedure } from "@/trpc/init/iracing-procedure";
-import { getSeasonDates } from "@/app/api/cronjobs/cache-series-results/helpers/season";
+import { getSeasonDates } from "@/lib/iracing/helpers/season-date";
 
 export const weeklySeriesResultsProcedure = iracingProcedure.query(async () => {
   const currentSeason = getSeasonDates();
