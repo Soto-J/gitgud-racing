@@ -103,8 +103,8 @@ export const ChunkResponseSchema = z.array(
     series_short_name: z.string(),
     race_week_num: z.number(),
     event_strength_of_field: z.number(),
-    season_license_group: z.number(),
-    season_license_group_name: z.string(),
+    season_license_group: z.number().optional(),
+    season_license_group_name: z.string().optional(),
 
     // Driver-specific fields (only present when cust_id is provided)
     cust_id: z.number().optional(),

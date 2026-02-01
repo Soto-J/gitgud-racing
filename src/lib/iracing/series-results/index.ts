@@ -38,7 +38,7 @@ export async function fetchSeriesResults(
       });
 
     response = await fetchData(initialUrl, accessToken);
-
+    console.log({ response });
     if (!response.ok) {
       console.error("[SeriesResults] iRacing API error:", response.error);
       return { success: false, error: `iRacing API error: ${response.error}` };
@@ -69,6 +69,7 @@ export async function fetchSeriesResults(
 
   const chunkPromises = chunk_file_names.map(async (fileName) => {
     const chunkUrl = base_download_url + fileName;
+
     const chunkResponse = await fetch(chunkUrl);
 
     if (!chunkResponse.ok) {

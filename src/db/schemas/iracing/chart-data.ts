@@ -9,7 +9,7 @@ import {
   uniqueIndex,
 } from "drizzle-orm/mysql-core";
 
-import { user } from "@/db/schemas/auth";
+import { user as userTable } from "@/db/schemas/auth";
 
 export const userChartDataTable = mysqlTable(
   "user_chart_data",
@@ -19,7 +19,7 @@ export const userChartDataTable = mysqlTable(
       .$default(() => nanoid()),
     userId: varchar("user_id", { length: 36 })
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => userTable.id, { onDelete: "cascade" }),
 
     categoryId: int("category_id").notNull(),
     category: varchar("category", { length: 50 }).notNull(),

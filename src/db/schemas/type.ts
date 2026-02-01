@@ -9,6 +9,7 @@ import {
   userChartDataTable,
   licenseTable,
   USER_ROLES,
+  leagueScheduleTable,
 } from ".";
 
 export type UserTable = InferSelectModel<typeof userTable>;
@@ -20,5 +21,6 @@ export type UserChartDataTable = InferSelectModel<typeof userChartDataTable>;
 export type SeriesWeeklyStatsTable = InferSelectModel<
   typeof seriesWeeklyStatsTable
 >;
+export type LeagueScheduleTable = InferSelectModel<typeof leagueScheduleTable>;
 
 export type UserRole = (typeof USER_ROLES)[number];

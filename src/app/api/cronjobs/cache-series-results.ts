@@ -40,6 +40,7 @@ export async function cacheCurrentWeekResults() {
   const response = await fetchSeriesResults({
     season_year: currentSeason.year,
     season_quarter: currentSeason.quarter,
+    race_week_num: currentSeason.raceWeek,    
   });
 
   if (!response.success) {

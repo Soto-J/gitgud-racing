@@ -9,7 +9,7 @@ import {
   decimal,
 } from "drizzle-orm/mysql-core";
 
-import { user } from "@/db/schemas/auth";
+import { user as userTable } from "@/db/schemas/auth";
 
 export const safetyClassValues = ["A", "B", "C", "D", "R"] as const;
 
@@ -19,7 +19,7 @@ export const licenseTable = mysqlTable("license", {
     .$default(() => nanoid())
     .notNull(),
   userId: varchar("user_id", { length: 36 })
-    .references(() => user.id, { onDelete: "cascade" })
+    .references(() => userTable.id, { onDelete: "cascade" })
     .unique()
     .notNull(),
 
