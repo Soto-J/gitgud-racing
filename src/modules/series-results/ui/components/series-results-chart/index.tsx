@@ -90,12 +90,6 @@ export default function SeriesResultsChart({ data }: SeriesChartProps) {
   );
 }
 
-interface ChartHeaderProps {
-  seasonYear: number;
-  seasonQuarter: number;
-  raceWeek: number;
-}
-
 function EmptyState() {
   return (
     <div className={containerStyles}>
