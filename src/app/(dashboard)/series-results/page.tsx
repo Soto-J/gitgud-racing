@@ -24,16 +24,15 @@ export default async function SeriesResultsPage({
 }: SeriesResultsPageProps) {
   const filters = await loadSearchParams(searchParams);
 
-  prefetch(trpc.seriesResults.weeklySeriesResults.queryOptions({ ...filters }));
   prefetch(trpc.seriesResults.searchSeriesResults.queryOptions({ ...filters }));
-  // prefetch(trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }));
 
   return (
     <>
+      <SeriesResultsHeader />
+
       <HydrateClient>
         <Suspense fallback={<LoadingSeriesResultsView />}>
           <ErrorBoundary fallback={<ErrorSeriesResultsView />}>
-            <SeriesResultsHeader />
             <SeriesResultsPageView />
           </ErrorBoundary>
         </Suspense>
