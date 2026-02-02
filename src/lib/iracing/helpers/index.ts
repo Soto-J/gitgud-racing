@@ -1,4 +1,4 @@
-import { ChunkResponse, SeriesResult } from "../series-results/types";
+import { ChunkResponse, SeriesResult } from "../results/search_series/types";
 
 export function groupSessionsBySeries(sessions: ChunkResponse) {
   return sessions.reduce(

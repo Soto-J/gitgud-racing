@@ -1,4 +1,4 @@
-import { SeriesResultsParamsSchema } from "@/lib/iracing/series-results/types/schemas";
+import { SeriesResultsParamsSchema } from "@/lib/iracing/results/search_series/types/schemas";
 import { z } from "zod";
 
 /** Default page for pagination */

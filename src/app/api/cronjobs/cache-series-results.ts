@@ -3,7 +3,7 @@ import { sql, eq, gt, and, desc } from "drizzle-orm";
 import { db } from "@/db";
 import { seriesWeeklyStatsTable } from "@/db/schemas";
 
-import { fetchSeriesResults } from "@/lib/iracing/series-results";
+import { fetchSeriesResults } from "@/lib/iracing/results/search_series";
 import { groupSessionsBySeries } from "@/lib/iracing/helpers";
 import { getSeasonDates } from "@/lib/iracing/helpers/season-date";
 

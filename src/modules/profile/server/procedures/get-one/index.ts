@@ -1,4 +1,4 @@
-import { getTableColumns, eq } from "drizzle-orm";
+import { getTableColumns, eq, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import { protectedProcedure } from "@/trpc/init";
@@ -20,7 +20,13 @@ export const getProfileProcedure = protectedProcedure
       })
       .from(profileTable)
       .innerJoin(userTable, eq(userTable.id, profileTable.userId))
-      .innerJoin(account, eq(account.userId, profileTable.userId))
+      .innerJoin(
+        account,
+        and(
+          eq(account.userId, profileTable.userId),
+          eq(account.providerId, "iracing"),
+        ),
+      )
       .where(eq(profileTable.userId, input.userId));
 
     if (!profile) {
