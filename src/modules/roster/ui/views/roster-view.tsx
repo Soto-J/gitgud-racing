@@ -9,6 +9,8 @@ import ErrorState from "@/components/error-state";
 import LoadingState from "@/components/loading-state";
 import DataPagination from "@/components/data-pagination";
 import RosterTable from "@/modules/roster/ui/components/roster-table";
+import { DataTable } from "../components/roster-table/data-table";
+import { columns } from "../components/roster-table/columns";
 
 export const RosterView = () => {
   const [filters, setFilters] = useRosterFilters();
@@ -20,8 +22,14 @@ export const RosterView = () => {
 
   return (
     <>
-      <RosterTable roster={roster} />
-
+      {/* <RosterTable roster={roster} /> */}
+      <DataTable
+        data={roster.users}
+        columns={columns}
+        total={roster.total}
+        totalActive={roster.totalActive}
+      />
+      
       <DataPagination
         page={filters.page}
         totalPages={roster.totalPages}

@@ -21,16 +21,20 @@ interface RosterPageProps {
 
 export default async function RosterPage({ searchParams }: RosterPageProps) {
   const filters = await loadSearchParams(searchParams);
+
   prefetch(trpc.roster.getMany.queryOptions({ ...filters }));
 
   return (
-    <HydrateClient>
-      <Suspense fallback={<LoadingRosterView />}>
-        <ErrorBoundary fallback={<ErrorRosterView />}>
-          <RosterHeader />
-          <RosterView />
-        </ErrorBoundary>
-      </Suspense>
-    </HydrateClient>
+    <>
+      <RosterHeader />
+
+      <HydrateClient>
+        <Suspense fallback={<LoadingRosterView />}>
+          <ErrorBoundary fallback={<ErrorRosterView />}>
+            <RosterView />
+          </ErrorBoundary>
+        </Suspense>
+      </HydrateClient>
+    </>
   );
 }

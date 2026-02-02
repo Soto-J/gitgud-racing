@@ -1,5 +1,6 @@
-import { useRouter } from "next/navigation";
+"use client";
 
+import { useRouter } from "next/navigation";
 import { SearchSeriesResults } from "@/modules/series-results/server/procedures/search-series-results/types";
 
 interface ImageTickProps {

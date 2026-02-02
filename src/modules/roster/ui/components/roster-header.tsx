@@ -1,31 +1,27 @@
 "use client";
 
+import { Activity } from "react";
+
 import { IoPeopleOutline } from "react-icons/io5";
 import { XCircleIcon } from "lucide-react";
-
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
 
 import { DEFAULT_PAGE } from "@/modules/roster/server/procedures/get-many/params";
 
 import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
-
-import RosterSearchFilter from "@/modules/roster/ui/components/roster-search-filter";
+import { useDebounceSearch } from "@/hooks/use-debounce-search";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-
 import Banner from "@/components/banner";
+import SearchInput from "@/components/search-input";
 
 export default function RosterHeader() {
   const [filters, setFilters] = useRosterFilters();
-
-  const isFilterActive = !!filters.search;
-
-  const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
-    trpc.roster.getMany.queryOptions({ ...filters }),
+  const { searchValue, setSearchValue } = useDebounceSearch(
+    filters,
+    setFilters,
   );
+  const isFilterActive = !!filters.search;
 
   const onClearFilters = () =>
     setFilters({
@@ -38,21 +34,26 @@ export default function RosterHeader() {
       <Banner
         section="Racing League Members"
         title="Git Gud Fam"
-        subTitle1={`${data.total} Members`}
-        subTitle2={`${data.totalActive} Active`}
+        subTitle1={` Members`}
+        subTitle2={` Active`}
         icon={IoPeopleOutline}
       />
 
       <ScrollArea>
         <div className="flex items-center gap-x-2 py-6 pl-1">
-          <RosterSearchFilter />
+          <SearchInput
+            placeholder="Filter by name"
+            value={searchValue}
+            onChange={setSearchValue}
+            className="bg-foreground h-9 w-[200px]"
+          />
 
-          {isFilterActive && (
+          <Activity mode={isFilterActive ? "visible" : "hidden"}>
             <Button variant="outline" size="sm" onClick={onClearFilters}>
               <XCircleIcon />
               <span>Clear</span>
             </Button>
-          )}
+          </Activity>
         </div>
 
         <ScrollBar orientation="horizontal" />

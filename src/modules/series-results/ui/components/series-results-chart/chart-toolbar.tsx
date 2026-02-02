@@ -2,7 +2,7 @@
 
 import { Activity } from "react";
 
-import { SearchIcon, XCircleIcon } from "lucide-react";
+import { XCircleIcon } from "lucide-react";
 
 import { useDebounceSearch } from "@/hooks/use-debounce-search";
 import { useChartFilter } from "@/modules/series-results/hooks/use-chart-data-filter";
@@ -11,7 +11,7 @@ import { DEFAULT_PAGE } from "@/modules/series-results/server/procedures/search-
 import ChartPagination from "./chart-pagination";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import SearchInput from "@/components/search-input";
 
 interface ChartToolbarProps {
   totalPages: number;
@@ -35,16 +35,12 @@ export default function ChartToolbar({ totalPages }: ChartToolbarProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center justify-center gap-3">
-        <div className="relative">
-          <Input
-            placeholder="Search series or tracks..."
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            className="border-muted-foreground placeholder:text-muted-foreground h-10 w-64 rounded-xl pr-4 pl-10 text-sm shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-          />
-
-          <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-        </div>
+        <SearchInput
+          placeholder="Search series or tracks..."
+          value={searchValue}
+          onChange={setSearchValue}
+          className="border-muted-foreground placeholder:text-muted-foreground h-10 w-64 rounded-xl text-sm shadow-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+        />
 
         <Activity mode={isFilterActive ? "visible" : "hidden"}>
           <Button
