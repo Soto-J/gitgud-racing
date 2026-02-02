@@ -22,15 +22,17 @@ export default function ImageTick({ x, y, payload, data }: ImageTickProps) {
   }
 
   const handleImageClick = () => {
-    const seriesData = data?.series.find(
-      (series) => series.name === payload.value,
-    );
+    return;
+    //TODO
+    // const seriesData = data?.series.find(
+    //   (series) => series.name === payload.value,
+    // );
 
-    if (!seriesData?.seriesId) {
-      return;
-    }
+    // if (!seriesData?.seriesId) {
+    //   return;
+    // }
 
-    router.push(`/home/${seriesData.seriesId}`);
+    // router.push(`/home/${seriesData.seriesId}`);
   };
 
   return (
@@ -38,9 +40,20 @@ export default function ImageTick({ x, y, payload, data }: ImageTickProps) {
       <image
         x={-50}
         y={-24}
+        width={42}
+        height={42}
         href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
-        className="h-8 w-8 cursor-pointer rounded-lg transition-all duration-200 hover:scale-110 hover:shadow-lg md:h-12 md:w-12"
+        className="cursor-pointer transition-all duration-200 hover:scale-110"
+        role="button"
+        tabIndex={0}
+        aria-label={`Open series ${payload.value}`}
         onClick={handleImageClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleImageClick();
+          }
+        }}
       />
     </g>
   );
