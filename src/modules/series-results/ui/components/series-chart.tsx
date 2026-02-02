@@ -4,7 +4,7 @@ import { CartesianGrid, XAxis, YAxis, Bar, BarChart } from "recharts";
 
 import { cn } from "@/lib/utils";
 
-import { WeeklySeriesResults } from "@/modules/iracing/server/procedures/weekly-series-results/schema";
+import { WeeklySeriesResults } from "../../server/procedures/weekly-series-results/types";
 
 import {
   ChartContainer,
@@ -14,20 +14,21 @@ import {
   ChartLegendContent,
   ChartConfig,
 } from "@/components/ui/chart";
+import { SearchSeriesResults } from "../../server/procedures/search-series-results/types";
 
 const chartConfig = {
-  averageEntrants: {
+  avgEntrantsPerRace: {
     label: "Avg Entrants",
     color: "hsl(220, 70%, 50%)",
   },
-  averageSplits: {
+  avgSplitsPerRace: {
     label: "Avg # of splits",
     color: "hsl(160, 60%, 45%)",
   },
 } satisfies ChartConfig;
 
 interface SeriesChartProps {
-  data: WeeklySeriesResults;
+  data: SearchSeriesResults;
 }
 
 export default function SeriesChart({ data }: SeriesChartProps) {
@@ -38,12 +39,12 @@ export default function SeriesChart({ data }: SeriesChartProps) {
   const isEmpty = data.series.length === 0;
 
   return (
-    <div className="group rounded-2xl border border-gray-100 bg-linear-to-br from-white to-gray-50/30 p-3 shadow-xl transition-all duration-300 hover:border-gray-200 hover:shadow-2xl sm:rounded-3xl sm:p-8">
+    <div className="group border-border from-foreground rounded-2xl border bg-linear-to-br to-gray-50/30 p-3 shadow-xl transition-all duration-300 hover:border-gray-200 hover:shadow-2xl sm:rounded-3xl sm:p-8">
       <div className="mb-4 flex flex-col items-center gap-2 sm:mb-6 sm:flex-row sm:justify-between sm:gap-3">
         <div className="flex items-center gap-3">
           <div className="h-1 w-8 rounded-full bg-linear-to-r from-blue-500 to-green-500" />
 
-          <h2 className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent sm:text-2xl lg:text-3xl">
+          <h2 className="from-muted to-muted/70 bg-linear-to-r bg-clip-text text-xl font-bold text-transparent sm:text-2xl lg:text-3xl">
             Series Performance
           </h2>
         </div>
@@ -119,17 +120,17 @@ export default function SeriesChart({ data }: SeriesChartProps) {
                     );
                   }}
                   formatter={(value, name) => {
-                    const isAvgSplit = name === "averageEntrants";
-                    const label = isAvgSplit ? "Avg Splits" : "Avg Entrants";
+                    const isAvgEntrants = name === "avgEntrantsPerRace";
+                    const label = isAvgEntrants ? "Avg Entrants" : "Avg Splits";
 
                     return (
                       <div className="flex items-center gap-x-3">
                         <span
                           className={cn(
                             "h-3 w-3 rounded-full",
-                            isAvgSplit
-                              ? "bg-[hsl(160,60%,45%)]"
-                              : "bg-[hsl(220,70%,50%)]",
+                            isAvgEntrants
+                              ? "bg-[hsl(220,70%,50%)]"
+                              : "bg-[hsl(160,60%,45%)]",
                           )}
                         />
 
@@ -154,13 +155,13 @@ export default function SeriesChart({ data }: SeriesChartProps) {
             />
 
             <Bar
-              dataKey="averageEntrants"
-              fill="var(--color-averageEntrants)"
+              dataKey="avgEntrantsPerRace"
+              fill="var(--color-avgEntrantsPerRace)"
               radius={5}
             />
             <Bar
-              dataKey="averageSplits"
-              fill="var(--color-averageSplits)"
+              dataKey="avgSplitsPerRace"
+              fill="var(--color-avgSplitsPerRace)"
               radius={5}
             />
           </BarChart>
@@ -184,7 +185,7 @@ const ImageTick = ({
     index: number;
     offset: number;
   };
-  data?: WeeklySeriesResults;
+  data?: SearchSeriesResults;
 }) => {
   const router = useRouter();
 

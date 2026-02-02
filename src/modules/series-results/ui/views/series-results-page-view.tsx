@@ -1,25 +1,96 @@
 "use client";
 
+import { useMemo } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { useChartFilter } from "@/modules/iracing/hooks/use-chart-data-filter";
+import { XCircleIcon } from "lucide-react";
+
+import { useChartFilter } from "@/modules/series-results/hooks/use-chart-data-filter";
+
+import { DEFAULT_PAGE } from "../../server/procedures/search-series-results/types/schemas";
 
 import SeriesChart from "@/modules/series-results/ui/components/series-chart";
+import ChartPagination from "@/modules/series-results/ui/components/chart-pagination";
+import ChartFilterInput from "../components/chart-filter-input";
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
 
+import { Button } from "@/components/ui/button";
+
+const PAGE_SIZE = 10;
+
 export const SeriesResultsPageView = () => {
-  const [filters, _] = useChartFilter();
+  const [filters, setFilters] = useChartFilter();
+  const isFilterActive = !!filters.search;
 
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(
-    trpc.seriesResults.weeklySeriesResults.queryOptions(),
+  const { data: searchData } = useSuspenseQuery(
+    trpc.seriesResults.searchSeriesResults.queryOptions({}),
   );
+
+  const { paginatedSeries, totalPages } = useMemo(() => {
+    const allSeries = searchData.series;
+
+    const searchValue = filters.search.trim().toLowerCase();
+
+    const filteredSeries = searchValue
+      ? allSeries.filter(
+          (series) =>
+            series.name.toLowerCase().includes(searchValue) ||
+            series.trackName?.toLowerCase().includes(searchValue),
+        )
+      : allSeries;
+
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filteredSeries.length / PAGE_SIZE),
+    );
+
+    const safePage = Math.min(filters.page, totalPages);
+
+    const startIndex = (safePage - 1) * PAGE_SIZE;
+    const paginatedSeries = filteredSeries.slice(
+      startIndex,
+      startIndex + PAGE_SIZE,
+    );
+
+    return { paginatedSeries, totalPages };
+  }, [searchData.series, filters.page, filters.search]);
+
+  const onClearFilters = () =>
+    setFilters({
+      search: "",
+      page: DEFAULT_PAGE,
+    });
 
   return (
     <div className="space-y-8 p-6">
-      {/* <SeriesChart data={data} /> */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center gap-3">
+          <ChartFilterInput />
+
+          {isFilterActive && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onClearFilters}
+              className="text-primary/70 border-border hover:primary hover:bg-primary"
+            >
+              <XCircleIcon className="h-4 w-4" />
+              <span>Clear</span>
+            </Button>
+          )}
+        </div>
+
+        <ChartPagination
+          page={filters.page}
+          totalPages={totalPages}
+          onPageChange={(page) => setFilters({ page })}
+        />
+      </div>
+
+      <SeriesChart data={{ series: paginatedSeries }} />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="group border-border relative overflow-hidden rounded-2xl border bg-linear-to-br from-blue-50 to-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
@@ -60,7 +131,7 @@ export const SeriesResultsPageView = () => {
             </h3>
 
             <p className="text-3xl font-bold text-gray-900">
-              {/* {data.series.length === 0
+              {/* {data.data.length === 0
                 ? "0.0"
                 : (
                     data.series.reduce(

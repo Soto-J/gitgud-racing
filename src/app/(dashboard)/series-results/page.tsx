@@ -15,8 +15,6 @@ import {
   SeriesResultsPageView,
 } from "@/modules/series-results/ui/views/series-results-page-view";
 
-import UnderConstruction from "@/components/under-construction";
-
 interface SeriesResultsPageProps {
   searchParams: Promise<SearchParams>;
 }
@@ -26,22 +24,20 @@ export default async function SeriesResultsPage({
 }: SeriesResultsPageProps) {
   const filters = await loadSearchParams(searchParams);
 
-  prefetch(trpc.seriesResults.weeklySeriesResults.queryOptions());
+  prefetch(trpc.seriesResults.weeklySeriesResults.queryOptions({ ...filters }));
+  prefetch(trpc.seriesResults.searchSeriesResults.queryOptions({ ...filters }));
   // prefetch(trpc.seriesStats.totalSeriesCount.queryOptions({ ...filters }));
-  // prefetch(trpc.seriesResults.resultsSearchSeries.queryOptions({}));
 
   return (
-    <HydrateClient>
-      <Suspense fallback={<LoadingSeriesResultsView />}>
-        <ErrorBoundary fallback={<ErrorSeriesResultsView />}>
-          {/* <SeriesResultsHeader /> */}
-          {/* <SeriesResultsPageView /> */}
-          <UnderConstruction
-            title="Series Stats view"
-            message="Working on an amazing page for you!"
-          />
-        </ErrorBoundary>
-      </Suspense>
-    </HydrateClient>
+    <>
+      <HydrateClient>
+        <Suspense fallback={<LoadingSeriesResultsView />}>
+          <ErrorBoundary fallback={<ErrorSeriesResultsView />}>
+            <SeriesResultsHeader />
+            <SeriesResultsPageView />
+          </ErrorBoundary>
+        </Suspense>
+      </HydrateClient>
+    </>
   );
 }

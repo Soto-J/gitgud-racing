@@ -40,7 +40,7 @@ export async function cacheCurrentWeekResults() {
   const response = await fetchSeriesResults({
     season_year: currentSeason.year,
     season_quarter: currentSeason.quarter,
-    race_week_num: currentSeason.raceWeek,    
+    race_week_num: currentSeason.raceWeek,
   });
 
   if (!response.success) {
@@ -96,7 +96,7 @@ export async function cacheCurrentWeekResults() {
           totalRaceSessions: sql`VALUES(total_race_sessions)`,
           totalSplits: sql`VALUES(total_splits)`,
           totalDrivers: sql`VALUES(total_drivers)`,
-          averageStrengthOfField: sql`VALUES(strength_of_field)`,
+          averageStrengthOfField: sql`VALUES(average_strength_of_field)`,
           officialSession: sql`VALUES(official_session)`,
         },
       });
