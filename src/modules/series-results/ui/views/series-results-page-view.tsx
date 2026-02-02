@@ -31,12 +31,32 @@ export const SeriesResultsPageView = () => {
 
   const { paginatedSeries, totalPages } = useMemo(() => {
     const allSeries = searchData.series;
-    const startIndex = (filters.page - 1) * PAGE_SIZE;
-    const paginatedSeries = allSeries.slice(startIndex, startIndex + PAGE_SIZE);
-    const totalPages = Math.ceil(allSeries.length / PAGE_SIZE);
+
+    const searchValue = filters.search.trim().toLowerCase();
+
+    const filteredSeries = searchValue
+      ? allSeries.filter(
+          (series) =>
+            series.name.toLowerCase().includes(searchValue) ||
+            series.trackName?.toLowerCase().includes(searchValue),
+        )
+      : allSeries;
+
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filteredSeries.length / PAGE_SIZE),
+    );
+
+    const safePage = Math.min(filters.page, totalPages);
+
+    const startIndex = (safePage - 1) * PAGE_SIZE;
+    const paginatedSeries = filteredSeries.slice(
+      startIndex,
+      startIndex + PAGE_SIZE,
+    );
 
     return { paginatedSeries, totalPages };
-  }, [searchData.series, filters.page]);
+  }, [searchData.series, filters.page, filters.search]);
 
   const onClearFilters = () =>
     setFilters({

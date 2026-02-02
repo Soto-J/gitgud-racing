@@ -10,7 +10,7 @@ export const MIN_PAGE_SIZE = 1;
 export const MAX_PAGE_SIZE = 100;
 
 export const WeeklySeriesResultsInputSchema = z.object({
-  page: z.number().default(DEFAULT_PAGE),
+  page: z.number().min(1).default(DEFAULT_PAGE),
   pageSize: z
     .number()
     .min(MIN_PAGE_SIZE)
