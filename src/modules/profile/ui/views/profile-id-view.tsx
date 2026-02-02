@@ -1,7 +1,7 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQueries } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import LoadingState from "@/components/loading-state";
 import ErrorState from "@/components/error-state";
@@ -13,19 +13,15 @@ interface ProfileViewProps {
 
 export const ProfileIdView = ({ userId }: ProfileViewProps) => {
   const trpc = useTRPC();
-  const [profilePayload, iracingPayload, chartPayload] = useSuspenseQueries({
-    queries: [
-      trpc.profile.getOne.queryOptions({ userId }),
-      trpc.iracing.userLicenses.queryOptions({ userId }),
-      trpc.iracing.userChartData.queryOptions({ userId }),
-    ],
-  });
+  const { data } = useSuspenseQuery(
+    trpc.profile.getOneWithIracing.queryOptions({ userId }),
+  );
 
   return (
     <Profile
-      profilePayload={profilePayload.data}
-      iracingPayload={iracingPayload.data}
-      chartDataPoints={chartPayload.data}
+      profilePayload={data.profile}
+      iracingPayload={data.iracing}
+      chartDataPoints={data.chartData}
     />
   );
 };

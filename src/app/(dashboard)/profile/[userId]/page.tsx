@@ -23,9 +23,8 @@ export default async function ProfileIdPage({ params }: ProfileIdPageProps) {
 
   const { userId } = await params;
 
-  prefetch(trpc.profile.getOne.queryOptions({ userId }));
-  prefetch(trpc.iracing.userLicenses.queryOptions({ userId }));
-  prefetch(trpc.iracing.userChartData.queryOptions({ userId }));
+  prefetch(trpc.profile.getOneWithIracing.queryOptions({ userId }));
+
   return (
     <HydrateClient>
       <Suspense fallback={<LoadingProfileView />}>

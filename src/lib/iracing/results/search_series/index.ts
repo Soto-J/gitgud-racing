@@ -1,13 +1,13 @@
 import { z } from "zod";
 
+import { fetchData } from "@/lib/iracing/helpers/fetch-data";
+import { getAccessToken } from "@/lib/iracing/helpers/access-token";
+
 import type { ChunkResponse, SeriesResultsParams } from "./types";
 import {
   ChunkResponseSchema,
   SeriesResultsResponseSchema,
 } from "./types/schemas";
-
-import { fetchData } from "../helpers/fetch-data";
-import { getAccessToken } from "../helpers/access-token";
 
 type FetchResult =
   | { success: true; data: ChunkResponse }

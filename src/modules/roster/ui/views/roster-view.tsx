@@ -1,16 +1,17 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { authClient } from "@/lib/auth/auth-client";
 import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
 
 import ErrorState from "@/components/error-state";
 import LoadingState from "@/components/loading-state";
 import DataPagination from "@/components/data-pagination";
 import RosterTable from "@/modules/roster/ui/components/roster-table";
-import { DataTable } from "../components/roster-table/data-table";
-import { columns } from "../components/roster-table/columns";
+import { columns } from "@/modules/roster/ui/components/roster-table/columns";
 
 export const RosterView = () => {
   const [filters, setFilters] = useRosterFilters();
@@ -20,16 +21,28 @@ export const RosterView = () => {
     trpc.roster.getMany.queryOptions({ ...filters }),
   );
 
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+
+  const onRowClick = (id: string) => {
+    if (!session?.user) {
+      router.push("/");
+      return;
+    }
+
+    router.push(session.user.id === id ? "/profile" : `/profile/${id}`);
+  };
+
   return (
     <>
-      {/* <RosterTable roster={roster} /> */}
-      <DataTable
+      <RosterTable
         data={roster.users}
         columns={columns}
         total={roster.total}
         totalActive={roster.totalActive}
+        onRowClick={(original) => onRowClick(original.id)}
       />
-      
+
       <DataPagination
         page={filters.page}
         totalPages={roster.totalPages}
