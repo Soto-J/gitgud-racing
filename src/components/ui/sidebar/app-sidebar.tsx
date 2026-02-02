@@ -6,8 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-import { Session } from "@/lib/auth";
-import { UserRole } from "@/db/schemas/type";
+import type { Session } from "@/lib/auth";
+import type { UserRole } from "@/db/schemas/type";
 import { USER_ROLES } from "@/db/schemas";
 
 import { IoHomeOutline } from "react-icons/io5";
@@ -17,7 +17,7 @@ import { SlCalender } from "react-icons/sl";
 import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
 
 import SidebarUserButton from "@/components/ui/sidebar/sidebar-user-button";
-import QuickStatsCard from "@/components/ui/sidebar/quick-stats-card";
+import QuickStatsCard from "@/components/quick-stats-card";
 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -41,8 +41,8 @@ const firstSection = [
   },
   {
     icon: BarChart3,
-    label: "Series Stats",
-    href: "/series-stats",
+    label: "Series Results",
+    href: "/series-results",
     roles: ["guest", "user", "staff", "admin"],
   },
   {

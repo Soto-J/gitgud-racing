@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ChartPaginationProps {
@@ -8,21 +9,22 @@ interface ChartPaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export const ChartPagination = ({
+export default function ChartPagination({
   page,
   totalPages,
   onPageChange,
-}: ChartPaginationProps) => {
+}: ChartPaginationProps) {
   return (
     <div className="flex items-center justify-center gap-4">
-      <button
-        className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={() => onPageChange(Math.max(1, page - 1))}
+      <Button
+        size="sm"
         disabled={page <= 1}
+        onClick={() => onPageChange(Math.max(1, page - 1))}
+        className="bg-foreground border-border inline-flex items-center gap-1 rounded-xl border px-4 py-2.5 text-xs font-medium text-gray-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <ChevronLeft className="h-4 w-4" />
         Previous
-      </button>
+      </Button>
 
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-600">Page</span>
@@ -32,14 +34,15 @@ export const ChartPagination = ({
         <span className="text-sm text-gray-600">of {totalPages}</span>
       </div>
 
-      <button
-        className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+      <Button
+        size="sm"
         disabled={page >= totalPages}
+        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+        className="bg-foreground border-border inline-flex items-center gap-1 rounded-xl border px-4 py-2.5 text-xs font-medium text-gray-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Next
         <ChevronRight className="h-4 w-4" />
-      </button>
+      </Button>
     </div>
   );
-};
+}

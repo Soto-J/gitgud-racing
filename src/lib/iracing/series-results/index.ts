@@ -33,12 +33,10 @@ export async function fetchSeriesResults(
       "/data/results/search_series" +
       buildSearchParams({
         ...searchParams,
-        event_types: 5,
-        official_only: true,
       });
 
     response = await fetchData(initialUrl, accessToken);
-    console.log({ response });
+
     if (!response.ok) {
       console.error("[SeriesResults] iRacing API error:", response.error);
       return { success: false, error: `iRacing API error: ${response.error}` };
@@ -117,7 +115,9 @@ export function buildSearchParams(params: SeriesResultsParams) {
 
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== "") {
-      searchParams.append(key, String(value));
+      // Convert arrays to comma-separated strings for iRacing API
+      const paramValue = Array.isArray(value) ? value.join(",") : String(value);
+      searchParams.append(key, paramValue);
     }
   });
 

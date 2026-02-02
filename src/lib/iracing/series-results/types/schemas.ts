@@ -14,17 +14,14 @@ export const SeriesResultsParamsSchema = z.object({
   season_year: z.number().optional(),
   // Required when using season_year
   season_quarter: z.number().optional(),
-
   // Session start times. ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\"
   start_range_begin: z.string().optional(),
   // ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\". Exclusive. May be omitted if start_range_begin is less than 90 days in the past
   start_range_end: z.string().optional(),
-
   // Session finish times. ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\"
   finish_range_begin: z.string().optional(),
   // ISO-8601 UTC time zero offset: \"2022-04-01T15:45Z\". Exclusive. May be omitted if finish_range_begin is less than 90 days in the past
   finish_range_end: z.string().optional(),
-
   // Only sessions in which this customer participated. Ignored if team_id is supplied
   cust_id: z.number().optional(),
   // Only sessions in which this team participated. Takes priority over cust_id if both are supplied
@@ -33,19 +30,19 @@ export const SeriesResultsParamsSchema = z.object({
   series_id: z.number().optional(),
   // Only sessions with this race week number
   race_week_num: z.number().optional(),
-
   // If true, include only sessions earning championship points. Defaults to false
   official_only: z.boolean().optional(),
-
+  
   // Types of events to include in the search. Defaults to all. ?event_types=2,3,4,5
-  event_types: z.number().optional(),
-  // License categories to include in the search. Defaults to all. ?category_ids=1,2,3,4
-  category_ids: z.number().optional(),
+  event_types: z.array(z.number()).optional(),
+
+  // License categories to include in the search. Defaults to all
+  //  1 - Oval; 2 - Road; 3 - Dirt oval; 4 - Dirt road
+  category_ids: z.array(z.number()).optional(),
 });
 
 export const SeriesResultsResponseSchema = z.object({
   type: z.string(),
-
   data: z.object({
     success: z.boolean(),
     chunk_info: z.object({
