@@ -1,14 +1,19 @@
-import { getTableColumns, eq } from "drizzle-orm";
+import { getTableColumns, eq, and } from "drizzle-orm";
 
 import { TRPCError } from "@trpc/server";
 import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 
 import { db } from "@/db";
-import { account, profileTable, user as userTable } from "@/db/schemas";
+import {
+  account as accountTable,
+  profileTable,
+  user as userTable,
+} from "@/db/schemas";
 
-import { ProfileGetOneInputSchema } from "../get-one/types/schema";
 import { fetchMemberGet } from "@/lib/iracing/member/get";
 import { fetchMemberChartData } from "@/lib/iracing/member/chart_data";
+
+import { ProfileGetOneInputSchema } from "@/modules/profile/server/procedures/get-one/types/schema";
 import { CATEGORY_NAME_MAP, CHART_TYPE_MAP } from "@/lib/iracing/constants";
 
 const LOGO_MAP: Record<string, string> = {
@@ -36,11 +41,17 @@ export const getProfileWithIracingProcedure = iracingProcedure
         ...getTableColumns(profileTable),
         userName: userTable.name,
         email: userTable.email,
-        custId: account.accountId,
+        custId: accountTable.accountId,
       })
       .from(profileTable)
       .innerJoin(userTable, eq(userTable.id, profileTable.userId))
-      .innerJoin(account, eq(account.userId, profileTable.userId))
+      .innerJoin(
+        accountTable,
+        and(
+          eq(accountTable.userId, profileTable.userId),
+          eq(accountTable.providerId, "iracing"),
+        ),
+      )
       .where(eq(profileTable.userId, input.userId));
 
     if (!profile) {

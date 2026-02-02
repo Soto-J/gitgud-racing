@@ -18,7 +18,12 @@ export async function fetchMemberChartData(
 
   const results = await Promise.allSettled(promises);
 
-  const failedResults = results.filter((res) => res.status === "rejected");
+  const failedResults = results.filter(
+    (res) =>
+      res.status === "rejected" ||
+      (res.status === "fulfilled" && res.value.ok === false),
+  );
+
   if (failedResults.length > 0) {
     console.warn(
       "[MemberChartData] Some chart data requests failed:",
