@@ -48,7 +48,7 @@ const firstSection = [
   {
     icon: SlCalender,
     label: "iRacing Schedule",
-    href: "/iracing-scheduleschedule",
+    href: "/iracing-schedule",
     roles: ["guest", "user", "staff", "admin"],
   },
 ];
