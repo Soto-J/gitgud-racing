@@ -23,24 +23,24 @@ import {
 
 interface ProfileInfoTabProps {
   tabKey: string;
-  profilePayload: ProfileGetOne;
+  profile: ProfileGetOne;
 }
 
 export default function ProfileInfoTab({
   tabKey,
-  profilePayload,
+  profile,
 }: ProfileInfoTabProps) {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const { data } = authClient.useSession();
+  const { data: session } = authClient.useSession();
 
-  const isOwnProfile = profilePayload.userId === data?.user.id;
+  const isOwnProfile = profile.userId === session?.user.id;
 
   return (
     <>
       <EditProfileDialog
         isOpen={dialogIsOpen}
         onCloseDialog={() => setDialogIsOpen(false)}
-        initialValues={profilePayload}
+        initialValues={profile}
       />
 
       <TabsContent value={tabKey}>
@@ -53,7 +53,7 @@ export default function ProfileInfoTab({
             <div className="relative flex items-center gap-4">
               <div className="ring-primary/70 ring-offset-card rounded-xl ring-2 ring-offset-2">
                 <GeneratedAvatar
-                  seed={profilePayload.userName}
+                  seed={profile.userName}
                   variant="botttsNeutral"
                   className="h-14 w-14 rounded-xl"
                 />
@@ -61,11 +61,11 @@ export default function ProfileInfoTab({
 
               <div>
                 <CardTitle className="text-card-foreground text-2xl font-bold tracking-tight">
-                  {profilePayload.userName}
+                  {profile.userName}
                 </CardTitle>
                 <CardDescription className="text-muted-foreground">
                   <span className="font-semibold">iRacing ID: </span>
-                  <span className="font-medium">{profilePayload.custId}</span>
+                  <span className="font-medium">{profile.custId}</span>
                 </CardDescription>
               </div>
             </div>
@@ -88,19 +88,19 @@ export default function ProfileInfoTab({
               <ProfileField
                 icon={MailIcon}
                 label="Email"
-                value={profilePayload?.email || "No email provided"}
+                value={profile?.email || "No email provided"}
                 iconBgColor="bg-indigo-600"
               />
               <ProfileField
                 icon={Users}
                 label="Team"
-                value={profilePayload?.team || "No team assigned"}
+                value={profile?.team || "No team assigned"}
                 iconBgColor="bg-purple-600"
               />
               <ProfileField
                 icon={FaDiscord}
                 label="Discord"
-                value={profilePayload?.discord || "No discord provided"}
+                value={profile?.discord || "No discord provided"}
                 iconBgColor="bg-[#5865F2]"
               />
             </div>
@@ -116,11 +116,11 @@ export default function ProfileInfoTab({
                 </h3>
               </div>
 
-              {profilePayload?.bio ? (
+              {profile?.bio ? (
                 <div className="border-border bg-muted/30 relative overflow-hidden rounded-xl border p-5">
                   <div className="from-primary to-secondary absolute top-0 left-0 h-full w-1 bg-gradient-to-b" />
                   <p className="text-muted-foreground pl-3 text-sm leading-relaxed">
-                    {profilePayload.bio}
+                    {profile.bio}
                   </p>
                 </div>
               ) : (

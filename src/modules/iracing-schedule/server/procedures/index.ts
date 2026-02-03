@@ -1,3 +1,3 @@
-// import { createTRPCRouter } from "@/trpc/init";
+import { createTRPCRouter } from "@/trpc/init";
 
-// export const iracingScheduleRouter = createTRPCRouter({});
+export const iracingScheduleRouter = createTRPCRouter({});
