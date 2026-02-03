@@ -12,8 +12,8 @@ import SeriesResultsHeader from "@/modules/series-results/ui/components/series-r
 import {
   ErrorSeriesResultsView,
   LoadingSeriesResultsView,
-  SeriesResultsPageView,
-} from "@/modules/series-results/ui/views/series-results-page-view";
+  SeriesResultsView,
+} from "@/modules/series-results/ui/views/series-results-view";
 
 interface SeriesResultsPageProps {
   searchParams: Promise<SearchParams>;
@@ -33,7 +33,7 @@ export default async function SeriesResultsPage({
       <HydrateClient>
         <Suspense fallback={<LoadingSeriesResultsView />}>
           <ErrorBoundary fallback={<ErrorSeriesResultsView />}>
-            <SeriesResultsPageView />
+            <SeriesResultsView />
           </ErrorBoundary>
         </Suspense>
       </HydrateClient>

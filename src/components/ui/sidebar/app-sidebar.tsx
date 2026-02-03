@@ -47,9 +47,9 @@ const firstSection = [
   },
   {
     icon: SlCalender,
-    label: "Schedule",
-    href: "/schedule",
-    roles: ["user", "staff", "admin"],
+    label: "iRacing Schedule",
+    href: "/iracing-scheduleschedule",
+    roles: ["guest", "user", "staff", "admin"],
   },
 ];
 
@@ -64,6 +64,12 @@ const secondSection = [
     icon: IoPeopleOutline,
     label: "Roster",
     href: "/roster",
+    roles: ["user", "staff", "admin"],
+  },
+  {
+    icon: IoPeopleOutline,
+    label: "League Schedule",
+    href: "/league-schedule",
     roles: ["user", "staff", "admin"],
   },
   {
@@ -116,8 +122,8 @@ export default function AppSidebar({ session }: AppSidebarProps) {
       <SidebarContent className="p-4">
         <SidebarGroup>
           <div className="mb-3">
-            <h3 className="text-primary px-2 text-sm font-bold tracking-wider uppercase">
-              Racing Hub
+            <h3 className="text-primary px-2 text-sm font-semibold tracking-wider uppercase">
+              iRacing Hub
             </h3>
           </div>
 
@@ -134,7 +140,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
                       )}
                     >
                       <Icon className="size-6" />
-                      <span className="font-semibold tracking-tight">
+                      <span className="font-medium tracking-tight">
                         {label}
                       </span>
                       {pathname === href && (
@@ -156,7 +162,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
 
           <SidebarGroup>
             <div className="mb-3">
-              <h3 className="text-secondary px-2 text-sm font-bold tracking-wider uppercase">
+              <h3 className="text-secondary px-2 text-sm font-semibold tracking-wider uppercase">
                 Driver Zone
               </h3>
             </div>
@@ -173,7 +179,7 @@ export default function AppSidebar({ session }: AppSidebarProps) {
                         )}
                       >
                         <Icon />
-                        <span className="font-semibold tracking-tight">
+                        <span className="font-medium tracking-tight">
                           {label}
                         </span>
                         {pathname === href && (

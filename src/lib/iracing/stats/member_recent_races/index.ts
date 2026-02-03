@@ -1,7 +1,7 @@
 import { fetchData, throwIracingError } from "@/lib/iracing/helpers/fetch-data";
 
 import type { MemberRecentRacesResponse } from "./types";
-import { MemberRecentRacesResponseSchema } from "./types/schemas";
+import { MemberRecentRacesResponseSchema } from "./types/schema";
 
 export async function fetchMemberRecentRaces(
   custId: string,

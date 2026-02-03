@@ -6,7 +6,7 @@ import { XCircleIcon } from "lucide-react";
 
 import { useDebounceSearch } from "@/hooks/use-debounce-search";
 import { useChartFilter } from "@/modules/series-results/hooks/use-chart-data-filter";
-import { DEFAULT_PAGE } from "@/modules/series-results/server/procedures/search-series-results/types/schemas";
+import { DEFAULT_PAGE } from "@/modules/series-results/server/procedures/search-series-results/types/schema";
 
 import ChartPagination from "./chart-pagination";
 

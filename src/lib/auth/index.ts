@@ -18,7 +18,7 @@ import {
   IRACING_SCOPES,
 } from "@/constants";
 
-import { IracingUserInfoSchema } from "./types/schemas";
+import { IracingUserInfoSchema } from "./types/schema";
 import { maskIRacingSecret } from "./utils/iracing-oauth-helpers";
 
 export const auth = betterAuth({

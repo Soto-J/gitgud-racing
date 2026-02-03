@@ -7,7 +7,7 @@ import type { ChunkResponse, SeriesResultsParams } from "./types";
 import {
   ChunkResponseSchema,
   SeriesResultsResponseSchema,
-} from "./types/schemas";
+} from "./types/schema";
 
 type FetchResult =
   | { success: true; data: ChunkResponse }

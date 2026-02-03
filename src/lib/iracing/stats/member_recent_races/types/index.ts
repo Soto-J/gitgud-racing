@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { MemberRecentRacesResponseSchema } from "./schemas";
+import { MemberRecentRacesResponseSchema } from "./schema";
 
 export type MemberRecentRacesResponse = z.infer<
   typeof MemberRecentRacesResponseSchema

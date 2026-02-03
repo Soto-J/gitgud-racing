@@ -9,14 +9,13 @@ import ManageListHeader from "@/modules/manage/ui/components/manage-list-header"
 
 import IracingScheduleView from "@/modules/iracing-schedule/ui/views/iracing-schedule-view";
 
-interface IracingScheduleProps {
+interface IracingSchedulePageProps {
   searchParams: Promise<SearchParams>;
 }
 
-export default async function IracingSchedule({
+export default async function IracingSchedulePage({
   searchParams,
-}: IracingScheduleProps) {
-  
+}: IracingSchedulePageProps) {
   return (
     <>
       <ManageListHeader />

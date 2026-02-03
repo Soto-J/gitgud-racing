@@ -13,7 +13,7 @@ import type { UserChartDataResponse } from "./types";
 import {
   UserChartDataInputSchema,
   UserChartDataResponseSchema,
-} from "./types/schemas";
+} from "./types/schema";
 
 export const categoryChartProcedure = iracingProcedure
   .input(UserChartDataInputSchema)

@@ -1,7 +1,7 @@
 import { fetchData, throwIracingError } from "@/lib/iracing/helpers/fetch-data";
 
 import type { MemberSummaryResponse } from "./types";
-import { MemberSummaryResponseSchema } from "./types/schemas";
+import { MemberSummaryResponseSchema } from "./types/schema";
 
 export async function fetchMemberSummary(
   custId: string,

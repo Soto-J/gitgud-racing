@@ -1,6 +1,6 @@
 import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 
-import { DEFAULT_PAGE } from "./schemas";
+import { DEFAULT_PAGE } from "./schema";
 
 export const filtersSearchParams = {
   /** Search term for filtering series/track names */
