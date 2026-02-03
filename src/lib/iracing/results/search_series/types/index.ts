@@ -3,7 +3,7 @@ import {
   ChunkResponseSchema,
   SeriesResultsParamsSchema,
   SeriesResultsResponseSchema,
-} from "./schemas";
+} from "./schema";
 
 export type SeriesResultsParams = z.infer<typeof SeriesResultsParamsSchema>;
 export type SeriesResultsResponse = z.infer<typeof SeriesResultsResponseSchema>;

@@ -3,7 +3,7 @@ import { fetchData } from "@/lib/iracing/helpers/fetch-data";
 import { CATEGORY_IDS, CHART_TYPE_IRATING } from "@/lib/iracing/constants";
 
 import type { ChartDataResponse } from "./types";
-import { ChartDataResponseSchema } from "./types/schemas";
+import { ChartDataResponseSchema } from "./types/schema";
 
 export async function fetchMemberChartData(
   custId: string,

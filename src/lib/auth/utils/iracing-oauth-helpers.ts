@@ -3,7 +3,7 @@ import crypto from "crypto";
 import env from "@/env";
 
 import type { TokenResponse } from "@/lib/auth/types";
-import { TokenRespnseSchema } from "@/lib/auth/types/schemas";
+import { TokenRespnseSchema } from "@/lib/auth/types/schema";
 
 import { RefreshTokenError, TokenErrorCode } from "@/trpc/errors";
 import { IRACING_REFRESH_TOKEN_URL } from "@/constants";

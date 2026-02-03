@@ -6,7 +6,7 @@ import {
   type ChunkResponse,
   type SeriesResult,
 } from "@/lib/iracing";
-import { SeriesResultsInputSchema } from "./types/schemas";
+import { SeriesResultsInputSchema } from "./types/schema";
 
 export const searchSeriesResultsProcedure = baseProcedure
   .input(SeriesResultsInputSchema)

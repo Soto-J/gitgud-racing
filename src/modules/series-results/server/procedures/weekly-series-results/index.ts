@@ -5,7 +5,7 @@ import { seriesWeeklyStatsTable } from "@/db/schemas";
 
 import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 import { getSeasonDates } from "@/lib/iracing/helpers/season-date";
-import { WeeklySeriesResultsInputSchema } from "./types/schemas";
+import { WeeklySeriesResultsInputSchema } from "./types/schema";
 
 export const weeklySeriesResultsProcedure = iracingProcedure
   .input(WeeklySeriesResultsInputSchema)

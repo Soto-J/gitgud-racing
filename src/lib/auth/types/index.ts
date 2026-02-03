@@ -3,7 +3,7 @@ import {
   IracingUserInfoSchema,
   TokenRespnseSchema,
   TokenResponseErrorSchema,
-} from "./schemas";
+} from "./schema";
 
 export type TokenResponse = z.infer<typeof TokenRespnseSchema>;
 export type TokenResponseError = z.infer<typeof TokenResponseErrorSchema>;

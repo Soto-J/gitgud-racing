@@ -4,7 +4,7 @@ import {
   MemberGetInputSchema,
   MemberGetResponseSchema,
   LicenseSchema,
-} from "./schemas";
+} from "./schema";
 
 export type MemberGetInput = z.infer<typeof MemberGetInputSchema>;
 export type MemberGetResponse = z.infer<typeof MemberGetResponseSchema>;
