@@ -17,13 +17,7 @@ export const ProfileIdView = ({ userId }: ProfileViewProps) => {
     trpc.profile.getOneWithIracing.queryOptions({ userId }),
   );
 
-  return (
-    <Profile
-      profilePayload={data.profile}
-      iracingPayload={data.iracing}
-      chartDataPoints={data.chartData}
-    />
-  );
+  return <Profile data={data} />;
 };
 
 export const LoadingProfileView = () => (

@@ -1,8 +1,7 @@
 "use client";
 
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
-
-import { DEFAULT_PAGE } from "@/modules/iracing/server/procedures/weekly-series-results/params";
+import { DEFAULT_PAGE } from "../server/procedures/search-series-results/types/params";
 
 // if input is empty clears URL to default ""
 // E.g. http://localhost:3000/agents?search=test

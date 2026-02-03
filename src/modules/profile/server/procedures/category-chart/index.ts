@@ -5,17 +5,17 @@ import { iracingProcedure } from "@/trpc/init/iracing-procedure";
 import { db } from "@/db";
 import { account as accountTable } from "@/db/schemas";
 
+import { fetchData } from "@/lib/iracing/helpers/fetch-data";
+
+import { CHART_TYPE_IRATING } from "@/lib/iracing/constants";
+import { categoryMap } from "@/modules/iracing-schedule/constants";
 import type { UserChartDataResponse } from "./types";
 import {
   UserChartDataInputSchema,
   UserChartDataResponseSchema,
-} from "./types/schema";
+} from "./types/schemas";
 
-import { fetchIracingData } from "@/modules/iracing/server/api";
-
-import { categoryMap, CHART_TYPE_IRATING } from "@/modules/iracing/constants";
-
-export const chartDataProcedure = iracingProcedure
+export const categoryChartProcedure = iracingProcedure
   .input(UserChartDataInputSchema)
   .query(async ({ ctx, input }) => {
     const [account] = await db
@@ -29,7 +29,7 @@ export const chartDataProcedure = iracingProcedure
       );
 
     const promiseArr = Object.keys(categoryMap).map((categoryId) =>
-      fetchIracingData(
+      fetchData(
         `/data/member/chart_data?cust_id=${account.custId}&category_id=${categoryId}&chart_type=${CHART_TYPE_IRATING}`,
         ctx.iracingAccessToken,
       ),
