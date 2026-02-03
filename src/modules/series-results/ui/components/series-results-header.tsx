@@ -2,7 +2,7 @@
 
 export default function SeriesResultsHeader() {
   return (
-    <div className="text-foreground relative mb-8 rounded-2xl bg-linear-to-r from-blue-600 via-blue-700 to-blue-800 px-8 py-12 shadow-2xl">
+    <div className="text-foreground relative mb-8 rounded-2xl bg-linear-to-r from-blue-600 via-blue-700 to-blue-800 px-8 py-10 shadow-2xl">
       <div className="absolute inset-0 bg-[url('/iRacing-Brandmarks/iRacing-Icon-BW-White.svg')] bg-[length:250px] bg-center bg-no-repeat opacity-10" />
 
       <div className="relative z-10 text-center">

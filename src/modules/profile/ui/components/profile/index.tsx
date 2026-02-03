@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
 
-import type { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
-import type { ProfileGetOne } from "@/modules/profile/types";
-import type { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
+import type { ProfileGetOneWithIracing } from "@/modules/profile/server/procedures/get-one-with-iracing/types";
 
 import ProfileInfoTab from "./profile-info-tab";
 import IracingInfoTab from "./iracing-info-tab";
@@ -31,16 +29,10 @@ const tabTriggers = [
 ];
 
 interface ProfileProps {
-  profilePayload: ProfileGetOne;
-  iracingPayload: UserLicenses;
-  chartDataPoints: UserChartData;
+  data: ProfileGetOneWithIracing;
 }
 
-export default function Profile({
-  profilePayload,
-  iracingPayload,
-  chartDataPoints,
-}: ProfileProps) {
+export default function Profile({ data }: ProfileProps) {
   return (
     <Tabs defaultValue={iRacingTab}>
       <TabsList
@@ -62,11 +54,11 @@ export default function Profile({
 
       <IracingInfoTab
         tabKey={iRacingTab}
-        iracingPayload={iracingPayload}
-        chartDataPoints={chartDataPoints}
+        LicensePayload={data.iracing.licenses}
+        chartDataPoints={data.chartData}
       />
 
-      <ProfileInfoTab tabKey={profileTab} profilePayload={profilePayload} />
+      <ProfileInfoTab tabKey={profileTab} profilePayload={data.profile} />
     </Tabs>
   );
 }

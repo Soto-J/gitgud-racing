@@ -1,21 +1,20 @@
-import { UserChartData } from "@/modules/iracing/server/procedures/chart-data/types";
-
-import { UserLicenses } from "@/modules/iracing/server/procedures/user-licenses/types";
-
+import { UserChartData } from "@/modules/profile/server/procedures/category-chart/types";
 import DisciplineCard from "./discipline-card";
 import RatingsChart from "./ratings-chart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { License } from "@/lib/iracing/member/get/types";
+import { ProfileGetOneWithIracing } from "@/modules/profile/server/procedures/get-one-with-iracing/types";
 
 interface IracingInfoProps {
   tabKey: string;
-  iracingPayload: UserLicenses;
-  chartDataPoints: UserChartData;
+  LicensePayload: ProfileGetOneWithIracing["iracing"]["licenses"];
+  chartDataPoints: ProfileGetOneWithIracing["chartData"];
 }
 
 export default function IracingInfoTab({
   tabKey,
-  iracingPayload,
+  LicensePayload,
   chartDataPoints,
 }: IracingInfoProps) {
   return (
@@ -23,7 +22,7 @@ export default function IracingInfoTab({
       <div className="space-y-12">
         <Tabs defaultValue="oval" className="mx-auto space-y-6">
           <TabsList className="flex flex-wrap items-center justify-center gap-4 bg-transparent">
-            {iracingPayload.licenses.map((discipline, idx) => (
+            {LicensePayload.map((discipline, idx) => (
               <TabsTrigger
                 key={idx}
                 value={discipline.categoryName.toLowerCase()}

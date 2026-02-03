@@ -6,7 +6,7 @@ import { SearchParams } from "nuqs";
 import { trpc } from "@/trpc/server";
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
-import { loadSearchParams } from "@/modules/iracing/server/procedures/weekly-series-results/params";
+import { loadSearchParams } from "@/modules/series-results/server/procedures/search-series-results/types/params";
 
 import SeriesResultsHeader from "@/modules/series-results/ui/components/series-results-header";
 import {

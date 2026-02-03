@@ -1,6 +1,16 @@
 import { createLoader, parseAsInteger, parseAsString } from "nuqs/server";
 
-import { DEFAULT_PAGE } from "./schemas";
+/** Default page number for pagination */
+export const DEFAULT_PAGE = 1;
+
+/** Default number of results per page */
+export const DEFAULT_PAGE_SIZE = 5;
+
+/** Minimum allowed page size */
+export const MIN_PAGE_SIZE = 1;
+
+/** Maximum allowed page size to prevent performance issues */
+export const MAX_PAGE_SIZE = 100;
 
 export const filtersSearchParams = {
   /** Search term for filtering series/track names */
@@ -11,15 +21,15 @@ export const filtersSearchParams = {
     .withDefault(DEFAULT_PAGE)
     .withOptions({ clearOnDefault: true }),
 
-  seasonYear: parseAsInteger
-    .withDefault(DEFAULT_PAGE)
-    .withOptions({ clearOnDefault: true }),
-  seasonQuarter: parseAsInteger
-    .withDefault(DEFAULT_PAGE)
-    .withOptions({ clearOnDefault: true }),
-  raceWeek: parseAsInteger
-    .withDefault(DEFAULT_PAGE)
-    .withOptions({ clearOnDefault: true }),
+  // seasonYear: parseAsInteger
+  //   .withDefault(2026)
+  //   .withOptions({ clearOnDefault: true }),
+  // seasonQuarter: parseAsInteger
+  //   .withDefault(DEFAULT_PAGE)
+  //   .withOptions({ clearOnDefault: true }),
+  // raceWeek: parseAsInteger
+  //   .withDefault(DEFAULT_PAGE)
+  //   .withOptions({ clearOnDefault: true }),
 };
 
 /**
