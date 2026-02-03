@@ -13,10 +13,12 @@ interface SchedulePageViewProps {}
 
 export default function ScheduleView({}: SchedulePageViewProps) {
   if (process.env.NODE_ENV !== "development") {
-    <UnderConstruction
-      title="Schedule view"
-      message="Working on an amazing page for you!"
-    />;
+    return (
+      <UnderConstruction
+        title="Schedule view"
+        message="Working on an amazing page for you!"
+      />
+    );
   }
 
   const trpc = useTRPC();
