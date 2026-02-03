@@ -2,7 +2,13 @@ import { NextResponse, NextRequest } from "next/server";
 
 import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
-const protectedRoutes = ["/profile", "/roster", "/teams", "/manage"];
+const protectedRoutes = [
+  "/profile",
+  "/roster",
+  "/teams",
+  "/manage",
+  "/league-schedule",
+];
 
 export async function proxy(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) =>
@@ -21,5 +27,12 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile", "/profile/:path*", "/roster", "/teams", "/manage"],
+  matcher: [
+    "/profile",
+    "/profile/:path*",
+    "/roster",
+    "/teams",
+    "/league-schedule",
+    "/manage",
+  ],
 };

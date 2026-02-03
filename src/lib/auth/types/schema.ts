@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  HelmetSchema,
+  LicenseSchema,
+} from "@/lib/iracing/member/get/types/schema";
+
 export const TokenRespnseSchema = z.object({
   access_token: z.string(),
   token_type: z.literal("Bearer"),
@@ -15,24 +20,6 @@ export const TokenResponseErrorSchema = z.union([
   z.literal("UPSTREAM_ERROR"),
   z.literal("RATE_LIMITED"),
 ]);
-
-const LicenseSchema = z.object({
-  category_id: z.number(),
-  category: z.string(),
-  category_name: z.string(),
-  license_level: z.number(),
-  safety_rating: z.number(),
-  cpi: z.number(),
-  irating: z.number(),
-  tt_rating: z.number(),
-  mpr_num_races: z.number(),
-  color: z.string(),
-  group_name: z.string(),
-  group_id: z.number(),
-  pro_promotable: z.boolean(),
-  seq: z.number(),
-  mpr_num_tts: z.number(),
-});
 
 const PackageSchema = z.array(
   z.object({
@@ -67,14 +54,7 @@ export const IracingUserInfoSchema = z.object({
     country_rules: z.null(),
   }),
 
-  helmet: z.object({
-    pattern: z.number(),
-    color1: z.string(),
-    color2: z.string(),
-    color3: z.string(),
-    face_type: z.number(),
-    helmet_type: z.number(),
-  }),
+  helmet: HelmetSchema,
   suit: z.object({
     pattern: z.number(),
     color1: z.string(),
