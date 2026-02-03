@@ -58,7 +58,7 @@ export default function Profile({ data }: ProfileProps) {
         chartDataPoints={data.chartData}
       />
 
-      <ProfileInfoTab tabKey={profileTab} profilePayload={data.profile} />
+      <ProfileInfoTab tabKey={profileTab} profile={data.profile} />
     </Tabs>
   );
 }
