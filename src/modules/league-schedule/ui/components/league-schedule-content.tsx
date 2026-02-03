@@ -44,10 +44,10 @@ export const LeagueScheduleContent = ({
   const queryClient = useQueryClient();
 
   const deleteSchedule = useMutation(
-    trpc.schedule.deleteLeagueSchedule.mutationOptions({
+    trpc.leagueSchedule.deleteLeagueSchedule.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.schedule.getLeagueSchedules.queryOptions(),
+          trpc.leagueSchedule.getLeagueSchedules.queryOptions(),
         );
 
         toast.success("Schedule successfully deleted.");

@@ -50,10 +50,10 @@ export const LeagueScheduleDialog = ({
   const queryClient = useQueryClient();
 
   const createSchedule = useMutation(
-    trpc.schedule.createLeagueSchedule.mutationOptions({
+    trpc.leagueSchedule.createLeagueSchedule.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.schedule.getLeagueSchedules.queryOptions(),
+          trpc.leagueSchedule.getLeagueSchedules.queryOptions(),
         );
 
         toast.success("Schedule created successfully!");
@@ -66,10 +66,10 @@ export const LeagueScheduleDialog = ({
   );
 
   const editSchedule = useMutation(
-    trpc.schedule.editLeagueSchedule.mutationOptions({
+    trpc.leagueSchedule.editLeagueSchedule.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.schedule.getLeagueSchedules.queryOptions(),
+          trpc.leagueSchedule.getLeagueSchedules.queryOptions(),
         );
 
         toast.success("Schedule updated successfully!");

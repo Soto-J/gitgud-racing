@@ -1,12 +1,6 @@
 import { TabsContent } from "@/components/ui/tabs";
 
-import type { SeasonSchedule } from "@/modules/league-schedule/server/procedures/season-schedule/types";
-
-interface IRacingScheduleContentProps {
-  scheduleList: SeasonSchedule;
-}
-export const IRacingScheduleContent = ({
-  scheduleList,
-}: IRacingScheduleContentProps) => {
+interface IRacingScheduleContentProps {}
+export const IRacingScheduleContent = ({}: IRacingScheduleContentProps) => {
   return <TabsContent value="iRacing">IRacingSchedule</TabsContent>;
 };
