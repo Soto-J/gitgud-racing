@@ -7,4 +7,4 @@ import { DeleteUserInputSchema } from "./schema";
 export type DeleteUserInput = z.infer<typeof DeleteUserInputSchema>;
 
 export type DeleteUserResult =
-  inferRouterOutputs<AppRouter>["roster"]["editUser"];
+  inferRouterOutputs<AppRouter>["roster"]["deleteUser"];
