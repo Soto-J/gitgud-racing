@@ -11,15 +11,14 @@ import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { ManageUser } from "@/modules/manage/server/procedures/get-user/schema";
-import { UpdateUserProfileInputSchema } from "@/modules/manage/server/procedures/edit-user/schema";
-
-import { useManageFilters } from "@/modules/manage/hooks/use-manage-filter";
+import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
+import type { RosterUser } from "@/modules/roster/server/procedures/get-many/types";
+import { EditUserInputSchema } from "@/modules/roster/server/procedures/edit-user/types/schema";
 
 import ResponsiveDialog from "@/components/responsive-dialog";
 import FieldErrorMessage from "@/components/field-error-message";
+import FormActions from "./form-actions";
 
-import { FormActions } from "@/modules/manage/ui/components/form/form-actions";
 import { Switch } from "@/components/ui/switch";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -31,23 +30,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface ManageEditProfileDialogProps {
-  onOpenDialog: boolean;
+interface EditRosterDialogProps {
+  isOpen: boolean;
   onCloseDialog: () => void;
-  initialValues: ManageUser;
+  initialValues: RosterUser;
 }
 
-export default function ManageEditProfileDialog({
-  onOpenDialog,
+export default function EditRosterDialog({
+  isOpen,
   onCloseDialog,
   initialValues,
-}: ManageEditProfileDialogProps) {
-  const [filters, _] = useManageFilters();
+}: EditRosterDialogProps) {
+  const [filters, _] = useRosterFilters();
 
-  type FormData = z.infer<typeof UpdateUserProfileInputSchema>;
+  type FormData = z.infer<typeof EditUserInputSchema>;
 
   const form = useForm<FormData>({
-    resolver: zodResolver(UpdateUserProfileInputSchema),
+    resolver: zodResolver(EditUserInputSchema),
     defaultValues: {
       team: initialValues.team || "",
       isActive: initialValues.isActive,
@@ -59,10 +58,10 @@ export default function ManageEditProfileDialog({
   const queryClient = useQueryClient();
 
   const editProfile = useMutation(
-    trpc.manage.editUser.mutationOptions({
+    trpc.roster.editUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.manage.getUsers.queryOptions({
+          trpc.roster.getMany.queryOptions({
             ...filters,
           }),
         );
@@ -89,11 +88,12 @@ export default function ManageEditProfileDialog({
     <ResponsiveDialog
       title="Edit Member"
       description={`${initialValues.name}'s profile`}
-      isOpen={onOpenDialog}
+      isOpen={isOpen}
       onOpenChange={onCloseDialog}
     >
       <form
         onSubmit={form.handleSubmit(onSubmit)}
+        onClick={(e) => e.stopPropagation()}
         className="max-h-[50vh] overflow-hidden"
       >
         <div className="space-y-6 p-6">

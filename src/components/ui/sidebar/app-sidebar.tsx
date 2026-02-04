@@ -14,7 +14,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { IoPersonOutline } from "react-icons/io5";
 import { IoPeopleOutline } from "react-icons/io5";
 import { SlCalender } from "react-icons/sl";
-import { BarChart3, ChevronRight, Crown, Flag } from "lucide-react";
+import { BarChart3, ChevronRight, Flag } from "lucide-react";
 
 import SidebarUserButton from "@/components/ui/sidebar/sidebar-user-button";
 import QuickStatsCard from "@/components/quick-stats-card";
@@ -77,12 +77,6 @@ const secondSection = [
     label: "Teams",
     href: "/teams",
     roles: ["user", "staff", "admin"],
-  },
-  {
-    icon: Crown,
-    label: "Manage",
-    href: "/manage",
-    roles: ["staff", "admin"],
   },
 ];
 
