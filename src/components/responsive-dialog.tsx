@@ -51,7 +51,10 @@ export default function ResponsiveDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="border-border bg-card rounded-xl">
+      <DialogContent
+        className="border-border bg-card rounded-xl"
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

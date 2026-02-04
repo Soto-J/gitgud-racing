@@ -5,7 +5,10 @@ interface FormActionsProps {
   onCloseDialog: () => void;
 }
 
-export const FormActions = ({ isPending, onCloseDialog }: FormActionsProps) => {
+export default function FormActions({
+  isPending,
+  onCloseDialog,
+}: FormActionsProps) {
   return (
     <div className="flex items-center justify-between gap-3 p-6 pt-4 dark:border-gray-700 dark:bg-gray-800/50">
       <Button
@@ -34,4 +37,4 @@ export const FormActions = ({ isPending, onCloseDialog }: FormActionsProps) => {
       </Button>
     </div>
   );
-};
+}

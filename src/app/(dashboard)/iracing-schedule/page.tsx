@@ -5,8 +5,6 @@ import { SearchParams } from "nuqs";
 
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
-import ManageListHeader from "@/modules/manage/ui/components/manage-list-header";
-
 import IracingScheduleView from "@/modules/iracing-schedule/ui/views/iracing-schedule-view";
 
 interface IracingSchedulePageProps {
@@ -18,8 +16,6 @@ export default async function IracingSchedulePage({
 }: IracingSchedulePageProps) {
   return (
     <>
-      <ManageListHeader />
-
       <HydrateClient>
         <Suspense fallback={<div>Loading..</div>}>
           <ErrorBoundary fallback={<div>Error</div>}>
