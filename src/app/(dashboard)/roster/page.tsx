@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -6,6 +7,8 @@ import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import { SearchParams } from "nuqs";
 import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
+
+import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 
 import RosterHeader from "@/modules/roster/ui/components/roster-header";
 
@@ -21,8 +24,14 @@ interface RosterPageProps {
 
 export default async function RosterPage({ searchParams }: RosterPageProps) {
   const filters = await loadSearchParams(searchParams);
+  const session = await getCurrentSession();
+
+  if (!session?.user.id) redirect("/");
 
   prefetch(trpc.roster.getMany.queryOptions({ ...filters }));
+
+  const isAdmin =
+    session.user.role === "admin" || session.user.role === "staff";
 
   return (
     <>
@@ -31,7 +40,7 @@ export default async function RosterPage({ searchParams }: RosterPageProps) {
       <HydrateClient>
         <Suspense fallback={<LoadingRosterView />}>
           <ErrorBoundary fallback={<ErrorRosterView />}>
-            <RosterView />
+            <RosterView currentUserId={session.user.id} isAdmin={isAdmin} />
           </ErrorBoundary>
         </Suspense>
       </HydrateClient>

@@ -37,7 +37,7 @@ export default function ResponsiveDialog({
   if (isMobile) {
     return (
       <Drawer open={isOpen} onOpenChange={onOpenChange}>
-        <DrawerContent>
+        <DrawerContent onClick={(e) => e.stopPropagation()}>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
             <DrawerDescription>{description}</DrawerDescription>
@@ -53,6 +53,7 @@ export default function ResponsiveDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
         className="border-border bg-card rounded-xl"
+        onClick={(e) => e.stopPropagation()}
         onPointerDownOutside={(e) => e.preventDefault()}
       >
         <DialogHeader>

@@ -80,20 +80,26 @@ export default function RosterTable<TData, TValue>({
                   index % 2 === 0 ? "bg-background" : "bg-card",
                 )}
               >
-                {row.getVisibleCells().map((cell, cellIndex) => (
-                  <TableCell
-                    key={cell.id}
-                    className={cn(
-                      "p-4",
-                      cellIndex === 0 ? "" : "text-center",
-                      cellIndex < row.getVisibleCells().length - 1
-                        ? "border-border border-r"
-                        : "",
-                    )}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getVisibleCells().map((cell, cellIndex) => {
+                  const isLast =
+                    cellIndex === row.getVisibleCells().length - 1;
+
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      className={cn(
+                        cellIndex === 0 ? "" : "text-center",
+                        isLast ? "relative p-0" : "p-4",
+                        !isLast && "border-border border-r",
+                      )}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : (

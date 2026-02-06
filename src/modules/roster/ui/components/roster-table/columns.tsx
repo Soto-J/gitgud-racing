@@ -1,39 +1,27 @@
 "use client";
 
-import { Activity, useState, MouseEvent } from "react";
+import { Activity } from "react";
 
-import { Crown, Settings } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { type Row } from "@tanstack/react-table";
+import type { Row } from "@tanstack/react-table";
 
 import { cn } from "@/lib/utils";
 
-import { RosterUser } from "@/modules/roster/server/procedures/get-many/types";
+import { Crown } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import type { RosterUser } from "@/modules/roster/server/procedures/get-many/types";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import EditRosterDialog from "../edit-roster-dialog";
+import ActionsColumn from "./actions-column";
 
-interface columnsProps {
-  isAdmin: boolean;
-  onEditUser: (user: RosterUser) => void;
-}
-export const columns = ({
-  isAdmin,
-  onEditUser,
-}: columnsProps): ColumnDef<RosterUser>[] => [
+export const columns = (isAdmin: boolean): ColumnDef<RosterUser>[] => [
   {
     accessorKey: "name",
     header: "Member",
     cell: ({ row }) => {
+      const memberIsAdmin =
+        row.original.role === "admin" || row.original.role === "staff";
+
       return (
         <div className="flex items-center gap-3">
           <Avatar className="border-border h-8 w-8 border">
@@ -52,7 +40,7 @@ export const columns = ({
               </p>
             </div>
 
-            <Activity mode={isAdmin ? "visible" : "hidden"}>
+            <Activity mode={memberIsAdmin ? "visible" : "hidden"}>
               <Crown className="text-secondary h-4 w-4" />
             </Activity>
           </div>
@@ -123,46 +111,9 @@ export const columns = ({
         {
           accessorKey: "actions",
           header: "Actions",
-          cell: ({ row }: { row: Row<RosterUser> }) => {
-            return (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className=""
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Settings />
-                  </Button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent className="">
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEditUser(row.original);
-                      }}
-                      className="cursor-pointer"
-                    >
-                      Edit
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem className="bg-secondary/60 cursor-pointer">
-                      Ban
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="bg-destructive cursor-pointer">
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            );
-          },
+          cell: ({ row }: { row: Row<RosterUser> }) => (
+            <ActionsColumn row={row} />
+          ),
         },
       ]
     : []),

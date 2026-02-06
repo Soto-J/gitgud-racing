@@ -1,24 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { authClient } from "@/lib/auth/auth-client";
 import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
-import type { RosterUser } from "@/modules/roster/server/procedures/get-many/types";
 
 import ErrorState from "@/components/error-state";
 import LoadingState from "@/components/loading-state";
 import DataPagination from "@/components/data-pagination";
 import RosterTable from "@/modules/roster/ui/components/roster-table";
-import EditRosterDialog from "@/modules/roster/ui/components/edit-roster-dialog";
 import { columns } from "@/modules/roster/ui/components/roster-table/columns";
 
-export const RosterView = () => {
-  const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<RosterUser | null>(null);
+interface RosterViewProps {
+  currentUserId: string;
+  isAdmin: boolean;
+}
+
+export const RosterView = ({ currentUserId, isAdmin }: RosterViewProps) => {
   const [filters, setFilters] = useRosterFilters();
   const router = useRouter();
 
@@ -27,36 +27,15 @@ export const RosterView = () => {
     trpc.roster.getMany.queryOptions({ ...filters }),
   );
 
-  const { data: session } = authClient.useSession();
-
   const onRowClick = (id: string) => {
-    router.push(session?.user.id === id ? "/profile" : `/profile/${id}`);
+    router.push(currentUserId === id ? "/profile" : `/profile/${id}`);
   };
-
-  const onEditUser = (user: RosterUser) => {
-    setSelectedUser(user);
-    setDialogIsOpen(true);
-  };
-
-  const isAdmin =
-    session?.user?.role === "admin" || session?.user?.role === "staff";
 
   return (
     <>
-      {selectedUser && (
-        <EditRosterDialog
-          isOpen={dialogIsOpen}
-          onCloseDialog={() => setDialogIsOpen(false)}
-          initialValues={selectedUser}
-        />
-      )}
-
       <RosterTable
         data={roster.users}
-        columns={columns({
-          isAdmin,
-          onEditUser,
-        })}
+        columns={columns(isAdmin)}
         total={roster.total}
         totalActive={roster.totalActive}
         onRowClick={(original) => onRowClick(original.id)}
