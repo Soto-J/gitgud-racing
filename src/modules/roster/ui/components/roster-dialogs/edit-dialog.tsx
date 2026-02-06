@@ -17,7 +17,7 @@ import { EditUserFieldsSchema } from "@/modules/roster/server/procedures/edit-us
 
 import ResponsiveDialog from "@/components/responsive-dialog";
 import FieldErrorMessage from "@/components/field-error-message";
-import FormActions from "./form-actions";
+import FormActions from "@/components/form-actions";
 
 import { Switch } from "@/components/ui/switch";
 import {

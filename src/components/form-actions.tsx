@@ -12,8 +12,8 @@ interface FormActionsProps {
 export default function FormActions({
   isPending,
   onCloseDialog,
-  submitLabel = "Update Member",
-  pendingLabel = "Updating...",
+  submitLabel = "Submit",
+  pendingLabel = "Submitting...",
 }: FormActionsProps) {
   return (
     <div className="border-border flex items-center justify-end gap-3 border-t p-6">
@@ -30,7 +30,7 @@ export default function FormActions({
         type="submit"
         variant="secondary"
         disabled={isPending}
-        className="font-semibold bg-primary/70"
+        className="bg-primary/70 font-semibold"
       >
         {isPending ? (
           <>

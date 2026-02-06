@@ -12,7 +12,7 @@ import { useTRPC } from "@/trpc/client";
 import { LeagueScheduleSchema } from "@/modules/league-schedule/server/procedures/edit/types/schema";
 import type { LeagueSchedule } from "@/modules/league-schedule/server/procedures/get-one/types";
 
-import { FormActions } from "@/modules/league-schedule/ui/components/form/form-actions";
+import FormActions from "@/components/form-actions";
 import ResponsiveDialog from "@/components/responsive-dialog";
 
 import { Input } from "@/components/ui/input";
@@ -222,7 +222,8 @@ export const LeagueScheduleDialog = ({
                 : editSchedule.isPending
             }
             onCloseDialog={onCloseDialog}
-            mode={mode}
+            submitLabel={mode === "Create" ? "Create" : "Update"}
+            pendingLabel={mode === "Create" ? "Creating..." : "Updating..."}
           />
         </ScrollArea>
       </form>
