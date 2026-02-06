@@ -23,6 +23,7 @@ interface ResponsiveDialogProps {
   description: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  preventOutsideClose?: boolean;
 }
 
 export default function ResponsiveDialog({
@@ -31,6 +32,7 @@ export default function ResponsiveDialog({
   description,
   isOpen,
   onOpenChange,
+  preventOutsideClose = false,
 }: ResponsiveDialogProps) {
   const isMobile = useIsMobile();
 
@@ -53,8 +55,9 @@ export default function ResponsiveDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
         className="border-border bg-card rounded-xl"
-        onClick={(e) => e.stopPropagation()}
-        onPointerDownOutside={(e) => e.preventDefault()}
+        onPointerDownOutside={
+          preventOutsideClose ? (e) => e.preventDefault() : undefined
+        }
       >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

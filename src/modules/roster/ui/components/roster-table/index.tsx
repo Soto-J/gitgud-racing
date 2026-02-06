@@ -81,16 +81,16 @@ export default function RosterTable<TData, TValue>({
                 )}
               >
                 {row.getVisibleCells().map((cell, cellIndex) => {
-                  const isLast =
-                    cellIndex === row.getVisibleCells().length - 1;
+                  const isActionsCell = cell.column.id === "actions";
 
                   return (
                     <TableCell
                       key={cell.id}
                       className={cn(
+                        isActionsCell ? "relative p-0" : "p-4",
                         cellIndex === 0 ? "" : "text-center",
-                        isLast ? "relative p-0" : "p-4",
-                        !isLast && "border-border border-r",
+                        cellIndex < row.getVisibleCells().length - 1 &&
+                          "border-border border-r",
                       )}
                     >
                       {flexRender(

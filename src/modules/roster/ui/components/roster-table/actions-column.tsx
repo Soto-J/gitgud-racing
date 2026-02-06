@@ -11,10 +11,10 @@ import type { Row } from "@tanstack/react-table";
 import type { RosterUser } from "@/modules/roster/server/procedures/get-many/types";
 
 import { useConfirm } from "@/hooks/use-confirm";
+import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
 
 import EditDialog from "@/modules/roster/ui/components/roster-dialogs/edit-dialog";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -32,6 +32,7 @@ interface ActionsColumnProps {
 export default function ActionsColumn({ row }: ActionsColumnProps) {
   const [editDialogIsOpen, setEditDialogIsOpen] = useState(false);
   const [banDialogIsOpen, setBanDialogIsOpen] = useState(false);
+  const [filter] = useRosterFilters();
 
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -40,7 +41,7 @@ export default function ActionsColumn({ row }: ActionsColumnProps) {
     trpc.roster.deleteUser.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.roster.getMany.queryOptions({}),
+          trpc.roster.getMany.queryOptions({ ...filter }),
         );
 
         toast.success(`Successfully deleted ${row.original.name}!`);

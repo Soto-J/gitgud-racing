@@ -92,6 +92,7 @@ export default function BanDialog({
       description={`${initialValues.name}'s profile`}
       isOpen={isOpen}
       onOpenChange={onCloseDialog}
+      preventOutsideClose
     >
       <form
         onSubmit={form.handleSubmit(onSubmit, (error) => {

@@ -95,6 +95,7 @@ export default function EditDialog({
       description={`${initialValues.name}'s profile`}
       isOpen={isOpen}
       onOpenChange={onCloseDialog}
+      preventOutsideClose
     >
       <form
         onSubmit={form.handleSubmit(onSubmit, (error) => {
