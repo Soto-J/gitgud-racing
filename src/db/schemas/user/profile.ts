@@ -20,11 +20,11 @@ export const profileTable = mysqlTable("profile", {
     .unique()
     .notNull(),
 
-  isActive: boolean("is_active").notNull().default(false),
+  isActive: boolean("is_active").default(false).notNull(),
 
-  discord: varchar("discord", { length: 37 }).default(""),
-  team: varchar("team", { length: 20 }).default(""),
-  bio: text("bio").default(""),
+  discord: varchar("discord", { length: 37 }),
+  team: varchar("team", { length: 20 }),
+  bio: text("bio"),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),

@@ -5,7 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { trpc } from "@/trpc/server";
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
-import { SearchParams } from "nuqs";
+import type { SearchParams } from "nuqs";
 import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
 
 import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
