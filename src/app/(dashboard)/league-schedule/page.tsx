@@ -38,7 +38,7 @@ export default async function LeagueSchedulePage() {
     <HydrateClient>
       <Suspense fallback={<p>Loading..</p>}>
         <ErrorBoundary fallback={<p>Error..</p>}>
-          <LeagueScheduleView />;
+          <LeagueScheduleView />
         </ErrorBoundary>
       </Suspense>
     </HydrateClient>

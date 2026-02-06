@@ -1,11 +1,10 @@
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { SearchParams } from "nuqs";
-
 import { trpc } from "@/trpc/server";
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
+import type { SearchParams } from "nuqs";
 import { loadSearchParams } from "@/modules/series-results/server/procedures/search-series-results/types/params";
 
 import SeriesResultsHeader from "@/modules/series-results/ui/components/series-results-header";

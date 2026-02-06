@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { SearchParams } from "nuqs";
+import type { SearchParams } from "nuqs";
 
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
