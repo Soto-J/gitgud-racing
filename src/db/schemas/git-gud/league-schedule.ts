@@ -21,7 +21,7 @@ export const leagueScheduleTable = mysqlTable("league_schedule", {
   date: timestamp("date").notNull(),
 
   car: varchar("car", { length: 127 }).notNull(),
-  trackName: varchar("track_name", { length: 50 }).notNull(),
+  trackName: varchar("track_name", { length: 127 }).notNull(),
   setupType: mysqlEnum("setup_type", ["Open", "Fixed"])
     .default("Open")
     .notNull(),
