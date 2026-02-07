@@ -1,5 +1,5 @@
 import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@/trpc/routers/_app";
 
-export type LeagueSchedule =
-  inferRouterOutputs<AppRouter>["leagueSchedule"]["getLeagueSchedule"];
+export type LeagueScheduleGetOne =
+  inferRouterOutputs<AppRouter>["leagueSchedule"]["getOne"];

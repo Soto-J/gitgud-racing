@@ -9,30 +9,30 @@ import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
+import type { LeagueScheduleGetOne } from "@/modules/league-schedule/server/procedures/get-one/types";
 import { LeagueScheduleSchema } from "@/modules/league-schedule/server/procedures/edit/types/schema";
-import type { LeagueSchedule } from "@/modules/league-schedule/server/procedures/get-one/types";
 
 import FormActions from "@/components/form-actions";
 import ResponsiveDialog from "@/components/responsive-dialog";
+import FieldErrorMessage from "@/components/field-error-message";
 
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Field, FieldLabel } from "@/components/ui/field";
-import FieldErrorMessage from "@/components/field-error-message";
 
-interface EditLeagueScheduleDialogProps {
-  onOpenDialog: boolean;
+interface EditScheduleDialogProps {
+  isOpen: boolean;
   onCloseDialog: () => void;
-  initialValues: LeagueSchedule | null;
+  initialValues: LeagueScheduleGetOne | null;
   mode: "Create" | "Edit";
 }
 
-export const LeagueScheduleDialog = ({
-  onOpenDialog,
+export const EditScheduleDialog = ({
+  isOpen,
   onCloseDialog,
   initialValues,
   mode,
-}: EditLeagueScheduleDialogProps) => {
+}: EditScheduleDialogProps) => {
   const form = useForm<z.infer<typeof LeagueScheduleSchema>>({
     resolver: zodResolver(LeagueScheduleSchema),
     values: {
@@ -50,10 +50,10 @@ export const LeagueScheduleDialog = ({
   const queryClient = useQueryClient();
 
   const createSchedule = useMutation(
-    trpc.leagueSchedule.createLeagueSchedule.mutationOptions({
+    trpc.leagueSchedule.create.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.leagueSchedule.getLeagueSchedules.queryOptions(),
+          trpc.leagueSchedule.getMany.queryOptions(),
         );
 
         toast.success("Schedule created successfully!");
@@ -66,10 +66,10 @@ export const LeagueScheduleDialog = ({
   );
 
   const editSchedule = useMutation(
-    trpc.leagueSchedule.editLeagueSchedule.mutationOptions({
+    trpc.leagueSchedule.edit.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.leagueSchedule.getLeagueSchedules.queryOptions(),
+          trpc.leagueSchedule.getMany.queryOptions(),
         );
 
         toast.success("Schedule updated successfully!");
@@ -106,7 +106,7 @@ export const LeagueScheduleDialog = ({
           ? "Create a new race schedule"
           : "Update race schedule details"
       }
-      isOpen={onOpenDialog}
+      isOpen={isOpen}
       onOpenChange={onCloseDialog}
     >
       <form

@@ -1,67 +1,70 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { addDays } from "date-fns";
-import { type DateRange } from "react-day-picker";
+import { useMemo, useState } from "react";
+import { format } from "date-fns";
 
 import { useSuspenseQueries } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
-import { Calendar, CalendarDayButton } from "@/components/ui/calendar";
-import UnderConstruction from "@/components/under-construction";
-import { useState } from "react";
+import { LeagueCalendar } from "../components/league-calendar";
+import { RaceDetailDialog } from "../components/dialogs/race-detail-dialog";
+import { EditScheduleDialog } from "../components/dialogs/edit-schedule-dialog";
+import { LeagueScheduleGetOne } from "../../server/procedures/get-one/types";
 
-interface SchedulePageViewProps {}
+export default function LeagueScheduleView() {
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
-export default function ScheduleView({}: SchedulePageViewProps) {
-  if (process.env.NODE_ENV !== "development") {
-    return (
-      <UnderConstruction
-        title="Schedule view"
-        message="Working on an amazing page for you!"
-      />
-    );
-  }
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] =
+    useState<LeagueScheduleGetOne | null>(null);
 
-  const [range, setRange] = useState<DateRange | undefined>({
-    from: new Date(new Date().getFullYear(), 11, 8),
-    to: addDays(new Date(new Date().getFullYear(), 11, 8), 10),
-  });
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const trpc = useTRPC();
+  const [{ data: schedules }] = useSuspenseQueries({
+    queries: [trpc.leagueSchedule.getMany.queryOptions()],
+  });
+
+  const selectedDateSchedules = useMemo(() => {
+    if (!selectedDate) return [];
+
+    const dateKey = format(selectedDate, "yyyy-MM-dd");
+    return schedules.filter(
+      (s) => format(new Date(s.date), "yyyy-MM-dd") === dateKey,
+    );
+  }, [selectedDate, schedules]);
+
+  const handleSelectDate = (date: Date | undefined) => {
+    setSelectedDate(date);
+
+    if (date) {
+      const dateKey = format(date, "yyyy-MM-dd");
+      const hasSchedules = schedules.some(
+        (s) => format(new Date(s.date), "yyyy-MM-dd") === dateKey,
+      );
+
+      if (hasSchedules) {
+        setIsDetailOpen(true);
+      }
+    }
+  };
 
   return (
-    <Card className="mx-auto w-fit p-0">
-      <CardContent className="p-0">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          numberOfMonths={1}
-          captionLayout="dropdown"
-          className="[--cell-size:--spacing(30)] md:[--cell-size:--spacing(32)]"
-          formatters={{
-            formatMonthDropdown: (date) => {
-              return date.toLocaleString("default", { month: "long" });
-            },
-          }}
-          components={{
-            DayButton: ({ children, modifiers, day, ...props }) => {
-              const isWeekend =
-                day.date.getDay() === 0 || day.date.getDay() === 6;
+    <>
+      <EditScheduleDialog
+        isOpen={isEditDialogOpen}
+        onCloseDialog={() => setIsEditDialogOpen(false)}
+        initialValues={selectedSchedule}
+        mode={"Create"}
+      />
 
-              return (
-                <CalendarDayButton day={day} modifiers={modifiers} {...props}>
-                  {children}
-                  {!modifiers.outside && (
-                    <span>{isWeekend ? "$120" : "$100"}</span>
-                  )}
-                </CalendarDayButton>
-              );
-            },
-          }}
-        />
-      </CardContent>
-    </Card>
+      <RaceDetailDialog
+        isOpen={isDetailOpen}
+        onOpenChange={setIsDetailOpen}
+        selectedDate={selectedDate}
+        schedules={selectedDateSchedules}
+      />
+
+      <LeagueCalendar schedules={schedules} onSelectDate={handleSelectDate} />
+    </>
   );
 }

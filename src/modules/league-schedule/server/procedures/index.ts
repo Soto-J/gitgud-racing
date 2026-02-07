@@ -7,9 +7,9 @@ import { createProcedure } from "./create";
 import { deleteProcedure } from "./delete";
 
 export const leagueScheduleRouter = createTRPCRouter({
-  getLeagueSchedule: getOneProcedure,
-  getLeagueSchedules: getManyProcedure,
-  editLeagueSchedule: editProcedure,
-  createLeagueSchedule: createProcedure,
-  deleteLeagueSchedule: deleteProcedure,
+  getOne: getOneProcedure,
+  getMany: getManyProcedure,
+  edit: editProcedure,
+  create: createProcedure,
+  delete: deleteProcedure,
 });
