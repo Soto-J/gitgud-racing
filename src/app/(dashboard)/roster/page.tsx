@@ -6,7 +6,7 @@ import { trpc } from "@/trpc/server";
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import type { SearchParams } from "nuqs";
-import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/params";
+import { loadSearchParams } from "@/modules/roster/server/procedures/get-many/types/params";
 
 import { getCurrentSession } from "@/lib/auth/utils/get-current-session";
 

@@ -5,7 +5,7 @@ import { Activity } from "react";
 import { IoPeopleOutline } from "react-icons/io5";
 import { XCircleIcon } from "lucide-react";
 
-import { DEFAULT_PAGE } from "@/modules/roster/server/procedures/get-many/params";
+import { DEFAULT_PAGE } from "@/modules/roster/server/procedures/get-many/types/params";
 
 import { useRosterFilters } from "@/modules/roster/hooks/use-roster-filter";
 import { useDebounceSearch } from "@/hooks/use-debounce-search";

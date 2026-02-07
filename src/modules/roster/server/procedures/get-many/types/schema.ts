@@ -5,7 +5,7 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
   MIN_PAGE_SIZE,
-} from "../params";
+} from "./params";
 
 export const RosterGetManyInputSchema = z.object({
   page: z.number().default(DEFAULT_PAGE),
