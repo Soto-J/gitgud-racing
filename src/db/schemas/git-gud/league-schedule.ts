@@ -12,6 +12,9 @@ import {
 
 import { user as userTable } from "../auth";
 
+export const SETUP_TYPE = ["Open", "Fixed"] as const;
+export const START_TYPE = ["Standing", "Rolling"] as const;
+
 export const leagueScheduleTable = mysqlTable("league_schedule", {
   id: varchar("id", { length: 21 })
     .primaryKey()
@@ -22,12 +25,8 @@ export const leagueScheduleTable = mysqlTable("league_schedule", {
 
   car: varchar("car", { length: 127 }).notNull(),
   trackName: varchar("track_name", { length: 127 }).notNull(),
-  setupType: mysqlEnum("setup_type", ["Open", "Fixed"])
-    .default("Open")
-    .notNull(),
-  startType: mysqlEnum("start_type", ["Standing", "Rolling"])
-    .default("Standing")
-    .notNull(),
+  setupType: mysqlEnum("setup_type", SETUP_TYPE).default("Open").notNull(),
+  startType: mysqlEnum("start_type", START_TYPE).default("Standing").notNull(),
 
   raceLength: int("race_length").default(1).notNull(),
 

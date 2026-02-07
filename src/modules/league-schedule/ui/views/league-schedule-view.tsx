@@ -54,7 +54,7 @@ export default function LeagueScheduleView() {
         isOpen={isEditDialogOpen}
         onCloseDialog={() => setIsEditDialogOpen(false)}
         initialValues={selectedSchedule}
-        mode={"Create"}
+        mode={selectedSchedule ? "Edit" : "Create"}
       />
 
       <RaceDetailDialog
@@ -62,6 +62,11 @@ export default function LeagueScheduleView() {
         onOpenChange={setIsDetailOpen}
         selectedDate={selectedDate}
         schedules={selectedDateSchedules}
+        onEditSchedule={(schedule) => {
+          setSelectedSchedule(schedule);
+          setIsDetailOpen(false);
+          setIsEditDialogOpen(true);
+        }}
       />
 
       <LeagueCalendar schedules={schedules} onSelectDate={handleSelectDate} />

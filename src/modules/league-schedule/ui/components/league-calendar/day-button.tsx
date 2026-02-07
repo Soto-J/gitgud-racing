@@ -23,28 +23,31 @@ export const DayButton = ({
 
   return (
     <CalendarDayButton
+      {...props}
       day={day}
       modifiers={modifiers}
-      {...props}
       className="text-secondary border-border items-start justify-start border p-2 [&>span]:text-base"
     >
       <div className="w-full leading-none">
-        <div className="flex justify-between">
-          {children}
-          {!modifiers.outside && !!daySchedules.length && (
-            <Edit className="text-muted-foreground size-3.5" />
-          )}
-        </div>
+        <div className="flex justify-between">{children}</div>
       </div>
 
       {!modifiers.outside && !!daySchedules.length && (
-        <span className="flex items-center gap-0.5">
-          {Array.from({
-            length: Math.min(daySchedules.length, 3),
-          }).map((_, i) => (
-            <span key={i} className="bg-primary size-1.5 rounded-full" />
+        <div className="mt-1 flex w-full flex-col gap-0.5">
+          {daySchedules.slice(0, 2).map((schedule) => (
+            <div
+              key={schedule.id}
+              className="bg-primary/10 text-foreground truncate rounded px-1 text-left text-[10px] leading-tight"
+            >
+              {schedule.trackName}
+            </div>
           ))}
-        </span>
+          {daySchedules.length > 2 && (
+            <span className="text-muted-foreground text-[10px] leading-tight">
+              +{daySchedules.length - 2} more
+            </span>
+          )}
+        </div>
       )}
     </CalendarDayButton>
   );
