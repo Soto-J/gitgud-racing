@@ -33,7 +33,7 @@ export const DayButton = ({
 
       <Activity mode={showMetaData ? "visible" : "hidden"}>
         <div className="mt-1 min-h-0 w-full min-w-0 overflow-hidden">
-          {daySchedules.map((schedule) => (
+          {daySchedules.slice(0, 2).map((schedule) => (
             <div
               key={schedule.id}
               className="bg-primary/10 text-foreground truncate rounded text-left leading-tight md:text-base"
