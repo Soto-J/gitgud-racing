@@ -6,7 +6,7 @@ export const CreateLeagueScheduleInputSchema = z.object({
   seasonNumber: z.number().min(1, "Season number required."),
   date: z.string().min(1, "Date Required."),
 
-  car: z.string().min(1, "Car is requiree."),
+  car: z.string().min(1, "Car is required."),
   trackName: z.string().min(1, "Track name required."),
   setupType: z.enum(SETUP_TYPE).default("Open"),
   startType: z.enum(START_TYPE).default("Standing"),
