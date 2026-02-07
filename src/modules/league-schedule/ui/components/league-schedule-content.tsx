@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
-import { LeagueScheduleDialog } from "./form/league-schedule-dialog";
+import { LeagueScheduleDialog } from "./dialogs/league-schedule-dialog";
 
 import type { LeagueSchedules } from "@/modules/league-schedule/server/procedures/get-many/types";
 import type { LeagueSchedule } from "@/modules/league-schedule/server/procedures/get-one/types";
