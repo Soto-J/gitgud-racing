@@ -11,8 +11,8 @@ import { DayButton } from "./day-button";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
-import { WeekDay } from "./weekday";
 
+import { WeekDay } from "./weekday";
 interface LeagueCalendarProps {
   schedules: LeagueScheduleGetMany;
   onSelectDate: (date: Date | undefined) => void;
@@ -44,7 +44,7 @@ export const LeagueCalendar = ({
   };
 
   return (
-    <Card className="w-full p-0 border-primary shadow">
+    <Card className="border-primary mx-auto w-fit overflow-hidden p-0 shadow">
       <CardContent className="p-0">
         <Calendar
           mode="single"
@@ -52,8 +52,10 @@ export const LeagueCalendar = ({
           onSelect={handleDaySelect}
           numberOfMonths={1}
           captionLayout="dropdown"
-          className="w-full overflow-hidden [--cell-size:--spacing(26)] md:[--cell-size:--spacing(30)]"
-          classNames={{}}
+          className={cn(
+            "[--cell-size:--spacing(11)] sm:[--cell-size:--spacing(15)] md:[--cell-size:--spacing(20)] lg:[--cell-size:--spacing(25)] xl:[--cell-size:--spacing(30)] 2xl:[--cell-size:--spacing(50)]",
+            "rounded-lg",
+          )}
           formatters={{
             formatMonthDropdown: (date) => {
               return date.toLocaleString("default", { month: "long" });

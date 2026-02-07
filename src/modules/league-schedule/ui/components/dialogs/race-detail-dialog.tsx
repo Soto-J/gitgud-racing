@@ -2,14 +2,18 @@ import { format } from "date-fns";
 
 import type { LeagueScheduleGetMany } from "@/modules/league-schedule/server/procedures/get-many/types";
 
+import { Edit3 } from "lucide-react";
+
 import ResponsiveDialog from "@/components/responsive-dialog";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 interface RaceDetailDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   schedules: LeagueScheduleGetMany;
   selectedDate: Date | undefined;
+  onEditSchedule: (schedule: LeagueScheduleGetMany[number]) => void;
 }
 
 export function RaceDetailDialog({
@@ -17,6 +21,7 @@ export function RaceDetailDialog({
   onOpenChange,
   schedules,
   selectedDate,
+  onEditSchedule,
 }: RaceDetailDialogProps) {
   const title = selectedDate
     ? format(selectedDate, "EEEE, MMMM d, yyyy")
@@ -40,13 +45,20 @@ export function RaceDetailDialog({
           const celsius = Math.floor(((schedule.temp - 32) * 5) / 9);
 
           return (
-            <div
-              key={schedule.id}
-              className="bg-muted/50 rounded-lg p-4"
-            >
-              <h3 className="text-foreground text-lg font-semibold">
-                {schedule.trackName}
-              </h3>
+            <div key={schedule.id} className="bg-muted/50 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-foreground text-lg font-semibold">
+                  {schedule.trackName}
+                </h3>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEditSchedule(schedule)}
+                >
+                  <Edit3 className="size-4" />
+                </Button>
+              </div>
 
               <Separator className="my-3" />
 
@@ -101,9 +113,7 @@ export function RaceDetailDialog({
               </div>
 
               <div className="text-muted-foreground mt-3 text-sm">
-                <span className="text-foreground font-medium">
-                  Race Time:{" "}
-                </span>
+                <span className="text-foreground font-medium">Race Time: </span>
                 {raceDate.toLocaleTimeString("en-US", {
                   hour: "numeric",
                   minute: "2-digit",
