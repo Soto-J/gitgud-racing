@@ -69,17 +69,20 @@ export default function ActionsColumn({ row }: ActionsColumnProps) {
 
   return (
     <>
-      <DeleteConfirmationDialog />
-      <EditDialog
-        isOpen={editDialogIsOpen}
-        onCloseDialog={() => setEditDialogIsOpen(false)}
-        initialValues={row.original}
-      />
-      <BanDialog
-        isOpen={banDialogIsOpen}
-        onCloseDialog={() => setBanDialogIsOpen(false)}
-        initialValues={row.original}
-      />
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <DeleteConfirmationDialog />
+        <EditDialog
+          isOpen={editDialogIsOpen}
+          onCloseDialog={() => setEditDialogIsOpen(false)}
+          initialValues={row.original}
+        />
+        <BanDialog
+          isOpen={banDialogIsOpen}
+          onCloseDialog={() => setBanDialogIsOpen(false)}
+          initialValues={row.original}
+        />
+      </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger
