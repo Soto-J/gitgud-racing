@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 
-import type { LeagueSchedule } from "@/modules/league-schedule/server/procedures/get-one/types";
+import type { LeagueScheduleGetMany } from "@/modules/league-schedule/server/procedures/get-many/types";
 
 import ResponsiveDialog from "@/components/responsive-dialog";
 import { Separator } from "@/components/ui/separator";
@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 interface RaceDetailDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  schedules: LeagueSchedule[];
+  schedules: LeagueScheduleGetMany;
   selectedDate: Date | undefined;
 }
 

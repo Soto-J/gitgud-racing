@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
-import { LeagueScheduleDialog } from "./dialogs/league-schedule-dialog";
+import { LeagueScheduleDialog } from "./form/league-schedule-dialog";
 
-import type { LeagueSchedules } from "@/modules/league-schedule/server/procedures/get-many/types";
-import type { LeagueSchedule } from "@/modules/league-schedule/server/procedures/get-one/types";
+import type { LeagueSchedules } from "@/modules/schedule/server/procedures/league-schedule/get-many/types";
+import type { LeagueSchedule } from "@/modules/schedule/server/procedures/league-schedule/get-one/types";
 
 import { TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -44,10 +44,10 @@ export const LeagueScheduleContent = ({
   const queryClient = useQueryClient();
 
   const deleteSchedule = useMutation(
-    trpc.leagueSchedule.deleteLeagueSchedule.mutationOptions({
+    trpc.schedule.deleteLeagueSchedule.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.leagueSchedule.getLeagueSchedules.queryOptions(),
+          trpc.schedule.getLeagueSchedules.queryOptions(),
         );
 
         toast.success("Schedule successfully deleted.");
@@ -99,9 +99,9 @@ export const LeagueScheduleContent = ({
       <ConfirmationDialog />
 
       <TabsContent value="gitGud">
-        <Card className="overflow-hidden border-0 bg-linear-to-br from-blue-900 via-gray-800 to-blue-900 pt-0 opacity-90">
+        <Card className="overflow-hidden border-0 bg-gradient-to-br from-blue-900 via-gray-800 to-blue-900 pt-0 opacity-90">
           <CardHeader className="relative overflow-hidden py-4 text-center">
-            <div className="absolute -inset-10 bg-linear-to-r from-blue-500/20 to-red-500/20" />
+            <div className="absolute -inset-10 bg-gradient-to-r from-blue-500/20 to-red-500/20" />
 
             <CardTitle className="z-10 text-4xl font-bold text-red-500">
               SEASON 1
