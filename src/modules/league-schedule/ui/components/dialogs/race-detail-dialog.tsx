@@ -45,10 +45,7 @@ export function RaceDetailDialog({
           const celsius = Math.floor(((schedule.temp - 32) * 5) / 9);
 
           return (
-            <div
-              key={schedule.id}
-              className="bg-muted/50 rounded-lg p-4"
-            >
+            <div key={schedule.id} className="bg-muted/50 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-foreground text-lg font-semibold">
                   {schedule.trackName}
@@ -116,9 +113,7 @@ export function RaceDetailDialog({
               </div>
 
               <div className="text-muted-foreground mt-3 text-sm">
-                <span className="text-foreground font-medium">
-                  Race Time:{" "}
-                </span>
+                <span className="text-foreground font-medium">Race Time: </span>
                 {raceDate.toLocaleTimeString("en-US", {
                   hour: "numeric",
                   minute: "2-digit",

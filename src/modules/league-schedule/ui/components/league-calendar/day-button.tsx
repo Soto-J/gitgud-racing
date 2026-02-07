@@ -1,8 +1,7 @@
+import { Activity } from "react";
 import { format } from "date-fns";
+
 import type { DayButtonProps } from "react-day-picker";
-
-import { Edit } from "lucide-react";
-
 import type { LeagueScheduleGetMany } from "@/modules/league-schedule/server/procedures/get-many/types";
 
 import { CalendarDayButton } from "@/components/ui/calendar";
@@ -21,34 +20,35 @@ export const DayButton = ({
   const dateKey = format(day.date, "yyyy-MM-dd");
   const daySchedules = schedulesByDate.get(dateKey) ?? [];
 
+  const showMetaData = !modifiers.outside && !!daySchedules.length;
+
   return (
     <CalendarDayButton
       {...props}
       day={day}
       modifiers={modifiers}
-      className="text-secondary border-border items-start justify-start border p-2 [&>span]:text-base"
+      className="border-border items-start justify-start border p-2 [&>span]:text-base"
     >
-      <div className="w-full leading-none">
-        <div className="flex justify-between">{children}</div>
-      </div>
+      <div className="text-secondary text-lg">{children}</div>
 
-      {!modifiers.outside && !!daySchedules.length && (
-        <div className="mt-1 flex w-full flex-col gap-0.5">
-          {daySchedules.slice(0, 2).map((schedule) => (
+      <Activity mode={showMetaData ? "visible" : "hidden"}>
+        <div className="mt-1 min-h-0 w-full min-w-0 overflow-hidden">
+          {daySchedules.map((schedule) => (
             <div
               key={schedule.id}
-              className="bg-primary/10 text-foreground truncate rounded px-1 text-left text-[10px] leading-tight"
+              className="bg-primary/10 text-foreground truncate rounded text-left leading-tight md:text-base"
             >
               {schedule.trackName}
             </div>
           ))}
-          {daySchedules.length > 2 && (
+
+          <Activity mode={daySchedules.length > 2 ? "visible" : "hidden"}>
             <span className="text-muted-foreground text-[10px] leading-tight">
               +{daySchedules.length - 2} more
             </span>
-          )}
+          </Activity>
         </div>
-      )}
+      </Activity>
     </CalendarDayButton>
   );
 };
