@@ -10,7 +10,6 @@ export default function QuickStatsCard() {
   );
 
   if (!data || isError) {
-    console.log({ error });
     return null;
   }
 

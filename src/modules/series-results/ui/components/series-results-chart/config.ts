@@ -15,6 +15,7 @@ export const chartConfig = {
 
 export const xAxisConfig: XAxisProps = {
   type: "number" as const,
+  domain: [0, "dataMax"],
   axisLine: false,
   fontSize: 12,
   fontWeight: 100,
