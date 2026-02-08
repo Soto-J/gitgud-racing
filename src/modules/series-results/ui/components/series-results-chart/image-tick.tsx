@@ -36,6 +36,8 @@ export default function ImageTick({ x, y, payload, data }: ImageTickProps) {
     // router.push(`/home/${seriesData.seriesId}`);
   };
 
+  const seriesId = data?.series[payload.index]?.seriesId;
+
   return (
     <g transform={`translate(${x},${y})`}>
       <image
@@ -43,13 +45,12 @@ export default function ImageTick({ x, y, payload, data }: ImageTickProps) {
         y={-24}
         width={42}
         height={42}
-        // href={`/Official_Series_Logos/logos/${payload.value.trim()}.png`}
-        href={`/series-assets/seriesid_${data?.series[payload.index]?.seriesId}.png`}
+        href={`/series-assets/seriesid_${seriesId}.png`}
         className="cursor-pointer transition-all duration-200 hover:scale-110"
         role="button"
         tabIndex={0}
         aria-label={`Open series ${payload.value}`}
-        onClick={handleImageClick}
+        onClick={() => router.push(`/series-results/${seriesId}`)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
