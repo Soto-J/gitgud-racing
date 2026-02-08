@@ -5,6 +5,7 @@ import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 
+import { Plus } from "lucide-react";
 import type { LeagueScheduleGetMany } from "@/modules/league-schedule/server/procedures/get-many/types";
 
 import { DayButton } from "./day-button";
@@ -13,14 +14,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 
 import { WeekDay } from "./weekday";
+import { Button } from "@/components/ui/button";
 interface LeagueCalendarProps {
   schedules: LeagueScheduleGetMany;
   onSelectDate: (date: Date | undefined) => void;
+  onOpenEditDialog: () => void;
 }
 
 export const LeagueCalendar = ({
   schedules,
   onSelectDate,
+  onOpenEditDialog,
 }: LeagueCalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
@@ -69,6 +73,24 @@ export const LeagueCalendar = ({
             DayButton: (props) => (
               <DayButton {...props} schedulesByDate={schedulesByDate} />
             ),
+            MonthCaption({ children, className, ...props }) {
+              return (
+                <div className={cn(className, "")}>
+                  <div className="flex gap-x-2">
+                    {children}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="relative z-20 cursor-pointer"
+                      onClick={onOpenEditDialog}
+                    >
+                      <Plus className="size-4" />
+                      New
+                    </Button>
+                  </div>
+                </div>
+              );
+            },
           }}
         />
       </CardContent>
