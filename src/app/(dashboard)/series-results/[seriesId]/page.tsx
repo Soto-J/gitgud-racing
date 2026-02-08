@@ -15,13 +15,13 @@ import {
 } from "@/modules/series-results/ui/views/series-results-view";
 import UnderConstruction from "@/components/under-construction";
 
-interface SeriesIdPagePageProps {
+interface SeriesIdPageProps {
   searchParams: Promise<SearchParams>;
 }
 
 export default async function SeriesIdPage({
   searchParams,
-}: SeriesIdPagePageProps) {
+}: SeriesIdPageProps) {
   const filters = await loadSearchParams(searchParams);
 
   prefetch(trpc.seriesResults.searchSeriesResults.queryOptions({ ...filters }));
@@ -33,7 +33,7 @@ export default async function SeriesIdPage({
       <HydrateClient>
         <Suspense fallback={<LoadingSeriesResultsView />}>
           <ErrorBoundary fallback={<ErrorSeriesResultsView />}>
-            <UnderConstruction title="Series ID page" message="Stayed tuned!" />
+            <UnderConstruction title="Series ID page" message="Stay tuned!" />
           </ErrorBoundary>
         </Suspense>
       </HydrateClient>

@@ -72,7 +72,10 @@ export default function LeagueScheduleView() {
       <LeagueCalendar
         schedules={schedules}
         onSelectDate={handleSelectDate}
-        onOpenEditDialog={() => setIsEditDialogOpen(true)}
+        onOpenEditDialog={() => {
+          setSelectedSchedule(null);
+          setIsEditDialogOpen(true);
+        }}
       />
     </>
   );
