@@ -8,16 +8,20 @@ import {
 } from "@/lib/iracing";
 import { SeriesResultsInputSchema } from "./types/schema";
 
+import { getSeasonDates } from "@/lib/iracing/helpers/season-date";
+
 export const searchSeriesResultsProcedure = baseProcedure
   .input(SeriesResultsInputSchema)
   .query(async ({ input }) => {
     const { page, pageSize, search, ...urlParams } = input;
 
+    const seasonDate = getSeasonDates();
+
     const response = await fetchSeriesResults({
       ...urlParams,
-      season_year: 2026,
-      season_quarter: 1,
-      race_week_num: 6,
+      season_year: seasonDate.year,
+      season_quarter: seasonDate.quarter,
+      race_week_num: seasonDate.raceWeek,
       official_only: true,
       event_types: [5],
       category_ids: [1, 3, 4, 5],
@@ -72,8 +76,13 @@ export const searchSeriesResultsProcedure = baseProcedure
             Math.round((totalSplits / totalRaceSessions) * 10) / 10,
         };
       })
-      .sort((a, b) => b.avgEntrantsPerRace - a.avgEntrantsPerRace);
-
+      .sort(
+        (a, b) =>
+          b.avgEntrantsPerRace +
+          b.avgSplitsPerRace -
+          (a.avgEntrantsPerRace + a.avgSplitsPerRace),
+      );
+      
     return { series: statsRecords };
   });
 

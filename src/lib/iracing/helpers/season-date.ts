@@ -7,32 +7,33 @@ const seasonStart = (year: number, month: number, day: number) =>
 export function getSeasonDates(now = new Date()) {
   const year = now.getFullYear();
 
-  const seasons = [
-    { season: 1, start: seasonStart(year, 2, 18) }, // Mar
-    { season: 2, start: seasonStart(year, 5, 17) }, // Jun
-    { season: 3, start: seasonStart(year, 8, 9) }, // Sep
-    { season: 4, start: seasonStart(year, 11, 15) }, // Dec
+  // iRacing seasons with their start dates
+  // Season 1 starts in mid-December of the previous year
+  // Each season is ~12 weeks long
+  const currentYearSeasons = [
+    { season: 1, start: seasonStart(year - 1, 11, 16), year }, // Dec 16 (prev year)
+    { season: 2, start: seasonStart(year, 2, 11), year }, // Mar 11
+    { season: 3, start: seasonStart(year, 5, 3), year }, // Jun 3
+    { season: 4, start: seasonStart(year, 7, 26), year }, // Aug 26
   ];
 
-  // Find which season we're in
-  let currentSeason = seasons[0];
-  let seasonYear = year;
+  // Also check next year's Season 1 in case we're in late December
+  const nextYearS1 = {
+    season: 1,
+    start: seasonStart(year, 11, 16),
+    year: year + 1,
+  };
 
-  // If before first season of the year, use last season of previous year
-  if (now < currentSeason.start) {
-    currentSeason = {
-      season: 4,
-      start: seasonStart(year - 1, 11, 15),
-    };
+  // Combine all possible seasons to check
+  const allSeasons = [...currentYearSeasons, nextYearS1];
 
-    seasonYear = year - 1;
-  } else {
-    // Find the most recent season that has started
-    for (let i = seasons.length - 1; i >= 0; i--) {
-      if (now >= seasons[i].start) {
-        currentSeason = seasons[i];
-        break;
-      }
+  // Find which season we're in by checking most recent season that has started
+  let currentSeason = currentYearSeasons[0];
+
+  for (let i = allSeasons.length - 1; i >= 0; i--) {
+    if (now >= allSeasons[i].start) {
+      currentSeason = allSeasons[i];
+      break;
     }
   }
 
@@ -44,6 +45,6 @@ export function getSeasonDates(now = new Date()) {
   return {
     raceWeek: Math.max(0, Math.min(weeksSinceStart, MAX_RACE_WEEK)),
     quarter: currentSeason.season,
-    year: seasonYear,
+    year: currentSeason.year,
   };
 }

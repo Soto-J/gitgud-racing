@@ -22,7 +22,6 @@ export default async function SeriesResultsPage({
   searchParams,
 }: SeriesResultsPageProps) {
   const filters = await loadSearchParams(searchParams);
-
   prefetch(trpc.seriesResults.searchSeriesResults.queryOptions({ ...filters }));
 
   return (
