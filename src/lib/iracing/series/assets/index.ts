@@ -13,13 +13,12 @@ const SERIES_ASSETS_DIR = path.join(process.cwd(), "public/series-assets");
 
 export async function fetchSeriesAssets(): Promise<SeriesAssetsResponse> {
   const accessToken = await getAccessToken();
-  console.log("YURRRR");
+  
   const response = await fetchData<SeriesAssetsResponse>(
     "/data/series/assets",
     accessToken,
   );
 
-  console.log({ response });
   if (!response.ok) {
     throwIracingError(response.error, response.message);
   }

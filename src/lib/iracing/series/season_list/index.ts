@@ -2,14 +2,14 @@ import { fetchData, throwIracingError } from "@/lib/iracing/helpers/fetch-data";
 import { getAccessToken } from "@/lib/iracing/helpers/access-token";
 
 export async function fetchSeriesSeasonList(
-  includeSeries = true,
+  includeSeries = false,
   seasonYear = 2026,
   seasonQuarter = 1,
 ) {
   const accessToken = await getAccessToken();
 
   const response = await fetchData(
-    `/data/series/season_list=${includeSeries}&season_year=${seasonYear}&season_quarter=${seasonQuarter}`,
+    `/data/series/season_list?include_series=${includeSeries}&season_year=${seasonYear}&season_quarter=${seasonQuarter}`,
     accessToken,
   );
 
@@ -17,5 +17,5 @@ export async function fetchSeriesSeasonList(
     throwIracingError(response.error, response.message);
   }
 
-  console.log({ data: response.data });
+  // console.log({ data: response.data.seasons[0] });
 }
