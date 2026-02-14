@@ -22,8 +22,9 @@ export default async function IracingSchedulePage({
   if (process.env.NODE_ENV !== "development") {
     return <UnderConstruction title="iRacing Schedule" message="Stay tuned!" />;
   }
-  await fetchSeriesSeasonSchedule();
 
+  // await fetchSeriesSeasonSchedule();
+  await fetchSeriesSeasonList();
   return (
     <>
       <HydrateClient>
