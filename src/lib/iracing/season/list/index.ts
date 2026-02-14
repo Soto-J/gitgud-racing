@@ -10,8 +10,6 @@ export async function fetchSeasonList(seasonYear = 2026, seasonQuarter = 1) {
     accessToken,
   );
 
-  console.log({ response });
-
   if (!response.ok) {
     throwIracingError(response.error, response.message);
   }

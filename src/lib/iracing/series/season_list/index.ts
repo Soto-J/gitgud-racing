@@ -13,8 +13,6 @@ export async function fetchSeriesSeasonList(
     accessToken,
   );
 
-  console.log({ response });
-
   if (!response.ok) {
     throwIracingError(response.error, response.message);
   }

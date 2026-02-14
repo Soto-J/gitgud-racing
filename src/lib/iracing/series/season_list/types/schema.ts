@@ -4,7 +4,7 @@ export const SeriesSeasonListSchema = z.object({
   season_id: z.number(),
   season_name: z.string(),
   active: z.boolean(),
-  allowed_season_members: null,
+  allowed_season_members: z.null(),
   car_class_ids: z.array(z.number()),
   car_switching: z.boolean(),
   car_types: z.array(
@@ -28,7 +28,7 @@ export const SeriesSeasonListSchema = z.object({
     }),
     car_restrictions: [],
     race_lap_limit: z.number(),
-    race_time_limit: null,
+    race_time_limit: z.null(),
     precip_chance: z.number(),
     start_type: z.string(),
     category_id: z.number(),
@@ -37,10 +37,10 @@ export const SeriesSeasonListSchema = z.object({
   driver_change_rule: z.number(),
   driver_changes: z.boolean(),
   drops: z.number(),
-  elig: {
+  elig: z.object({
     own_car: z.boolean(),
     own_track: z.boolean(),
-  },
+  }),
   enable_pitlane_collisions: z.boolean(),
   fixed_setup: z.boolean(),
   green_white_checkered_limit: z.number(),
