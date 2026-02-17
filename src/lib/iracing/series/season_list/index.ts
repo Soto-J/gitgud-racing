@@ -18,15 +18,14 @@ export async function fetchSeriesSeasonList(
     throwIracingError(response.error, response.message);
   }
 
-  const {data, error, success} = SeriesSeasonListSchema.safeParse(response.data);
+  const { data, error, success } = SeriesSeasonListSchema.safeParse(
+    response.data,
+  );
 
   if (!success) {
     console.error(error);
-    return
+    return [];
   }
 
-  console.log(data);
-
-
-  console.log({ data: data.seasons[0] });
+  return data.seasons;
 }

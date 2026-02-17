@@ -3,14 +3,10 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import type { SearchParams } from "nuqs";
 
+import { trpc } from "@/trpc/server";
 import { HydrateClient, prefetch } from "@/components/hydration-client";
 
 import IracingScheduleView from "@/modules/iracing-schedule/ui/views/iracing-schedule-view";
-import { fetchSeriesAssets } from "@/lib/iracing/series/assets";
-import UnderConstruction from "@/components/under-construction";
-import { fetchSeriesSeasonList } from "@/lib/iracing/series/season_list";
-import { fetchSeasonList } from "@/lib/iracing/season/list";
-import { fetchSeriesSeasonSchedule } from "@/lib/iracing/series/season_schedule";
 
 interface IracingSchedulePageProps {
   searchParams: Promise<SearchParams>;
@@ -19,19 +15,14 @@ interface IracingSchedulePageProps {
 export default async function IracingSchedulePage({
   searchParams,
 }: IracingSchedulePageProps) {
-  if (process.env.NODE_ENV !== "development") {
-    return <UnderConstruction title="iRacing Schedule" message="Stay tuned!" />;
-  }
 
-  // await fetchSeriesSeasonSchedule();
-  await fetchSeriesSeasonList();
+  prefetch(trpc.iracingSchedule.getMany.queryOptions());
   return (
     <>
       <HydrateClient>
         <Suspense fallback={<div>Loading..</div>}>
           <ErrorBoundary fallback={<div>Error</div>}>
-            <UnderConstruction title="iRacing Schedule" message="Stay tuned!" />
-            {/* <IracingScheduleView /> */}
+            <IracingScheduleView />
           </ErrorBoundary>
         </Suspense>
       </HydrateClient>
