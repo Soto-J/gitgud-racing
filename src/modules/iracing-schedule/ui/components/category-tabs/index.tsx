@@ -1,7 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { categoryMap } from "@/modules/iracing-schedule/constants";
 import type { Season } from "@/modules/iracing-schedule/types";
-import { ScheduleGrid } from "../schedule-grid";
+
+import ScheduleGrid from "@/modules/iracing-schedule/ui/components/schedule-grid";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SCHEDULE_CATEGORIES = [
   { id: "all", label: "All" },
@@ -33,8 +34,7 @@ export function CategoryTabs({ seasons }: CategoryTabsProps) {
           category.id === "all"
             ? seasons
             : seasons.filter(
-                (s) =>
-                  s.current_week_sched.category_id === Number(category.id),
+                (s) => s.current_week_sched.category_id === Number(category.id),
               );
 
         return (
