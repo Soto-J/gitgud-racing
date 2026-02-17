@@ -82,7 +82,7 @@ export const searchSeriesResultsProcedure = baseProcedure
           b.avgSplitsPerRace -
           (a.avgEntrantsPerRace + a.avgSplitsPerRace),
       );
-      
+
     return { series: statsRecords };
   });
 

@@ -1,3 +1,8 @@
 import { createTRPCRouter } from "@/trpc/init";
 
-export const iracingScheduleRouter = createTRPCRouter({});
+import { getManyProcedure } from "./get-many";
+
+
+export const iracingScheduleRouter = createTRPCRouter({
+    getMany: getManyProcedure
+});
