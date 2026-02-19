@@ -14,6 +14,15 @@ export const categoryMap = {
   5: "Sport",
   6: "Formula",
 } as const;
+export const licenseGroupTypeMap = {
+  1: "R",
+  2: "D",
+  3: "C",
+  4: "B",
+  5: "A",
+  6: "P",
+} as const;
+
 export const evenTypesMap = {
   2: "Practice",
   3: "Qualify",

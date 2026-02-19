@@ -10,7 +10,5 @@ export async function fetchDocumentation() {
     return;
   }
 
-  console.log({ data: data.data });
-
   return data.data;
 }

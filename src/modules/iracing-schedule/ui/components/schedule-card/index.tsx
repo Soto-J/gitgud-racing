@@ -1,3 +1,8 @@
+import { MapPin, Settings, Users, Wrench } from "lucide-react";
+
+import { categoryMap, licenseGroupTypeMap } from "@/modules/iracing-schedule/constants";
+import type { Season } from "@/modules/iracing-schedule/types";
+
 import {
   Card,
   CardContent,
@@ -5,9 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { categoryMap } from "@/modules/iracing-schedule/constants";
-import type { Season } from "@/modules/iracing-schedule/types";
-import { MapPin, Settings, Users, Wrench } from "lucide-react";
 
 interface ScheduleCardProps {
   season: Season;
@@ -22,7 +24,17 @@ export function ScheduleCard({ season }: ScheduleCardProps) {
     <Card className="hover:border-primary/30 cursor-pointer transition-colors">
       <CardHeader>
         <CardDescription className="flex items-center justify-between">
-          <span>{categoryLabel}</span>
+          <span className="flex items-center gap-2">
+            {categoryLabel}
+            {season.license_group_types.map(({ license_group_type }) => (
+              <span
+                key={license_group_type}
+                className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-[10px]"
+              >
+                {licenseGroupTypeMap[license_group_type as keyof typeof licenseGroupTypeMap] ?? license_group_type}
+              </span>
+            ))}
+          </span>
           <span className="text-xs">
             Week {current_week_sched.race_week_num + 1} of {season.max_weeks}
           </span>

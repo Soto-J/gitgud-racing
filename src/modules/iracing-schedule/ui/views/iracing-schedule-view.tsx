@@ -27,7 +27,7 @@ export default function IracingScheduleView() {
   const { data: seasons } = useSuspenseQuery(
     trpc.iracingSchedule.getMany.queryOptions(),
   );
-
+  
   const searchFiltered = search
     ? seasons.filter((s) =>
         s.season_name.toLowerCase().includes(search.toLowerCase()),
