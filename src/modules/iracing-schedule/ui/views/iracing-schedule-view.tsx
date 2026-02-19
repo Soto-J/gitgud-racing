@@ -42,7 +42,7 @@ export default function IracingScheduleView() {
         : true,
     )
     .sort((a, b) => {
-      const cmp = a.season_name.localeCompare(b.season_name);
+      const cmp = a.season_name.localeCompare(b.season_name, "en");
       return sortAsc ? cmp : -cmp;
     });
 
@@ -74,7 +74,11 @@ export default function IracingScheduleView() {
           onClick={() => setSortAsc((prev) => !prev)}
           aria-label={sortAsc ? "Sort descending" : "Sort ascending"}
         >
-          {sortAsc ? <ArrowDownAZ className="size-4" /> : <ArrowUpAZ className="size-4" />}
+          {sortAsc ? (
+            <ArrowDownAZ className="size-4" />
+          ) : (
+            <ArrowUpAZ className="size-4" />
+          )}
         </Button>
       </div>
 

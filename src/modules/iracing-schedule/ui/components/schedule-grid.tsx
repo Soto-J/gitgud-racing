@@ -39,7 +39,7 @@ export default function ScheduleGrid({ seasons }: ScheduleGridProps) {
 
         return (
           <Card
-            key={season.series_id}
+            key={season.season_id}
             className="hover:border-primary/30 cursor-pointer transition-colors"
           >
             <CardHeader>
